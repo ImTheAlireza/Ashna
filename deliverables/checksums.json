@@ -1,0 +1,14 @@
+[
+  {
+    "file": "signa-otp-with-logo.zip",
+    "bytes": 445178,
+    "sha256": "3e05fc21e43a2ab8856272e417e2f530eaaffa8ea80d11f6331ea9f9561c969e",
+    "files": 74
+  },
+  {
+    "file": "signa-website-source.zip",
+    "bytes": 2080231,
+    "sha256": "fcd6899377731ff0883592ae88f7842815bad87b34803a90ace848008d6aa22c",
+    "files": 32
+  }
+]

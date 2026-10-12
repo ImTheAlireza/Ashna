@@ -285,10 +285,7 @@ $partials_dir     = SIGNA_OTP_PATH . 'includes/admin/views/partials/';
 		<header class="signa-topbar">
 			<div class="signa-topbar-brand">
 				<div class="signa-brand-logo">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;flex-shrink:0;display:block;">
-						<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-						<path d="m9 12 2 2 4-4"></path>
-					</svg>
+					<img src="<?php echo esc_url( SIGNA_OTP_URL . 'assets/images/signa-icon.png' ); ?>" width="40" height="40" alt="" />
 				</div>
 				<div>
 					<div class="signa-brand-title-row">
