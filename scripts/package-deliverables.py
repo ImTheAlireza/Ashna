@@ -9,6 +9,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--plugin-only", action="store_true", help="Rebuild only the plugin ZIP, preserving the website archive.")
+parser.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP; leave the licensed ZIP and website unchanged.")
 args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +30,20 @@ plugin_readme = '''نسخهٔ فعلی سیگنا با لوگوی جدید — �
 بررسی بسته و نحوی کد انجام شده؛ تست نصب و عملکرد در وردپرس زنده انجام نشده است.
 
 فایل‌های تبلیغاتی، گالری، Git، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
+'''
+if args.without_license:
+    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری سیگنا — ۲.۷.۷
+
+این بستهٔ جداگانه از کد فعلی افزونه ساخته شده و بررسی لایسنس راست‌چین در فایل signa.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. لوگو و سایر امکانات بدون تغییر حفظ شده‌اند.
+نسخهٔ لایسنس‌دار مخزن و ZIP قبلی تغییر نکرده‌اند.
+
+ابتدا از سایت و دیتابیس بکاپ بگیرید؛ ترجیحاً روی سایت آزمایشی تست کنید.
+نسخهٔ قبلی سیگنا را غیرفعال کنید، این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ signa-otp جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
+برای حفظ تنظیمات، لازم نیست افزونه را از طریق دکمهٔ «حذف» وردپرس پاک کنید.
+پس از استخراج دستی، فایل signa.php قدیمیِ کدگذاری‌شده را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
+
+حداقل وردپرس ۵.۸ و PHP ۷.۴ مطابق سربرگ افزونه.
+این نسخه برای جداکردن احتمال خطای Loader/لایسنس از سایر خطاهای هاست مناسب است؛ رفع قطعی خطای گزارش‌شدهٔ سایت، بدون گزارش خطا قابل تأیید نیست.
 '''
 website_readme = '''# کد وب‌سایت گالری سیگنا
 
@@ -86,10 +101,16 @@ def archive_check(path, prefix):
     return {'file': path.name, 'bytes': path.stat().st_size,
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'files': len(names)}
 
-plugin = OUT / 'signa-otp-with-logo.zip'
+plugin = OUT / ('signa-otp-no-license.zip' if args.without_license else 'signa-otp-with-logo.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     for name in ['index.php', 'signa.php', 'uninstall.php', 'README.md']:
-        bundle.write(ROOT / name, 'signa-otp/' + name)
+        if args.without_license and name == 'signa.php':
+            bundle.write(ROOT / 'scripts/templates/signa-no-license.php', 'signa-otp/signa.php')
+        elif args.without_license and name == 'index.php':
+            index = (ROOT / name).read_text().replace('Signa - ورود', 'Signa (بدون لایسنس) - ورود', 1)
+            add_bytes(bundle, 'signa-otp/index.php', index)
+        else:
+            bundle.write(ROOT / name, 'signa-otp/' + name)
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file():
@@ -97,7 +118,7 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     add_bytes(bundle, 'signa-otp/README-INSTALL-FA.txt', plugin_readme)
 
 website = OUT / 'signa-website-source.zip'
-if not args.plugin_only:
+if not args.plugin_only and not args.without_license:
     with ZipFile(website, 'w', ZIP_DEFLATED) as bundle:
         for name in ['index.html', 'render.html', 'styles.css', 'slides.js', 'package.json', 'package-lock.json']:
             text = (DESIGN / name).read_text()
@@ -122,7 +143,7 @@ if not args.plugin_only:
             bundle.write(ROOT / 'product-images/gallery' / name, 'signa-website/gallery/' + name)
         bundle.write(ROOT / 'product-images/signa-gallery-8-images.zip', 'signa-website/signa-gallery-8-images.zip')
 
-report = [archive_check(plugin, 'signa-otp')]
+report = [archive_check(OUT / name, 'signa-otp') for name in ['signa-otp-with-logo.zip', 'signa-otp-no-license.zip'] if (OUT / name).exists()]
 if website.exists():
     report.append(archive_check(website, 'signa-website'))
 (OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
