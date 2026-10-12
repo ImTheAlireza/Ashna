@@ -50,6 +50,9 @@ class Signa_Activator {
 		$installed_version = get_option( 'signa_otp_db_version' );
 		if ( self::DB_VERSION !== $installed_version ) {
 			self::create_tables();
+			if ( false === get_option( 'signa_otp_settings' ) ) {
+				update_option( 'signa_otp_settings', Signa_Helper::default_settings() );
+			}
 			if ( ! wp_next_scheduled( 'signa_otp_daily_cleanup' ) ) {
 				wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'signa_otp_daily_cleanup' );
 			}
