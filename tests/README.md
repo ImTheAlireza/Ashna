@@ -23,3 +23,16 @@ Coverage includes normal early loading, late activation from function scope,
 strict true/false results, missing/bad files, runtime/parse/constructor errors,
 preloaded/conflicting classes, inaccessible methods, service initialization,
 activation/deactivation, idempotency, non-admin notices and the no-license build.
+
+## Temporary activation diagnostic tool
+
+`PHP_BINARY=/path/to/php python tests/run-activation-diagnostics.py` exercises
+13 scenarios using the same official WordPress hook dispatcher, with mocked
+capabilities, nonces and user-meta storage: ordinary/unauthorized/unrelated/bulk
+requests are ignored; activation hooks, error-scrape report separation, silent
+exit, real PHP fatal shutdown, inactive-license status, sanitized error records,
+page escaping and nonce-protected clearing are checked. The test never calls a
+license verifier. This is not a live WordPress/hosting/ionCube integration test.
+
+Build its independent ZIP with `python scripts/package-activation-diagnostics.py`.
+This does not change or rebuild either existing Signa edition.
