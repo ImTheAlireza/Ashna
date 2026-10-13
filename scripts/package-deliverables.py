@@ -26,8 +26,8 @@ plugin_readme = '''نسخهٔ فعلی سیگنا با لوگوی جدید — �
 نصب: پیشخوان وردپرس ← افزونه‌ها ← افزودن ← بارگذاری افزونه.
 قبل از جایگزینی نسخهٔ نصب‌شده، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
-مهم: هش بررسی فایل لایسنس به مقدار جدید ارسالی مالک محصول به‌روز شده است. فعال‌شدن امکانات همچنان به فایل معتبر RTL_License_c1595a7238d64f3a.php و تأیید isActive() نیاز دارد. فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.
-وردپرس حداقل ۵.۸ و PHP حداقل ۷.۴ مطابق سربرگ افزونه لازم است.
+مهم: نسخهٔ قبلی لایسنس و هش 4f106eb02a251f2a6951ca3f530596590081002d حفظ شده است؛ فایل جایگزین مخصوص PHP 7.4 استفاده نمی‌شود. فعال‌شدن امکانات همچنان به فایل معتبر RTL_License_c1595a7238d64f3a.php و تأیید isActive() نیاز دارد. فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.
+وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. ionCube Loader باید در PHP وب فعال و با همان PHP و فایل لایسنس سازگار باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
 بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند.
 تست‌های خودکار با هوک واقعی وردپرس و سرویس‌های شبیه‌سازی‌شده انجام شده‌اند؛ تست با فایل واقعی لایسنس و وردپرس زندهٔ مشتری انجام نشده است.
 
@@ -118,6 +118,8 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
             bundle.write(ROOT / 'scripts/templates/signa-no-license.php', 'signa-otp/signa.php')
         elif args.without_license and name == 'index.php':
             index = (ROOT / name).read_text().replace('Signa - ورود', 'Signa (بدون لایسنس) - ورود', 1)
+            # The separate unencoded edition does not share the licensed file's PHP floor.
+            index = re.sub(r'(Requires PHP:\s*)[0-9.]+', r'\g<1>7.4', index, count=1)
             add_bytes(bundle, 'signa-otp/index.php', index)
         else:
             bundle.write(ROOT / name, 'signa-otp/' + name)
@@ -158,5 +160,8 @@ if not args.plugin_only and not args.without_license:
 report = [archive_check(OUT / name, 'signa-otp') for name in ['signa-otp-with-logo.zip', 'signa-otp-no-license.zip'] if (OUT / name).exists()]
 if website.exists():
     report.append(archive_check(website, 'signa-website'))
+diagnostics = OUT / 'signa-activation-diagnostics.zip'
+if diagnostics.exists():
+    report.append(archive_check(diagnostics, 'signa-activation-diagnostics'))
 (OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

@@ -51,3 +51,19 @@ explicit checkbox + nonce arming, escaped private display, clearing and scoped
 uninstall. The real message is never inserted into the default JSON report.
 Consented text may still be sensitive and requires human review before sharing;
 these tests do not claim complete secret redaction.
+
+## Licensed PHP minimum (8.2)
+
+Cache the official WordPress admin API separately (do not use a live install):
+
+```sh
+mkdir -p .cache/license-tests/wp/wp-admin/includes
+gh api 'repos/WordPress/WordPress/contents/wp-admin/includes/plugin.php?ref=6.8.3' --jq .content | base64 -d > .cache/license-tests/wp/wp-admin/includes/plugin.php
+PHP_BINARY=/path/to/php python tests/run-php-requirement.py
+```
+
+This extracts the unmodified `validate_plugin_requirements()` function and uses
+isolated metadata/UI/dependency stubs. PHP 7.4, 8.0 and 8.1 must be rejected;
+8.2 and 8.3 pass the version check without loading Signa or a license. This does
+not certify the vendor-encoded license on all newer PHP releases. Direct-source
+bootstrap tests on older PHP are not a declaration of licensed-package support.

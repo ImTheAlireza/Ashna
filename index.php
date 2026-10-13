@@ -4,7 +4,7 @@
  * Description:       پلاگین جامع ورود و ثبت‌نام یکپارچه با کد یکبارمصرف (OTP) و ورود بیومتریک بدون رمز (Passkey / WebAuthn) از طریق پیامک، پیام‌رسان بله و ایمیل همراه با یکپارچگی کامل ووکامرس و ویجت اختصاصی المنتور.
  * Version:           2.7.7
  * Requires at least: 5.8
- * Requires PHP:      7.4
+ * Requires PHP:      8.2
  * Author:            Signa Team
  * Text Domain:       signa-otp
  * Domain Path:       /languages
