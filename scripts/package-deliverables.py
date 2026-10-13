@@ -6,6 +6,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import hashlib
 import json
 import argparse
+import re
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--plugin-only", action="store_true", help="Rebuild only the plugin ZIP, preserving the website archive.")
@@ -27,7 +28,8 @@ plugin_readme = '''نسخهٔ فعلی سیگنا با لوگوی جدید — �
 
 مهم: هش بررسی فایل لایسنس به مقدار جدید ارسالی مالک محصول به‌روز شده است. فعال‌شدن امکانات همچنان به فایل معتبر RTL_License_c1595a7238d64f3a.php و تأیید isActive() نیاز دارد. فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.
 وردپرس حداقل ۵.۸ و PHP حداقل ۷.۴ مطابق سربرگ افزونه لازم است.
-بررسی بسته و نحوی کد انجام شده؛ تست نصب و عملکرد در وردپرس زنده انجام نشده است.
+بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند.
+تست‌های خودکار با هوک واقعی وردپرس و سرویس‌های شبیه‌سازی‌شده انجام شده‌اند؛ تست با فایل واقعی لایسنس و وردپرس زندهٔ مشتری انجام نشده است.
 
 فایل‌های تبلیغاتی، گالری، Git، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
 '''
@@ -101,6 +103,14 @@ def archive_check(path, prefix):
     return {'file': path.name, 'bytes': path.stat().st_size,
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'files': len(names)}
 
+license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
+include_license = not args.without_license and license_file.is_file()
+if include_license:
+    expected_hash = re.search(r"'([0-9a-f]{40})'\s*!==\s*\$rtlLicenseFileHash", (ROOT / 'signa.php').read_text())
+    if not expected_hash or hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_hash.group(1):
+        raise SystemExit('License file does not match the verifier hash; refusing to package a mismatched license.')
+    plugin_readme = plugin_readme.replace('فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.', 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.')
+
 plugin = OUT / ('signa-otp-no-license.zip' if args.without_license else 'signa-otp-with-logo.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     for name in ['index.php', 'signa.php', 'uninstall.php', 'README.md']:
@@ -115,6 +125,8 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file():
                 bundle.write(source, 'signa-otp/' + source.relative_to(ROOT).as_posix())
+    if include_license:
+        bundle.write(license_file, 'signa-otp/' + license_file.name)
     add_bytes(bundle, 'signa-otp/README-INSTALL-FA.txt', plugin_readme)
 
 website = OUT / 'signa-website-source.zip'

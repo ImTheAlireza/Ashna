@@ -15,10 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SIGNA_OTP_VERSION', '2.7.7' );
-define( 'SIGNA_OTP_FILE', __FILE__ );
-define( 'SIGNA_OTP_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SIGNA_OTP_URL', plugin_dir_url( __FILE__ ) );
-define( 'SIGNA_OTP_BASENAME', plugin_basename( __FILE__ ) );
+if ( ! defined( 'SIGNA_OTP_VERSION' ) ) {
+	define( 'SIGNA_OTP_VERSION', '2.7.7' );
+}
+if ( ! defined( 'SIGNA_OTP_FILE' ) ) {
+	define( 'SIGNA_OTP_FILE', __FILE__ );
+}
+if ( ! defined( 'SIGNA_OTP_PATH' ) ) {
+	define( 'SIGNA_OTP_PATH', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'SIGNA_OTP_URL' ) ) {
+	define( 'SIGNA_OTP_URL', plugin_dir_url( __FILE__ ) );
+}
+if ( ! defined( 'SIGNA_OTP_BASENAME' ) ) {
+	define( 'SIGNA_OTP_BASENAME', plugin_basename( __FILE__ ) );
+}
 
 require_once SIGNA_OTP_PATH . 'signa.php';

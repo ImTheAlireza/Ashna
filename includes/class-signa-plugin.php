@@ -18,6 +18,9 @@ final class Signa_Plugin {
 	 */
 	private static $instance = null;
 
+	/** Prevent duplicate service hooks when bootstrapping after plugins_loaded. */
+	private $services_initialized = false;
+
 	/**
 	 * Get singleton instance
 	 *
@@ -44,15 +47,30 @@ final class Signa_Plugin {
 		register_activation_hook( SIGNA_OTP_FILE, array( 'Signa_Activator', 'activate' ) );
 		register_deactivation_hook( SIGNA_OTP_FILE, array( 'Signa_Activator', 'deactivate' ) );
 
-		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
 		add_action( 'signa_otp_daily_cleanup', array( 'Signa_Logger', 'run_scheduled_cleanup' ) );
 		add_filter( 'plugin_action_links_' . SIGNA_OTP_BASENAME, array( $this, 'plugin_action_links' ) );
+
+		if ( did_action( 'plugins_loaded' ) ) {
+			// Licensed boot happens after plugins_loaded. Do not attach a callback
+			// to an already-fired priority. During activation, only register the
+			// lifecycle hooks; WordPress will invoke activate() after inclusion.
+			if ( ! defined( 'WP_SANDBOX_SCRAPING' ) || ! WP_SANDBOX_SCRAPING ) {
+				$this->on_plugins_loaded();
+			}
+		} else {
+			add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
+		}
 	}
 
 	/**
 	 * Boot services when WordPress plugins are loaded
 	 */
 	public function on_plugins_loaded() {
+		if ( $this->services_initialized ) {
+			return;
+		}
+		$this->services_initialized = true;
+
 		Signa_Activator::maybe_upgrade();
 
 		Signa_Auth::instance();
