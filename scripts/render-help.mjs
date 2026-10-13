@@ -33,10 +33,10 @@ try {
     return { page: i + 1, footerGap: footer.top - bottom, horizontalOverflow, fontLoaded: document.fonts.check('900 27pt Estedad') };
   }));
   console.log(JSON.stringify(layout, null, 2));
-  if (errors.length || layout.length !== 4 || layout.some(p => p.footerGap < 12 || p.horizontalOverflow.length || !p.fontLoaded)) {
+  if (errors.length || layout.length !== 3 || layout.some(p => p.footerGap < 12 || p.horizontalOverflow.length || !p.fontLoaded)) {
     throw new Error('Guide layout validation failed: ' + errors.join(', '));
   }
   await fs.mkdir(path.join(root, 'deliverables'), { recursive: true });
   await page.pdf({ path: path.join(root, 'deliverables/Signa-Help-FA.pdf'), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
-  console.log('PASS: 4 pages, fonts/images loaded, no content/footer collision.');
+  console.log('PASS: 3 pages, fonts/images loaded, no content/footer collision.');
 } finally { await browser.close(); }

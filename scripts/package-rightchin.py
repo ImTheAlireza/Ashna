@@ -19,8 +19,8 @@ with ZipFile(installer) as z:
     assert z.read('signa-otp/index.php') == (root / 'index.php').read_bytes(), 'Rebuild the current installer first'
     assert z.read('signa-otp/signa.php') == (root / 'signa.php').read_bytes()
     license_present = 'signa-otp/RTL_License_c1595a7238d64f3a.php' in z.namelist()
-# This guide explicitly documents the current source-only, missing-license package.
-assert not license_present, 'Update the guide/license-presence notice before distributing a new licensed bundle'
+# The packaging README (not the customer PDF) records the missing-license status.
+assert not license_present, 'Update the packaging license-presence notice before distributing a new licensed bundle'
 installer_sha = hashlib.sha256(installer.read_bytes()).hexdigest()
 readme = f'''بستهٔ سیگنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۷
 ویرایش راهنما: ۱۳ اکتبر ۲۰۲۶
@@ -31,7 +31,7 @@ readme = f'''بستهٔ سیگنا برای آماده‌سازی انتشار �
 
 محتویات
 - Plugin/signa-otp.zip: فایل نصب فعلی (همان deliverables/signa-otp-with-logo.zip)
-- Signa-Help-FA.pdf: راهنمای فارسی ۴ صفحه‌ای نصب، راه‌اندازی، لایسنس، به‌روزرسانی و عیب‌یابی
+- Signa-Help-FA.pdf: راهنمای فارسی ۳ صفحه‌ای نصب، تنظیمات، استفاده و به‌روزرسانی
 - changelog-FA.txt: تاریخچه و توضیح تغییرات بسته
 
 نیازمندی‌ها
