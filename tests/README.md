@@ -43,3 +43,11 @@ numeric encoding type, corruption, expiry, host restriction, absent Loader,
 unknown messages and bounded numeric extraction). No raw Loader text, paths or
 fixture secrets may enter these structured fields. These are message-parser
 tests, not execution of ionCube or the vendor license.
+
+Version 1.2 adds 15 consent/private-message scenarios: no capture by default,
+expired consent, user isolation, invalid nonce, scrape isolation, fatal and
+ionCube restrictions, bounded first-message capture, known path replacement,
+explicit checkbox + nonce arming, escaped private display, clearing and scoped
+uninstall. The real message is never inserted into the default JSON report.
+Consented text may still be sensitive and requires human review before sharing;
+these tests do not claim complete secret redaction.

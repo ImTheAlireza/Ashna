@@ -28,3 +28,14 @@ output = result.stdout + result.stderr
 if result.returncode != 0 or 'PASS all 14 ionCube message fixtures' not in output or 'Fatal error' in output:
     raise SystemExit(f'FAIL ionCube parser\n{output}')
 print('PASS all 14 ionCube message fixtures')
+
+private_scenarios = ['default', 'expired', 'other_user', 'bad_nonce', 'scrape',
+                     'not_fatal', 'not_ioncube', 'capture', 'long', 'first_only',
+                     'arm', 'arm_no_consent', 'arm_bad_nonce', 'page_privacy', 'uninstall']
+for scenario in private_scenarios:
+    result = subprocess.run([php, str(root / 'tests/diagnostics-private-message.php'), scenario],
+                            capture_output=True, text=True, cwd=root)
+    output = result.stdout + result.stderr
+    if result.returncode != 0 or f'PASS private {scenario}' not in output or 'Fatal error' in output:
+        raise SystemExit(f'FAIL private {scenario}\n{output}')
+    print(f'PASS private {scenario}')

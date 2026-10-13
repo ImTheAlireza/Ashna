@@ -5,3 +5,5 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 delete_metadata( 'user', 0, '_signa_activation_diagnostics_activate', '', true );
 delete_metadata( 'user', 0, '_signa_activation_diagnostics_error_scrape', '', true );
+delete_metadata( 'user', 0, '_signa_activation_diagnostics_capture_until', '', true );
+delete_metadata( 'user', 0, '_signa_activation_diagnostics_loader_message', '', true );
