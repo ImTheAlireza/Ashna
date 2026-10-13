@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Signa Activation Diagnostics (Temporary)
  * Description: گزارش خصوصی و موقت محیط PHP و مراحل فعال‌سازی سیگنا؛ بدون تغییر لایسنس.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later
@@ -61,7 +61,7 @@ final class Signa_Activation_Diagnostics {
 		self::$user_id = get_current_user_id();
 		self::$reserve = str_repeat( 'x', 65536 );
 		self::$report = array(
-			'tool_version' => '1.0.0',
+			'tool_version' => '1.1.0',
 			'attempt_id' => wp_generate_uuid4(),
 			'time_utc' => gmdate( 'c' ),
 			'request_kind' => $action,
@@ -142,13 +142,61 @@ final class Signa_Activation_Diagnostics {
 			}
 		}
 		$type = isset( $error['type'] ) ? (int) $error['type'] : 0;
-		return array(
+		$result = array(
 			'type' => $type,
 			'is_fatal' => in_array( $type, array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ),
 			'category' => $category,
 			'file' => isset( $error['file'] ) ? basename( str_replace( '\\', '/', $error['file'] ) ) : '',
 			'line' => isset( $error['line'] ) ? (int) $error['line'] : 0,
 		);
+		if ( 'ioncube' === $category ) {
+			$result['ioncube_details'] = self::ioncube_details( $message );
+		}
+		return $result;
+	}
+
+	/**
+	 * Extract only allowlisted reason codes and bounded version numbers.
+	 * Never return the original Loader message (it may contain paths/license data).
+	 * These are recognized message patterns, not a complete compatibility test.
+	 */
+	public static function ioncube_details( $message ) {
+		$details = array(
+			'reason' => 'unrecognized_loader_error',
+			'mentions_expected_license_file' => false !== stripos( $message, 'RTL_License_c1595a7238d64f3a.php' ),
+		);
+		$patterns = array(
+			'php_version_incompatible' => '~cannot (?:run|be run) (?:under|with|on) PHP~i',
+			'loader_update_required' => '~requires\s+(?:the\s+)?ionCube\s+(?:PHP\s+)?Loader\s+(?:version\s+)?[0-9]|(?:newer|later) version of the ionCube Loader~i',
+			'encoding_not_decodable' => '~cannot be decoded by this version of the ionCube Loader~i',
+			'encoded_file_corrupt' => '~(?:file|code)[^\r\n]{0,300}\b(?:corrupt|corrupted|damaged)\b~i',
+			'encoded_file_expired' => '~(?:file|script)[^\r\n]{0,300}\b(?:has expired|is expired)\b~i',
+			'license_expired' => '~licen[sc]e[^\r\n]{0,300}\b(?:has expired|is expired)\b~i',
+			'host_restriction' => '~not (?:licensed|authori[sz]ed) (?:to run|for use)|not allowed to run on this~i',
+			'loader_not_installed' => '~ionCube Loader for PHP needs to be installed~i',
+		);
+		foreach ( $patterns as $reason => $pattern ) {
+			if ( preg_match( $pattern, $message ) ) {
+				$details['reason'] = $reason;
+				break;
+			}
+		}
+		$version = '([0-9]{1,2}\.[0-9]{1,2}(?:\.[0-9]{1,3})?)(?![0-9]|\.[0-9])';
+		$versions = array(
+			'encoded_for_php' => '~Encoder for PHP\s+(?:version\s+)?' . $version . '~i',
+			'rejected_runtime_php' => '~cannot (?:run|be run) (?:under|with|on) PHP\s+' . $version . '~i',
+			'required_loader_version' => '~requires\s+(?:the\s+)?ionCube\s+(?:PHP\s+)?Loader\s+(?:version\s+)?' . $version . '~i',
+		);
+		foreach ( $versions as $key => $pattern ) {
+			if ( preg_match( $pattern, $message, $matches ) ) {
+				$details[ $key ] = $matches[1];
+			}
+		}
+		if ( preg_match( '~encoded as type\s*\[([0-9]{1,3})/([0-9]{1,3})\]~i', $message, $matches ) ) {
+			// Preserve the numeric type without guessing how it maps to PHP versions.
+			$details['encoding_type'] = $matches[1] . '/' . $matches[2];
+		}
+		return $details;
 	}
 
 	private static function save( $event, $error = null ) {

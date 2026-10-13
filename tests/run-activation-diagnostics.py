@@ -21,3 +21,10 @@ for scenario in scenarios:
         raise SystemExit(f'FAIL {scenario}\n{output}')
     print(f'PASS {scenario}')
 print(f'PASS all {len(scenarios)} diagnostic scenarios')
+
+result = subprocess.run([php, str(root / 'tests/ioncube-diagnostics.php')],
+                        capture_output=True, text=True, cwd=root)
+output = result.stdout + result.stderr
+if result.returncode != 0 or 'PASS all 14 ionCube message fixtures' not in output or 'Fatal error' in output:
+    raise SystemExit(f'FAIL ionCube parser\n{output}')
+print('PASS all 14 ionCube message fixtures')

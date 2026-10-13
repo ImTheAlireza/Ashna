@@ -36,3 +36,10 @@ license verifier. This is not a live WordPress/hosting/ionCube integration test.
 
 Build its independent ZIP with `python scripts/package-activation-diagnostics.py`.
 This does not change or rebuild either existing Signa edition.
+
+`PHP_BINARY=/path/to/php python tests/run-activation-diagnostics.py` also verifies
+14 synthetic ionCube message fixtures (PHP target mismatch, minimum Loader,
+numeric encoding type, corruption, expiry, host restriction, absent Loader,
+unknown messages and bounded numeric extraction). No raw Loader text, paths or
+fixture secrets may enter these structured fields. These are message-parser
+tests, not execution of ionCube or the vendor license.
