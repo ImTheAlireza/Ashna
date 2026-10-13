@@ -25,6 +25,17 @@ try {
     await document.fonts.ready;
     await Promise.all([...document.images].map(image => image.decode()));
   });
+  const numeralCheck = await page.evaluate(() => {
+    const text = document.body.innerText;
+    const forbiddenDigits = text.match(/[0-9\u0660-\u0669]/gu) || [];
+    const stepsValid = [...document.querySelectorAll('ol')].every(list =>
+      [...list.querySelectorAll('.step-number')].every((step, i) =>
+        step.textContent === String(i + 1).replace(/[0-9]/g, n => '۰۱۲۳۴۵۶۷۸۹'[Number(n)])));
+    return { forbiddenDigits, stepsValid, phpMinimumPresent: text.includes('۸.۲') };
+  });
+  if (numeralCheck.forbiddenDigits.length || !numeralCheck.stepsValid || !numeralCheck.phpMinimumPresent) {
+    throw new Error('Persian numeral validation failed: ' + JSON.stringify(numeralCheck));
+  }
   const layout = await page.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
     const footer = p.querySelector('.footer').getBoundingClientRect();
     const contents = [...p.children].filter(e => !e.classList.contains('footer'));
@@ -38,5 +49,5 @@ try {
   }
   await fs.mkdir(path.join(root, 'deliverables'), { recursive: true });
   await page.pdf({ path: path.join(root, 'deliverables/Signa-Help-FA.pdf'), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
-  console.log('PASS: 3 pages, fonts/images loaded, no content/footer collision.');
+  console.log('PASS: 3 pages, Persian numerals verified, fonts/images loaded, no content/footer collision.');
 } finally { await browser.close(); }
