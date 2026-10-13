@@ -1,0 +1,17 @@
+[
+  {
+    "file": "Signa-Rightchin-Package.zip",
+    "bytes": 645553,
+    "sha256": "eca9643eff7e27aa386e7acf017ea2dbb5bac9840716725ba76dbd0dbabd1ae9"
+  },
+  {
+    "file": "../deliverables/Signa-Help-FA.pdf",
+    "bytes": 244115,
+    "sha256": "b4a566ff8bda06731928d81a4b3629b7c5ba4c3a049b22006b1de1327851d46b"
+  },
+  {
+    "file": "../deliverables/signa-otp-with-logo.zip",
+    "bytes": 447359,
+    "sha256": "45c9f0490368cab30520e7d3843bd1df01a75ef6ac103c46e6735c49642e821b"
+  }
+]

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>راهنمای نصب و راه‌اندازی سیگنا — نسخه ۲.۷.۷</title>
+<style>
+@font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-400.woff2');font-weight:400}
+@font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-700.woff2');font-weight:700}
+@font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-900.woff2');font-weight:900}
+*{box-sizing:border-box} @page{size:A4;margin:0}
+body{margin:0;color:#202c43;background:#e8edf4;font:10.4pt/1.9 Estedad,sans-serif}
+.page{position:relative;width:210mm;height:297mm;padding:15mm 17mm 18mm;background:white;break-after:page;overflow:hidden}
+.page:last-child{break-after:auto}.top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e4e9f0;padding-bottom:10px;margin-bottom:18px;font-size:9pt;color:#66758b}.top img{width:105px;height:38px;object-fit:contain}.eyebrow{color:#2762de;font-weight:700;font-size:9pt;letter-spacing:.4px}h1{font-size:27pt;line-height:1.6;margin:8px 0 9px;font-weight:900;letter-spacing:-.8px}h2{font-size:17pt;margin:9px 0 15px;font-weight:900;color:#173868}h3{font-size:11.4pt;margin:16px 0 7px;color:#174891}p{margin:6px 0 11px}.subtitle{color:#63728a;font-size:11pt}.pills{display:flex;gap:8px;margin:16px 0 19px}.pill{background:#edf3ff;color:#174eaa;padding:4px 12px;border-radius:7px;font-size:9pt;font-weight:700}.note{border-right:3px solid #3676ea;background:#f0f5ff;padding:10px 13px;margin:13px 0;border-radius:5px;font-size:9.6pt}.warn{background:#fff8e9;border-color:#dc9b2b;color:#624b23}.muted{color:#64748b;font-size:9pt}table{width:100%;border-collapse:collapse;font-size:9.5pt;line-height:1.9;margin:8px 0 13px}th{background:#edf3fd;color:#234475;text-align:right;font-weight:700}th,td{padding:7px 10px;border-bottom:1px solid #e5ebf4;vertical-align:top}td:first-child{font-weight:700;white-space:nowrap}ul,ol{padding-right:22px;margin:7px 0 11px}li{margin-bottom:5px}.ltr,code{direction:ltr;unicode-bidi:isolate;display:inline-block}code{font:9pt/1.7 monospace;background:#edf2f8;padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}.codebox{direction:ltr;text-align:left;font:10pt/1.8 monospace;background:#172b49;color:#fff;padding:10px 14px;border-radius:7px;margin:9px 0 12px}.footer{position:absolute;bottom:9mm;left:17mm;right:17mm;border-top:1px solid #e2e8f0;padding-top:7px;display:flex;justify-content:space-between;font-size:8pt;color:#78879b}.section-num{color:#7e9cd1;font-size:9pt}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.card{border:1px solid #e1e8f1;border-radius:9px;padding:11px 13px}.card h3{margin-top:0}.small{font-size:9.4pt}.tight li{margin-bottom:3px}
+.compact{font-size:10pt;line-height:1.8}.compact h3{margin-top:12px}.compact table{font-size:9.2pt;line-height:1.8}.compact th,.compact td{padding:6px 10px}
+@media print{body{background:white}.page{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<section class="page">
+<div class="top"><img src="../assets/images/signa-logo.png" alt="Signa"><span>راهنمای محصول · نسخهٔ لایسنس‌دار ۲.۷.۷</span></div>
+<div class="eyebrow">نصب / لایسنس / راه‌اندازی</div>
+<h1>ورود ساده،<br>راه‌اندازی مطمئن.</h1>
+<p class="subtitle">راهنمای فارسی نصب و استفاده از سیگنا</p>
+<p>سیگنا ورود و ثبت‌نام با کد یکبارمصرف را از طریق پیامک، بله و ایمیل فراهم می‌کند؛ با پشتیبانی از Passkey، یکپارچگی ووکامرس و ویجت المنتور.</p>
+<div class="pills"><span class="pill">حداقل PHP: <bdi>8.2</bdi></span><span class="pill">حداقل وردپرس: ۵.۸</span><span class="pill">لایسنس قبلی حفظ شده</span></div>
+<h3>۱. پیش‌نیازهای نصب</h3>
+<table><thead><tr><th>مورد</th><th>نیازمندی</th></tr></thead><tbody>
+<tr><td>PHP وب سایت</td><td><strong>نسخهٔ 8.2 یا بالاترِ سازگار با فایل لایسنس</strong>؛ نسخه‌های 7.4، 8.0 و 8.1 در فعال‌سازی استاندارد وردپرس پذیرفته نمی‌شوند.</td></tr>
+<tr><td>ionCube Loader</td><td>باید در PHP وب فعال و با نسخهٔ PHP و فایل لایسنس سازگار باشد. فعال‌بودن آن فقط در CLI کافی نیست.</td></tr>
+<tr><td>لایسنس راست‌چین</td><td>فایل معتبر محصول، افزونهٔ مدیریت هوشمند راست‌چین و فعال‌سازی دامنه برای استفاده در سایت اصلی.</td></tr>
+<tr><td>سرویس ارسال کد</td><td>حداقل یکی از مسیرهای پیامک، بله یا ایمیل باید تنظیم و آزمایش شود.</td></tr>
+<tr><td>ووکامرس / المنتور</td><td>اختیاری؛ فقط برای استفاده از یکپارچگی‌های مربوط به آن‌ها.</td></tr>
+</tbody></table>
+<div class="note warn"><strong>پیش از تغییر PHP:</strong> از فایل‌ها و دیتابیس بکاپ بگیرید و قالب، پرداخت و افزونه‌ها را روی کپی آزمایشی بررسی کنید. نصب یا به‌روزرسانی سیگنا، PHP هاست را ارتقا نمی‌دهد.</div>
+<p class="muted">حداقل PHP یک شرط نصب است، نه تضمین سازگاری فایل رمزگذاری‌شده با تمام نسخه‌های جدیدتر PHP.</p>
+<div class="footer"><span>Signa · راهنمای نصب و استفاده</span><span><bdi dir="ltr">۱ / ۴</bdi></span></div>
+</section>
+<section class="page">
+<div class="top"><img src="../assets/images/signa-logo.png" alt="Signa"><span>از نصب تا اولین ورود</span></div>
+<span class="section-num">بخش دوم</span><h2>نصب و فعال‌سازی لایسنس</h2>
+<ol>
+<li>از سایت و دیتابیس نسخهٔ پشتیبان تهیه کنید. پیش‌نیازهای صفحهٔ قبل را بررسی کنید.</li>
+<li>فایل نصب <code>Plugin/signa-otp.zip</code> را از بسته بردارید. ZIP بیرونیِ حاوی راهنما را به‌عنوان افزونه بارگذاری نکنید.</li>
+<li>در وردپرس به <strong>افزونه‌ها ← افزودن ← بارگذاری افزونه</strong> بروید، فایل نصب را انتخاب و «نصب هم‌اکنون» را بزنید.</li>
+<li>افزونهٔ مدیریت هوشمند راست‌چین را از منبع رسمی نصب/به‌روز کنید و دامنهٔ صحیح را برای لایسنس محصول ثبت کنید.</li>
+<li>سیگنا را فعال کنید. در صورت نیاز، از بخش مدیریت لایسنس راست‌چین، همگام‌سازی یا اشکال‌زدایی را اجرا کنید.</li>
+<li>پس از تأیید لایسنس، منوی سیگنا در پیشخوان در دسترس خواهد بود. فعال‌بودن نام افزونه در فهرست وردپرس به‌تنهایی به معنی تأیید لایسنس نیست.</li>
+</ol>
+<div class="note"><strong>فایل لایسنس:</strong> فایل زیر باید کنار <code>signa.php</code> در پوشهٔ افزونه قرار داشته باشد. نام، محتوا و کنترل هش آن را خودسرانه تغییر ندهید.<br><code>RTL_License_c1595a7238d64f3a.php</code></div>
+<div class="note warn"><strong>توجه تهیه‌کنندهٔ بسته:</strong> فایل واقعی لایسنس در مخزن و ZIP فعلیِ تولیدشده از مخزن موجود نیست. پیش از توزیع یا نصب نهایی، همان فایل معتبر قبلی را به ZIP نصب اضافه کنید. این بسته به‌تنهایی، بستهٔ کامل لایسنس‌دار آمادهٔ انتشار نیست.</div>
+<h3>۲. تنظیمات اصلی پنل</h3>
+<table><thead><tr><th>بخش</th><th>کاربرد</th></tr></thead><tbody>
+<tr><td>داشبورد</td><td>نمایش آمار ورود و وضعیت کلی سیستم.</td></tr>
+<tr><td>احراز هویت</td><td>انتخاب شماره موبایل، ایمیل یا هر دو و تنظیم کد یکبارمصرف.</td></tr>
+<tr><td>پیامک / بله و ایمیل</td><td>انتخاب مسیر ارسال و ثبت اطلاعات دسترسی سرویس.</td></tr>
+<tr><td>ظاهر</td><td>طراحی فرم، فونت و رنگ، پیش‌نمایش و انتخاب صفحه، مودال، کشو یا شیت.</td></tr>
+<tr><td>ووکامرس</td><td>تنظیم یکپارچگی ورود با صفحات فروشگاه.</td></tr>
+<tr><td>امنیت و فایروال</td><td>محدودیت تلاش، قفل موقت و تنظیمات امنیتی.</td></tr>
+<tr><td>ابزارها و پشتیبان</td><td>آزمایش ارسال، پشتیبان تنظیمات و گزینهٔ حذف داده‌ها.</td></tr>
+</tbody></table>
+<div class="footer"><span>Signa · فایل نصب و لایسنس</span><span><bdi dir="ltr">۲ / ۴</bdi></span></div>
+</section>
+<section class="page compact">
+<div class="top"><img src="../assets/images/signa-logo.png" alt="Signa"><span>راه‌اندازی فرم و ظاهر</span></div>
+<span class="section-num">بخش سوم</span><h2>اولین ورود موفق را آزمایش کنید</h2>
+<ol>
+<li>درگاه ارسال را در «پیامک» یا «بله و ایمیل» تنظیم و ذخیره کنید.</li>
+<li>در «احراز هویت»، روش ورود و تنظیمات کد را انتخاب کنید.</li>
+<li>از «ابزارها و پشتیبان» یک ارسال آزمایشی انجام دهید. موفق‌بودن ذخیرهٔ تنظیمات به‌تنهایی به معنی موفقیت ارسال نیست.</li>
+<li>ظاهر فرم را تنظیم کنید و جریان ورود را در مرورگر خصوصی، با حساب آزمایشی بررسی کنید.</li>
+</ol>
+<h3>۳. نمایش فرم در برگه</h3>
+<p>کد کوتاه زیر را در بلوک «کد کوتاه» یک برگه قرار دهید. برای المنتور نیز می‌توانید از ویجت اختصاصی ورود استفاده کنید.</p>
+<div class="codebox">[signa_otp_login]</div>
+<p class="small">نام جایگزین فرم: <code>[signa_otp_form]</code>؛ دکمهٔ بازکردن فرم مودال: <code>[signa_otp_button]</code>. حالت‌های مودال، کشوی کناری و شیت پایین از تنظیمات ظاهر انتخاب می‌شوند.</p>
+<h3>۴. شماره موبایل و پیش‌شمارهٔ ایران</h3>
+<p>در حالت نمایش پیش‌شمارهٔ <bdi>+98</bdi>، شماره را بدون صفر اول وارد کنید؛ مانند <bdi>912xxxxxxx</bdi>. ورودی‌های دارای صفر اول یا پیش‌شماره در مسیر نرمال‌سازی شماره پردازش می‌شوند. در نمایش معمول، قالب <bdi>09xxxxxxxxx</bdi> نیز قابل استفاده است.</p>
+<h3>۵. فونت‌ها و سفارشی‌سازی</h3>
+<p>فونت <bdi>Estedad</bdi> با مجوز <bdi>SIL OFL 1.1</bdi> همراه افزونه است. فایل‌های فونت‌های تجاری داخل بسته قرار ندارند؛ تنها در صورت داشتن مجوز، آن‌ها را در مسیرهای زیر اضافه کنید:</p>
+<table><thead><tr><th>فونت</th><th>مسیر فایل</th></tr></thead><tbody>
+<tr><td>IRANSans</td><td><code>assets/fonts/iransans/iransans.woff2</code></td></tr>
+<tr><td>YekanBakh</td><td><code>assets/fonts/yekanbakh/yekanbakh.woff2</code></td></tr>
+<tr><td>Dana</td><td><code>assets/fonts/dana/dana.woff2</code></td></tr>
+</tbody></table>
+<p class="muted">برای جزئیات مسیرها، فایل <code>assets/fonts/README.txt</code> را ببینید. فونت غایب بارگذاری نمی‌شود و مرورگر از فونت جایگزین تعریف‌شده استفاده می‌کند.</p>
+<div class="note"><strong>چک‌لیست قبل از انتشار:</strong> دریافت کد، ورود کاربر جدید و قبلی، محدودیت تلاش، ظاهر موبایل و در صورت استفاده، ورود در حساب کاربری ووکامرس را بررسی کنید. Passkey را در محیط امن HTTPS و مرورگر سازگار آزمایش کنید.</div>
+<div class="footer"><span>Signa · راه‌اندازی و شخصی‌سازی</span><span><bdi dir="ltr">۳ / ۴</bdi></span></div>
+</section>
+<section class="page compact">
+<div class="top"><img src="../assets/images/signa-logo.png" alt="Signa"><span>نگهداری و رفع خطا</span></div>
+<span class="section-num">بخش چهارم</span><h2>به‌روزرسانی، حذف و عیب‌یابی</h2>
+<h3>۶. به‌روزرسانی بدون حذف تنظیمات</h3>
+<ol class="tight">
+<li>از دیتابیس، فایل‌های سایت، تنظیمات و فایل معتبر لایسنس بکاپ بگیرید.</li>
+<li>قبل از جایگزینی، وجود فایل لایسنس متناظر را در ZIP جدید بررسی کنید؛ به باقی‌ماندن فایل اضافهٔ نسخهٔ قبلی پس از به‌روزرسانی اتکا نکنید.</li>
+<li>ZIP نصب جدید را از بخش بارگذاری افزونه نصب و گزینهٔ جایگزینی نسخهٔ فعلی را انتخاب کنید. برای به‌روزرسانی، دکمهٔ «حذف» لازم نیست.</li>
+<li>پس از به‌روزرسانی، کش مرتبط را پاک و ورود و ارسال کد را آزمایش کنید. دو نسخهٔ سیگنا را هم‌زمان فعال نکنید.</li>
+</ol>
+<h3>۷. حذف افزونه و داده‌ها</h3>
+<p>غیرفعال‌سازی با حذف داده‌ها فرق دارد. هنگام حذف افزونه، اگر گزینهٔ <strong>«حذف داده‌ها هنگام حذف افزونه»</strong> فعال باشد، جدول لاگ‌ها و تنظیمات مرتبط پاک می‌شوند. برای حفظ داده‌ها، پیش از حذف از خاموش‌بودن این گزینه مطمئن شوید؛ فایل‌های داخل پوشهٔ افزونه، از جمله فایل لایسنس، در حذف وردپرس باقی نمی‌مانند.</p>
+<h3>۸. تشخیص خطاهای رایج</h3>
+<table><thead><tr><th>نشانه</th><th>اقدام درست</th></tr></thead><tbody>
+<tr><td>نیاز به PHP جدیدتر</td><td>حداقل این بسته PHP 8.2 است. ابتدا سازگاری سایت را روی کپی آزمایشی بررسی کنید.</td></tr>
+<tr><td>Loader نصب نیست</td><td>ionCube را برای همان نسخهٔ PHP وب بررسی کنید؛ تنظیمات CLI ممکن است متفاوت باشد.</td></tr>
+<tr><td>خطای ionCube با Loader فعال</td><td>متن دقیق خطا تعیین‌کننده است. اگر فایل سازگار با PHP 7.4 درخواست شده، نصب‌بودن Loader کافی نیست؛ فایل لایسنس فعلی روی آن PHP اجرا نمی‌شود.</td></tr>
+<tr><td>هش / فایل لایسنس نامعتبر</td><td>فایل رسمی متناظر با نسخهٔ محصول را بازیابی کنید؛ بررسی هش را حذف نکنید.</td></tr>
+<tr><td>پیام «لایسنس فعال نیست»</td><td>دامنه، نسخهٔ مدیریت هوشمند راست‌چین و همگام‌سازی لایسنس را بررسی کنید؛ این پیام با خطای Fatal یکی نیست.</td></tr>
+</tbody></table>
+<p class="small">پیام عمومی «به‌دلیل داشتن مشکلی جدی افزونه فعال نشد» به‌تنهایی علت را مشخص نمی‌کند. فقط خطای همان زمان را بررسی کنید؛ نمایش عمومی خطاها را روی سایت اصلی روشن نکنید. ابزار عیب‌یابی موقت را پس از بررسی حذف کنید.</p>
+<h3>۹. پشتیبانی و تغییرات این راهنما</h3>
+<p class="small">برای پشتیبانی محصول از مسیر رسمی فروشنده در راست‌چین اقدام کنید. شمارهٔ نسخه، PHP وب و متن خطای پاک‌سازی‌شده را ارائه کنید؛ رمز عبور، توکن و کلید لایسنس را در گزارش عمومی نفرستید.</p>
+<p class="muted">ویرایش ۱۳ اکتبر ۲۰۲۶: حداقل PHP به 8.2 تغییر کرد؛ لایسنس و هش قبلی حفظ شد؛ راهنمای نصب، نگهداری فایل لایسنس و تفکیک خطای Loader از فعال‌نبودن لایسنس به‌روز شد. نسخهٔ افزونه همچنان ۲.۷.۷ است.</p>
+<div class="footer"><span>Signa · راهنمای به‌روز نسخهٔ ۲.۷.۷</span><span><bdi dir="ltr">۴ / ۴</bdi></span></div>
+</section>
+</body>
+</html>

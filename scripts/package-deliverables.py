@@ -163,5 +163,9 @@ if website.exists():
 diagnostics = OUT / 'signa-activation-diagnostics.zip'
 if diagnostics.exists():
     report.append(archive_check(diagnostics, 'signa-activation-diagnostics'))
+guide = OUT / 'Signa-Help-FA.pdf'
+if guide.exists():
+    report.append({'file': guide.name, 'bytes': guide.stat().st_size,
+                   'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
 (OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

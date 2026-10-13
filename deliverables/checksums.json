@@ -22,5 +22,10 @@
     "bytes": 9990,
     "sha256": "d000fb23dc3e7b9ca31763fe7cae7a1d0d2c3ff0caa9a7c926b1b812c55749a0",
     "files": 3
+  },
+  {
+    "file": "Signa-Help-FA.pdf",
+    "bytes": 244115,
+    "sha256": "b4a566ff8bda06731928d81a4b3629b7c5ba4c3a049b22006b1de1327851d46b"
   }
 ]
