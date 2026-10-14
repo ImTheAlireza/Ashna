@@ -1,0 +1,5 @@
+# Local rendering tools and intermediate gallery screenshots.
+.cache/
+.venv/
+node_modules/
+__pycache__/

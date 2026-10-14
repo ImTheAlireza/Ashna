@@ -1343,10 +1343,7 @@ $split_features_list = array_filter( array_map( 'trim', explode( "\n", (string) 
 														<img id="signa-prev-logo-img" src="<?php echo esc_url( $settings['logo_url'] ); ?>" alt="Logo" style="max-height:48px;" />
 													</div>
 													<div id="signa-prev-badge-icon" style="<?php echo ! empty( $settings['logo_url'] ) ? 'display:none;' : 'display:inline-flex;'; ?>width:48px;height:48px;border-radius:12px;align-items:center;justify-content:center;background:rgba(37,99,235,0.12);color:<?php echo esc_attr( $settings['primary_color'] ); ?>;margin-bottom:10px;">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-															<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-															<path d="m9 12 2 2 4-4"></path>
-														</svg>
+														<img src="<?php echo esc_url( SIGNA_OTP_URL . 'assets/images/signa-icon.png' ); ?>" width="38" height="38" alt="Signa" style="display:block;object-fit:contain;" />
 													</div>
 													<h3 id="signa-prev-title" style="margin:0 0 6px 0;font-size:17px;color:inherit;transition:color 0.42s cubic-bezier(0.4, 0, 0.2, 1);"><?php echo esc_html( $settings['form_title'] ); ?></h3>
 													<p id="signa-prev-subtitle" style="margin:0;font-size:12.5px;opacity:0.82;line-height:1.6;color:inherit;transition:color 0.42s cubic-bezier(0.4, 0, 0.2, 1);"><?php echo esc_html( $settings['form_subtitle'] ); ?></p>

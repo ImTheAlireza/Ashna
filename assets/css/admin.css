@@ -131,13 +131,20 @@
 	width: 48px;
 	height: 48px;
 	border-radius: 14px;
-	background: linear-gradient(135deg, #2563eb, #4f46e5);
+	background: var(--s-bg-subtle);
 	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
+	border: 1px solid var(--s-border);
 	flex-shrink: 0;
+}
+
+.signa-brand-logo img {
+	display: block;
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
 }
 
 .signa-brand-title-row {

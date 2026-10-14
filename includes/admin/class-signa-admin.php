@@ -67,7 +67,7 @@ class Signa_Admin {
 			'manage_options',
 			'signa-otp',
 			array( $this, 'render_settings_page' ),
-			'dashicons-smartphone',
+			SIGNA_OTP_URL . 'assets/images/signa-menu-icon.png',
 			58
 		);
 
