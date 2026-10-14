@@ -35,4 +35,21 @@ class SectionParser(HTMLParser):
         if tag == 'section' and dict(attrs).get('id') == 'ashna-technical': self.found = True
 parser = SectionParser(); parser.feed(landing)
 assert parser.found and 'href="#ashna-technical"' in landing
+for claim in ['Dokan', 'MemberPress', 'Paid Memberships Pro', 'Ultimate Member',
+              'circuit breaker', '۱۵ ثانیه', '۶۰ ثانیه', 'ترتیبی', 'نتیجهٔ نامعلوم',
+              'p50/p95/p99', 'هنوز اجرا نشده', 'ashna_authenticate_user',
+              'ashna_otp_login_redirect', 'ashna_otp_user_registered']:
+    assert claim in text, f'Missing latency/integration scope: {claim}'
+session = (ROOT / 'includes/core/class-ashna-session.php').read_text()
+for hook in ['ashna_authenticate_user', 'wp_authenticate_user', 'wp_login']:
+    assert hook in session
+for hook in ['ashna_otp_login_redirect', 'ashna_otp_user_registered']:
+    assert hook in auth
+manager = (ROOT / 'includes/gateways/class-ashna-gateway-manager.php').read_text()
+assert 'sleep(' not in manager and 'usleep(' not in manager
+for driver in ['smsir', 'kavenegar', 'melipayamak', 'farazsms', 'ippanel', 'bale']:
+    source = (ROOT / f'includes/gateways/class-ashna-gateway-{driver}.php').read_text()
+    timeouts = re.findall(r"'timeout'\s*=>\s*(\d+)", source)
+    assert timeouts and all(int(value) == 15 for value in timeouts), f'Review documented HTTP timeout: {driver}'
+print('PASS: latency defaults and third-party integration boundaries match the inspected sources; roadmap items are not advertised as delivered.')
 print('PASS: technical copy covers native sessions and OTP abuse controls with actual hourly defaults, exceptions and limitations.')

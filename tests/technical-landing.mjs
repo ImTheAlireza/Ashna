@@ -36,7 +36,7 @@ try {
           caveats: section.querySelector('details').textContent,
         };
       });
-      assert.equal(checks.cards, 2);
+      assert.equal(checks.cards, 4);
       assert(checks.withinViewport && checks.noOverflow, `${width}/${theme}: technical section overflows`);
       assert(checks.caveatsOpen && checks.caveats.includes('اتمیک') && checks.caveats.includes('لیست سفید'));
       await page.locator('#ashna-technical summary').click();

@@ -25,4 +25,4 @@ python scripts/package-rightchin.py
 
 گزارش نشست، JWT و Permission و اصلاحات نسخهٔ ۲.۷.۸: [session-authentication-fa.md](session-authentication-fa.md).
 
-متن قابل استفاده برای معرفی فنی محصول، شامل نشست و کنترل ارسال OTP: [product-technical-description-fa.md](product-technical-description-fa.md).
+متن قابل استفاده برای معرفی فنی محصول، شامل نشست، کنترل ارسال OTP، تأخیر Failover، ماتریس سازگاری Dokan/Membership و نیازمندی‌های توسعه: [product-technical-description-fa.md](product-technical-description-fa.md).
