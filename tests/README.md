@@ -75,7 +75,7 @@ legacy settings/DB version/cron/lockouts and exercise the actual storage, Passke
 repository (read, indexed lookup, save and deletion), class/interface/constant
 aliases, shortcode callbacks, extension hooks and saved Elementor widget IDs.
 The database/user APIs are stubs, not a live upgrade test. See
-`docs/rebrand-audit-fa.md` for the non-destructive storage contract and upgrade steps.
+`README.md` (repository root) for the non-destructive storage contract and upgrade steps.
 
 `python tests/check-ashna-brand.py` checks source identities, protocol vocabulary,
 licensed verifier invariants and final ZIP contents after rebuilding artifacts.
@@ -138,4 +138,23 @@ only; no proprietary source or compatibility certification is provided.
 The browser test exercises real frontend/jQuery with controlled AJAX and clock:
 3s feedback, duplicate-submit exclusion, timeout with no retry, timer cleanup,
 button/spinner recovery and transition to OTP. It is not a carrier benchmark.
-See `docs/delivery-integrations-fa.md` for setup, scope and remaining staging tests.
+See `README.md` (repository root) for setup, scope and remaining staging tests.
+
+## Product description and documentation checks
+
+`rtl-description.md` is the single marketplace-description draft. It follows the
+linked RTL guide's section structure, but the guide explicitly prohibits AI text
+and images: **human rewriting and a human-designed infographic are still needed**.
+No marketplace acceptance or image-compliance certification is implied.
+
+```sh
+python tests/check-rtl-description.py
+python tests/check-technical-description.py
+```
+
+The first check enforces two explicit intro lines, exactly five single-line main
+features, title-only flat feature bullets, no unverified MemberPress advertising
+and a clearly marked pending 960px/<1MB infographic (not a fake image URL).
+The second retains the code-default and limitation checks against the root README;
+superseded report files are no longer needed. Build/guide instructions are also
+in the root README. `docs/` retains only the guide source and changelog.

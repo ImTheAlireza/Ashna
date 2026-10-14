@@ -15,7 +15,6 @@ ALLOWED = {
     'assets/js/compatibility.js',
     'tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php',
     'tools/ashna-activation-diagnostics/uninstall.php',
-    'docs/rebrand-audit-fa.md',
     'scripts/package-brand-assets.py',  # Checks that legacy archive paths are absent.
 }
 for p in ROOT.rglob('*'):

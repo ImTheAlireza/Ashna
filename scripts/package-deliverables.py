@@ -114,7 +114,7 @@ if include_license:
 
 plugin = OUT / ('ashna-otp-no-license.zip' if args.without_license else 'ashna-otp-with-logo.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
-    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md']:
+    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md', 'rtl-description.md']:
         if args.without_license and name == 'ashna.php':
             bundle.write(ROOT / 'scripts/templates/ashna-no-license.php', 'ashna-otp/ashna.php')
         elif args.without_license and name == 'index.php':
@@ -124,10 +124,6 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
             add_bytes(bundle, 'ashna-otp/index.php', index)
         else:
             bundle.write(ROOT / name, 'ashna-otp/' + name)
-    bundle.write(ROOT / 'docs/rebrand-audit-fa.md', 'ashna-otp/docs/rebrand-audit-fa.md')
-    bundle.write(ROOT / 'docs/session-authentication-fa.md', 'ashna-otp/docs/session-authentication-fa.md')
-    bundle.write(ROOT / 'docs/product-technical-description-fa.md', 'ashna-otp/docs/product-technical-description-fa.md')
-    bundle.write(ROOT / 'docs/delivery-integrations-fa.md', 'ashna-otp/docs/delivery-integrations-fa.md')
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file() and not source.is_relative_to(ROOT / 'assets/images/ashna'):
