@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Security Meta Tags -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+  <!-- CSP (fallback for servers without .htaccess) -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
+
+  <title>پارسنا — گروه توسعه افزونه‌های وردپرس</title>
+
+  <!-- Fonts (HTTPS only) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Styles (external, CSP-compliant) -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Background Effects -->
+  <div class="bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+  <div class="cursor-glow" id="glow"></div>
+
+  <div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="container">
+        <a href="#" class="logo">
+          <svg class="logo-svg" viewBox="0 0 32 32" width="26" height="26" fill="none"
+               aria-label="لوگوی پارسنا" role="img">
+            <rect x="2" y="2" width="12" height="12" rx="3" fill="#93c5fd"/>
+            <rect x="18" y="2" width="12" height="12" rx="3" fill="#fda4af"/>
+            <rect x="2" y="18" width="12" height="12" rx="3" fill="#c4b5fd"/>
+            <rect x="18" y="18" width="12" height="12" rx="3" fill="#86efac"/>
+          </svg>
+          پارسنا
+        </a>
+        <div class="nav-right">
+          <ul class="nav-links">
+            <li><a href="#products">محصولات</a></li>
+            <li><a href="#philosophy">اصول ما</a></li>
+            <li><a href="#community">ارتباط</a></li>
+          </ul>
+          <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم" type="button">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge reveal">
+          <span class="dot"></span> گروه توسعه افزونه‌های وردپرس
+        </div>
+        <h1 class="reveal" style="transition-delay:.1s">
+          هر محصول، یه رنگ.<br>یه برند، یه خانواده.
+        </h1>
+        <p class="sub reveal" style="transition-delay:.2s">
+          پارسنا مجموعه‌ای از افزونه‌های حرفه‌ای وردپرسه.
+          هر محصول هویت بصری خودش رو داره — رنگ، شخصیت و کاربرد منحصربه‌فرد — ولی همه زیر یه سقف.
+        </p>
+        <div class="hero-actions reveal" style="transition-delay:.3s">
+          <a href="https://parsena.ir/signa" class="btn btn-glow" rel="noopener">
+            دمو زنده سیگنا
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#philosophy" class="btn btn-ghost">درباره پارسنا</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products" id="products">
+      <div class="container">
+        <div class="products-grid">
+
+          <!-- SIGNA — Blue -->
+          <a href="https://parsena.ir/signa" class="card card-signa reveal"
+             style="transition-delay:.05s" rel="noopener">
+            <div class="glow-orb"></div>
+            <div class="signa-header">
+              <img src="assets/signa-logo.png" alt="لوگوی سیگنا"
+                   class="signa-logo-img" draggable="false" loading="lazy">
+              <div class="signa-meta">
+                <span class="card-badge">نسخه ۲.۷ — فعال</span>
+                <h3>سیگنا — Signa OTP</h3>
+              </div>
+            </div>
+            <p>ورود و ثبت‌نام با کد یکبارمصرف (OTP) و ورود بیومتریک (Passkey) برای وردپرس و ووکامرس.</p>
+            <div class="features-row">
+              <span class="feat-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                ۵ درگاه پیامکی
+              </span>
+              <span class="feat-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Passkey بیومتریک
+              </span>
+              <span class="feat-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                المنتور + ووکامرس
+              </span>
+            </div>
+            <span class="card-link">
+              مشاهده و دمو زنده
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div class="demo-bar">
+              <input class="demo-input" type="tel" maxlength="11"
+                     placeholder="۰۹۱۲۳۴۵۶۷۸۹" autocomplete="off"
+                     aria-label="شماره موبایل">
+              <button class="demo-btn" type="button">دریافت کد</button>
+            </div>
+          </a>
+
+          <!-- COMING SOON — Purple -->
+          <div class="card card-soon reveal" style="transition-delay:.12s">
+            <div class="glow-orb"></div>
+            <div>
+              <div class="soon-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <span class="card-badge">به‌زودی</span>
+              <h3>محصول بعدی</h3>
+              <p>افزونه جدیدی در حال شکل‌گیریه. ایده‌اش آماده‌ست، کدش در راهه.</p>
+            </div>
+            <div class="progress"><div class="progress-fill"></div></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy" id="philosophy">
+      <div class="container">
+        <div class="reveal">
+          <div class="section-label">اصول ما</div>
+          <h2 class="section-title">چطوری کار می‌کنیم</h2>
+        </div>
+        <div class="phil-grid">
+          <div class="phil-card reveal" style="transition-delay:.05s">
+            <div class="phil-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3>ساختن با دقت</h3>
+            <p>هر ویژگی با فکر و بررسی ساخته میشه. یه محصول خوب بهتر از ده تا معمولیه.</p>
+          </div>
+          <div class="phil-card reveal" style="transition-delay:.12s">
+            <div class="phil-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <h3>گوش دادن به کاربر</h3>
+            <p>بازخورد کاربرها مسیر توسعه رو تعیین می‌کنه. ما واقعاً گوش می‌دیم.</p>
+          </div>
+          <div class="phil-card reveal" style="transition-delay:.19s">
+            <div class="phil-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <h3>شفافیت</h3>
+            <p>بدون هزینه پنهان، بدون غافلگیری. ارتباط روشن و قیمت‌گذاری صادقانه.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community -->
+    <section class="community" id="community">
+      <div class="container">
+        <div class="comm-box reveal">
+          <h2>با ما در ارتباط باشید</h2>
+          <p class="comm-desc">
+            سوالی دارید؟ پیشنهادی؟ یا فقط می‌خواید در جریان اخبار پارسنا باشید؟
+          </p>
+          <div class="comm-links">
+            <a href="#" class="comm-link" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              تلگرام
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-wrap">
+      <div class="marquee">
+        <span>سیگنا OTP</span><span class="sep">•</span>
+        <span>پسکی Passkey</span><span class="sep">•</span>
+        <span>ووکامرس</span><span class="sep">•</span>
+        <span>المنتور</span><span class="sep">•</span>
+        <span>۵ درگاه پیامکی</span><span class="sep">•</span>
+        <span>سفیر بله</span><span class="sep">•</span>
+        <span>کاوه‌نگار</span><span class="sep">•</span>
+        <span>SMS.ir</span><span class="sep">•</span>
+        <span>ملی‌پیامک</span><span class="sep">•</span>
+        <span>فراز اس‌ام‌اس</span><span class="sep">•</span>
+        <span>Cloudflare Turnstile</span><span class="sep">•</span>
+        <span>سیگنا OTP</span><span class="sep">•</span>
+        <span>پسکی Passkey</span><span class="sep">•</span>
+        <span>ووکامرس</span><span class="sep">•</span>
+        <span>المنتور</span><span class="sep">•</span>
+        <span>۵ درگاه پیامکی</span><span class="sep">•</span>
+        <span>سفیر بله</span><span class="sep">•</span>
+        <span>کاوه‌نگار</span><span class="sep">•</span>
+        <span>SMS.ir</span><span class="sep">•</span>
+        <span>ملی‌پیامک</span><span class="sep">•</span>
+        <span>فراز اس‌ام‌اس</span><span class="sep">•</span>
+        <span>Cloudflare Turnstile</span><span class="sep">•</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p>&copy; ۱۴۰۴ <a href="#">پارسنا</a>. تمامی حقوق محفوظ است.
+           &middot; <a href="https://parsena.ir/signa" rel="noopener">سیگنا</a></p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scripts (external, CSP-compliant) -->
+  <script src="js/main.js"></script>
+</body>
+</html>
