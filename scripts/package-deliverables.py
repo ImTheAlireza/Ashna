@@ -126,6 +126,7 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
             bundle.write(ROOT / name, 'ashna-otp/' + name)
     bundle.write(ROOT / 'docs/rebrand-audit-fa.md', 'ashna-otp/docs/rebrand-audit-fa.md')
     bundle.write(ROOT / 'docs/session-authentication-fa.md', 'ashna-otp/docs/session-authentication-fa.md')
+    bundle.write(ROOT / 'docs/product-technical-description-fa.md', 'ashna-otp/docs/product-technical-description-fa.md')
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file() and not source.is_relative_to(ROOT / 'assets/images/ashna'):

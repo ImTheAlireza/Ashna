@@ -33,6 +33,7 @@ readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار د�
 - Plugin/ashna-otp.zip: فایل نصب فعلی (همان deliverables/ashna-otp-with-logo.zip)
 - Ashna-Help-FA.pdf: راهنمای فارسی ۳ صفحه‌ای نصب، تنظیمات، استفاده و به‌روزرسانی
 - changelog-FA.txt: تاریخچه و توضیح تغییرات بسته
+- Technical-Description-FA.md: توضیحات فنی نشست، مجوزها، محدودسازی ارسال و مقابله با سوءاستفاده
 
 نیازمندی‌ها
 - حداقل PHP 8.2 و وردپرس 5.8
@@ -52,6 +53,8 @@ with ZipFile(wrapper, 'w', ZIP_DEFLATED) as z:
     z.write(installer, 'Ashna-Rightchin/Plugin/ashna-otp.zip')
     z.write(guide, 'Ashna-Rightchin/Ashna-Help-FA.pdf')
     z.write(root / 'docs/changelog-FA.txt', 'Ashna-Rightchin/changelog-FA.txt')
+    z.write(root / 'docs/product-technical-description-fa.md', 'Ashna-Rightchin/Technical-Description-FA.md')
+    z.write(root / 'docs/session-authentication-fa.md', 'Ashna-Rightchin/session-authentication-fa.md')
     z.writestr('Ashna-Rightchin/README-FA.txt', readme)
 with ZipFile(wrapper) as z:
     assert z.testzip() is None

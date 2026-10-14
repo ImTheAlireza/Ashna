@@ -54,6 +54,7 @@
         <div class="nav-right">
           <ul class="nav-links">
             <li><a href="#products">محصولات</a></li>
+            <li><a href="#ashna-technical">فنی آشنا</a></li>
             <li><a href="#philosophy">اصول ما</a></li>
             <li><a href="#community">ارتباط</a></li>
           </ul>
@@ -114,7 +115,7 @@
               <img src="assets/ashna-logo.png" alt="لوگوی آشنا"
                    class="ashna-logo-img" draggable="false" loading="lazy">
               <div class="ashna-meta">
-                <span class="card-badge">نسخه ۲.۷ — فعال</span>
+                <span class="card-badge">نسخه ۲.۷.۸ — فعال</span>
                 <h3>آشنا — Ashna OTP</h3>
               </div>
             </div>
@@ -178,6 +179,36 @@
           </div>
 
         </div>
+      </div>
+    </section>
+
+    <!-- Ashna technical product description: claims match the current implementation. -->
+    <section class="ashna-technical" id="ashna-technical" aria-labelledby="ashna-technical-title">
+      <div class="container">
+        <div class="section-label">زیرساخت ورود و امنیت</div>
+        <h2 class="section-title" id="ashna-technical-title">جزئیات فنی آشنا؛ فراتر از فرم ورود</h2>
+        <div class="ashna-technical-grid">
+          <article class="ashna-technical-card">
+            <h3>نشست استاندارد، دسترسی یکپارچه</h3>
+            <p>ورود با OTP و Passkey از کوکی و نشست استاندارد وردپرس استفاده می‌کند؛ JWT مستقل یا نشست موازی ندارد. نقش و مجوزهای کاربر موجود حفظ می‌شود و دسترسی حساب و سفارش‌های ووکامرس بر همان شناسهٔ کاربر تکیه دارد.</p>
+            <p>انتقال نشست مهمان با API عمومی ووکامرس روی session فعال انجام می‌شود و nonce پس از ورود AJAX تازه می‌شود؛ برای نمونه، ثبت فوری Passkey از nonce نشست جدید استفاده می‌کند.</p>
+          </article>
+          <article class="ashna-technical-card">
+            <h3>کاهش ریسک SMS Bombing و Brute Force</h3>
+            <p>کنترل ارسال فقط کپچا نیست: درخواست عادی OTP پیش از فراخوانی درگاه در سرور محدود می‌شود. پیش‌فرض‌ها: <strong>۵ درخواست برای هر شماره/ایمیل و ۱۵ درخواست برای هر IP در ساعت گذشته</strong>، همراه <strong>فاصلهٔ ارسال مجدد ۶۰ ثانیه‌ای</strong> بر اساس آخرین رکورد غیر failed؛ این مقادیر قابل تنظیم‌اند.</p>
+            <p>برای حدس‌زدن کد، پیش‌فرض ۵ تلاش ناموفق و قفل موقت ۱۵ دقیقه‌ای گیرنده و IP در نظر گرفته شده است. Turnstile، reCAPTCHA، آرکپچا و کپچای ریاضی نیز به‌عنوان لایهٔ مکمل قابل فعال‌سازی‌اند؛ کپچا پیش‌فرض خاموش است.</p>
+          </article>
+        </div>
+        <details class="ashna-technical-note">
+          <summary>شرایط استفاده و مرز ادعاهای امنیتی</summary>
+          <ul>
+            <li>سقف‌های درخواست فعلی ساعتی‌اند؛ cooldown به معنی limiter مستقل «هر IP در هر دقیقه» نیست.</li>
+            <li>لیست سفید از محدودیت ارسال، cooldown و قفل موقت مستثناست؛ باید محدود و هدفمند باشد.</li>
+            <li>شمارش و ارسال فعلی رزرو اتمیک سهمیه ندارد؛ جلوگیری قطعی از عبور درخواست‌های هم‌زمان یا تخلیهٔ اعتبار تضمین نمی‌شود. سقف درخواست نیز سقف قطعی هزینه نیست؛ failover ممکن است چند تلاش ارسال ایجاد کند.</li>
+            <li>اعتماد به هدر IP فقط پشت پروکسی قابل اعتماد و با تنظیم درست مبدا مناسب است. برای سایت حساس، WAF/Rate Limiting سرور یا CDN و محدودیت/هشدار مصرف پنل پیامکی نیز توصیه می‌شود.</li>
+            <li>سازگاری Permissionها به معنی تضمین تمام افزونه‌های 2FA و امنیتی نیست؛ ترکیب واقعی سایت باید روی staging بررسی شود.</li>
+          </ul>
+        </details>
       </div>
     </section>
 
