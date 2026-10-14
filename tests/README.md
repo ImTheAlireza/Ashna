@@ -162,3 +162,8 @@ Screenshots use default offline fixture data; they do not certify a live install
 The second retains the code-default and limitation checks against the root README;
 superseded report files are no longer needed. Build/guide instructions are also
 in the root README. `docs/` retains only the guide source and changelog.
+
+
+### لندینگ معرفی محصول
+
+راهنمای اجرا، بسته‌بندی و انتشار در بخش «پیش‌نمایش معرفی آشنا» در README اصلی است. پس از اجرای `python parsna-landing/serve.py 8080`، تست‌های `python parsna-landing/tests/security_test.py` و `ASHNA_BUNDLED_LIBS=1 node tests/landing-preview.mjs` اجرا می‌شوند. این تست‌ها رابط استاتیک و شبیه‌سازی آموزشی را بررسی می‌کنند، نه ورود واقعی یا نصب وردپرس. دارایی‌ها محلی و تصاویر از رندر آفلاین قالب‌های تنظیمات‌اند. اسکرین‌شات‌های تست فقط در `.cache/landing-preview/` نگهداری می‌شوند.

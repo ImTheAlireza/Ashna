@@ -1,0 +1,76 @@
+{
+  "width": 1000,
+  "version": "2.7.9",
+  "provenance": "Actual PHP settings templates; offline default-data render, NOT installed WordPress screenshots.",
+  "captures": [
+    {
+      "name": "01-routing",
+      "title": "درگاه و زمان انتظار",
+      "caption": "تنظیم بودجهٔ هر تلاش و کل مسیر، همراه با انتخاب سامانهٔ پیامک.",
+      "cssWidth": 936,
+      "cssHeight": 587,
+      "file": "01-routing.webp",
+      "sha256": "862f9a6a9604a1d23ef4c122fd3e3ab46a2c6a25cb56560b7dfb749a2dd07fa9"
+    },
+    {
+      "name": "02-passkey",
+      "title": "ورود با Passkey",
+      "caption": "کنترل نمایش ورود بدون رمز، پیشنهاد ثبت و مدیریت دستگاه‌ها.",
+      "cssWidth": 936,
+      "cssHeight": 212.1875,
+      "file": "02-passkey.webp",
+      "sha256": "8bd4a23263ced11e10428369f03698253a84bf4d2d8ffb7a5f02a100c243d22b"
+    },
+    {
+      "name": "03-authentication",
+      "title": "کد تأیید و مسیر ورود",
+      "caption": "تنظیم طول و اعتبار کد، عضویت عمومی و مقصد کاربر پس از ورود.",
+      "cssWidth": 936,
+      "cssHeight": 690.3125,
+      "file": "03-authentication.webp",
+      "sha256": "2ffd4eed1f0b57254fe8a8365f2371909872f080360180033967518061a59e38"
+    },
+    {
+      "name": "04-security",
+      "title": "محدودیت درخواست و کپچا",
+      "caption": "سقف ساعتی، تلاش ناموفق، قفل موقت و انتخاب کپچا؛ مقادیر پیش‌فرض.",
+      "cssWidth": 936,
+      "cssHeight": 465.59375,
+      "file": "04-security.webp",
+      "sha256": "ec42f970a34b20598a9a1cb22acd23077bf361c98cde1aac74d470e427a5a3f9"
+    },
+    {
+      "name": "05-appearance",
+      "title": "چیدمان فرم و پیش‌نمایش",
+      "caption": "کنترل چیدمان فرم در کنار پیش‌نمایش موجود در خود پنل.",
+      "cssWidth": 936,
+      "cssHeight": 920.453125,
+      "file": "05-appearance.webp",
+      "sha256": "6fb95620f9e493cd45aa2eb26eb34caeb44aa51ceabc62cb93978207d326b6c3"
+    }
+  ],
+  "sources": {
+    "index.php": "0d3a78a1d929db0ef570b05453ac9f6aa9e0b051e5c10323faaf89dc20e71240",
+    "scripts/templates/settings-capture.php": "d384a7ad59b394317f1fcdd260d98b12504c1e959e324b1db0b0ea4f7715f1ff",
+    "includes/admin/views/settings-page.php": "acf8f13bccb2fe0ecde548ad6ebf7465bb4f426158c51c67deb27d322b22e1ca",
+    "includes/core/class-ashna-helper.php": "25e7a84a4ce550444d7ad057278b7eb67553b8d30fe49369d475a51ef11540ff",
+    "assets/css/admin.css": "bc8c3d28035eaa2f07f429a3ecfe3f69b681acb55dd86ff2ed80ec6ef8e46458",
+    "assets/js/admin.js": "aa70767d271a26cb6d2b5d4a6f3c10a94c378dc5e32018bfa24d00023375b9ea",
+    "includes/admin/views/partials/tab-auth-flow.php": "f564949ba9ae213722b3e9c5d552d498679bf3a5af782042e6cc154d6c378f4d",
+    "includes/admin/views/partials/tab-sms-gateways.php": "7074a54623da6bc54e627fef8947b78fe808e35285e39397ba1130698c47131c",
+    "includes/admin/views/partials/tab-security.php": "a2c6e484d2c5b0d673ba152c97435dc804800d52a7a9ef7be6763b82eb1d08d4",
+    "includes/admin/views/partials/tab-appearance.php": "361102823ff8790cad77bcbd0cf99e1ef267d681e9c975f64a9d91614dc5a40b"
+  },
+  "output": {
+    "file": "ashna-settings-infographic.webp",
+    "bytes": 704826,
+    "lossless": true,
+    "sha256": "0094968472fd90df13713fd17b8dee87c79335f330690af71949bad69769eb14"
+  },
+  "metrics": {
+    "width": 1000,
+    "height": 4209,
+    "fontLoaded": true,
+    "images": true
+  }
+}

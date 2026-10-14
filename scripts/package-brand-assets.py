@@ -26,8 +26,13 @@ with ZipFile(PRODUCT / 'ashna-gallery-revised-2-3-5.zip', 'w', ZIP_DEFLATED) as 
 
 landing = ROOT / 'parsna-landing'
 with ZipFile(landing / 'parsna-landing.zip', 'w', ZIP_DEFLATED) as bundle:
-    for name in ['.htaccess', 'index.html', 'css/style.css', 'js/main.js', 'assets/ashna-logo.png', 'ashna-logo.png', 'serve.py']:
-        bundle.write(landing / name, name)
+    # Public, self-contained static site only; no dev server, tests or old ZIPs.
+    for source in [landing / '.htaccess', landing / 'index.html',
+                   *sorted((landing / 'css').rglob('*')),
+                   *sorted((landing / 'js').rglob('*')),
+                   *sorted((landing / 'assets').rglob('*'))]:
+        if source.is_file():
+            bundle.write(source, source.relative_to(landing).as_posix())
 
 files = sorted(p for p in PRODUCT.iterdir() if p.is_file() and p.suffix in {'.zip', '.jpg', '.png', '.webp'})
 for path in [*files, landing / 'parsna-landing.zip']:

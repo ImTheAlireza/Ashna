@@ -1,59 +1,58 @@
 #!/usr/bin/env python3
+"""Preview-only static server. Production Apache policy is in .htaccess.
+No WP, API, user storage, directory listing or installer downloads are served.
+The dev preview permits embedding by Arena; production keeps frame protection.
 """
-Parsna Landing — Secure Development Server
-Blocks dotfiles (.htaccess, .git, etc.)
-"""
-
 import http.server
-import os
+import mimetypes
+from pathlib import Path
 import sys
+from urllib.parse import unquote, urlsplit
 
-class SecureHandler(http.server.SimpleHTTPRequestHandler):
-    """Handler that blocks access to dotfiles and sensitive paths."""
+ROOT = Path(__file__).resolve().parent
 
-    BLOCKED_PREFIXES = ('.', '__')
-    BLOCKED_FILES = ('.htaccess', '.git', '.env', '.DS_Store')
+class PreviewHandler(http.server.BaseHTTPRequestHandler):
+    server_version = 'AshnaPreview'
+    sys_version = ''
 
     def do_GET(self):
-        basename = os.path.basename(self.path.rstrip('/'))
+        self.serve(head=False)
 
-        # Block dotfiles
-        if basename.startswith('.') or basename.startswith('__'):
-            self.send_error(403, 'Forbidden')
-            return
+    def do_HEAD(self):
+        self.serve(head=True)
 
-        # Block sensitive files
-        if basename.lower() in self.BLOCKED_FILES:
-            self.send_error(403, 'Forbidden')
-            return
-
-        # Add security headers
-        super().do_GET()
+    def serve(self, head=False):
+        path = unquote(urlsplit(self.path).path)
+        parts = path.split('/')
+        if any(part.startswith(('.', '__')) for part in parts if part):
+            self.send_error(403); return
+        name = path.lstrip('/') or 'index.html'
+        allowed = name == 'index.html' or (
+            name.startswith(('assets/', 'css/', 'js/')) and
+            Path(name).suffix.lower() in {'.css', '.js', '.webp', '.png', '.svg', '.woff2', '.txt', '.json'}
+        )
+        target = (ROOT / name).resolve()
+        if not target.is_relative_to(ROOT) or not allowed or not target.is_file():
+            self.send_error(404); return
+        content = target.read_bytes()
+        self.send_response(200)
+        self.send_header('Content-Type', mimetypes.guess_type(name)[0] or 'application/octet-stream')
+        self.send_header('Content-Length', str(len(content)))
+        self.end_headers()
+        if not head: self.wfile.write(content)
 
     def end_headers(self):
-        self.send_header('X-Frame-Options', 'SAMEORIGIN')
         self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('X-XSS-Protection', '1; mode=block')
         self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
         self.send_header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-        self.send_header('Content-Security-Policy',
-            "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; "
-            "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; "
-            "frame-ancestors 'self'; base-uri 'self'; form-action 'self';")
+        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")
+        self.send_header('Cache-Control', 'no-cache')
         super().end_headers()
-
-    def log_message(self, format, *args):
-        # Suppress noisy logs in dev
-        pass
 
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    server = http.server.HTTPServer(('0.0.0.0', port), SecureHandler)
-    print(f'🔒 Parsna secure server on http://0.0.0.0:{port}')
-    print(f'   Dotfiles blocked, security headers active')
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print('\n👋 Stopped.')
-        server.server_close()
+    server = http.server.ThreadingHTTPServer(('0.0.0.0', port), PreviewHandler)
+    print(f'Ashna product preview listening on 0.0.0.0:{port}', flush=True)
+    try: server.serve_forever()
+    except KeyboardInterrupt: pass
+    finally: server.server_close()

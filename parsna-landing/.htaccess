@@ -1,77 +1,30 @@
-# ═══════════════════════════════════════
-# PARSNA — Security Headers
-# ═══════════════════════════════════════
-
-# ── Force HTTPS ───────────────────────
+# Ashna static product preview; Apache 2.4 with mod_headers/mod_rewrite.
+Options -Indexes
+DirectoryIndex index.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Behind a reverse proxy, configure trusted HTTPS detection at the virtual host.
   RewriteCond %{HTTPS} off
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule \.(php|py|zip|asp|aspx|jsp|cgi)$ - [F,L,NC]
 </IfModule>
-
-# ── Content Security Policy ───────────
-<IfModule mod_headers.c>
-  Header set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
-
-  # Prevent clickjacking
-  Header set X-Frame-Options "SAMEORIGIN"
-
-  # Prevent MIME sniffing
-  Header set X-Content-Type-Options "nosniff"
-
-  # XSS Protection (legacy browsers)
-  Header set X-XSS-Protection "1; mode=block"
-
-  # Referrer Policy
-  Header set Referrer-Policy "strict-origin-when-cross-origin"
-
-  # Permissions Policy — disable unnecessary browser features
-  Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
-
-  # HSTS — force HTTPS for 1 year
-  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-
-  # Cross-Origin policies
-  Header set Cross-Origin-Opener-Policy "same-origin"
-  Header set Cross-Origin-Embedder-Policy "require-corp"
-  Header set Cross-Origin-Resource-Policy "same-origin"
-
-  # Remove server info
-  Header unset Server
-  Header unset X-Powered-By
-
-  # Cache control for static assets
-  <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-
-  # No cache for HTML
-  <FilesMatch "\.html$">
-    Header set Cache-Control "no-cache, no-store, must-revalidate"
-    Header set Pragma "no-cache"
-    Header set Expires "0"
-  </FilesMatch>
-</IfModule>
-
-# ── Prevent directory listing ─────────
-Options -Indexes
-
-# ── Prevent access to hidden files ────
-<FilesMatch "^\.">
-  Order allow,deny
-  Deny from all
+<FilesMatch "^(\.|serve\.py|.*\.zip$)">
+  Require all denied
 </FilesMatch>
-
-# ── Block common attack paths ─────────
-<IfModule mod_rewrite.c>
-  RewriteCond %{REQUEST_URI} \.(php|asp|aspx|jsp|cgi)$ [NC]
-  RewriteRule ^ - [F,L]
-</IfModule>
-
-# ── Rate limiting (basic) ─────────────
-<IfModule mod_ratelimit.c>
-  <Files "index.html">
-    SetOutputFilter RATE_LIMIT
-    SetEnv rate-limit 100
-  </Files>
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'; object-src 'none'"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  # No preload/includeSubDomains: deployment owner controls other hosts.
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header unset X-Powered-By
+  <FilesMatch "\.(css|js|png|webp|svg|woff2)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
 </IfModule>

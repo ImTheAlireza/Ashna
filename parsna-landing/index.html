@@ -1,191 +1,116 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="dark">
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Security Meta Tags -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="آشنا؛ ورود و ثبت‌نام وردپرس با کد یکبارمصرف و Passkey. امکانات، تصاویر تنظیمات، نمونه تعاملی و شرایط استفاده را پیش از خرید بررسی کنید.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-  <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-
-  <!-- CSP (fallback for servers without .htaccess) -->
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
-
-  <title>پارسنا — گروه توسعه افزونه‌های وردپرس</title>
-
-  <!-- Fonts (HTTPS only) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Styles (external, CSP-compliant) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>آشنا — یک ورود ساده، یک شروع آشنا</title>
+  <link rel="icon" href="assets/ashna-icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/estedad-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
 </head>
 <body>
-
-  <!-- Background Effects -->
-  <div class="bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><symbol id="i-arrow" viewBox="0 0 24 24"><path d="M17 7 7 17M7 7v10h10"/></symbol><symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14m-6-6 6 6 6-6"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="9" r="4"/><path d="m11 12 8 8m-3-3 3-3m-6 0 3-3"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol><symbol id="i-theme" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></symbol><symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 3 8M3 4v7h7"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></symbol></defs></svg>
+<a class="skip-link" href="#main">رفتن به محتوای اصلی</a>
+<header class="site-header">
+  <nav class="container nav" aria-label="منوی اصلی">
+    <a class="brand" href="#home"><img src="assets/ashna-icon.svg" width="42" height="48" alt=""><span>آشنا<small>ورود، با خیال آشناتر</small></span></a>
+    <button id="menuToggle" class="icon-button mobile-only" type="button" aria-label="باز کردن منو" aria-controls="navLinks" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">امکانات</a><a href="#experience">تجربه ورود</a><a href="#settings">تنظیمات</a><a href="#integrations">سازگاری‌ها</a><a href="#ashna-technical">جزئیات فنی</a><a href="#faq">پرسش‌ها</a>
+    </div>
+    <div class="nav-actions"><button id="themeToggle" class="icon-button" type="button" aria-label="تغییر به حالت تاریک" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-theme"></use></svg></button><a class="button small" href="#before-buy">پیش از خرید <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a></div>
+  </nav>
+</header>
+<main id="main">
+<section class="hero container" id="home" aria-labelledby="heroTitle">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="status-dot"></span> آشنا برای وردپرس · نسخه ۲.۷.۹</span>
+    <h1 id="heroTitle">یک ورود ساده،<br>یک شروع <em>آشنا.</em></h1>
+    <p class="lead">فاصلهٔ کاربر تا سایت شما، یک کد است.</p>
+    <p class="muted hero-description">ورود و ثبت‌نام با پیامک، ایمیل و بله؛ در کنار ورود بدون رمز با Passkey. فرم را با هویت سایتتان هماهنگ کنید و کنترل مسیر ورود را در دست بگیرید.</p>
+    <div class="actions"><a class="button" href="#experience">تجربهٔ نمونه ورود <span aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></span></a><a class="button secondary" href="#settings">دیدن تنظیمات واقعی</a></div>
+    <div class="hero-notes"><span>فارسی و راست‌چین</span><span>ووکامرس و المنتور</span><span>کنترل درخواست‌های OTP</span></div>
   </div>
-  <div class="particles" id="particles"></div>
-  <div class="cursor-glow" id="glow"></div>
+  <div class="hero-visual" aria-label="تصویرسازی شماتیک مسیر ورود آشنا">
+    <div class="visual-grid"></div><span class="visual-caption">یک هویت. چند راه ورود.</span>
+    <div class="login-illustration">
+      <img src="assets/ashna-icon.svg" width="52" height="60" alt="نماد ورود و امنیت آشنا">
+      <h2>خوش آمدید!</h2><p>شروع یک ارتباط آشنا</p>
+      <div class="illustration-input" dir="ltr">09•• ••• ••89 <span>موبایل</span></div>
+      <div class="illustration-button">ورود با کد یکبارمصرف</div>
+      <div class="illustration-divider">یا بدون رمز عبور</div>
+      <div class="illustration-passkey"><span aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg></span> ورود با Passkey</div>
+    </div>
+    <span class="floating-note note-one"><span aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-spark"></use></svg></span> بدون به‌خاطرسپردن رمز</span>
+    <span class="floating-note note-two"><span class="status-dot"></span> نشست استاندارد وردپرس</span>
+    <span class="visual-footnote">نمای شماتیک؛ فرم واقعی قابل شخصی‌سازی است</span>
+  </div>
+</section>
+<div class="compat-strip"><div class="container"><span>در کنار ابزارهای شما</span><strong>WordPress</strong><strong>WooCommerce</strong><strong>Elementor</strong><span>اتصال‌های اختیاری عضویت <svg class="icon" aria-hidden="true"><use href="#i-down"></use></svg></span></div></div>
 
-  <div class="wrapper">
+<section class="section container" id="features" aria-labelledby="featuresTitle">
+  <div class="section-heading"><div><span class="eyebrow">۰۱ / امکانات محصول</span><h2 id="featuresTitle">ورود، فقط یک فرم نیست.</h2></div><p>از تجربهٔ کاربر تا کنترل درگاه و امنیت؛<br>ابزارهای لازم در یک پنل فارسی.</p></div>
+  <div class="feature-grid">
+    <article class="feature-card featured"><span class="feature-number">01 / OTP</span><h3>کد تأیید، از مسیر مناسب</h3><p>ارسال کد با پیامک، ایمیل یا پیام‌رسان بله. انتخاب ورود با شماره موبایل، ایمیل یا هر دو و تنظیم طول و اعتبار کد.</p><div class="tags"><span>پیامک</span><span>ایمیل</span><span>بله</span></div></article>
+    <article class="feature-card"><span class="feature-number">02 / PASSKEY</span><h3>ورود بدون رمز عبور</h3><p>با Passkey و تأیید دستگاه در مرورگرهای سازگار وارد شوید. کاربر می‌تواند کلیدهای ثبت‌شدهٔ خود را مدیریت کند؛ HTTPS و دستگاه سازگار لازم است.</p></article>
+    <article class="feature-card"><span class="feature-number">03 / DELIVERY</span><h3>یک درگاه، پایان راه نیست</h3><p>یک درگاه اصلی و حداکثر سه درگاه پشتیبان با ترتیب مشخص. تنظیم زمان انتظار و کنارگذاشتن موقت درگاه دچار خطای ارتباطی.</p></article>
+    <article class="feature-card"><span class="feature-number">04 / DESIGN</span><h3>هم‌رنگ هویت سایت شما</h3><p>قالب‌های آماده، رنگ، فونت، لوگو و CSS دلخواه با پیش‌نمایش زنده؛ نمایش در صفحه، پاپ‌آپ، کشوی کناری یا شیت پایین.</p></article>
+    <article class="feature-card"><span class="feature-number">05 / SECURITY</span><h3>کنترل بیشتر روی درخواست‌ها</h3><p>محدودیت ارسال، فاصلهٔ ارسال مجدد، محدودیت تلاش ناموفق و قفل موقت برای کاهش ریسک SMS Bombing و Brute Force؛ همراه کپچای اختیاری.</p></article>
+    <article class="feature-card"><span class="feature-number">06 / CONTROL</span><h3>مدیریت با دید روشن</h3><p>گزارش ارسال و تأیید، آمار هفت‌روزه، رفع قفل امنیتی، پشتیبان تنظیمات و حالت آزمایشی Sandbox، بدون ارسال پیامک واقعی.</p></article>
+  </div>
+  <details class="capability-details"><summary>جزئیات بیشتر امکانات آشنا</summary><div class="capability-grid">
+    <div><h3>ورود و حساب کاربری</h3><ul><li>ورود با رمز عبور با فعال‌سازی مدیر</li><li>مدیریت Passkeyهای ثبت‌شدهٔ کاربر</li><li>تنظیم دریافت نام و ایمیل در ثبت‌نام عمومی</li><li>پذیرش قوانین و تعیین مقصد پس از ورود</li></ul></div>
+    <div><h3>مسیر ارسال</h3><ul><li>سفیر بله و ربات بله</li><li>قالب HTML فارسی کد ایمیلی</li><li>انتخاب مسیر جایگزین پیامک و بله</li><li>پیام انتظار در محیط کند و مهار دوباره‌فرستی فرم</li></ul></div>
+    <div><h3>لایه‌های امنیتی</h3><ul><li>لیست سیاه شماره و IP؛ لیست سفید با استثناهای امنیتی</li><li>Turnstile، reCAPTCHA v3، آرکپچا و کپچای ریاضی</li><li>سقف درخواست ساعتی و فاصلهٔ ارسال مجدد قابل تنظیم</li><li>قفل موقت تأیید و مدیریت رفع قفل از پیشخوان</li></ul></div>
+    <div><h3>ظاهر و نگهداری</h3><ul><li>ویجت فرم و دکمهٔ ورود المنتور</li><li>قالب آماده و تنظیم رنگ، فونت و گوشه‌های فرم</li><li>پیشخوان روشن و تاریک و پشتیبان تنظیمات</li><li>گزارش تأیید و پاک‌سازی زمان‌بندی‌شدهٔ گزارش‌های قدیمی</li></ul></div>
+  </div></details>
+  <div class="gateway-bar"><span>۵ درگاه پیامک</span><strong>SMS.ir</strong><strong>کاوه‌نگار</strong><strong>ملی‌پیامک</strong><strong>فراز اس‌ام‌اس</strong><strong>آی‌پی‌پنل</strong></div>
+</section>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="container">
-        <a href="#" class="logo">
-          <svg class="logo-svg" viewBox="0 0 32 32" width="26" height="26" fill="none"
-               aria-label="لوگوی پارسنا" role="img">
-            <rect x="2" y="2" width="12" height="12" rx="3" fill="#93c5fd"/>
-            <rect x="18" y="2" width="12" height="12" rx="3" fill="#fda4af"/>
-            <rect x="2" y="18" width="12" height="12" rx="3" fill="#c4b5fd"/>
-            <rect x="18" y="18" width="12" height="12" rx="3" fill="#86efac"/>
-          </svg>
-          پارسنا
-        </a>
-        <div class="nav-right">
-          <ul class="nav-links">
-            <li><a href="#products">محصولات</a></li>
-            <li><a href="#ashna-technical">فنی آشنا</a></li>
-            <li><a href="#philosophy">اصول ما</a></li>
-            <li><a href="#community">ارتباط</a></li>
-          </ul>
-          <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم" type="button">
-            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          </button>
-        </div>
+<section class="experience-section" id="experience" aria-labelledby="experienceTitle">
+  <div class="container experience-layout">
+    <div class="experience-copy"><span class="eyebrow">۰۲ / تجربه کنید</span><h2 id="experienceTitle">قبل از انتخاب،<br>مسیر ورود را ببینید.</h2><p class="lead">سه مسیر، یک تجربهٔ آشنا.</p><p class="muted">در این نمونه می‌توانید ورود با موبایل و ایمیل، بررسی کد، خطا و تأیید نهایی را امتحان کنید.</p><ol class="steps"><li><span>۱</span> یک روش ورود انتخاب کنید.</li><li><span>۲</span> از شماره یا ایمیل ساختگی استفاده کنید.</li><li><span>۳</span> کد نمایشی <bdi>123456</bdi> را وارد کنید.</li></ol><div class="notice"><strong>نمونهٔ تعاملی، نه ورود واقعی</strong><p>این بخش بازسازی آموزشی مسیر ورود است، نه فرم اجرایی افزونه. هیچ پیامک یا ایمیلی ارسال و هیچ حسابی ساخته نمی‌شود. داده‌ها به سرور ارسال یا در مرورگر ذخیره نمی‌شوند. Passkey نیز فقط توضیح داده می‌شود.</p></div></div>
+    <div class="demo-shell"><div class="demo-toolbar"><span><span class="status-dot"></span> محیط نمایشی</span><button id="resetDemo" class="text-button" type="button">شروع دوباره <svg class="icon" aria-hidden="true"><use href="#i-reset"></use></svg></button></div>
+      <div class="demo-card" id="demoCard">
+        <img src="assets/ashna-icon.svg" alt="" width="40" height="46"><h3>به آشنا خوش آمدید</h3><p class="muted">راه ورود خود را انتخاب کنید</p>
+        <div class="demo-tabs" role="tablist" aria-label="روش ورود"><button type="button" id="tab-sms" role="tab" aria-selected="true" aria-controls="panel-sms" tabindex="0" data-channel="sms">موبایل</button><button type="button" id="tab-email" role="tab" aria-selected="false" aria-controls="panel-email" tabindex="-1" data-channel="email">ایمیل</button><button type="button" id="tab-passkey" role="tab" aria-selected="false" aria-controls="panel-passkey" tabindex="-1" data-channel="passkey">Passkey</button></div>
+        <div role="tabpanel" id="panel-sms" aria-labelledby="tab-sms"><label for="demoPhone">شماره موبایل نمایشی</label><input id="demoPhone" type="tel" inputmode="tel" maxlength="11" dir="ltr" placeholder="09123456789" autocomplete="off"><p class="input-hint">شمارهٔ ساختگی ۱۱ رقمی با شروع 09</p></div>
+        <div role="tabpanel" id="panel-email" aria-labelledby="tab-email" hidden><label for="demoEmail">ایمیل نمایشی</label><input id="demoEmail" type="email" maxlength="254" dir="ltr" placeholder="hello@example.com" autocomplete="off"><p class="input-hint">برای نمونه: hello@example.com</p></div>
+        <div role="tabpanel" id="panel-passkey" aria-labelledby="tab-passkey" hidden><div class="passkey-symbol" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg></div><h4>کلید ورود روی دستگاه شما</h4><p>در محصول واقعی، پس از ثبت Passkey، تأیید دستگاه (مثل اثر انگشت، تشخیص چهره یا PIN) جای رمز را می‌گیرد. روش تأیید به دستگاه بستگی دارد.</p><p class="input-hint">این پیش‌نمایش درخواست بیومتریک ایجاد نمی‌کند. ابتدا کلید باید در حساب واقعی ثبت شده باشد.</p></div>
+        <button class="button full" id="requestCode" type="button">ادامه با موبایل</button>
+        <div id="verifyPanel" hidden><p id="recipientText" class="muted"></p><label for="demoCode">کد نمایشی شش‌رقمی</label><input id="demoCode" type="text" inputmode="numeric" dir="ltr" maxlength="6" placeholder="123456" autocomplete="off"><p class="input-hint">کد این نمونه: <bdi>123456</bdi> — هیچ کدی ارسال نشده است.</p><button class="button full" id="verifyCode" type="button">بررسی کد نمایشی</button><button class="text-button" id="resendCode" type="button" disabled>ارسال مجدد نمایشی</button></div>
+        <div id="successPanel" hidden><div class="success-symbol" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div><h4>مسیر نمونه کامل شد!</h4><p>در سایت واقعی، پس از تأیید معتبر، نشست وردپرس ایجاد و کاربر به مقصد تعیین‌شده هدایت می‌شود. اینجا هیچ ورود یا انتقالی انجام نشد.</p></div>
+        <p id="demoStatus" class="demo-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="demo-footer">فقط برای آشنایی با مراحل · بدون اتصال به درگاه</p>
       </div>
-    </nav>
+      <noscript><p class="notice">برای نمونهٔ تعاملی، جاوااسکریپت را فعال کنید. معرفی و تصاویر تنظیمات بدون آن قابل مشاهده‌اند.</p></noscript>
+    </div>
+  </div>
+</section>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-badge reveal">
-          <span class="dot"></span> گروه توسعه افزونه‌های وردپرس
-        </div>
-        <h1 class="reveal" style="transition-delay:.1s">
-          هر محصول، یه رنگ.<br>یه برند، یه خانواده.
-        </h1>
-        <p class="sub reveal" style="transition-delay:.2s">
-          پارسنا مجموعه‌ای از افزونه‌های حرفه‌ای وردپرسه.
-          هر محصول هویت بصری خودش رو داره — رنگ، شخصیت و کاربرد منحصربه‌فرد — ولی همه زیر یه سقف.
-        </p>
-        <div class="hero-actions reveal" style="transition-delay:.3s">
-          <a href="https://parsena.ir/ashna" class="btn btn-glow" rel="noopener">
-            دمو زنده آشنا
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-              <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <a href="#philosophy" class="btn btn-ghost">درباره پارسنا</a>
-        </div>
-      </div>
-    </section>
+<section class="section container" id="settings" aria-labelledby="settingsTitle">
+  <div class="section-heading"><div><span class="eyebrow">۰۳ / پشت صحنهٔ محصول</span><h2 id="settingsTitle">تنظیمات را از نزدیک ببینید.</h2></div><a class="text-link" href="assets/settings/ashna-settings-infographic.webp" target="_blank" rel="noopener">اینفوگرافیک کامل، عرض ۱۰۰۰ پیکسل <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a></div>
+  <p class="muted">این تصاویر از قالب‌های واقعی PHP تنظیمات آشنا، با داده‌های پیش‌فرض در محیط رندر آفلاین تهیه شده‌اند؛ اسکرین‌شات نصب زندهٔ وردپرس نیستند.</p>
+  <div class="settings-tabs" role="tablist" aria-label="بخش‌های تنظیمات"><button type="button" id="settings-routing" role="tab" aria-selected="true" aria-controls="settingsPanel" tabindex="0" data-shot="01-routing">درگاه و پشتیبان</button><button type="button" id="settings-passkey" role="tab" aria-selected="false" aria-controls="settingsPanel" tabindex="-1" data-shot="02-passkey">Passkey</button><button type="button" id="settings-authentication" role="tab" aria-selected="false" aria-controls="settingsPanel" tabindex="-1" data-shot="03-authentication">ورود و ثبت‌نام</button><button type="button" id="settings-security" role="tab" aria-selected="false" aria-controls="settingsPanel" tabindex="-1" data-shot="04-security">امنیت</button><button type="button" id="settings-appearance" role="tab" aria-selected="false" aria-controls="settingsPanel" tabindex="-1" data-shot="05-appearance">طراحی فرم</button></div>
+  <div class="settings-panel" id="settingsPanel" role="tabpanel" aria-labelledby="settings-routing"><div class="settings-toolbar"><span id="shotCaption">تنظیم درگاه اصلی، ترتیب پشتیبان‌ها و بودجهٔ انتظار</span><button type="button" id="zoomShot" class="text-button" aria-haspopup="dialog">بزرگ‌نمایی <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div><a id="shotLink" href="assets/settings/01-routing.webp" target="_blank" rel="noopener"><img id="settingsImage" src="assets/settings/01-routing.webp" width="1872" height="1174" loading="lazy" alt="تنظیم درگاه اصلی، ترتیب پشتیبان‌ها و بودجهٔ انتظار در آشنا"></a></div>
+  <noscript><p>تصاویر دیگر: <a href="assets/settings/02-passkey.webp">Passkey</a> · <a href="assets/settings/03-authentication.webp">ورود</a> · <a href="assets/settings/04-security.webp">امنیت</a> · <a href="assets/settings/05-appearance.webp">ظاهر</a></p></noscript>
+  <dialog id="imageDialog" aria-labelledby="imageDialogTitle"><div class="dialog-bar"><h3 id="imageDialogTitle">تصویر تنظیمات آشنا</h3><button id="closeDialog" type="button" class="button small">بستن <svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg></button></div><img id="dialogImage" alt="" width="1872" height="1174"></dialog>
+</section>
 
-    <!-- Products -->
-    <section class="products" id="products">
-      <div class="container">
-        <div class="products-grid">
+<section class="section integration-section" id="integrations" aria-labelledby="integrationsTitle"><div class="container">
+  <div class="section-heading"><div><span class="eyebrow">۰۴ / در کنار سایت شما</span><h2 id="integrationsTitle">متصل به مسیر کاربر شما.</h2></div><p>از فروشگاه تا سایت عضویتی؛<br>با شناخت دقیق محدودهٔ اتصال‌ها.</p></div>
+  <div class="integration-grid"><article><span class="product-label">WooCommerce</span><h3>ورود در مسیر خرید</h3><p>ورود در حساب کاربری و کادر ورود در تسویه‌حساب؛ انتقال نشست مهمان با API عمومی ووکامرس، در صورت فعال‌بودن نشست.</p></article><article><span class="product-label">Elementor + Shortcode</span><h3>جای فرم را شما انتخاب کنید</h3><p>ویجت فرم و دکمهٔ ورود المنتور یا شورت‌کد برای قرارگیری فرم در برگه؛ نمایش در صفحه یا پنجرهٔ ورود.</p></article><article><span class="product-label">Dokan · PMPro · Ultimate Member</span><h3>حساب موجود، نقش محفوظ</h3><p>اتصال اختیاری ورود حساب موجود و تعیین مقصد. ثبت‌نام تخصصی، پرداخت، تأیید فروشنده و عضویت ویژه در اختیار افزونهٔ اصلی باقی می‌ماند.</p></article></div>
+  <p class="integration-note">آزمون اتصال‌های عضویت در سطح API/fixture انجام شده، نه نصب کامل end-to-end. MemberPress آزمایشی و تأییدنشده است؛ به‌عنوان سازگاری تأییدشده ارائه نمی‌شود. ترکیب واقعی قالب و افزونه‌ها را روی staging بررسی کنید.</p>
+  <div class="shortcodes"><div><h3>یک شورت‌کد تا نمایش فرم</h3><p class="muted">در برگهٔ وردپرس یا ابزارک شورت‌کد قرار دهید.</p></div><div class="code-sample"><code dir="ltr">[ashna_otp_login]</code><button type="button" class="text-button" id="copyShortcode">کپی کد</button></div><p id="copyStatus" role="status" aria-live="polite"></p></div>
+</div></section>
 
-          <!-- ASHNA — Blue -->
-          <a href="https://parsena.ir/ashna" class="card card-ashna reveal"
-             style="transition-delay:.05s" rel="noopener">
-            <div class="glow-orb"></div>
-            <div class="ashna-header">
-              <img src="assets/ashna-logo.png" alt="لوگوی آشنا"
-                   class="ashna-logo-img" draggable="false" loading="lazy">
-              <div class="ashna-meta">
-                <span class="card-badge">نسخه ۲.۷.۹ — فعال</span>
-                <h3>آشنا — Ashna OTP</h3>
-              </div>
-            </div>
-            <p>ورود و ثبت‌نام با کد یکبارمصرف (OTP) و ورود بیومتریک (Passkey) برای وردپرس و ووکامرس.</p>
-            <div class="features-row">
-              <span class="feat-chip">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                ۵ درگاه پیامکی
-              </span>
-              <span class="feat-chip">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                Passkey بیومتریک
-              </span>
-              <span class="feat-chip">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="8" y1="21" x2="16" y2="21"/>
-                  <line x1="12" y1="17" x2="12" y2="21"/>
-                </svg>
-                المنتور + ووکامرس
-              </span>
-            </div>
-            <span class="card-link">
-              مشاهده و دمو زنده
-              <svg viewBox="0 0 16 16" fill="none">
-                <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5"
-                      stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-            <div class="demo-bar">
-              <input class="demo-input" type="tel" maxlength="11"
-                     placeholder="۰۹۱۲۳۴۵۶۷۸۹" autocomplete="off"
-                     aria-label="شماره موبایل">
-              <button class="demo-btn" type="button">دریافت کد</button>
-            </div>
-          </a>
-
-          <!-- COMING SOON — Purple -->
-          <div class="card card-soon reveal" style="transition-delay:.12s">
-            <div class="glow-orb"></div>
-            <div>
-              <div class="soon-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-              </div>
-              <span class="card-badge">به‌زودی</span>
-              <h3>محصول بعدی</h3>
-              <p>افزونه جدیدی در حال شکل‌گیریه. ایده‌اش آماده‌ست، کدش در راهه.</p>
-            </div>
-            <div class="progress"><div class="progress-fill"></div></div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Ashna technical product description: claims match the current implementation. -->
     <section class="ashna-technical" id="ashna-technical" aria-labelledby="ashna-technical-title">
       <div class="container">
-        <div class="section-label">زیرساخت ورود و امنیت</div>
+        <div class="section-label">۰۵ / زیرساخت ورود و امنیت</div>
         <h2 class="section-title" id="ashna-technical-title">جزئیات فنی آشنا؛ فراتر از فرم ورود</h2>
         <div class="ashna-technical-grid">
           <article class="ashna-technical-card">
@@ -222,109 +147,22 @@
       </div>
     </section>
 
-    <!-- Philosophy -->
-    <section class="philosophy" id="philosophy">
-      <div class="container">
-        <div class="reveal">
-          <div class="section-label">اصول ما</div>
-          <h2 class="section-title">چطوری کار می‌کنیم</h2>
-        </div>
-        <div class="phil-grid">
-          <div class="phil-card reveal" style="transition-delay:.05s">
-            <div class="phil-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-            <h3>ساختن با دقت</h3>
-            <p>هر ویژگی با فکر و بررسی ساخته میشه. یه محصول خوب بهتر از ده تا معمولیه.</p>
-          </div>
-          <div class="phil-card reveal" style="transition-delay:.12s">
-            <div class="phil-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-            </div>
-            <h3>گوش دادن به کاربر</h3>
-            <p>بازخورد کاربرها مسیر توسعه رو تعیین می‌کنه. ما واقعاً گوش می‌دیم.</p>
-          </div>
-          <div class="phil-card reveal" style="transition-delay:.19s">
-            <div class="phil-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </div>
-            <h3>شفافیت</h3>
-            <p>بدون هزینه پنهان، بدون غافلگیری. ارتباط روشن و قیمت‌گذاری صادقانه.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Community -->
-    <section class="community" id="community">
-      <div class="container">
-        <div class="comm-box reveal">
-          <h2>با ما در ارتباط باشید</h2>
-          <p class="comm-desc">
-            سوالی دارید؟ پیشنهادی؟ یا فقط می‌خواید در جریان اخبار پارسنا باشید؟
-          </p>
-          <div class="comm-links">
-            <a href="#" class="comm-link" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              تلگرام
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Marquee -->
-    <div class="marquee-wrap">
-      <div class="marquee">
-        <span>آشنا OTP</span><span class="sep">•</span>
-        <span>پسکی Passkey</span><span class="sep">•</span>
-        <span>ووکامرس</span><span class="sep">•</span>
-        <span>المنتور</span><span class="sep">•</span>
-        <span>۵ درگاه پیامکی</span><span class="sep">•</span>
-        <span>سفیر بله</span><span class="sep">•</span>
-        <span>کاوه‌نگار</span><span class="sep">•</span>
-        <span>SMS.ir</span><span class="sep">•</span>
-        <span>ملی‌پیامک</span><span class="sep">•</span>
-        <span>فراز اس‌ام‌اس</span><span class="sep">•</span>
-        <span>Cloudflare Turnstile</span><span class="sep">•</span>
-        <span>آشنا OTP</span><span class="sep">•</span>
-        <span>پسکی Passkey</span><span class="sep">•</span>
-        <span>ووکامرس</span><span class="sep">•</span>
-        <span>المنتور</span><span class="sep">•</span>
-        <span>۵ درگاه پیامکی</span><span class="sep">•</span>
-        <span>سفیر بله</span><span class="sep">•</span>
-        <span>کاوه‌نگار</span><span class="sep">•</span>
-        <span>SMS.ir</span><span class="sep">•</span>
-        <span>ملی‌پیامک</span><span class="sep">•</span>
-        <span>فراز اس‌ام‌اس</span><span class="sep">•</span>
-        <span>Cloudflare Turnstile</span><span class="sep">•</span>
-      </div>
-    </div>
+<section class="section container" id="setup" aria-labelledby="setupTitle"><div class="section-heading"><div><span class="eyebrow">۰۶ / شروع کار</span><h2 id="setupTitle">از نصب تا اولین ورود.</h2></div></div><div class="setup-grid"><article><b>۰۱</b><h3>نصب و فعال‌سازی</h3><p>بستهٔ افزونه را در وردپرس نصب کنید و الزامات PHP و لایسنس نسخهٔ دریافتی را بررسی کنید.</p></article><article><b>۰۲</b><h3>اتصال مسیر ارسال</h3><p>حساب سرویس‌دهنده و اعتبار پیامک یا تنظیمات ایمیل و بله را آماده کنید. ابتدا از Sandbox استفاده کنید.</p></article><article><b>۰۳</b><h3>طراحی و انتشار</h3><p>ظاهر، قوانین و مقصد ورود را تعیین کنید؛ فرم را با ویجت یا شورت‌کد در برگه بگذارید.</p></article><article><b>۰۴</b><h3>آزمون در سایت خودتان</h3><p>ارسال واقعی، Passkey، خرید، نقش‌ها و مسیر بازگشت را روی staging بررسی و سپس منتشر کنید.</p></article></div></section>
 
-    <!-- Footer -->
-    <footer>
-      <div class="container">
-        <p>&copy; ۱۴۰۴ <a href="#">پارسنا</a>. تمامی حقوق محفوظ است.
-           &middot; <a href="https://parsena.ir/ashna" rel="noopener">آشنا</a></p>
-      </div>
-    </footer>
+<section class="section faq-section" id="faq" aria-labelledby="faqTitle"><div class="container faq-layout"><div><span class="eyebrow">۰۷ / پاسخ‌های روشن</span><h2 id="faqTitle">پیش از انتخاب،<br>بیشتر بدانید.</h2><p class="muted">انتخاب درست با شناخت امکانات<br>و محدودیت‌ها شروع می‌شود.</p></div><div class="faq-list">
+<details><summary>آیا این دمو پیامک واقعی ارسال می‌کند؟</summary><p>خیر. نمونهٔ تعاملی فقط در مرورگر اجرا می‌شود و به وردپرس یا پنل پیامکی متصل نیست. کد آن 123456 است. تصاویر پنل نیز رندر آفلاین قالب‌های واقعی‌اند. آزمون ارسال واقعی به نصب وردپرس و تنظیم سرویس‌دهنده نیاز دارد.</p></details>
+<details><summary>برای پیامک هزینهٔ جداگانه لازم است؟</summary><p>بله. پنل، اعتبار و الزامات سرویس‌دهندهٔ پیامکی مستقل از افزونه است. تأیید الگو، وضعیت سرویس، شبکه و تنظیمات هاست روی تحویل اثر دارند؛ تحویل صددرصدی یا زمان ثابت تضمین نمی‌شود.</p></details>
+<details><summary>Passkey روی همهٔ دستگاه‌ها کار می‌کند؟</summary><p>خیر. سایت HTTPS، مرورگر و دستگاه سازگار و ثبت قبلی کلید در حساب لازم است. تأیید ممکن است با اثر انگشت، چهره یا PIN دستگاه انجام شود. آشنا دادهٔ اثر انگشت یا چهره را دریافت نمی‌کند.</p></details>
+<details><summary>آیا نقش و دسترسی کاربر تغییر می‌کند؟</summary><p>ورود حساب موجود با نشست استاندارد وردپرس انجام می‌شود و نقش و مجوزهای آن حفظ می‌شود. ورود، عضویت ویژه یا نقش فروشنده ایجاد نمی‌کند. سازگاری تمام افزونه‌های امنیتی و 2FA تضمین نشده است.</p></details>
+<details><summary>در صورت کندی درگاه چه اتفاقی می‌افتد؟</summary><p>تلاش‌ها ترتیبی‌اند؛ پس از خطا، مسیر پشتیبان با بودجهٔ زمانی باقی‌مانده بررسی می‌شود. پیش‌فرض هر تلاش ۴ ثانیه و کل مسیر پیامک/بله ۹ ثانیه است. این بودجه زمان قطعی تحویل یا SLA هاست نیست؛ نتیجهٔ مبهم می‌تواند به ارسال تکراری منجر شود.</p></details>
+<details><summary>برای نصب چه پیش‌نیازهایی لازم است؟</summary><p>نسخهٔ لایسنس‌دار به PHP 8.2 یا بالاتر و پیش‌نیازهای لایسنس راست‌چین نیاز دارد؛ بستهٔ بدون لایسنس حداقل PHP 7.4 دارد. برای Passkey از HTTPS استفاده کنید. دسترسی خروجی هاست و حساب سرویس‌دهنده را بررسی کنید. هیچ نصب زنده‌ای با ترکیب سایت شما در این دمو تأیید نشده است.</p></details>
+<details><summary>آیا افزونه جایگزین سیستم عضویت است؟</summary><p>خیر. آشنا ابزار ورود و ثبت‌نام است، نه پروفایل‌ساز، فروش پلن، قفل محتوا یا مدیریت فروشنده. اتصال‌های اختیاری، ورود حساب موجود را پوشش می‌دهند؛ فرایندهای تخصصی در افزونهٔ اصلی باقی می‌مانند.</p></details>
+</div></div></section>
 
-  </div>
-
-  <!-- Scripts (external, CSP-compliant) -->
-  <script src="js/main.js"></script>
+<section class="section container" id="before-buy" aria-labelledby="buyTitle"><div class="buy-panel"><div><span class="eyebrow">انتخاب آگاهانه</span><h2 id="buyTitle">آیا آشنا برای سایت شما مناسب است؟</h2><p>اگر به ورود با کد، فرم قابل شخصی‌سازی و کنترل مسیر ارسال نیاز دارید، امکانات بالا را با نیاز سایتتان تطبیق دهید.</p><a class="button light" href="#experience">یک بار دیگر تجربه کنید <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a></div><div class="buy-checklist"><h3>چک‌لیست پیش از خرید</h3><ul><li>حساب و اعتبار سرویس‌دهنده را آماده دارید.</li><li>پیش‌نیاز PHP، لایسنس و HTTPS را بررسی کرده‌اید.</li><li>محدودهٔ اتصال‌های عضویت را خوانده‌اید.</li><li>آزمون روی staging را در برنامه دارید.</li></ul><p>لینک خرید و کانال پشتیبانی پس از نهایی‌شدن صفحهٔ رسمی محصول درج می‌شود. این صفحه در حال حاضر درگاه خرید ندارد و وعدهٔ قیمت یا مدت پشتیبانی ارائه نمی‌کند.</p></div></div></section>
+</main>
+<footer class="site-footer container"><a class="brand" href="#home"><img src="assets/ashna-icon.svg" alt="" width="32" height="38"><span>آشنا<small>ورود و امنیت، در کنار هم</small></span></a><p>پیش‌نمایش معرفی محصول · نسخه ۲.۷.۹<br>نمونهٔ آموزشی + تصاویر آفلاین؛ نه نصب زندهٔ وردپرس</p><a href="#home" class="text-link">بازگشت به بالا <svg class="icon" aria-hidden="true"><use href="#i-up"></use></svg></a></footer>
 </body>
 </html>
