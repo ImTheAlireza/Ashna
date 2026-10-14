@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پارسنا — گروه توسعه افزونه‌های وردپرس</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:#93c5fd;--rose:#fda4af;--purple:#c4b5fd;--mint:#86efac;
+      --font:'Vazirmatn',-apple-system,sans-serif;
+      --radius:20px;--ease:cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --bg:#06060a;--bg2:#0a0a10;
+      --surface:rgba(255,255,255,.035);--surface-hover:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.06);--border-hover:rgba(255,255,255,.12);
+      --text:#e2e8f0;--text2:#94a3b8;--text3:#475569;
+      --navbar-bg:rgba(6,6,10,.72);
+      --orb-opacity:1;--particle-opacity:.6;
+      --card-blue-bg:linear-gradient(145deg,rgba(147,197,253,.08),var(--bg2));
+      --card-blue-border:rgba(147,197,253,.18);--card-blue-hover:rgba(147,197,253,.2);
+      --card-purple-bg:linear-gradient(145deg,rgba(196,181,253,.08),var(--bg2));
+      --card-purple-border:rgba(196,181,253,.18);--card-purple-hover:rgba(196,181,253,.2);
+      --grad-1:#93c5fd;--grad-2:#fda4af;--grad-3:#c4b5fd;--grad-4:#86efac;
+      --btn-text:#06060a;
+      --phil-bg:rgba(255,255,255,.02);--phil-border:rgba(255,255,255,.04);
+      --comm-bg:rgba(255,255,255,.02);--comm-border:rgba(255,255,255,.04);
+    }
+    [data-theme="light"] {
+      --bg:#eeeef2;--bg2:#ffffff;
+      --surface:rgba(255,255,255,.88);--surface-hover:#ffffff;
+      --border:rgba(0,0,0,.1);--border-hover:rgba(0,0,0,.18);
+      --text:#0f172a;--text2:#334155;--text3:#475569;
+      --navbar-bg:rgba(238,238,242,.78);
+      --orb-opacity:.55;--particle-opacity:.35;
+      --card-blue-bg:linear-gradient(145deg,rgba(96,165,250,.16),var(--bg2));
+      --card-blue-border:rgba(96,165,250,.35);--card-blue-hover:rgba(96,165,250,.45);
+      --card-purple-bg:linear-gradient(145deg,rgba(167,139,250,.14),var(--bg2));
+      --card-purple-border:rgba(167,139,250,.35);--card-purple-hover:rgba(167,139,250,.45);
+      --grad-1:#3b82f6;--grad-2:#f43f5e;--grad-3:#8b5cf6;--grad-4:#10b981;
+      --btn-text:#ffffff;
+      --phil-bg:rgba(0,0,0,.02);--phil-border:rgba(0,0,0,.06);
+      --comm-bg:rgba(0,0,0,.02);--comm-border:rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .5s,color .3s}
+    a{color:inherit;text-decoration:none}
+
+    .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+    .bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(128,128,128,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(128,128,128,.025) 1px,transparent 1px);background-size:60px 60px}
+    .orb{position:absolute;border-radius:50%;filter:blur(100px);will-change:transform;transition:opacity .6s,background .6s}
+    .orb-1{width:450px;height:450px;background:rgba(147,197,253,.12);top:-8%;right:5%;animation:d1 18s ease-in-out infinite alternate}
+    .orb-2{width:380px;height:380px;background:rgba(253,164,175,.10);bottom:-5%;left:8%;animation:d2 22s ease-in-out infinite alternate}
+    .orb-3{width:320px;height:320px;background:rgba(196,181,253,.10);top:35%;left:35%;animation:d3 20s ease-in-out infinite alternate}
+    .orb-4{width:280px;height:280px;background:rgba(134,239,172,.08);bottom:15%;right:15%;animation:d4 24s ease-in-out infinite alternate}
+    [data-theme="light"] .orb-1{background:rgba(96,165,250,.18)}
+    [data-theme="light"] .orb-2{background:rgba(251,113,133,.14)}
+    [data-theme="light"] .orb-3{background:rgba(167,139,250,.14)}
+    [data-theme="light"] .orb-4{background:rgba(52,211,153,.12)}
+    @keyframes d1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,-30px) scale(1.08)}}
+    @keyframes d2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-35px,25px) scale(1.05)}}
+    @keyframes d3{0%{transform:translate(0,0) scale(1)}100%{transform:translate(25px,35px) scale(.92)}}
+    @keyframes d4{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-20px,-30px) scale(1.1)}}
+
+    .particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+    .particle{position:absolute;border-radius:50%;opacity:0;animation:pF linear infinite}
+    @keyframes pF{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:var(--particle-opacity)}90%{opacity:var(--particle-opacity)}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+
+    .cursor-glow{position:fixed;width:400px;height:400px;border-radius:50%;pointer-events:none;z-index:2;background:radial-gradient(circle,rgba(147,197,253,.05) 0%,transparent 70%);transform:translate(-50%,-50%);transition:opacity .4s;opacity:0;will-change:transform}
+    body:hover .cursor-glow{opacity:1}
+    [data-theme="light"] .cursor-glow{background:radial-gradient(circle,rgba(96,165,250,.08) 0%,transparent 70%)}
+
+    .wrapper{position:relative;z-index:3}
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navbar-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);transition:background .4s,border-color .4s}
+    .navbar .container{display:flex;align-items:center;justify-content:space-between;height:52px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem}
+    .logo-svg{transition:transform .3s}
+    .logo:hover .logo-svg{transform:rotate(15deg) scale(1.08)}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-links{display:flex;gap:22px;list-style:none}
+    .nav-links a{color:var(--text2);font-size:.8rem;font-weight:500;transition:color .25s;position:relative}
+    .nav-links a::after{content:'';position:absolute;bottom:-2px;right:0;width:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .3s var(--ease)}
+    .nav-links a:hover{color:var(--text)}
+    .nav-links a:hover::after{width:100%}
+    .theme-toggle{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s var(--ease);color:var(--text2);padding:0}
+    .theme-toggle:hover{border-color:var(--border-hover);background:var(--surface-hover);transform:rotate(15deg)}
+    .theme-toggle svg{width:18px;height:18px}
+    [data-theme="dark"] .icon-sun{display:none}
+    [data-theme="light"] .icon-moon{display:none}
+
+    .hero{padding:140px 0 70px;text-align:center}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);font-size:.72rem;color:var(--text2);margin-bottom:20px;animation:badgeP 3s ease-in-out infinite;transition:all .3s}
+    @keyframes badgeP{0%,100%{border-color:var(--border)}50%{border-color:rgba(147,197,253,.25)}}
+    .hero-badge .dot{width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--mint));animation:blink 1.5s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+    .hero h1{font-size:3rem;font-weight:900;line-height:1.2;letter-spacing:-.05em;margin-bottom:16px;background:linear-gradient(135deg,var(--grad-1),var(--grad-2),var(--grad-3),var(--grad-4));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gShift 6s ease-in-out infinite}
+    @keyframes gShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .hero .sub{font-size:1rem;color:var(--text2);max-width:460px;margin:0 auto 28px;line-height:1.85}
+    .hero-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:11px 24px;border-radius:12px;font-family:var(--font);font-size:.85rem;font-weight:600;border:none;cursor:pointer;transition:all .3s var(--ease);text-decoration:none}
+    .btn-glow{background:linear-gradient(135deg,var(--blue),var(--purple));color:var(--btn-text);box-shadow:0 0 30px rgba(147,197,253,.2);animation:btnG 3s ease-in-out infinite}
+    @keyframes btnG{0%,100%{box-shadow:0 0 20px rgba(147,197,253,.15)}50%{box-shadow:0 0 40px rgba(147,197,253,.3)}}
+    .btn-glow:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(147,197,253,.4)!important}
+    .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--border-hover);color:var(--text);background:var(--surface)}
+
+    .products{padding:40px 0 60px}
+    .products-grid{display:grid;grid-template-columns:5fr 3fr;gap:16px}
+    .card{position:relative;border-radius:var(--radius);padding:28px;overflow:hidden;transition:all .4s var(--ease);cursor:default;will-change:transform}
+    .card:hover{transform:translateY(-8px) scale(1.02)}
+
+    .card-signa{background:var(--card-blue-bg);border:1px solid var(--card-blue-border)}
+    .card-signa:hover{box-shadow:0 20px 60px var(--card-blue-hover);border-color:var(--card-blue-hover)}
+    .signa-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .signa-logo-img{width:44px;height:44px;border-radius:11px;object-fit:contain;background:rgba(255,255,255,.9);padding:4px;transition:background .4s}
+    [data-theme="light"] .signa-logo-img{background:rgba(147,197,253,.1)}
+    .signa-meta .card-badge{background:rgba(147,197,253,.12);color:var(--blue);font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:100px;display:inline-block;margin-bottom:4px}
+    .signa-meta h3{font-size:1.05rem;font-weight:700}
+    .card-signa p{font-size:.84rem;color:var(--text2);line-height:1.75;margin-bottom:16px}
+    .card-signa .card-link{display:inline-flex;align-items:center;gap:4px;font-size:.82rem;font-weight:600;color:var(--blue);transition:gap .3s var(--ease)}
+    .card-signa .card-link:hover{gap:8px}
+    .card-signa .card-link svg{width:13px;height:13px}
+    .features-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .feat-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;background:rgba(147,197,253,.07);border:1px solid rgba(147,197,253,.12);font-size:.72rem;color:var(--text2);transition:all .3s}
+    .feat-chip svg{width:13px;height:13px;color:var(--blue)}
+    .demo-bar{display:flex;gap:8px;padding:10px;border-radius:12px;background:rgba(128,128,128,.04);border:1px solid var(--border);transition:all .3s}
+    .demo-input{flex:1;font-family:var(--font);font-size:.75rem;background:rgba(128,128,128,.04);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text2);direction:rtl;transition:all .3s}
+    .demo-btn{font-family:var(--font);font-size:.72rem;font-weight:600;background:rgba(147,197,250,.1);color:var(--blue);border:1px solid rgba(147,197,250,.2);border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;transition:all .25s var(--ease)}
+    .demo-btn:hover{background:rgba(147,197,250,.18);box-shadow:0 0 15px rgba(147,197,250,.15)}
+
+    .card-soon{background:var(--card-purple-bg);border:1px solid var(--card-purple-border);display:flex;flex-direction:column;justify-content:space-between}
+    .card-soon:hover{box-shadow:0 20px 60px var(--card-purple-hover);border-color:var(--card-purple-hover)}
+    .card-soon .soon-icon{width:42px;height:42px;border-radius:11px;background:rgba(196,181,253,.12);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--purple);transition:transform .3s var(--ease)}
+    .card-soon:hover .soon-icon{transform:scale(1.1) rotate(-5deg)}
+    .card-soon .soon-icon svg{width:20px;height:20px}
+    .card-soon .card-badge{background:rgba(196,181,253,.12);color:var(--purple);font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:100px;display:inline-block;margin-bottom:14px}
+    .card-soon h3{font-size:.95rem;font-weight:700;margin-bottom:6px}
+    .card-soon p{font-size:.8rem;color:var(--text2);line-height:1.7}
+    .progress{height:2px;background:rgba(128,128,128,.08);border-radius:100px;overflow:hidden;margin-top:14px}
+    [data-theme="light"] .progress{background:rgba(0,0,0,.06)}
+    .progress-fill{height:100%;width:25%;border-radius:100px;background:var(--purple);animation:progP 3s ease-in-out infinite}
+    @keyframes progP{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .card .glow-orb{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:120px;height:60px;border-radius:50%;filter:blur(30px);opacity:.3;transition:opacity .4s,transform .4s;animation:oP 4s ease-in-out infinite}
+    .card:hover .glow-orb{opacity:.55;transform:translateX(-50%) scale(1.3)}
+    @keyframes oP{0%,100%{opacity:.2}50%{opacity:.4}}
+    .card-signa .glow-orb{background:var(--card-blue-hover)}
+    .card-soon .glow-orb{background:var(--card-purple-hover)}
+
+    .card-signa{animation:f1 6s ease-in-out infinite}
+    .card-soon{animation:f2 7s ease-in-out infinite}
+    @keyframes f1{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes f2{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+    .philosophy{padding:60px 0}
+    .section-label{font-size:.72rem;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:32px;letter-spacing:-.02em}
+    .phil-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .phil-card{padding:26px;border-radius:var(--radius);background:var(--phil-bg);border:1px solid var(--phil-border);transition:all .3s var(--ease)}
+    .phil-card:hover{border-color:var(--border-hover);background:var(--surface)}
+    .phil-card .phil-icon{width:36px;height:36px;border-radius:9px;background:rgba(147,197,253,.08);display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:var(--blue)}
+    .phil-card .phil-icon svg{width:18px;height:18px}
+    .phil-card h3{font-size:.9rem;font-weight:700;margin-bottom:6px}
+    .phil-card p{font-size:.8rem;color:var(--text2);line-height:1.75}
+
+    .community{padding:60px 0}
+    .comm-box{padding:40px;border-radius:var(--radius);background:var(--comm-bg);border:1px solid var(--comm-border);text-align:center;transition:all .4s}
+    .comm-box h2{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+    .comm-box .comm-desc{font-size:.88rem;color:var(--text2);margin-bottom:24px;line-height:1.8}
+    .comm-links{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .comm-link{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);font-size:.82rem;font-weight:500;color:var(--text2);transition:all .3s var(--ease)}
+    .comm-link:hover{border-color:var(--border-hover);color:var(--text);background:var(--surface-hover);transform:translateY(-2px)}
+    .comm-link svg{width:16px;height:16px}
+
+    .marquee-wrap{overflow:hidden;padding:20px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:border-color .4s}
+    .marquee{display:flex;gap:36px;animation:scroll 40s linear infinite;width:max-content}
+    .marquee span{font-size:.74rem;color:var(--text3);white-space:nowrap;font-weight:500;transition:color .4s}
+    .marquee .sep{color:var(--border)}
+    @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+    footer{padding:20px 0;text-align:center;font-size:.72rem;color:var(--text3);transition:color .4s}
+    footer a{transition:color .25s}footer a:hover{color:var(--text)}
+
+    .reveal{opacity:0;transform:translateY(20px);transition:all .6s var(--ease)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:900px){.products-grid{grid-template-columns:1fr}.hero h1{font-size:2.2rem}.phil-grid{grid-template-columns:1fr}.card-signa,.card-soon{animation:none}}
+    @media(max-width:600px){.hero h1{font-size:1.7rem}.nav-links{display:none}.hero-actions,.comm-links{flex-direction:column}.btn,.comm-link{justify-content:center;width:100%}.demo-bar{flex-direction:column}.features-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+  <div class="particles" id="particles"></div>
+  <div class="cursor-glow" id="glow"></div>
+  <div class="wrapper">
+    <nav class="navbar"><div class="container">
+      <a href="#" class="logo"><svg class="logo-svg" viewBox="0 0 32 32" width="26" height="26" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" fill="#93c5fd"/><rect x="18" y="2" width="12" height="12" rx="3" fill="#fda4af"/><rect x="2" y="18" width="12" height="12" rx="3" fill="#c4b5fd"/><rect x="18" y="18" width="12" height="12" rx="3" fill="#86efac"/></svg> پارسنا</a>
+      <div class="nav-right"><ul class="nav-links"><li><a href="#products">محصولات</a></li><li><a href="#philosophy">اصول ما</a></li><li><a href="#community">ارتباط</a></li></ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      </div></div></nav>
+
+    <section class="hero"><div class="container">
+      <div class="hero-badge reveal"><span class="dot"></span> گروه توسعه افزونه‌های وردپرس</div>
+      <h1 class="reveal" style="transition-delay:.1s">هر محصول، یه رنگ.<br>یه برند، یه خانواده.</h1>
+      <p class="sub reveal" style="transition-delay:.2s">پارسنا مجموعه‌ای از افزونه‌های حرفه‌ای وردپرسه. هر محصول هویت بصری خودش رو داره — رنگ، شخصیت و کاربرد منحصربه‌فرد — ولی همه زیر یه سقف.</p>
+      <div class="hero-actions reveal" style="transition-delay:.3s">
+        <a href="https://parsena.ir/signa" class="btn btn-glow">دمو زنده سیگنا <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#philosophy" class="btn btn-ghost">درباره پارسنا</a>
+      </div></div></section>
+
+    <section class="products" id="products"><div class="container"><div class="products-grid">
+      <a href="https://parsena.ir/signa" class="card card-signa reveal" style="transition-delay:.05s;text-decoration:none;color:inherit">
+        <div class="glow-orb"></div>
+        <div class="signa-header"><img src="signa-logo.png" alt="لوگوی سیگنا" class="signa-logo-img"><div class="signa-meta"><span class="card-badge">نسخه ۲.۷ — فعال</span><h3>سیگنا — Signa OTP</h3></div></div>
+        <p>ورود و ثبت‌نام با کد یکبارمصرف (OTP) و ورود بیومتریک (Passkey) برای وردپرس و ووکامرس.</p>
+        <div class="features-row">
+          <span class="feat-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>۵ درگاه پیامکی</span>
+          <span class="feat-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Passkey بیومتریک</span>
+          <span class="feat-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>المنتور + ووکامرس</span>
+        </div>
+        <span class="card-link">مشاهده و دمو زنده <svg viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="demo-bar" style="margin-top:14px"><input class="demo-input" type="text" placeholder="۰۹۱۲۳۴۵۶۷۸۹" readonly><button class="demo-btn">دریافت کد</button></div>
+      </a>
+      <div class="card card-soon reveal" style="transition-delay:.12s">
+        <div class="glow-orb"></div>
+        <div><div class="soon-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <span class="card-badge">به‌زودی</span><h3>محصول بعدی</h3><p>افزونه جدیدی در حال شکل‌گیریه. ایده‌اش آماده‌ست، کدش در راهه.</p></div>
+        <div class="progress"><div class="progress-fill"></div></div>
+      </div>
+    </div></div></section>
+
+    <section class="philosophy" id="philosophy"><div class="container">
+      <div class="reveal"><div class="section-label">اصول ما</div><h2 class="section-title">چطوری کار می‌کنیم</h2></div>
+      <div class="phil-grid">
+        <div class="phil-card reveal" style="transition-delay:.05s"><div class="phil-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>ساختن با دقت</h3><p>هر ویژگی با فکر و بررسی ساخته میشه. یه محصول خوب بهتر از ده تا معمولیه.</p></div>
+        <div class="phil-card reveal" style="transition-delay:.12s"><div class="phil-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>گوش دادن به کاربر</h3><p>بازخورد کاربرها مسیر توسعه رو تعیین می‌کنه. ما واقعاً گوش می‌دیم.</p></div>
+        <div class="phil-card reveal" style="transition-delay:.19s"><div class="phil-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>شفافیت</h3><p>بدون هزینه پنهان، بدون غافلگیری. ارتباط روشن و قیمت‌گذاری صادقانه.</p></div>
+      </div></div></section>
+
+    <section class="community" id="community"><div class="container"><div class="comm-box reveal">
+      <h2>با ما در ارتباط باشید</h2>
+      <p class="comm-desc">سوالی دارید؟ پیشنهادی؟ یا فقط می‌خواید در جریان اخبار پارسنا باشید؟</p>
+      <div class="comm-links">
+        <a href="#" class="comm-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>تلگرام</a>
+      </div></div></div></section>
+
+    <div class="marquee-wrap"><div class="marquee">
+      <span>سیگنا OTP</span><span class="sep">•</span><span>پسکی Passkey</span><span class="sep">•</span><span>ووکامرس</span><span class="sep">•</span><span>المنتور</span><span class="sep">•</span><span>۵ درگاه پیامکی</span><span class="sep">•</span><span>سفیر بله</span><span class="sep">•</span><span>کاوه‌نگار</span><span class="sep">•</span><span>SMS.ir</span><span class="sep">•</span><span>ملی‌پیامک</span><span class="sep">•</span><span>فراز اس‌ام‌اس</span><span class="sep">•</span><span>Cloudflare Turnstile</span><span class="sep">•</span>
+      <span>سیگنا OTP</span><span class="sep">•</span><span>پسکی Passkey</span><span class="sep">•</span><span>ووکامرس</span><span class="sep">•</span><span>المنتور</span><span class="sep">•</span><span>۵ درگاه پیامکی</span><span class="sep">•</span><span>سفیر بله</span><span class="sep">•</span><span>کاوه‌نگار</span><span class="sep">•</span><span>SMS.ir</span><span class="sep">•</span><span>ملی‌پیامک</span><span class="sep">•</span><span>فراز اس‌ام‌اس</span><span class="sep">•</span><span>Cloudflare Turnstile</span><span class="sep">•</span>
+    </div></div>
+
+    <footer><div class="container"><p>© ۱۴۰۴ <a href="#">پارسنا</a>. تمامی حقوق محفوظ است. · <a href="https://parsena.ir/signa">سیگنا</a></p></div></footer>
+  </div>
+
+  <script>
+    const toggle=document.getElementById('themeToggle'),html=document.documentElement;const s=localStorage.getItem('parsna-theme');if(s)html.dataset.theme=s;toggle.addEventListener('click',()=>{const n=html.dataset.theme==='dark'?'light':'dark';html.dataset.theme=n;localStorage.setItem('parsna-theme',n)});
+    const glow=document.getElementById('glow');let mx=0,my=0,gx=0,gy=0;document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});(function r(){gx+=(mx-gx)*.08;gy+=(my-gy)*.08;glow.style.left=gx+'px';glow.style.top=gy+'px';requestAnimationFrame(r)})();
+    const pc=document.getElementById('particles'),cols=['#93c5fd','#fda4af','#c4b5fd','#86efac'];for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.background=cols[i%4];p.style.animationDuration=(10+Math.random()*15)+'s';p.style.animationDelay=(Math.random()*10)+'s';p.style.width=p.style.height=(2+Math.random()*3)+'px';pc.appendChild(p)}
+    const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}})},{threshold:.1});document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+  </script>
+</body>
+</html>
