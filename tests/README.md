@@ -167,3 +167,8 @@ in the root README. `docs/` retains only the guide source and changelog.
 ### لندینگ معرفی محصول
 
 راهنمای اجرا، بسته‌بندی و انتشار در بخش «پیش‌نمایش معرفی آشنا» در README اصلی است. پس از اجرای `python parsna-landing/serve.py 8080`، تست‌های `python parsna-landing/tests/security_test.py` و `ASHNA_BUNDLED_LIBS=1 node tests/landing-preview.mjs` اجرا می‌شوند. این تست‌ها رابط استاتیک و شبیه‌سازی آموزشی را بررسی می‌کنند، نه ورود واقعی یا نصب وردپرس. دارایی‌ها محلی و تصاویر از رندر آفلاین قالب‌های تنظیمات‌اند. اسکرین‌شات‌های تست فقط در `.cache/landing-preview/` نگهداری می‌شوند.
+
+
+### بررسی استاندارد تحویل سه‌فایلی
+
+`python tests/check-submission.py` ساختار دقیق product ZIP (فقط افزونه+PDF)، دقیقاً سه فایل اصلی داخل تحویل یکجا، برابری بایتی updater/PDF/installer، manifest و CRC بسته‌های تو‌در‌تو را می‌سنجد. PDF با `scripts/render-help.mjs` به هشت صفحه و پنج capture واقعی تنظیمات گسترش یافته؛ نصب قبل از راه‌اندازی، شماره‌های فارسی و نبود برخورد با پاورقی بررسی می‌شود. چک‌لیست وضعیت انسانی در `docs/submission-checklist.md` است. این بررسی جای آزمون واقعی لایسنس، تحویل پیامک، الزامات دقیقه‌ای/هم‌زمان و پذیرش بازار نیست.

@@ -1,5 +1,5 @@
-"""Update the Rightchin wrapper with the CURRENT installer and rendered Persian PDF.
-Run scripts/render-help.mjs first. Does not rebuild or modify the installer/license.
+"""Build the product package with ONLY installer ZIP + PDF; keep extra material outside.
+Run render-help.mjs and both installer packagers first. No license is fabricated.
 """
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -14,64 +14,29 @@ wrapper = root / 'rightchin/Ashna-Rightchin-Package.zip'
 assert guide.read_bytes().startswith(b'%PDF-'), 'Render the guide PDF first'
 with ZipFile(installer) as z:
     assert z.testzip() is None
-    header = z.read('ashna-otp/index.php').decode()
-    assert re.search(r'Requires PHP:\s*8\.2\s', header)
-    assert z.read('ashna-otp/index.php') == (root / 'index.php').read_bytes(), 'Rebuild the current installer first'
-    assert z.read('ashna-otp/ashna.php') == (root / 'ashna.php').read_bytes()
+    assert re.search(r'Requires PHP:\s*8\.2\s', z.read('ashna-otp/index.php').decode())
+    for name in ['index.php', 'ashna.php', 'README.md', 'rtl-description.md']:
+        assert z.read('ashna-otp/' + name) == (root / name).read_bytes(), 'Rebuild installer: ' + name
     license_present = 'ashna-otp/RTL_License_c1595a7238d64f3a.php' in z.namelist()
-# The packaging README (not the customer PDF) records the missing-license status.
-assert not license_present, 'Update the packaging license-presence notice before distributing a new licensed bundle'
-installer_sha = hashlib.sha256(installer.read_bytes()).hexdigest()
-readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۹
-ویرایش راهنما: ۱۴ اکتبر ۲۰۲۶
-
-مهم: این بسته هنوز فایل واقعی لایسنس راست‌چین را ندارد و بستهٔ کامل آمادهٔ انتشار نیست.
-مالک محصول باید فایل معتبر قبلی RTL_License_c1595a7238d64f3a.php را پیش از نصب/توزیع، کنار ashna.php داخل ZIP افزونه قرار دهد. نسخهٔ مخصوص PHP 7.4 جایگزین نشده است.
-هش SHA1 مورد انتظار همان 4f106eb02a251f2a6951ca3f530596590081002d است.
-
-محتویات
-- Plugin/ashna-otp.zip: فایل نصب فعلی (همان deliverables/ashna-otp-with-logo.zip)
-- Ashna-Help-FA.pdf: راهنمای فارسی ۳ صفحه‌ای نصب، تنظیمات، استفاده و به‌روزرسانی
-- changelog-FA.txt: تاریخچه و توضیح تغییرات بسته
-- product-images/ashna-settings-infographic.webp: تصویر عمودی ۱۰۰۰ پیکسلی از رندر آزمایشی قالب‌های تنظیمات؛ نه نصب زندهٔ وردپرس
-- rtl-description.md: تنها پیش‌نویس معرفی محصول؛ نیازمند بازنویسی و بازبینی انسانی طبق راهنمای راست‌چین
-
-نیازمندی‌ها
-- حداقل PHP 8.2 و وردپرس 5.8
-- ionCube فعال در PHP وب و سازگار با PHP و فایل لایسنس
-- افزونهٔ مدیریت هوشمند راست‌چین و تأیید لایسنس برای سایت اصلی
-حداقل PHP به معنی تضمین سازگاری فایل رمزگذاری‌شده با همهٔ نسخه‌های جدیدتر نیست.
-
-نصب: ZIP داخلی Plugin/ashna-otp.zip را نصب کنید، نه ZIP بیرونی شامل راهنما.
-هدر وردپرس در index.php و بررسی لایسنس در ashna.php باقی مانده است.
-پیش از تغییر PHP یا جایگزینی افزونه، از سایت و فایل لایسنس بکاپ بگیرید.
-
-SHA256 فایل نصب فعلی (پیش از افزودن فایل لایسنس):
-{installer_sha}
-'''
 wrapper.parent.mkdir(exist_ok=True)
 with ZipFile(wrapper, 'w', ZIP_DEFLATED) as z:
     z.write(installer, 'Ashna-Rightchin/Plugin/ashna-otp.zip')
     z.write(guide, 'Ashna-Rightchin/Ashna-Help-FA.pdf')
-    z.write(root / 'docs/changelog-FA.txt', 'Ashna-Rightchin/changelog-FA.txt')
-    z.write(root / 'rtl-description.md', 'Ashna-Rightchin/rtl-description.md')
-    z.write(root / 'product-images/ashna-settings-infographic.webp', 'Ashna-Rightchin/product-images/ashna-settings-infographic.webp')
-    z.writestr('Ashna-Rightchin/README-FA.txt', readme)
 with ZipFile(wrapper) as z:
     assert z.testzip() is None
+    assert set(z.namelist()) == {'Ashna-Rightchin/Plugin/ashna-otp.zip', 'Ashna-Rightchin/Ashna-Help-FA.pdf'}
     assert z.read('Ashna-Rightchin/Plugin/ashna-otp.zip') == installer.read_bytes()
     assert z.read('Ashna-Rightchin/Ashna-Help-FA.pdf') == guide.read_bytes()
 
 def record(path, name):
     return {'file': name, 'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
-
 manifest = root / 'deliverables/checksums.json'
-entries = json.loads(manifest.read_text())
-entries = [entry for entry in entries if entry['file'] != guide.name]
+entries = [entry for entry in json.loads(manifest.read_text()) if entry['file'] != guide.name]
 entries.append(record(guide, guide.name))
 manifest.write_text(json.dumps(entries, indent=2) + '\n')
 (root / 'rightchin/checksums.json').write_text(json.dumps([
     record(wrapper, wrapper.name), record(guide, '../deliverables/' + guide.name),
     record(installer, '../deliverables/' + installer.name)], indent=2) + '\n')
 print(json.dumps(record(wrapper, wrapper.name), indent=2))
-print('PASS: wrapper contains byte-identical current installer and updated PDF; missing-license notice included.')
+print('PASS: product package contains EXACTLY installer + PDF; both byte-identical to standalone files.')
+print('LICENSE STATUS: ' + ('file present; live validation still required' if license_present else 'MISSING; preparation package is NOT ready for official distribution. See submission checklist.'))

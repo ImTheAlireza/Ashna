@@ -36,6 +36,8 @@ try {
   if (numeralCheck.forbiddenDigits.length || !numeralCheck.stepsValid || !numeralCheck.phpMinimumPresent) {
     throw new Error('Persian numeral validation failed: ' + JSON.stringify(numeralCheck));
   }
+  const guideCheck = await page.evaluate(() => ({ installationFirst: document.querySelector('.page').innerText.includes('مراحل نصب'), screenshots: [...document.querySelectorAll('figure img')].map(img => ({ loaded: img.complete && img.naturalWidth >= 1800, alt: img.alt })), captions: [...document.querySelectorAll('figcaption')].every(el => el.textContent.includes('آفلاین')) }));
+  if (!guideCheck.installationFirst || guideCheck.screenshots.length !== 5 || guideCheck.screenshots.some(img => !img.loaded || !img.alt) || !guideCheck.captions) throw new Error('Guide screenshot/order check failed');
   const layout = await page.evaluate(() => [...document.querySelectorAll('.page')].map((p, i) => {
     const footer = p.querySelector('.footer').getBoundingClientRect();
     const contents = [...p.children].filter(e => !e.classList.contains('footer'));
@@ -44,10 +46,10 @@ try {
     return { page: i + 1, footerGap: footer.top - bottom, horizontalOverflow, fontLoaded: document.fonts.check('900 27pt Estedad') };
   }));
   console.log(JSON.stringify(layout, null, 2));
-  if (errors.length || layout.length !== 3 || layout.some(p => p.footerGap < 12 || p.horizontalOverflow.length || !p.fontLoaded)) {
+  if (errors.length || layout.length !== 8 || layout.some(p => p.footerGap < 12 || p.horizontalOverflow.length || !p.fontLoaded)) {
     throw new Error('Guide layout validation failed: ' + errors.join(', '));
   }
   await fs.mkdir(path.join(root, 'deliverables'), { recursive: true });
   await page.pdf({ path: path.join(root, 'deliverables/Ashna-Help-FA.pdf'), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
-  console.log('PASS: 3 pages, Persian numerals verified, fonts/images loaded, no content/footer collision.');
+  console.log('PASS: 8 pages, installation first, five actual settings captures, Persian numerals, fonts/images and footer clearance verified.');
 } finally { await browser.close(); }

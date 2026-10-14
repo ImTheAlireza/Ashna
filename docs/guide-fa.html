@@ -1,113 +1,65 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>راهنمای نصب و راه‌اندازی آشنا — نسخه ۲.۷.۹</title>
-<style>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>راهنمای نصب و راه‌اندازی آشنا — نسخه ۲.۷.۹</title><style>
 @font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-400.woff2');font-weight:400}
 @font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-700.woff2');font-weight:700}
 @font-face{font-family:Estedad;src:url('../assets/fonts/estedad/estedad-900.woff2');font-weight:900}
-*{box-sizing:border-box} @page{size:A4;margin:0}
-body{margin:0;color:#25334b;background:#e8ecf5;font:10pt/1.85 Estedad,sans-serif}
-.page{position:relative;width:210mm;height:297mm;padding:12mm 16mm 18mm;background:#fff;break-after:page;overflow:hidden;border-top:5px solid #2563eb}
-.page:last-child{break-after:auto}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:8.2pt;color:#79859d}.top img{width:109px;height:35px;object-fit:contain}.top span{border:1px solid #e6eaf2;border-radius:30px;padding:3px 11px}
-.hero{position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(125deg,#253867,#172543);color:white;border-radius:18px;padding:23px 23px;margin-bottom:17px;isolation:isolate}
-.hero-copy{flex:1;min-width:0}.eyebrow{color:#b7c4ff;font-size:8pt;font-weight:700;margin-bottom:7px}h1{font-weight:900;font-size:27pt;line-height:1.65;letter-spacing:-1px;margin:0}.hero p{font-size:8.8pt;color:#d5ddef;margin:9px 0 0}.hero-art{flex:none;width:156px;padding:16px 12px;background:#ffffff0d;border:1px solid #ffffff2b;border-radius:14px;text-align:center}.hero-art .symbol{margin:0 auto 9px;border:1px solid #8399e1;border-radius:50%;width:35px;height:35px;line-height:35px;font-size:19px;color:#c3cff7}.hero-art .symbol{display:flex;align-items:center;justify-content:center}.hero-art .caption{font-size:8pt;color:#e4e8fc}.digits{direction:ltr;display:flex;gap:4px;margin:12px 0}.digits span{display:flex;align-items:center;justify-content:center;width:18px;height:25px;border-radius:4px;background:white;color:#253c70;font:700 10pt Estedad}.mini-button{background:#2563eb;color:white;border-radius:5px;font-size:7.5pt;padding:4px}
-.requirements{display:flex;gap:10px;margin-bottom:16px}.requirement{flex:1;display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border:1px solid #e4e8f2;border-radius:10px;background:#f8f9fd}.requirement span{font-size:8.8pt;color:#53617a}.requirement strong{font-size:16pt;color:#2563eb;line-height:1.4}
-.section-head{display:flex;align-items:center;gap:15px;padding:17px 19px;background:#f0f2fc;border:1px solid #e1e5f6;border-radius:14px;margin:7px 0 20px}.chapter{font-size:29pt;line-height:1.4;color:#2563eb;font-weight:900;padding-left:15px;border-left:1px solid #d6dcf5}.section-head small{color:#7581a4;font-size:8pt}.section-head h2{margin:3px 0 0;font-size:19pt;line-height:1.6;font-weight:900;color:#243254;letter-spacing:-.5px}
-h3{display:flex;align-items:center;gap:8px;font-size:11pt;line-height:1.7;margin:16px 0 8px;color:#26365e}.number{background:#edf0ff;color:#2563eb;min-width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:9pt}p{margin:7px 0 10px}
-table{width:100%;border-collapse:separate;border-spacing:0;font-size:9.1pt;line-height:1.85;margin:9px 0 14px;border:1px solid #e5e9f3;border-radius:10px;overflow:hidden}th{text-align:right;font-weight:700;background:#f0f3fa;color:#617093;font-size:8pt}th,td{padding:7px 11px;border-bottom:1px solid #e9edf5;vertical-align:top}td:first-child{white-space:nowrap;font-weight:700;color:#334570}tbody tr:nth-child(even){background:#fafbfe}tbody tr:last-child td{border-bottom:0}
-ol{list-style:none;padding:0;margin:8px 0 12px}li{position:relative;padding-right:30px;margin:7px 0;min-height:23px}.step-number{position:absolute;right:0;top:1px;display:flex;align-items:center;justify-content:center;width:21px;height:21px;border:1px solid #dce3f3;color:#737fa0;border-radius:50%;font-size:8pt;background:#fff}
-code{direction:ltr;unicode-bidi:isolate;display:inline-block;font:8.7pt/1.6 monospace;color:#435270;background:#eef2f8;padding:1px 5px;border-radius:4px}.codebox{position:relative;direction:ltr;text-align:left;font:10pt/1.8 monospace;background:#1c2c4b;color:#e9ecff;padding:10px 14px;border-radius:9px;margin:8px 0 12px;border-left:4px solid #2563eb}
-.note{background:#f0f3ff;color:#3e5283;border:1px solid #e1e7fa;border-radius:10px;padding:10px 13px;margin:12px 0;font-size:9pt;line-height:1.85}.warn{background:#fff9ee;border-color:#f2e5ca;color:#7e5b29}.compact{font-size:9.8pt;line-height:1.8}.compact h3{margin-top:14px}.compact table{font-size:9pt}.compact th,.compact td{padding:6px 10px}.muted{color:#7a849b;font-size:8.5pt}.font-tags{display:flex;gap:8px;margin:12px 0}.font-tags span{border:1px solid #e0e5f2;background:#fafbff;padding:5px 12px;border-radius:8px;font-size:9pt;color:#425579}
-.footer{position:absolute;bottom:9mm;left:16mm;right:16mm;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e5e9f2;padding-top:10px;font-size:8pt;color:#8a94aa}.page-no{display:flex;align-items:center;gap:9px;color:#596a8d}.progress{display:flex;gap:3px}.progress i{display:block;height:4px;width:17px;border-radius:3px;background:#e5e9f4}.progress i.on{background:#2563eb}
-@media print{body{background:white}.page{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style>
-</head>
-<body>
-<section class="page">
-<div class="top"><img src="../assets/images/ashna-logo.png" alt="Ashna"><span>راهنمای آشنا · نسخهٔ ۲.۷.۹</span></div>
-<div class="hero">
-<div class="hero-copy"><div class="eyebrow">راهنمای محصول / آشنا</div><h1>از نصب<br>تا اولین ورود.</h1><p>ورود و ثبت‌نام با پیامک، بله، ایمیل و Passkey</p></div>
-<div class="hero-art" aria-hidden="true"><div class="symbol"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4 10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="caption">کد ورود شما</div><div class="digits"><span>۲</span><span>۷</span><span>۴</span><span>۹</span><span>۱</span><span>۶</span></div><div class="mini-button">تأیید و ورود</div></div>
-</div>
-<div class="requirements"><div class="requirement"><span>حداقل نسخهٔ PHP</span><strong><bdi>۸.۲</bdi></strong></div><div class="requirement"><span>حداقل نسخهٔ وردپرس</span><strong>۵.۸</strong></div></div>
-<h3><span class="number">۱</span>پیش‌نیازها</h3>
-<table><thead><tr><th>مورد</th><th>نیازمندی</th></tr></thead><tbody>
-<tr><td>ionCube Loader</td><td>نصب و فعال روی هاست، متناسب با نسخهٔ PHP.</td></tr>
-<tr><td>مدیریت هوشمند راست‌چین</td><td>برای فعال‌سازی لایسنس محصول.</td></tr>
-<tr><td>سرویس ارسال کد</td><td>پنل پیامکی، بله یا سرویس ایمیل، متناسب با روش ورود انتخابی.</td></tr>
-<tr><td>ووکامرس / المنتور</td><td>اختیاری؛ برای استفاده از امکانات مرتبط با این افزونه‌ها.</td></tr>
-</tbody></table>
-<h3><span class="number">۲</span>نصب افزونه</h3>
-<ol>
-<li><span class="step-number" aria-hidden="true">۱</span>از سایت خود نسخهٔ پشتیبان بگیرید.</li>
-<li><span class="step-number" aria-hidden="true">۲</span>فایل <code>Plugin/ashna-otp.zip</code> را از بستهٔ محصول بردارید.</li>
-<li><span class="step-number" aria-hidden="true">۳</span>در پیشخوان وردپرس به <strong>افزونه‌ها / افزودن / بارگذاری افزونه</strong> بروید.</li>
-<li><span class="step-number" aria-hidden="true">۴</span>فایل ZIP را انتخاب کنید و «نصب هم‌اکنون» را بزنید؛ سپس افزونه را فعال کنید.</li>
-</ol>
-<div class="note">فایل نصب، <code>ashna-otp.zip</code> است؛ بستهٔ اصلیِ حاوی راهنما را در وردپرس بارگذاری نکنید.</div>
-<h3><span class="number">۳</span>فعال‌سازی لایسنس</h3>
-<ol>
-<li><span class="step-number" aria-hidden="true">۱</span>افزونهٔ مدیریت هوشمند راست‌چین را نصب و فعال کنید.</li>
-<li><span class="step-number" aria-hidden="true">۲</span>در حساب راست‌چین، از بخش مدیریت لایسنس محصول، دامنهٔ سایت را ثبت کنید.</li>
-<li><span class="step-number" aria-hidden="true">۳</span>در پیشخوان سایت، بخش مدیریت لایسنس راست‌چین را باز کنید و همگام‌سازی یا اشکال‌زدایی را اجرا کنید.</li>
-</ol>
-<p>پس از تأیید لایسنس، تنظیمات آشنا از منوی افزونه در پیشخوان در دسترس است.</p>
-<div class="footer"><span>Ashna · نصب و فعال‌سازی</span><span class="page-no"><span class="progress"><i class="on"></i><i></i><i></i></span><bdi dir="ltr">۱ / ۳</bdi></span></div>
-</section>
-<section class="page compact">
-<div class="top"><img src="../assets/images/ashna-logo.png" alt="Ashna"><span>تنظیمات و نمایش فرم</span></div>
-<div class="section-head"><span class="chapter">۰۲</span><div><small>تنظیمات و نمایش فرم</small><h2>راه‌اندازی ورود و ثبت‌نام</h2></div></div>
-<h3><span class="number">۴</span>آشنایی با پنل آشنا</h3>
-<table><thead><tr><th>بخش</th><th>کاربرد</th></tr></thead><tbody>
-<tr><td>داشبورد</td><td>مشاهدهٔ آمار ورود و وضعیت کلی سیستم.</td></tr>
-<tr><td>احراز هویت</td><td>روش ورود و اتصال اختیاری Dokan/عضویت؛ ثبت‌نام تخصصی با افزونهٔ اصلی.</td></tr>
-<tr><td>پیامک / بله و ایمیل</td><td>اطلاعات سرویس؛ بودجهٔ پیش‌فرض ۴ ثانیه هر درگاه و ۹ ثانیه کل مسیر.</td></tr>
-<tr><td>ظاهر</td><td>تنظیم فونت، رنگ و حالت نمایش فرم همراه با پیش‌نمایش.</td></tr>
-<tr><td>ووکامرس</td><td>تنظیم فرم ورود در صفحات فروشگاه.</td></tr>
-<tr><td>امنیت و فایروال</td><td>تنظیم محدودیت تلاش، قفل موقت و کپچا.</td></tr>
-<tr><td>ابزارها و پشتیبان</td><td>ارسال آزمایشی، پشتیبان تنظیمات و مدیریت حذف داده‌ها.</td></tr>
-</tbody></table>
-<h3><span class="number">۵</span>تنظیم مسیر ارسال کد</h3>
-<ol>
-<li><span class="step-number" aria-hidden="true">۱</span>در بخش «پیامک» یا «بله و ایمیل»، سرویس موردنظر و اطلاعات اتصال آن را وارد کنید.</li>
-<li><span class="step-number" aria-hidden="true">۲</span>در «احراز هویت»، روش ورود و تنظیمات کد را انتخاب و ذخیره کنید.</li>
-<li><span class="step-number" aria-hidden="true">۳</span>از «ابزارها و پشتیبان» یک پیام آزمایشی ارسال کنید.</li>
-</ol>
-<h3><span class="number">۶</span>نمایش فرم ورود</h3>
-<p>یک برگه بسازید و کد زیر را در بلوک «کد کوتاه» قرار دهید:</p>
+*{box-sizing:border-box}@page{size:A4;margin:0}body{margin:0;background:#e7edf7;color:#24334d;font:9.3pt/1.95 Estedad,sans-serif}
+.page{position:relative;width:210mm;height:297mm;padding:12mm 16mm 20mm;background:#fff;break-after:page;overflow:hidden;border-top:5px solid #2563eb}.page:last-child{break-after:auto}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:8pt;color:#64738e;border-bottom:1px solid #e2e9f3;padding-bottom:12px;margin-bottom:18px}.top img{width:100px;height:33px;object-fit:contain}.hero{background:#17376e;color:white;padding:23px;border-radius:14px;margin-bottom:18px}.hero span{color:#b3ceff;font-size:8pt}.hero h1{font-size:26pt;line-height:1.65;margin:8px 0}.hero p{font-size:9pt;color:#e1ebff;margin:0}
+h2{font-size:21pt;line-height:1.65;margin:4px 0 15px;font-weight:900;letter-spacing:-.5px}h3{font-size:11pt;margin:14px 0 7px;color:#1b467e}.chapter{font-size:8pt;font-weight:700;color:#2563eb}p{margin:7px 0 10px}.small{font-size:8pt;color:#66748a;line-height:1.9}
+ol{list-style:none;margin:8px 0 14px;padding:0}li{position:relative;padding-right:28px;margin:8px 0;min-height:22px}.step-number{position:absolute;right:0;top:2px;width:21px;height:21px;border-radius:50%;background:#ecf3ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:8pt;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:8.7pt;line-height:1.9;margin:10px 0 14px}th,td{text-align:right;vertical-align:top;border:1px solid #e0e8f3;padding:7px 10px}th{background:#f0f5fc;color:#496589;font-size:8pt}td:first-child{width:30%;font-weight:700}figure{margin:13px 0}figure img{display:block;width:100%;height:auto;border:1px solid #dce5f0;border-radius:6px}figcaption{font-size:7.5pt;color:#687a92;margin-top:7px;line-height:1.8}
+.note{background:#eef4ff;border-right:3px solid #2563eb;border-radius:7px;padding:10px 13px;font-size:8.5pt;line-height:1.95;margin:13px 0}.warn{background:#fff7e9;border-color:#df9d24;color:#71541e}code{display:inline-block;direction:ltr;unicode-bidi:isolate;font:8.2pt/1.7 monospace;overflow-wrap:anywhere}.codebox{direction:ltr;text-align:left;background:#18345b;color:#fff;padding:12px 18px;border-radius:9px;font:11pt/1.7 monospace;margin:13px 0}
+.footer{position:absolute;bottom:9mm;left:16mm;right:16mm;display:flex;justify-content:space-between;border-top:1px solid #dde5f0;padding-top:10px;font-size:8pt;color:#71829d}
+@media print{body{background:white}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>نصب افزونه · نسخهٔ ۲.۷.۹</span></div>
+<div class="hero"><span>راهنمای محصول · نسخهٔ ۲.۷.۹</span><h1>ابتدا نصب،<br>سپس راه‌اندازی.</h1><p>آشنا؛ ورود و ثبت‌نام وردپرس با کد یکبارمصرف و Passkey</p></div>
+<h3>پیش‌نیاز نسخهٔ لایسنس‌دار</h3><table><tr><th>مورد</th><th>نیازمندی</th></tr><tr><td>وردپرس و PHP</td><td>وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲؛ پیش از تغییر PHP از هاست پشتیبان بگیرید.</td></tr><tr><td>لایسنس</td><td>فایل معتبر صادرشدهٔ راست‌چین، مدیریت هوشمند راست‌چین و ionCube سازگار با فایل و PHP وب.</td></tr><tr><td>ارسال و Passkey</td><td>حساب سرویس‌دهنده، اعتبار و دسترسی خروجی هاست؛ برای Passkey، HTTPS و دستگاه/مرورگر سازگار.</td></tr></table>
+<h3>مراحل نصب</h3><ol><li><span class="step-number">۱</span>از فایل‌ها و پایگاه دادهٔ سایت نسخهٔ پشتیبان تهیه کنید؛ ابتدا روی staging نصب کنید.</li><li><span class="step-number">۲</span>بستهٔ محصول را استخراج و فایل <code>Plugin/ashna-otp.zip</code> را بردارید؛ ZIP بیرونی را در وردپرس نصب نکنید.</li><li><span class="step-number">۳</span>در پیشخوان به «افزونه‌ها  /  افزودن افزونه  /  بارگذاری افزونه» بروید. ZIP افزونه را انتخاب و «نصب هم‌اکنون» را بزنید.</li><li><span class="step-number">۴</span>افزونه را فعال کنید. لایسنس را طبق راهنمای راست‌چین برای دامنهٔ مجاز ثبت/همگام‌سازی کنید.</li><li><span class="step-number">۵</span>پس از فعال‌شدن معتبر لایسنس، منوی آشنا و صفحهٔ تنظیمات را باز کنید. اگر خطا دارید، به صفحهٔ آخر این راهنما مراجعه کنید.</li></ol>
+<div class="note warn">بستهٔ فعلی آماده‌سازی، فایل واقعی لایسنس را ندارد و بدون آن امکانات نسخهٔ لایسنس‌دار فعال نمی‌شوند. مالک محصول باید پیش از توزیع، فایل معتبر را کنار <code>ashna.php</code> قرار دهد و بسته را مجدداً بسازد. راهنما جایگزین تأیید لایسنس نیست.</div>
+<p class="small">راهنما ابتدا نصب را توضیح می‌دهد؛ سپس پنج تصویر باکیفیت از قالب‌های واقعی تنظیمات، مراحل راه‌اندازی را نشان می‌دهند. تصاویر با داده‌های آزمایشی رندر شده‌اند؛ آزمون نصب زندهٔ مشتری انجام نشده است.</p>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۱ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>راه‌اندازی مسیر ارسال · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۲ / درگاه و مسیر پشتیبان</div><h2>اتصال سرویس ارسال کد</h2>
+<ol><li><span class="step-number">۱</span>از پنل سرویس‌دهنده، کلید API و شناسهٔ الگوی معتبر را دریافت کنید؛ اطلاعات محرمانه را منتشر نکنید.</li><li><span class="step-number">۲</span>در تنظیمات «پیامک»، سرویس اصلی را انتخاب و فیلدهای همان سرویس را تکمیل کنید. سرویس‌های قابل انتخاب شامل SMS.ir، کاوه‌نگار، ملی‌پیامک، فراز و آی‌پی‌پنل‌اند.</li><li><span class="step-number">۳</span>در صورت نیاز، حداکثر سه درگاه پشتیبان را به ترتیب اولویت مشخص کنید. هر سرویس باید حساب و تنظیمات معتبر خودش را داشته باشد.</li><li><span class="step-number">۴</span>زمان انتظار هر تلاش و کل مسیر را تنظیم و ذخیره کنید؛ سپس با ابزار ارسال آزمایشی و شمارهٔ مجاز خودتان، پاسخ واقعی سرویس را بررسی کنید.</li></ol>
+<figure><img src="../parsna-landing/assets/settings/01-routing.webp" alt="انتخاب سرویس اصلی و تنظیم زمان انتظار"><figcaption>انتخاب سرویس اصلی و تنظیم زمان انتظار — رندر آفلاین قالب واقعی با مقادیر پیش‌فرض؛ نه نصب زندهٔ وردپرس.</figcaption></figure>
+<div class="note">پیش‌فرض هر تلاش ۴ ثانیه و کل مسیر پیامک/بله ۹ ثانیه است. تلاش‌ها ترتیبی‌اند؛ بودجهٔ API زمان قطعی تحویل پیامک نیست. نتیجهٔ مبهم و ارسال تکراری ممکن است. هزینهٔ پنل مستقل از افزونه است.</div>
+<h3>ایمیل و بله</h3><p>برای استفاده از این روش‌ها، اطلاعات اتصال را در «بله و ایمیل» تکمیل کنید. ارسال ایمیل به تنظیم درست سرویس ایمیل هاست وابسته است. قبل از انتشار، دریافت واقعی هر مسیر انتخاب‌شده را آزمایش کنید.</p>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۲ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>کد تأیید و ثبت‌نام · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۳ / احراز هویت</div><h2>رفتار ورود را مشخص کنید</h2>
+<ol><li><span class="step-number">۱</span>تب «احراز هویت» را باز کنید و روش ورود با موبایل، ایمیل یا هر دو را متناسب با مسیر ارسال انتخاب کنید.</li><li><span class="step-number">۲</span>طول و اعتبار کد و فاصلهٔ ارسال مجدد را بررسی کنید؛ پیش‌فرض اعتبار ۱۲۰ ثانیه و فاصلهٔ ارسال مجدد ۶۰ ثانیه است.</li><li><span class="step-number">۳</span>برای ثبت‌نام عمومی، دریافت نام/ایمیل و پذیرش قوانین را متناسب با سیاست سایت تنظیم کنید. نقش ویژه یا فروشنده را از ثبت‌نام عمومی اعطا نکنید.</li><li><span class="step-number">۴</span>مقصد بعد از ورود را تعیین کنید، تنظیمات را ذخیره و ورود حساب موجود و ثبت‌نام مجاز را جداگانه آزمایش کنید.</li></ol>
+<figure><img src="../parsna-landing/assets/settings/03-authentication.webp" alt="تنظیم کد، ثبت‌نام عمومی و مقصد پس از ورود"><figcaption>تنظیم کد، ثبت‌نام عمومی و مقصد پس از ورود — رندر آفلاین قالب واقعی با مقادیر پیش‌فرض؛ نه نصب زندهٔ وردپرس.</figcaption></figure>
+<div class="note">با فعال‌کردن اتصال‌های عضویت/دکان، ثبت‌نام عمومی آشنا مسدود می‌شود؛ ثبت‌نام تخصصی، پرداخت و تأیید در افزونهٔ اصلی باقی می‌ماند. ورود موفق از نشست استاندارد وردپرس استفاده می‌کند، نه JWT مستقل.</div>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۳ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>راه‌اندازی Passkey · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۴ / ورود بدون رمز</div><h2>Passkey را فعال و آزمایش کنید</h2>
+<ol><li><span class="step-number">۱</span>HTTPS سایت، پشتیبانی مرورگر/دستگاه و فعال‌بودن قابلیت موردنیاز در هاست را بررسی کنید.</li><li><span class="step-number">۲</span>در تنظیمات احراز هویت، گزینهٔ Passkey و محل نمایش پیشنهاد ثبت/مدیریت کلید را تنظیم و ذخیره کنید.</li><li><span class="step-number">۳</span>در حساب کاربر آزمایشی وارد شوید و با رابط واقعی افزونه، کلید ورود را ثبت کنید. راهنمای دستگاه ممکن است اثر انگشت، تشخیص چهره یا PIN بخواهد.</li><li><span class="step-number">۴</span>از حساب خارج شوید و ورود با همان کلید را بررسی کنید؛ حذف کلید و مسیر جایگزین ورود را نیز آزمایش کنید.</li></ol>
+<figure><img src="../parsna-landing/assets/settings/02-passkey.webp" alt="گزینه‌های Passkey و مدیریت کلید ورود"><figcaption>گزینه‌های Passkey و مدیریت کلید ورود — رندر آفلاین قالب واقعی با مقادیر پیش‌فرض؛ نه نصب زندهٔ وردپرس.</figcaption></figure>
+<h3>نمایش مدیریت کلید در برگه</h3><p>در صورت نیاز، شورت‌کد زیر را در برگه یا ابزارک شورت‌کد قرار دهید؛ کاربر باید وارد حساب خود شده باشد.</p><div class="codebox">[ashna_passkey_manager]</div>
+<table><tr><th>مورد</th><th>نکتهٔ اجرایی</th></tr><tr><td>ثبت کلید</td><td>قبل از اولین ورود با Passkey باید کلید در حساب واقعی ثبت شود.</td></tr><tr><td>دادهٔ بیومتریک</td><td>تأیید در دستگاه انجام می‌شود؛ آشنا تصویر چهره یا اثر انگشت را دریافت نمی‌کند.</td></tr><tr><td>تغییر دستگاه</td><td>انتقال/همگام‌سازی کلید تابع دستگاه و سرویس کاربر است؛ کارکرد روی همهٔ دستگاه‌ها تضمین نشده است.</td></tr><tr><td>Permission</td><td>ورود حساب موجود نقش و مجوز آن را حفظ می‌کند؛ جایگزین سیاست عضویت یا همهٔ افزونه‌های امنیتی نیست.</td></tr></table>
+<div class="note warn">نمونهٔ تعاملی در لندینگ، Passkey واقعی اجرا نمی‌کند. این مراحل باید در نصب وردپرس HTTPS واقعی آزمایش شوند.</div>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۴ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>تنظیم امنیت · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۵ / محدودیت درخواست و تأیید</div><h2>امنیت را پیش از انتشار تنظیم کنید</h2>
+<ol><li><span class="step-number">۱</span>در «امنیت و فایروال»، سقف ساعتی هر گیرنده و هر IP و فاصلهٔ ارسال مجدد را بررسی کنید.</li><li><span class="step-number">۲</span>حداکثر تلاش تأیید و مدت قفل موقت را تنظیم کنید. در حساب آزمایشی، کد نادرست را وارد و اعمال قفل را بررسی کنید.</li><li><span class="step-number">۳</span>در صورت نیاز، کپچا را انتخاب و کلیدهای معتبرش را وارد کنید؛ صرف انتخاب نوع کپچا بدون تنظیم صحیح کلیدها کافی نیست.</li><li><span class="step-number">۴</span>لیست سیاه/سفید را محدود و هدفمند نگه دارید؛ سپس ذخیره و ارسال‌های تکراری را آزمایش کنید.</li></ol>
+<figure><img src="../parsna-landing/assets/settings/04-security.webp" alt="کنترل درخواست، قفل موقت و کپچا"><figcaption>کنترل درخواست، قفل موقت و کپچا — رندر آفلاین قالب واقعی با مقادیر پیش‌فرض؛ نه نصب زندهٔ وردپرس.</figcaption></figure>
+<table><tr><th>پیش‌فرض</th><th>مقدار</th></tr><tr><td>هر شماره/ایمیل و هر IP</td><td>۵ و ۱۵ درخواست در ساعت گذشته</td></tr><tr><td>تأیید ناموفق</td><td>۵ تلاش؛ قفل موقت ۱۵ دقیقه</td></tr><tr><td>ارسال مجدد</td><td>۶۰ ثانیه؛ لیست سفید استثنا دارد</td></tr></table>
+<div class="note warn">این کنترل‌ها limiter مستقل «هر IP در دقیقه» یا رزرو اتمیک سهمیه نیستند. در بار هم‌زمان و failover، جلوگیری قطعی از مصرف اعتبار تضمین نمی‌شود. برای سایت حساس، WAF/Rate Limiting و سقف مصرف/هشدار پنل پیامکی نیز لازم است.</div>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۵ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>ظاهر فرم · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۶ / شخصی‌سازی</div><h2>فرم را هم‌رنگ سایت کنید</h2>
+<ol><li><span class="step-number">۱</span>در تب «ظاهر»، قالب، رنگ، فونت، ابعاد و گوشه‌های فرم را انتخاب کنید.</li><li><span class="step-number">۲</span>لوگوی دلخواه و در صورت نیاز CSS سفارشی را اضافه کنید؛ استعداد همراه افزونه است، فونت تجاری نیازمند مجوز جداگانه است.</li><li><span class="step-number">۳</span>نتیجه را در پیش‌نمایش بررسی، ذخیره و فرم واقعی را در موبایل/دسکتاپ باز کنید.</li></ol>
+<figure><img src="../parsna-landing/assets/settings/05-appearance.webp" alt="تنظیم ظاهر همراه پیش‌نمایش فرم"><figcaption>تنظیم ظاهر همراه پیش‌نمایش فرم — رندر آفلاین قالب واقعی با مقادیر پیش‌فرض؛ نه نصب زندهٔ وردپرس.</figcaption></figure>
+<p class="small">حالت نمایش در صفحه، پاپ‌آپ، کشوی کناری یا شیت پایین را متناسب با مسیر کاربر انتخاب کنید. پیش‌نمایش پنل به‌تنهایی جای تست فرم واقعی با قالب سایت را نمی‌گیرد.</p>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۶ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>نمایش فرم و اتصال‌ها · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۷ / انتشار فرم</div><h2>فرم را در مسیر کاربر قرار دهید</h2>
+<h3>برگهٔ ورود با شورت‌کد</h3><ol><li><span class="step-number">۱</span>یک برگه در وردپرس بسازید و بلوک «کد کوتاه» یا ابزارک شورت‌کد المنتور را در آن قرار دهید.</li><li><span class="step-number">۲</span>شورت‌کد زیر را وارد، برگه را منتشر و در مرورگر مهمان باز کنید.</li><li><span class="step-number">۳</span>برای فرم یا دکمهٔ ورود المنتور می‌توانید از ویجت‌های آشنا استفاده کنید؛ مقصد پس از ورود را روی سایت واقعی بررسی کنید.</li></ol>
 <div class="codebox">[ashna_otp_login]</div>
-<p>برای نمایش دکمهٔ بازکردن فرم مودال از کد زیر استفاده کنید:</p>
-<div class="codebox">[ashna_otp_button]</div>
-<p>در المنتور نیز می‌توانید ویجت اختصاصی ورود آشنا را به صفحه اضافه کنید. حالت‌های مودال، کشوی کناری و شیت پایین از بخش «ظاهر» انتخاب می‌شوند.</p>
-<div class="note"><strong>آزمایش نهایی:</strong> در یک پنجرهٔ خصوصی مرورگر، دریافت کد و ورود را با حساب آزمایشی بررسی کنید. اگر از ووکامرس استفاده می‌کنید، فرم حساب کاربری فروشگاه را هم آزمایش کنید.</div>
-<div class="footer"><span>Ashna · تنظیمات و فرم ورود</span><span class="page-no"><span class="progress"><i></i><i class="on"></i><i></i></span><bdi dir="ltr">۲ / ۳</bdi></span></div>
-</section>
-<section class="page compact">
-<div class="top"><img src="../assets/images/ashna-logo.png" alt="Ashna"><span>شخصی‌سازی و نگهداری</span></div>
-<div class="section-head"><span class="chapter">۰۳</span><div><small>شخصی‌سازی و نگهداری</small><h2>ظاهر، به‌روزرسانی و پشتیبانی</h2></div></div>
-<h3><span class="number">۷</span>ظاهر فرم و شماره موبایل</h3>
-<p>در بخش «ظاهر»، فونت، رنگ‌ها و نوع نمایش فرم را انتخاب کنید و نتیجه را در پیش‌نمایش ببینید.</p>
-<p>در حالت نمایش پیش‌شمارهٔ <bdi dir="ltr">+۹۸</bdi>، شماره بدون صفر اول وارد می‌شود؛ مانند <bdi dir="ltr">۹۱۲۱۲۳۴۵۶۷</bdi>. در حالت معمول، از قالب <bdi dir="ltr">۰۹۱۲۱۲۳۴۵۶۷</bdi> استفاده کنید.</p>
-<h3><span class="number">۸</span>فونت‌های سفارشی</h3>
-<p>فونت استعداد همراه افزونه است. فونت‌های تجاری زیر را می‌توانید با تهیهٔ مجوز به افزونه اضافه کنید:</p>
-<div class="font-tags"><span>ایران‌سنس</span><span>یکان‌بخ</span><span>دانا</span></div>
-<p class="muted">مسیر و نام فایل‌های فونت در راهنمای <code>assets/fonts/README.txt</code> آمده است.</p>
-<h3><span class="number">۹</span>به‌روزرسانی افزونه</h3>
-<ol>
-<li><span class="step-number" aria-hidden="true">۱</span>از سایت و تنظیمات افزونه نسخهٔ پشتیبان بگیرید.</li>
-<li><span class="step-number" aria-hidden="true">۲</span>آخرین فایل نصب را از حساب راست‌چین دریافت کنید.</li>
-<li><span class="step-number" aria-hidden="true">۳</span>در بخش بارگذاری افزونه، فایل جدید را نصب و گزینهٔ جایگزینی نسخهٔ فعلی را انتخاب کنید.</li>
-<li><span class="step-number" aria-hidden="true">۴</span>پس از به‌روزرسانی، کش سایت را پاک و ارسال کد و ورود را بررسی کنید.</li>
-</ol>
-<div class="note">برای تغییر نام، نسخهٔ قبلی را غیرفعال و پوشهٔ کامل جدید را نصب کنید؛ افزونهٔ قبلی را حذف نکنید و دو نسخه را هم‌زمان فعال نکنید.</div>
-<h3><span class="number">۱۰</span>حذف افزونه</h3>
-<p>برای حذف، ابتدا آشنا را غیرفعال و سپس از فهرست افزونه‌ها حذف کنید.</p>
-<div class="note warn">اگر می‌خواهید تنظیمات و لاگ‌ها حفظ شوند، گزینهٔ <strong>«حذف داده‌ها هنگام حذف افزونه»</strong> را در بخش «ابزارها و پشتیبان» خاموش نگه دارید. با فعال‌بودن این گزینه، داده‌های مربوط به افزونه هنگام حذف پاک می‌شوند.</div>
-<h3><span class="number">۱۱</span>پشتیبانی</h3>
-<p>از بخش پشتیبانی محصول در راست‌چین درخواست خود را ثبت کنید. نسخهٔ افزونه، نسخهٔ PHP و تصویر یا متن خطا را همراه درخواست بفرستید؛ اطلاعات محرمانه را در تصاویر و گزارش‌ها قرار ندهید.</p>
-<div class="footer"><span>Ashna · راهنمای نسخهٔ ۲.۷.۹</span><span class="page-no"><span class="progress"><i></i><i></i><i class="on"></i></span><bdi dir="ltr">۳ / ۳</bdi></span></div>
-</section>
-</body>
-</html>
+<h3>ووکامرس</h3><p>از تنظیمات ووکامرس آشنا، نمایش ورود در حساب کاربری و تسویه‌حساب را تنظیم کنید. با مشتری آزمایشی، سبد مهمان، ورود، ادامهٔ تسویه‌حساب، سفارش‌های همان مشتری و خروج را بررسی کنید. انتقال نشست مهمان از API عمومی ووکامرس، در صورت فعال‌بودن نشست انجام می‌شود.</p>
+<h3>اتصال‌های اختیاری حساب موجود</h3><table><tr><th>افزونه</th><th>محدودهٔ اتصال</th></tr><tr><td>Dokan</td><td>تشخیص فروشندهٔ موجود و مقصد داشبورد/حساب؛ ایجاد فروشنده یا تأیید مدیر با دکان است.</td></tr><tr><td>Paid Memberships Pro</td><td>ورود حساب موجود و مقصد حساب/انتخاب پلن؛ پرداخت و محدودیت محتوا با PMPro است.</td></tr><tr><td>Ultimate Member</td><td>ورود حساب موجود با بررسی وضعیت حساب؛ گردش‌کارها و افزودنی‌های تخصصی کامل پوشش داده نمی‌شوند.</td></tr><tr><td>MemberPress</td><td>فقط پل آزمایشی؛ سازگاری واقعی تأیید نشده و به‌عنوان قابلیت تأییدشده عرضه نمی‌شود.</td></tr></table>
+<div class="note">اتصال‌ها پیش‌فرض خاموش‌اند. فقط برای افزونه‌ای که در سایت نصب است فعال کنید. تست اتصال‌ها API/fixture است؛ آزمون کامل قالب، پرداخت، افزونه‌های جانبی و permissionها روی staging خودتان لازم است.</div>
+<h3>آزمون نهایی راه‌اندازی</h3><p>ارسال واقعی پیامک/ایمیل/بله، کد غلط و منقضی، نقش حساب موجود، مقصد بازگشت، ورود مجدد، سبد خرید و خروج را بررسی کنید. قبل از انتشار، حالت Sandbox را مطابق نیاز سایت بررسی کنید؛ ارسال آزمایشی مدیریتی جای محدودیت امنیتی کاربر عمومی نیست.</p>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۷ / ۸</bdi></div></section><section class="page"><div class="top"><img src="../assets/images/ashna-logo.png" alt="آشنا"><span>به‌روزرسانی و عیب‌یابی · نسخهٔ ۲.۷.۹</span></div>
+<div class="chapter">۰۸ / نگهداری</div><h2>به‌روزرسانی بدون حذف داده‌ها</h2>
+<ol><li><span class="step-number">۱</span>از فایل‌ها، دیتابیس، تنظیمات و فایل معتبر لایسنس پشتیبان بگیرید.</li><li><span class="step-number">۲</span>آخرین ZIP کامل افزونه را دریافت کنید؛ فایل بروزرسان همان بستهٔ نصب کامل است، نه ZIP بیرونی محصول.</li><li><span class="step-number">۳</span>از «افزونه‌ها  /  افزودن  /  بارگذاری»، ZIP را بارگذاری و «جایگزینی نسخهٔ فعلی» را انتخاب کنید. ابتدا افزونه را حذف نکنید.</li><li><span class="step-number">۴</span>اگر پوشهٔ نسخهٔ قدیمی نام متفاوتی دارد، آن نسخه را غیرفعال و پوشهٔ کامل جدید را نصب کنید؛ فایل‌ها را مخلوط و دو نسخه را هم‌زمان فعال نکنید.</li><li><span class="step-number">۵</span>کش را پاک و ارسال، ورود مجدد، نقش‌ها، Passkey و خرید را بررسی کنید.</li></ol>
+<h3>اگر افزونه فعال نمی‌شود</h3><table><tr><th>نشانه</th><th>بررسی</th></tr><tr><td>خطای PHP/Loader</td><td>نسخهٔ PHP وب، ionCube فعال و سازگاری دقیق فایل لایسنس با Loader را از هاست بپرسید؛ PHP CLI ممکن است متفاوت باشد.</td></tr><tr><td>لایسنس غیرفعال</td><td>وجود فایل معتبر کنار ashna.php، دامنهٔ مجاز و وضعیت مدیریت لایسنس راست‌چین را بررسی کنید؛ فایل را دستکاری نکنید.</td></tr><tr><td>پیامک دریافت نمی‌شود</td><td>اعتبار پنل، کلیدها/الگو، دسترسی خروجی هاست، پاسخ درگاه و گزارش ارسال را بررسی کنید.</td></tr><tr><td>ورود/انتقال نادرست</td><td>HTTPS/کوکی، مقصد بازگشت، کش فرم، وضعیت حساب و تعارض افزونه‌ها را در staging بررسی کنید.</td></tr></table>
+<h3>پشتیبان و حذف</h3><p>از «ابزارها و پشتیبان» نسخهٔ پشتیبان تنظیمات تهیه کنید. گزینهٔ «حذف داده‌ها هنگام حذف افزونه» را فقط آگاهانه فعال کنید؛ حذف افزونه با این گزینه می‌تواند داده‌های آن را پاک کند. برای آپدیت از حذف استفاده نکنید.</p>
+<div class="note">در درخواست پشتیبانی، نسخهٔ افزونه، وردپرس، PHP، شرح مراحل و پیام خطای بازبینی‌شده را ارسال کنید؛ API key، رمز، شماره کاربران، nonce یا فایل لایسنس را عمومی منتشر نکنید.</div>
+<p class="small">این راهنما برای نسخهٔ لایسنس‌دار است. نسخهٔ بدون لایسنس موجود در بستهٔ تحویل فقط جهت آزمایش جداگانه است؛ برای ارسال رسمی از آن استفاده نکنید. قبل از پذیرش رسمی بازار، شرایط پشتیبانی را از صفحهٔ تأییدشدهٔ محصول بررسی کنید.</p>
+<div class="footer"><span>آشنا · راهنمای نصب و راه‌اندازی</span><bdi>۸ / ۸</bdi></div></section></body></html>
