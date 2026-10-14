@@ -484,11 +484,17 @@ class Ashna_Passkey {
 		$signature_bin = self::base64url_decode( $signature_b64 );
 		$signed_data   = $auth_data_bin . hash( 'sha256', $client_data_raw, true );
 
-		if ( function_exists( 'openssl_verify' ) ) {
-			$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 );
-			if ( 1 !== $verified ) {
-				wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
-			}
+		if ( ! function_exists( 'openssl_verify' ) ) {
+			wp_send_json_error( array( 'message' => 'امکان بررسی امضای بیومتریک در سرور وجود ندارد. با کد یکبارمصرف وارد شوید.' ) );
+		}
+		$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 );
+		if ( 1 !== $verified ) {
+			wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
+		}
+
+		$session = Ashna_Session::login( $user, 'passkey' );
+		if ( is_wp_error( $session ) ) {
+			wp_send_json_error( array( 'message' => $session->get_error_message(), 'code' => $session->get_error_code() ) );
 		}
 
 		// Update last_used timestamp
@@ -509,30 +515,13 @@ class Ashna_Passkey {
 			)
 		);
 
-		// Log the user into WordPress
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true );
-		do_action( 'wp_login', $user->user_login, $user );
-
-		// Resolve redirect URL
-		$behavior = Ashna_Helper::get_option( 'redirect_behavior', 'auto' );
-		if ( 'custom' === $behavior && ! empty( Ashna_Helper::get_option( 'custom_redirect_url' ) ) ) {
-			$final_redirect = Ashna_Helper::get_option( 'custom_redirect_url' );
-		} elseif ( 'my_account' === $behavior && function_exists( 'wc_get_page_permalink' ) ) {
-			$final_redirect = wc_get_page_permalink( 'myaccount' );
-		} elseif ( 'home' === $behavior ) {
-			$final_redirect = home_url( '/' );
-		} elseif ( ! empty( $redirect_to ) ) {
-			$final_redirect = $redirect_to;
-		} else {
-			$final_redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
-		}
+		$final_redirect = Ashna_Auth::resolve_redirect_url( $redirect_to, $user );
 
 		wp_send_json_success(
 			array(
 				'message'  => sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name ),
 				'redirect' => $final_redirect,
+				'nonce'    => $session['nonce'],
 			)
 		);
 	}

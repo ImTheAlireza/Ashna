@@ -22,7 +22,7 @@ with ZipFile(installer) as z:
 # The packaging README (not the customer PDF) records the missing-license status.
 assert not license_present, 'Update the packaging license-presence notice before distributing a new licensed bundle'
 installer_sha = hashlib.sha256(installer.read_bytes()).hexdigest()
-readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۷
+readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۸
 ویرایش راهنما: ۱۴ اکتبر ۲۰۲۶
 
 مهم: این بسته هنوز فایل واقعی لایسنس راست‌چین را ندارد و بستهٔ کامل آمادهٔ انتشار نیست.

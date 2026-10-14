@@ -82,3 +82,38 @@ licensed verifier invariants and final ZIP contents after rebuilding artifacts.
 
 `node tests/rebrand-browser.cjs` verifies browser preference/enrollment migration.
 `PHP_BINARY=/path/to/php python tests/lint-php.py` lints every repository PHP source.
+
+## Native authentication/session regression (2.7.8)
+
+```sh
+python tests/prepare-session-tests.py
+PHP_BINARY=/path/to/php python tests/run-session-integration.py
+```
+
+Requires PHP with OpenSSL (including EC key generation), `gh` for initial cache
+preparation and the ability to use `-d disable_functions=openssl_verify` for the
+separate fail-closed scenario. Official WP 6.8.3 cookie/token/nonce/user/role code
+and WooCommerce 9.9.5 session-handler, login and order-ownership functions are
+cached in `.cache/session-tests`; selected WC functions/polyfills are evaluated
+verbatim in the isolated fixture. Storage, environment, cache, order rows and
+JSON/OTP transport are fixtures; this does not boot a whole WP/WC site.
+
+The tests run actual plugin AJAX handlers for valid/invalid OTP and password,
+signed/invalid/replayed Passkey assertions, OpenSSL unavailability, immediate
+post-OTP Passkey registration and safe signup roles. They verify native token
+rotation/validation/revocation, rehydration of user roles on a simulated next
+request, ownership permissions, real WC guest-session migration, expiration,
+tampering, headers already sent, account policy rejection and cookie suppression.
+
+Browser nonce handoff test (actual frontend.js and jQuery, mocked transport):
+
+```sh
+npm ci --prefix product-images/gallery-design
+npm install --prefix .cache/frontend-tests jquery@3.7.1
+ASHNA_BUNDLED_LIBS=1 node tests/post-login-nonce.mjs
+```
+
+It verifies the guest nonce in OTP verification, then the freshly returned
+nonce in immediate authenticated Passkey enrollment, with browser storage both
+available and blocked. No real SMS, browser authenticator, production HTTP cookie
+transport, checkout/payment, vendor license or external Redis server is tested.

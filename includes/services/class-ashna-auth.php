@@ -244,10 +244,10 @@ class Ashna_Auth {
 			}
 		}
 
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true, is_ssl() );
-		do_action( 'wp_login', $user->user_login, $user );
+		$session = Ashna_Session::login( $user, 'otp' );
+		if ( is_wp_error( $session ) ) {
+			$this->send_error( array( 'message' => $session->get_error_message(), 'code' => $session->get_error_code() ) );
+		}
 		Ashna_Compatibility::action( 'ashna_otp_user_authenticated', $user, $identifier, $type, $is_new_user );
 
 		$final_redirect = self::resolve_redirect_url( $redirect_to, $user );
@@ -257,6 +257,7 @@ class Ashna_Auth {
 				'message'     => $is_new_user ? 'ثبت‌نام و ورود شما با موفقیت انجام شد! در حال انتقال...' : 'ورود با موفقیت انجام شد! در حال انتقال...',
 				'redirect_to' => $final_redirect,
 				'user_id'     => $user->ID,
+				'nonce'       => $session['nonce'],
 				'is_new_user' => $is_new_user,
 			)
 		);
@@ -296,14 +297,15 @@ class Ashna_Auth {
 
 		Ashna_Security::clear_password_attempts( $identifier );
 
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true, is_ssl() );
-		do_action( 'wp_login', $user->user_login, $user );
+		$session = Ashna_Session::login( $user, 'password', $password );
+		if ( is_wp_error( $session ) ) {
+			$this->send_error( array( 'message' => $session->get_error_message(), 'code' => $session->get_error_code() ) );
+		}
 
 		$this->send_success(
 			array(
 				'message'     => 'ورود با موفقیت انجام شد! در حال انتقال...',
+				'nonce'       => $session['nonce'],
 				'redirect_to' => self::resolve_redirect_url( $redirect_to, $user ),
 			)
 		);
@@ -419,6 +421,18 @@ class Ashna_Auth {
 		}
 	}
 
+	/** Choose only the public signup roles offered by the settings UI. */
+	public static function get_registration_role() {
+		$role = Ashna_Helper::get_option( 'default_user_role', 'customer' );
+		if ( ! in_array( $role, array( 'customer', 'subscriber' ), true ) || ! wp_roles()->is_role( $role ) ) {
+			$role = 'subscriber';
+		}
+		if ( ! wp_roles()->is_role( $role ) ) {
+			return new WP_Error( 'ashna_registration_role_unavailable', 'نقش امن ثبت‌نام در سایت وجود ندارد. با مدیر سایت تماس بگیرید.' );
+		}
+		return $role;
+	}
+
 	/**
 	 * Automatically register a new user from verified phone or email
 	 *
@@ -453,9 +467,9 @@ class Ashna_Auth {
 				: '';
 		}
 
-		$desired_role = Ashna_Helper::get_option( 'default_user_role', 'customer' );
-		if ( 'customer' === $desired_role && ! wp_roles()->is_role( 'customer' ) ) {
-			$desired_role = get_option( 'default_role', 'subscriber' );
+		$desired_role = self::get_registration_role();
+		if ( is_wp_error( $desired_role ) ) {
+			return $desired_role;
 		}
 
 		$full_name    = ! empty( $extra['full_name'] ) ? trim( $extra['full_name'] ) : '';
@@ -510,7 +524,7 @@ class Ashna_Auth {
 	 * @param WP_User $user               Authenticated user.
 	 * @return string
 	 */
-	private static function resolve_redirect_url( $requested_redirect, $user ) {
+	public static function resolve_redirect_url( $requested_redirect, $user ) {
 		$admin_redirect = trim( (string) Ashna_Helper::get_option( 'admin_redirect_url', '' ) );
 		if ( ! empty( $admin_redirect ) && user_can( $user, 'manage_options' ) ) {
 			return esc_url_raw( $admin_redirect );

@@ -4,6 +4,21 @@
 (function ($) {
 	'use strict';
 
+	// A guest nonce cannot authorize requests once the browser receives login cookies.
+	function updateSessionNonce(data) {
+		if (data && typeof data.nonce === 'string' && data.nonce) {
+			ashnaOtpParams.nonce = data.nonce;
+		}
+	}
+
+	function isPasskeyEnrollmentRecorded() {
+		try {
+			return window.localStorage.getItem('ashna_pk_enrolled') === '1';
+		} catch (error) {
+			return false;
+		}
+	}
+
 	function toEnglishDigits(str) {
 		if (!str) {
 			return '';
@@ -447,6 +462,7 @@
 			})
 				.done(function (res) {
 					if (res && res.success) {
+						updateSessionNonce(res.data);
 						showAlert(res.data.message, 'success');
 						var finalUrl = res.data.redirect_to || window.location.href;
 						var $enrollStep = $wrapper.find('.ashna-step-passkey-enroll');
@@ -454,7 +470,7 @@
 							$wrapper.attr('data-passkey-prompt') === '1' &&
 							isWebAuthnSupported() &&
 							$enrollStep.length > 0 &&
-							window.localStorage.getItem('ashna_pk_enrolled') !== '1';
+							!isPasskeyEnrollmentRecorded();
 
 						if (shouldPromptPasskey) {
 							$stepVerify.hide();
@@ -533,6 +549,7 @@
 			})
 				.done(function (res) {
 					if (res && res.success) {
+						updateSessionNonce(res.data);
 						showAlert(res.data.message, 'success');
 						setTimeout(function () {
 							if (res.data.redirect_to) {
@@ -609,6 +626,7 @@
 						})
 						.then(function (verifyRes) {
 							if (verifyRes && verifyRes.success) {
+								updateSessionNonce(verifyRes.data);
 								try {
 									window.localStorage.setItem('ashna_pk_enrolled', '1');
 								} catch (e) {}

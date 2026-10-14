@@ -254,6 +254,11 @@ class Ashna_Admin {
 			$clean['custom_redirect_url'] = $clean['redirect_url'];
 		}
 
+		// Do not let an imported backup grant staff privileges to public signups.
+		if ( ! in_array( $clean['default_user_role'], array( 'customer', 'subscriber' ), true ) ) {
+			$clean['default_user_role'] = 'subscriber';
+		}
+
 		$clean['otp_length']     = max( 4, min( 8, $clean['otp_length'] ) );
 		$clean['form_max_width'] = max( 320, min( 640, $clean['form_max_width'] ) );
 

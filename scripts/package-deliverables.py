@@ -19,7 +19,7 @@ OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
 DESIGN = ROOT / 'product-images/gallery-design'
 
-plugin_readme = '''نسخهٔ فعلی آشنا با لوگوی جدید — ۲.۷.۷
+plugin_readme = '''نسخهٔ فعلی آشنا با لوگوی جدید — ۲.۷.۸
 
 این ZIP از کد فعلی مخزن ساخته شده و شامل لوگوی جدید در سربرگ مدیریت، منوی وردپرس، فرم ورود پیش‌فرض و پیش‌نمایش زنده است.
 لوگوی سفارشی انتخاب‌شده توسط مدیر سایت همچنان اولویت دارد.
@@ -35,7 +35,7 @@ plugin_readme = '''نسخهٔ فعلی آشنا با لوگوی جدید — ۲.
 فایل‌های تبلیغاتی، گالری، Git، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
 '''
 if args.without_license:
-    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۲.۷.۷
+    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۲.۷.۸
 
 این بستهٔ جداگانه از کد فعلی افزونه ساخته شده و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. لوگو و سایر امکانات بدون تغییر حفظ شده‌اند.
 نسخهٔ لایسنس‌دار مخزن و ZIP قبلی تغییر نکرده‌اند.
@@ -125,6 +125,7 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
         else:
             bundle.write(ROOT / name, 'ashna-otp/' + name)
     bundle.write(ROOT / 'docs/rebrand-audit-fa.md', 'ashna-otp/docs/rebrand-audit-fa.md')
+    bundle.write(ROOT / 'docs/session-authentication-fa.md', 'ashna-otp/docs/session-authentication-fa.md')
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file() and not source.is_relative_to(ROOT / 'assets/images/ashna'):

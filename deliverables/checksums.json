@@ -1,15 +1,15 @@
 [
   {
     "file": "ashna-otp-with-logo.zip",
-    "bytes": 371365,
-    "sha256": "7280a8b922bb7f5ae77d25acfc8750770839ed28b88f2da1612c4a40e64b1d20",
-    "files": 83
+    "bytes": 378301,
+    "sha256": "b89c8a223a0b892ec601f9e4d63f4b2de68afd0c2145e5962920df385feb4aeb",
+    "files": 85
   },
   {
     "file": "ashna-otp-no-license.zip",
-    "bytes": 369012,
-    "sha256": "47f0a14af48dca3652f85d6c11d025668ca397ca703cd914e00d766c8cc27b08",
-    "files": 83
+    "bytes": 375948,
+    "sha256": "bd7763d2c2ed8824d592ee4b4e2343f29f325547dac30ef5b139c589abc5da99",
+    "files": 85
   },
   {
     "file": "ashna-website-source.zip",
@@ -31,7 +31,7 @@
   },
   {
     "file": "Ashna-Help-FA.pdf",
-    "bytes": 157784,
-    "sha256": "03796dab33b8aee4445e2915f43f93483663ca96ea01128876c43a0841e579a1"
+    "bytes": 157787,
+    "sha256": "8091dc09d4d5f99ea3357100f4331d3e5525bb21588efd852ff502107a1ddc2f"
   }
 ]
