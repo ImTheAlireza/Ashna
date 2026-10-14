@@ -20,6 +20,8 @@ class Ashna_Autoloader {
 		'Ashna_Plugin'              => 'includes/class-ashna-plugin.php',
 		'Ashna_Activator'           => 'includes/core/class-ashna-activator.php',
 		'Ashna_Helper'              => 'includes/core/class-ashna-helper.php',
+		'Ashna_Delivery'            => 'includes/gateways/class-ashna-delivery.php',
+		'Ashna_Integrations'        => 'includes/integrations/class-ashna-integrations.php',
 		'Ashna_Session'             => 'includes/core/class-ashna-session.php',
 		'Ashna_Security'            => 'includes/core/class-ashna-security.php',
 		'Ashna_Passkey'             => 'includes/core/class-ashna-passkey.php',

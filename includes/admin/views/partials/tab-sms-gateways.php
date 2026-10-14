@@ -36,6 +36,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 						</div>
 
+						<div class="ashna-choice-grid ashna-cols-2">
+						<?php foreach ( array( 'delivery_attempt_timeout' => array( 'زمان هر درگاه (ثانیه)', 1, 15 ), 'delivery_total_timeout' => array( 'بودجهٔ کل مسیر پیامک/بله (ثانیه)', 3, 30 ), 'delivery_failure_threshold' => array( 'تعداد خطا برای کنارگذاشتن درگاه', 1, 10 ), 'delivery_circuit_seconds' => array( 'مدت استراحت درگاه خراب (ثانیه)', 10, 600 ) ) as $key => $field ) : ?>
+							<label><?php echo esc_html( $field[0] ); ?><input type="number" name="ashna[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $settings[ $key ] ); ?>" min="<?php echo esc_attr( $field[1] ); ?>" max="<?php echo esc_attr( $field[2] ); ?>" /></label>
+						<?php endforeach; ?>
+						</div>
+						<p class="ashna-help">پیش‌فرض: ۴ ثانیه برای هر درگاه، ۹ ثانیه برای کل زنجیره؛ پس از ۲ خطا، ۶۰ ثانیه استراحت. فقط درخواست‌های WordPress HTTP در این مسیر محدود می‌شوند؛ SMTP و درایور خارجیِ بدون این API سقف تضمینی ندارند. timeout ممکن است نتیجهٔ ارسال را نامعلوم کند؛ ارسال موازی یا تکرار خودکار مرورگر انجام نمی‌شود.</p>
+
 						<!-- Primary SMS Gateway Visual Selector Cards with Logos -->
 						<label class="ashna-section-label">۱. سامانه پیامک اصلی شما</label>
 						<input type="hidden" name="ashna[active_sms_gateway]" id="active_sms_gateway" value="<?php echo esc_attr( $settings['active_sms_gateway'] ); ?>" />

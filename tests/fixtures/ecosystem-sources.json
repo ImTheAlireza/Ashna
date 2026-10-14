@@ -1,0 +1,23 @@
+[
+  {
+    "name": "dokan",
+    "repo": "getdokan/dokan",
+    "sha": "63ad8935357869a4743a5aa8a8c7fc0bc7bd1754",
+    "path": "includes/functions.php",
+    "sha256": "32b6a4c929329f04f43bb55be1b547aa8cb701b5b2aa70cf7d38b22f154c09fe"
+  },
+  {
+    "name": "pmpro",
+    "repo": "strangerstudios/paid-memberships-pro",
+    "sha": "d95654dd3b2a45c42f5bb976271061eb41a304f8",
+    "path": "includes/login.php",
+    "sha256": "a8b486c27de305f2dbfec2ed5f7266233e4003581849c26f1c0bfb3a6323b9f1"
+  },
+  {
+    "name": "um",
+    "repo": "ultimatemember/ultimatemember",
+    "sha": "0ffe1ef917fb45810aa756b9064e9ffdcf436e3c",
+    "path": "includes/core/um-filters-login.php",
+    "sha256": "19c33f6c0a0e7b48588bfdc281060cf2e908c7fd420d33a90adf4e5b777133f7"
+  }
+]

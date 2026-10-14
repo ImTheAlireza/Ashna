@@ -117,6 +117,9 @@ class Ashna_Auth {
 		$existing_user = self::find_user( $identifier, $type );
 		$auto_register = (bool) Ashna_Helper::get_option( 'auto_register', 1 );
 
+		if ( ! $existing_user && Ashna_Integrations::registration_managed() ) {
+			$this->send_error( array( 'message' => Ashna_Integrations::registration_error()->get_error_message() ) );
+		}
 		if ( ! $existing_user && ! $auto_register ) {
 			$this->send_error( array( 'message' => 'حساب کاربری با این مشخصات یافت نشد.' ) );
 		}
@@ -199,6 +202,9 @@ class Ashna_Auth {
 		$is_new_user = false;
 
 		if ( ! $user ) {
+			if ( Ashna_Integrations::registration_managed() ) {
+				$this->send_error( array( 'message' => Ashna_Integrations::registration_error()->get_error_message() ) );
+			}
 			if ( ! Ashna_Helper::get_option( 'auto_register', 1 ) ) {
 				$this->send_error( array( 'message' => 'ثبت‌نام خودکار غیرفعال است.' ) );
 			}
@@ -442,6 +448,7 @@ class Ashna_Auth {
 	 * @return WP_User|WP_Error
 	 */
 	public static function register_user( $identifier, $type = 'phone', $extra = array() ) {
+		if ( Ashna_Integrations::registration_managed() ) { return Ashna_Integrations::registration_error(); }
 		$prefix = sanitize_key( Ashna_Helper::get_option( 'username_prefix', '' ) );
 
 		if ( 'email' === $type ) {
@@ -554,6 +561,7 @@ class Ashna_Auth {
 			$redirect = home_url( '/' );
 		}
 
-		return Ashna_Compatibility::filter( 'ashna_otp_login_redirect', $redirect, $user );
+		if ( 'auto' === $behavior ) { $redirect = Ashna_Integrations::redirect( $redirect, $user ); }
+		return wp_validate_redirect( Ashna_Compatibility::filter( 'ashna_otp_login_redirect', $redirect, $user ), home_url( '/' ) );
 	}
 }

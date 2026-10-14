@@ -100,55 +100,25 @@ class Ashna_Gateway_Manager {
 	 * @return array { result: true|WP_Error, gateway_id: string, message: string }
 	 */
 	public static function send_sms_with_failover( $recipient, $code, $forced_gateway_id = '' ) {
-		$gateways = self::get_sms_gateways();
-
-		if ( ! empty( $forced_gateway_id ) && isset( $gateways[ $forced_gateway_id ] ) ) {
-			$gw  = $gateways[ $forced_gateway_id ];
-			$res = $gw->send( $recipient, $code );
-			return array(
-				'result'     => $res,
-				'gateway_id' => $gw->get_id(),
-				'message'    => is_wp_error( $res ) ? $res->get_error_message() : 'ارسال موفق از طریق ' . $gw->get_title(),
-			);
-		}
-
-		$primary_gw  = self::get_active_sms_gateway();
-		$primary_res = $primary_gw->send( $recipient, $code );
-
-		if ( ! is_wp_error( $primary_res ) ) {
-			return array(
-				'result'     => true,
-				'gateway_id' => $primary_gw->get_id(),
-				'message'    => 'ارسال موفق از طریق ' . $primary_gw->get_title(),
-			);
-		}
-
-		// Try Backup Failover Chain (Priority 1 -> Priority 2 -> Priority 3)
-		$backups         = self::get_backup_sms_gateways();
-		$priority_labels = array( 'اول', 'دوم', 'سوم' );
-
-		foreach ( $backups as $idx => $backup_gw ) {
-			$backup_res = $backup_gw->send( $recipient, $code );
-			if ( ! is_wp_error( $backup_res ) ) {
-				$p_label = isset( $priority_labels[ $idx ] ) ? $priority_labels[ $idx ] : (string) ( $idx + 1 );
-				return array(
-					'result'     => true,
-					'gateway_id' => $backup_gw->get_id(),
-					'message'    => sprintf(
-						'ارسال از طریق پشتیبان %s (%s) پس از خطای درگاه اصلی (%s)',
-						$p_label,
-						$backup_gw->get_title(),
-						$primary_res->get_error_message()
-					),
-				);
+		$owner = Ashna_Delivery::begin();
+		try {
+			$gateways = self::get_sms_gateways();
+			$forced = '' !== $forced_gateway_id;
+			if ( $forced && ! isset( $gateways[ $forced_gateway_id ] ) ) {
+				return array( 'result' => new WP_Error( 'ashna_gateway_unknown', 'درگاه انتخاب‌شده معتبر نیست.' ), 'gateway_id' => $forced_gateway_id, 'message' => 'درگاه نامعتبر' );
 			}
+			$chain = $forced ? array( $gateways[ $forced_gateway_id ] ) : array_merge( array( self::get_active_sms_gateway() ), self::get_backup_sms_gateways() );
+			foreach ( $chain as $gateway ) {
+				$result = Ashna_Delivery::attempt( $gateway, $recipient, $code, $forced );
+				if ( true === $result ) {
+					return array( 'result' => true, 'gateway_id' => $gateway->get_id(), 'message' => 'ارسال موفق از طریق ' . $gateway->get_title() );
+				}
+				if ( 'ashna_delivery_budget' === $result->get_error_code() ) { break; }
+			}
+			return array( 'result' => $result, 'gateway_id' => $gateway->get_id(), 'message' => $result->get_error_message() );
+		} finally {
+			Ashna_Delivery::end( $owner );
 		}
-
-		return array(
-			'result'     => $primary_res,
-			'gateway_id' => $primary_gw->get_id(),
-			'message'    => $primary_res->get_error_message(),
-		);
 	}
 
 	/**
@@ -161,6 +131,15 @@ class Ashna_Gateway_Manager {
 	 * @return array|WP_Error { code: string, channel: string, gateway: string, log_id: int }
 	 */
 	public static function dispatch_otp( $recipient, $identifier_type = 'phone', $forced_channel = '', $forced_gateway_id = '' ) {
+		$owner = Ashna_Delivery::begin();
+		try {
+			return self::dispatch_with_budget( $recipient, $identifier_type, $forced_channel, $forced_gateway_id );
+		} finally {
+			Ashna_Delivery::end( $owner );
+		}
+	}
+
+	private static function dispatch_with_budget( $recipient, $identifier_type, $forced_channel, $forced_gateway_id ) {
 		$length   = absint( Ashna_Helper::get_option( 'otp_length', 5 ) );
 		$code     = Ashna_Helper::generate_otp_code( $length );
 		$otp_hash = wp_hash_password( $code );
@@ -189,14 +168,14 @@ class Ashna_Gateway_Manager {
 				case 'bale':
 					$channel_used = 'bale';
 					$gateway_used = 'bale';
-					$send_result  = $bale_gw->send( $recipient, $code );
+					$send_result  = Ashna_Delivery::attempt( $bale_gw, $recipient, $code, '' !== $forced_channel );
 					if ( ! is_wp_error( $send_result ) ) {
 						$response_msg = 'ارسال موفق از طریق پیام‌رسان بله';
 					}
 					break;
 
 				case 'bale_fallback_sms':
-					$bale_res = $bale_gw->send( $recipient, $code );
+					$bale_res = Ashna_Delivery::attempt( $bale_gw, $recipient, $code, '' !== $forced_channel );
 					if ( ! is_wp_error( $bale_res ) ) {
 						$channel_used = 'bale';
 						$gateway_used = 'bale';
@@ -223,7 +202,7 @@ class Ashna_Gateway_Manager {
 					} else {
 						$channel_used = 'bale';
 						$gateway_used = 'bale';
-						$send_result  = $bale_gw->send( $recipient, $code );
+						$send_result  = Ashna_Delivery::attempt( $bale_gw, $recipient, $code, '' !== $forced_channel );
 						if ( ! is_wp_error( $send_result ) ) {
 							$response_msg = 'ارسال از طریق بله پس از خطای پیامک: ' . $sms_attempt['message'];
 						}
@@ -232,12 +211,12 @@ class Ashna_Gateway_Manager {
 
 				case 'both':
 					$sms_attempt = self::send_sms_with_failover( $recipient, $code, $forced_gateway_id );
-					$bale_res    = $bale_gw->send( $recipient, $code );
+					$bale_res    = Ashna_Delivery::attempt( $bale_gw, $recipient, $code, '' !== $forced_channel );
 					if ( ! is_wp_error( $sms_attempt['result'] ) || ! is_wp_error( $bale_res ) ) {
-						$channel_used = 'sms+bale';
-						$gateway_used = $sms_attempt['gateway_id'] . '+bale';
+						$channel_used = ! is_wp_error( $sms_attempt['result'] ) && ! is_wp_error( $bale_res ) ? 'sms+bale' : ( is_wp_error( $bale_res ) ? 'sms' : 'bale' );
+						$gateway_used = 'sms+bale' === $channel_used ? $sms_attempt['gateway_id'] . '+bale' : ( 'sms' === $channel_used ? $sms_attempt['gateway_id'] : 'bale' );
 						$send_result  = true;
-						$response_msg = 'ارسال همزمان پیامک و بله';
+						$response_msg = 'ارسال موفق از طریق ' . $channel_used;
 					} else {
 						$channel_used = 'sms+bale';
 						$gateway_used = $sms_attempt['gateway_id'] . '+bale';

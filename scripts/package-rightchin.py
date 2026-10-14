@@ -22,7 +22,7 @@ with ZipFile(installer) as z:
 # The packaging README (not the customer PDF) records the missing-license status.
 assert not license_present, 'Update the packaging license-presence notice before distributing a new licensed bundle'
 installer_sha = hashlib.sha256(installer.read_bytes()).hexdigest()
-readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۸
+readme = f'''بستهٔ آشنا برای آماده‌سازی انتشار در راست‌چین — نسخهٔ ۲.۷.۹
 ویرایش راهنما: ۱۴ اکتبر ۲۰۲۶
 
 مهم: این بسته هنوز فایل واقعی لایسنس راست‌چین را ندارد و بستهٔ کامل آمادهٔ انتشار نیست.
@@ -55,6 +55,7 @@ with ZipFile(wrapper, 'w', ZIP_DEFLATED) as z:
     z.write(root / 'docs/changelog-FA.txt', 'Ashna-Rightchin/changelog-FA.txt')
     z.write(root / 'docs/product-technical-description-fa.md', 'Ashna-Rightchin/Technical-Description-FA.md')
     z.write(root / 'docs/session-authentication-fa.md', 'Ashna-Rightchin/session-authentication-fa.md')
+    z.write(root / 'docs/delivery-integrations-fa.md', 'Ashna-Rightchin/delivery-integrations-fa.md')
     z.writestr('Ashna-Rightchin/README-FA.txt', readme)
 with ZipFile(wrapper) as z:
     assert z.testzip() is None

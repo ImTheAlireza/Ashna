@@ -31,6 +31,10 @@ class Ashna_Helper {
 			'otp_length'                => 5,
 			'otp_expiry'                => 120,               // seconds
 			'resend_cooldown'           => 60,                // seconds
+			'integrate_dokan'           => 0,
+			'integrate_pmpro'           => 0,
+			'integrate_um'              => 0,
+			'integrate_memberpress'     => 0,
 			'auto_register'             => 1,
 			'default_user_role'         => 'customer',        // falls back to subscriber if WooCommerce not active
 			'username_prefix'           => '',
@@ -58,6 +62,11 @@ class Ashna_Helper {
 			'backup_sms_gateway_1'      => 'none',            // 1st priority failover
 			'backup_sms_gateway_2'      => 'none',            // 2nd priority failover
 			'backup_sms_gateway_3'      => 'none',            // 3rd priority failover
+
+			'delivery_attempt_timeout'  => 4,
+			'delivery_total_timeout'    => 9,
+			'delivery_failure_threshold' => 2,
+			'delivery_circuit_seconds'  => 60,
 
 			// SMS.ir Settings
 			'smsir_api_key'             => '',

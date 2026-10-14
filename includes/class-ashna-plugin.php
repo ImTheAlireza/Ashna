@@ -73,6 +73,7 @@ final class Ashna_Plugin {
 
 		Ashna_Activator::maybe_upgrade();
 
+		Ashna_Integrations::register();
 		Ashna_Auth::instance();
 		new Ashna_Passkey();
 		Ashna_Frontend::instance();

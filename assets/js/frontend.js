@@ -107,6 +107,7 @@
 		var currentIdentifier = '';
 		var hasRequiredExtraFields = false;
 		var timerInterval = null;
+		var requestInFlight = false;
 
 		function showAlert(message, type) {
 			$alert
@@ -269,6 +270,7 @@
 
 		// Step 1: Request OTP
 		function requestOtp(identifier) {
+			if (requestInFlight) { return; }
 			var $submitBtn = $stepRequest.find('.ashna-submit-request');
 			hideAlert();
 			setLoading($submitBtn, true);
@@ -318,13 +320,21 @@
 		}
 
 		function dispatchOtpRequest(payload, $submitBtn) {
+			if (requestInFlight) { return; }
+			requestInFlight = true;
+			var slowTimer = window.setTimeout(function () {
+				showAlert('درخواست هنوز در حال بررسی است. لطفاً منتظر بمانید و دوباره ارسال نکنید.', 'info');
+			}, 3000);
 			$.ajax({
 				url: ashnaOtpParams.ajaxUrl,
 				type: 'POST',
 				dataType: 'json',
+				timeout: ashnaOtpParams.requestTimeoutMs || 30000,
 				data: payload
 			})
 				.done(function (res) {
+					window.clearTimeout(slowTimer);
+					hideAlert();
 					if (res && res.success) {
 						currentIdentifier = res.data.identifier;
 						$recipientDisplay.text(res.data.masked || currentIdentifier);
@@ -393,10 +403,13 @@
 						showAlert(errMsg, 'error');
 					}
 				})
-				.fail(function () {
-					showAlert(ashnaOtpParams.i18n.networkError, 'error');
+				.fail(function (xhr, status) {
+					window.clearTimeout(slowTimer);
+					showAlert(status === 'timeout' ? 'پاسخ سرور طول کشید؛ ارسال ممکن است انجام شده باشد. برای ارسال مجدد کمی صبر کنید و از درخواست‌های پیاپی خودداری کنید.' : ashnaOtpParams.i18n.networkError, 'error');
 				})
 				.always(function () {
+					requestInFlight = false;
+					window.clearTimeout(slowTimer);
 					setLoading($submitBtn, false);
 				});
 		}

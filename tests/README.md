@@ -117,3 +117,25 @@ It verifies the guest nonce in OTP verification, then the freshly returned
 nonce in immediate authenticated Passkey enrollment, with browser storage both
 available and blocked. No real SMS, browser authenticator, production HTTP cookie
 transport, checkout/payment, vendor license or external Redis server is tested.
+
+## Delivery budgets and ecosystem bridges (2.7.9)
+
+```sh
+python tests/prepare-session-tests.py
+python tests/prepare-ecosystem-tests.py
+python tests/run-delivery-ecosystem.py
+ASHNA_BUNDLED_LIBS=1 node tests/slow-delivery-browser.mjs
+```
+
+The runner rejects WASM's silent fatal/zero-exit behavior and expects 10 delivery
+scenarios plus 4 ecosystem groups. It uses actual WP hook/session APIs, the actual
+manager/dispatcher, and an actual SMS.ir request/parser with fixture transport.
+Slow transport is simulated with sleeps clamped to the provided timeout. Probe
+contention is modeled by a pre-existing lease, **not** a multi-worker load test.
+Dokan/PMPro/UM policy functions are extracted verbatim from SHA256-checked pinned
+sources; database/services are fixtures. MemberPress is an options-contract stub
+only; no proprietary source or compatibility certification is provided.
+The browser test exercises real frontend/jQuery with controlled AJAX and clock:
+3s feedback, duplicate-submit exclusion, timeout with no retry, timer cleanup,
+button/spinner recovery and transition to OTP. It is not a carrier benchmark.
+See `docs/delivery-integrations-fa.md` for setup, scope and remaining staging tests.

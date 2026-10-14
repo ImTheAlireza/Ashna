@@ -144,6 +144,7 @@ class Ashna_Frontend {
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 				'nonce'          => wp_create_nonce( 'ashna_otp_nonce' ),
+				'requestTimeoutMs' => 30000 + 1000 * Ashna_Delivery::limit( 'delivery_total_timeout', 9, 3, 30 ),
 				'otpLength'      => absint( Ashna_Helper::get_option( 'otp_length', 5 ) ),
 				'captchaType'    => $captcha_type,
 				'captchaSiteKey' => $site_key,

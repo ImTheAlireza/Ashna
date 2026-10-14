@@ -2,6 +2,7 @@
 /** Exercise actual AJAX handlers; OTP transport/lookup and JSON transport are fixtures. */
 require __DIR__ . '/fixtures/session-bootstrap.php';
 require $root . '/includes/core/class-ashna-storage.php';
+require $root . '/includes/integrations/class-ashna-integrations.php';
 require $root . '/includes/services/class-ashna-auth.php';
 require $root . '/includes/core/class-ashna-passkey.php';
 official_function($cache . '/wp-includes/formatting.php', '_deep_replace');

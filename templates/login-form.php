@@ -213,6 +213,10 @@ $wrapper_classes = sprintf(
 
 		<div class="ashna-otp-alert" role="alert" style="display:none;"></div>
 
+		<?php if ( Ashna_Integrations::registration_managed() ) : ?>
+		<p class="ashna-otp-subtitle">این فرم مخصوص ورود حساب‌های موجود است؛ برای ساخت حساب جدید از فرم عضویت یا فروشندگی سایت استفاده کنید.</p>
+		<?php endif; ?>
+
 		<!-- Step 1: Request OTP -->
 		<form class="ashna-otp-form ashna-step-request" novalidate>
 			<div class="ashna-field-group">

@@ -1,17 +1,17 @@
 [
   {
     "file": "Ashna-Rightchin-Package.zip",
-    "bytes": 516510,
-    "sha256": "da39fcc0bd17db9aad2ba8c0b1ba277d073f6a9c51bac22f83125c3c55e64167"
+    "bytes": 535305,
+    "sha256": "32248731ab231bf97043c35bd7278f138aba875c4895439d4559345ada8ae044"
   },
   {
     "file": "../deliverables/Ashna-Help-FA.pdf",
-    "bytes": 157787,
-    "sha256": "8091dc09d4d5f99ea3357100f4331d3e5525bb21588efd852ff502107a1ddc2f"
+    "bytes": 158128,
+    "sha256": "62a998479eae515f61bde16f5dead1b9faa8f51e8a727531b4adefe010ca7450"
   },
   {
     "file": "../deliverables/ashna-otp-with-logo.zip",
-    "bytes": 385993,
-    "sha256": "222cb77c9a93786399911fe3078786bfc422f209a1dd376ccaa2f3bc4baee844"
+    "bytes": 398528,
+    "sha256": "dc64a2991319691c22e3aa3546e5fba4d29d48b6e600ead827081e699756a701"
   }
 ]

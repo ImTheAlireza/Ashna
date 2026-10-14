@@ -20,6 +20,14 @@ $svg_fingerprint = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 $svg_faceid      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
 ?>
 				<section class="ashna-panel" id="ashna-tab-auth_flow">
+					<div class="ashna-card">
+						<h2>اتصال ورود حساب‌های موجود</h2>
+						<p>فعال‌سازی هر اتصالِ حاضر در سایت، ثبت‌نام عمومی آشنا را متوقف می‌کند؛ ثبت‌نام فروشنده/عضو، پرداخت و تأیید مدیر در افزونهٔ اصلی باقی می‌ماند. ابتدا روی staging آزمون کنید. اولویت مقصد خودکار: فروشندهٔ Dokan، سپس PMPro، UM و MemberPress؛ مقصد صریح فرم و تنظیمات دستی مقدم‌اند.</p>
+						<?php foreach ( array( 'dokan' => 'Dokan — نقش فروشنده و مقصد داشبورد', 'pmpro' => 'Paid Memberships Pro — مقصد حساب یا انتخاب پلن', 'um' => 'Ultimate Member — وضعیت حساب و مقصد حساب کاربری', 'memberpress' => 'MemberPress — اتصال آزمایشی مقصد حساب؛ نیازمند نسخهٔ معتبر برای تأیید' ) as $name => $label ) : ?>
+						<label class="ashna-choice-card"><input type="checkbox" name="ashna[integrate_<?php echo esc_attr( $name ); ?>]" value="1" <?php checked( $settings[ 'integrate_' . $name ], 1 ); ?> /> <?php echo esc_html( $label ); ?></label>
+						<?php endforeach; ?>
+						<p class="ashna-help">نقش یا اشتراک خودکار اعطا نمی‌شود. انقضای پلن به‌تنهایی جلوی ورود برای تمدید را نمی‌گیرد. این اتصال جای 2FA یا افزونه‌های جانبی تأیید حساب نیست؛ برای آن‌ها سیاست اختصاصی لازم است. برای جای‌گذاری فرم ورود در صفحهٔ دلخواه از [ashna_otp_login] استفاده کنید؛ فرم‌های اصلی حذف نمی‌شوند.</p>
+					</div>
 					<!-- TOP BENTO ROW: Identifier Type (Col 5) + Mobile Delivery Strategy (Col 7) -->
 					<div class="ashna-bento-row">
 						<!-- Top-Right Box (Col 5): 1. Login Identifier Mode -->

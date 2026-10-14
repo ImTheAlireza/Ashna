@@ -158,6 +158,10 @@ class Ashna_Admin {
 		$clean    = array();
 
 		$checkbox_keys = array(
+			'integrate_dokan',
+			'integrate_pmpro',
+			'integrate_um',
+			'integrate_memberpress',
 			'auto_register',
 			'allow_password_login',
 			'enable_passkey',
@@ -180,6 +184,10 @@ class Ashna_Admin {
 		);
 
 		$int_keys = array(
+			'delivery_attempt_timeout',
+			'delivery_total_timeout',
+			'delivery_failure_threshold',
+			'delivery_circuit_seconds',
 			'otp_length',
 			'otp_expiry',
 			'resend_cooldown',
@@ -257,6 +265,10 @@ class Ashna_Admin {
 		// Do not let an imported backup grant staff privileges to public signups.
 		if ( ! in_array( $clean['default_user_role'], array( 'customer', 'subscriber' ), true ) ) {
 			$clean['default_user_role'] = 'subscriber';
+		}
+
+		foreach ( array( 'delivery_attempt_timeout' => array( 1, 15 ), 'delivery_total_timeout' => array( 3, 30 ), 'delivery_failure_threshold' => array( 1, 10 ), 'delivery_circuit_seconds' => array( 10, 600 ) ) as $key => $range ) {
+			$clean[ $key ] = max( $range[0], min( $range[1], $clean[ $key ] ) );
 		}
 
 		$clean['otp_length']     = max( 4, min( 8, $clean['otp_length'] ) );

@@ -37,9 +37,9 @@ parser = SectionParser(); parser.feed(landing)
 assert parser.found and 'href="#ashna-technical"' in landing
 for claim in ['Dokan', 'MemberPress', 'Paid Memberships Pro', 'Ultimate Member',
               'circuit breaker', '۱۵ ثانیه', '۶۰ ثانیه', 'ترتیبی', 'نتیجهٔ نامعلوم',
-              'p50/p95/p99', 'هنوز اجرا نشده', 'ashna_authenticate_user',
+              'p50/p95/p99', 'هنوز تحویل نشده', 'ashna_authenticate_user',
               'ashna_otp_login_redirect', 'ashna_otp_user_registered']:
-    assert claim in text, f'Missing latency/integration scope: {claim}'
+    assert claim.lower() in text.lower(), f'Missing latency/integration scope: {claim}'
 session = (ROOT / 'includes/core/class-ashna-session.php').read_text()
 for hook in ['ashna_authenticate_user', 'wp_authenticate_user', 'wp_login']:
     assert hook in session
@@ -53,3 +53,11 @@ for driver in ['smsir', 'kavenegar', 'melipayamak', 'farazsms', 'ippanel', 'bale
     assert timeouts and all(int(value) == 15 for value in timeouts), f'Review documented HTTP timeout: {driver}'
 print('PASS: latency defaults and third-party integration boundaries match the inspected sources; roadmap items are not advertised as delivered.')
 print('PASS: technical copy covers native sessions and OTP abuse controls with actual hourly defaults, exceptions and limitations.')
+
+for key, expected in [('delivery_attempt_timeout',4), ('delivery_total_timeout',9), ('delivery_failure_threshold',2), ('delivery_circuit_seconds',60)]:
+    match = re.search(r"'" + key + r"'\s*=>\s*(\d+)", settings)
+    assert match and int(match.group(1)) == expected, f'Review documented delivery default: {key}'
+    assert key in text
+for key in ['integrate_dokan','integrate_pmpro','integrate_um','integrate_memberpress']:
+    assert re.search(r"'" + key + r"'\s*=>\s*0", settings), f'Review opt-in integration default: {key}'
+print('PASS: 4s/9s/2 failures/60s defaults and opt-in integration settings match published copy.')
