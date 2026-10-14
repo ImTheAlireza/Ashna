@@ -144,7 +144,9 @@ See `README.md` (repository root) for setup, scope and remaining staging tests.
 
 `rtl-description.md` is the single marketplace-description draft. It follows the
 linked RTL guide's section structure, but the guide explicitly prohibits AI text
-and images: **human rewriting and a human-designed infographic are still needed**.
+and images: **human rewriting/review are still needed**. The included infographic is an automated
+composition of actual PHP settings-view renders, not a live-site screenshot or
+AI-generated artwork; marketplace acceptance is not certified.
 No marketplace acceptance or image-compliance certification is implied.
 
 ```sh
@@ -154,7 +156,9 @@ python tests/check-technical-description.py
 
 The first check enforces two explicit intro lines, exactly five single-line main
 features, title-only flat feature bullets, no unverified MemberPress advertising
-and a clearly marked pending 960px/<1MB infographic (not a fake image URL).
+and a real linked lossless 1000px/<1MB settings infographic. The renderer checks
+source-view capture, fonts/images, no browser errors and PNG/WebP pixel equality.
+Screenshots use default offline fixture data; they do not certify a live install.
 The second retains the code-default and limitation checks against the root README;
 superseded report files are no longer needed. Build/guide instructions are also
 in the root README. `docs/` retains only the guide source and changelog.

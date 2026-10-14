@@ -124,6 +124,7 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
             add_bytes(bundle, 'ashna-otp/index.php', index)
         else:
             bundle.write(ROOT / name, 'ashna-otp/' + name)
+    bundle.write(ROOT / 'product-images/ashna-settings-infographic.webp', 'ashna-otp/product-images/ashna-settings-infographic.webp')
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file() and not source.is_relative_to(ROOT / 'assets/images/ashna'):

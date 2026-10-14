@@ -29,7 +29,7 @@ with ZipFile(landing / 'parsna-landing.zip', 'w', ZIP_DEFLATED) as bundle:
     for name in ['.htaccess', 'index.html', 'css/style.css', 'js/main.js', 'assets/ashna-logo.png', 'ashna-logo.png', 'serve.py']:
         bundle.write(landing / name, name)
 
-files = sorted(p for p in PRODUCT.iterdir() if p.is_file() and p.suffix in {'.zip', '.jpg', '.png'})
+files = sorted(p for p in PRODUCT.iterdir() if p.is_file() and p.suffix in {'.zip', '.jpg', '.png', '.webp'})
 for path in [*files, landing / 'parsna-landing.zip']:
     if path.suffix == '.zip':
         with ZipFile(path) as bundle:
