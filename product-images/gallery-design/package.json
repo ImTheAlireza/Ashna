@@ -1,5 +1,5 @@
 {
-  "name": "signa-gallery-design",
+  "name": "ashna-gallery-design",
   "private": true,
   "scripts": {
     "render": "node export.mjs"

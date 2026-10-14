@@ -1,4 +1,4 @@
-Signa OTP – bundled web fonts
+Ashna OTP – bundled web fonts
 
 estedad/      Estedad (SIL OFL 1.1) – bundled, see estedad/LICENSE.txt
 iransans/     Place iransans.woff2 here (commercial font, licence required – not bundled)

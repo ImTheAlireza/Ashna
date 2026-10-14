@@ -26,16 +26,16 @@ function nocache_headers() {}
 function wp_nonce_field($action) { echo '<input value="safe-nonce">'; }
 function check_admin_referer($action) { check(isset($_POST['_wpnonce']) && $_POST['_wpnonce'] === $action, 'Bad clear nonce'); }
 function wp_die($message) { throw new RuntimeException('access_denied'); }
-require __DIR__ . '/../tools/signa-activation-diagnostics/signa-activation-diagnostics.php';
+require __DIR__ . '/../tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php';
 $pagenow = 'plugins.php';
 $wp_version = '6.8.3';
-$_GET = array('action' => 'activate', 'plugin' => 'signa-otp/index.php', '_wpnonce' => 'activate-plugin_signa-otp/index.php');
+$_GET = array('action' => 'activate', 'plugin' => 'ashna-otp/index.php', '_wpnonce' => 'activate-plugin_ashna-otp/index.php');
 if ($scenario === 'bad_nonce') { $_GET['_wpnonce'] = 'bad'; }
 if ($scenario === 'array_nonce') { $_GET['_wpnonce'] = array('bad'); }
-if ($scenario === 'wrong_target') { $_GET['plugin'] = '../signa-otp/index.php'; }
+if ($scenario === 'wrong_target') { $_GET['plugin'] = '../ashna-otp/index.php'; }
 if ($scenario === 'bulk') { $_GET['action'] = 'activate-selected'; }
 if ($scenario === 'ordinary_page') { $pagenow = 'index.php'; }
-if ($scenario === 'scrape') { $_GET['action'] = 'error_scrape'; $_GET['_wpnonce'] = 'plugin-activation-error_signa-otp/index.php'; }
+if ($scenario === 'scrape') { $_GET['action'] = 'error_scrape'; $_GET['_wpnonce'] = 'plugin-activation-error_ashna-otp/index.php'; }
 $ignored = in_array($scenario, array('unauthorized', 'bad_nonce', 'array_nonce', 'wrong_target', 'bulk', 'ordinary_page'), true);
 if ($scenario === 'scrape') {
     $GLOBALS['reports']['_signa_activation_diagnostics_activate'] = array('attempt_id' => 'original-request');
@@ -46,7 +46,7 @@ check(ob_get_clean() === '', 'Observer emitted output');
 if ($ignored) {
     check(count($GLOBALS['reports']) === 0, 'Unauthorized/unrelated request stored a report');
     if ($scenario === 'unauthorized') {
-        try { Signa_Activation_Diagnostics::page(); throw new RuntimeException('Page allowed unauthorized user'); }
+        try { Ashna_Activation_Diagnostics::page(); throw new RuntimeException('Page allowed unauthorized user'); }
         catch (RuntimeException $e) { check($e->getMessage() === 'access_denied', 'Unexpected page exception'); }
     }
     echo "PASS $scenario\n";
@@ -59,9 +59,9 @@ if ($scenario === 'scrape') {
 }
 check($GLOBALS['reports'][$key]['phase'] === 'before_plugin_include', 'Bad first phase');
 check($GLOBALS['reports'][$key]['files']['license_present'] === false, 'Unexpected fixture license');
-check(Signa_Activation_Diagnostics::is_target('Signa/index.php'), 'Windows folder variation rejected');
-check(!Signa_Activation_Diagnostics::is_target('signa-otp/../index.php'), 'Traversal accepted');
-class Signa_License_Bootstrap {
+check(Ashna_Activation_Diagnostics::is_target('Ashna/index.php'), 'Windows folder variation rejected');
+check(!Ashna_Activation_Diagnostics::is_target('ashna-otp/../index.php'), 'Traversal accepted');
+class Ashna_License_Bootstrap {
     public static $status = 'checking';
     public static function get_status() { return self::$status; }
     public static function isActive() { throw new RuntimeException('Verifier must NEVER be called by diagnostics'); }
@@ -86,12 +86,12 @@ register_shutdown_function(function () use ($key, $scenario) {
 });
 if ($scenario === 'silent_exit') { exit; }
 if ($scenario === 'fatal') { throw new RuntimeException('PRIVATE-TOKEN'); }
-if ($scenario === 'inactive') { Signa_License_Bootstrap::$status = 'license_inactive'; }
+if ($scenario === 'inactive') { Ashna_License_Bootstrap::$status = 'license_inactive'; }
 if ($scenario === 'success' || $scenario === 'scrape') {
-    Signa_License_Bootstrap::$status = 'active';
-    if ($scenario !== 'scrape') { do_action('activate_plugin', 'signa-otp/index.php'); }
-    do_action('activate_signa-otp/index.php');
-    if ($scenario !== 'scrape') { do_action('activated_plugin', 'signa-otp/index.php'); }
+    Ashna_License_Bootstrap::$status = 'active';
+    if ($scenario !== 'scrape') { do_action('activate_plugin', 'ashna-otp/index.php'); }
+    do_action('activate_ashna-otp/index.php');
+    if ($scenario !== 'scrape') { do_action('activated_plugin', 'ashna-otp/index.php'); }
 }
 if ($scenario === 'redaction') {
     $error = array('type' => E_ERROR, 'message' => 'ionCube failure PRIVATE-TOKEN', 'file' => 'C:\\private\\RTL_License.php', 'line' => 14);
@@ -101,19 +101,19 @@ if ($scenario === 'redaction') {
     check($safe['file'] === 'RTL_License.php' && $safe['line'] === 14, 'Wrong source location');
     check($safe['category'] === 'ioncube', 'Wrong loader category');
     check(strpos(json_encode($GLOBALS['reports']), 'PRIVATE-TOKEN') === false, 'Secret stored');
-    $notice = Signa_Activation_Diagnostics::safe_error(array('type' => E_NOTICE, 'message' => 'translation notice'));
+    $notice = Ashna_Activation_Diagnostics::safe_error(array('type' => E_NOTICE, 'message' => 'translation notice'));
     check(!$notice['is_fatal'], 'Notice incorrectly classified fatal');
 }
 if ($scenario === 'page') {
     $GLOBALS['reports'][$key]['test_escape'] = '</textarea><script>alert(1)</script>';
-    ob_start(); Signa_Activation_Diagnostics::page(); $html = ob_get_clean();
+    ob_start(); Ashna_Activation_Diagnostics::page(); $html = ob_get_clean();
     check(strpos($html, '<script>alert(1)</script>') === false, 'Report XSS');
     check(strpos($html, '&lt;script&gt;') !== false, 'Escaped report missing');
-    $_POST = array('signa_diag_clear' => '1', '_wpnonce' => 'bad');
-    try { Signa_Activation_Diagnostics::page(); throw new RuntimeException('Clear allowed bad nonce'); }
+    $_POST = array('ashna_diag_clear' => '1', '_wpnonce' => 'bad');
+    try { Ashna_Activation_Diagnostics::page(); throw new RuntimeException('Clear allowed bad nonce'); }
     catch (RuntimeException $e) { check($e->getMessage() === 'Bad clear nonce', 'Unexpected clear exception'); }
     check(count($GLOBALS['reports']) === 1, 'Bad nonce deleted reports');
-    $_POST = array('signa_diag_clear' => '1', '_wpnonce' => 'signa_diag_clear');
-    ob_start(); Signa_Activation_Diagnostics::page(); ob_end_clean();
+    $_POST = array('ashna_diag_clear' => '1', '_wpnonce' => 'ashna_diag_clear');
+    ob_start(); Ashna_Activation_Diagnostics::page(); ob_end_clean();
     check(count($GLOBALS['reports']) === 0, 'Clear did not remove reports');
 }

@@ -27,7 +27,7 @@ for item in report:
     item['bytes'] = path.stat().st_size
     print(path.name, '1600 × 1800', item['bytes'], 'bytes')
 (output / 'manifest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-archive = ROOT / 'product-images/signa-gallery-8-images.zip'
+archive = ROOT / 'product-images/ashna-gallery-8-images.zip'
 with ZipFile(archive, 'w', compression=ZIP_DEFLATED) as bundle:
     for item in report:
         path = output / (item['file'] + '.webp')

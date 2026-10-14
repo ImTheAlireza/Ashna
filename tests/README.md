@@ -35,7 +35,7 @@ page escaping and nonce-protected clearing are checked. The test never calls a
 license verifier. This is not a live WordPress/hosting/ionCube integration test.
 
 Build its independent ZIP with `python scripts/package-activation-diagnostics.py`.
-This does not change or rebuild either existing Signa edition.
+This does not change or rebuild either existing Ashna edition.
 
 `PHP_BINARY=/path/to/php python tests/run-activation-diagnostics.py` also verifies
 14 synthetic ionCube message fixtures (PHP target mismatch, minimum Loader,
@@ -64,6 +64,21 @@ PHP_BINARY=/path/to/php python tests/run-php-requirement.py
 
 This extracts the unmodified `validate_plugin_requirements()` function and uses
 isolated metadata/UI/dependency stubs. PHP 7.4, 8.0 and 8.1 must be rejected;
-8.2 and 8.3 pass the version check without loading Signa or a license. This does
+8.2 and 8.3 pass the version check without loading Ashna or a license. This does
 not certify the vendor-encoded license on all newer PHP releases. Direct-source
 bootstrap tests on older PHP are not a declaration of licensed-package support.
+
+## Ashna identity compatibility
+
+The bootstrap runner also runs `rebrand` and `no_license_rebrand`. Both seed
+legacy settings/DB version/cron/lockouts and exercise the actual storage, Passkey
+repository (read, indexed lookup, save and deletion), class/interface/constant
+aliases, shortcode callbacks, extension hooks and saved Elementor widget IDs.
+The database/user APIs are stubs, not a live upgrade test. See
+`docs/rebrand-audit-fa.md` for the non-destructive storage contract and upgrade steps.
+
+`python tests/check-ashna-brand.py` checks source identities, protocol vocabulary,
+licensed verifier invariants and final ZIP contents after rebuilding artifacts.
+
+`node tests/rebrand-browser.cjs` verifies browser preference/enrollment migration.
+`PHP_BINARY=/path/to/php python tests/lint-php.py` lints every repository PHP source.

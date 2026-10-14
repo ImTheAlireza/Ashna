@@ -1,6 +1,17 @@
-# پلاگین ورود و ثبت‌نام یکبارمصرف وردپرس (Signa OTP v2.3.0)
+# آشنا / Ashna — ورود و ثبت‌نام وردپرس · نسخهٔ ۲.۷.۷
 
-**Signa OTP** یک افزونه جامع، سازمانی (Enterprise) و کاملاً ماژولار برای **ورود و ثبت‌نام یکپارچه کاربران با کد یکبارمصرف (OTP)** در وردپرس و ووکامرس است.
+**آشنا / Ashna** یک افزونه جامع، سازمانی (Enterprise) و کاملاً ماژولار برای **ورود و ثبت‌نام یکپارچه کاربران با کد یکبارمصرف (OTP)** در وردپرس و ووکامرس است.
+
+## هویت جدید و ارتقای امن
+
+نام محصول **آشنا / Ashna** و نماد آن سپر آبی با در نیمه‌باز است. فایل ورودی داخلی `ashna.php` و پوشهٔ نصب `ashna-otp` هستند. نام و هویت تمام رابط‌ها، مستندات و خروجی‌ها هماهنگ شده‌اند.
+
+**برای ارتقا:** بکاپ بگیرید، نسخهٔ قبلی را غیرفعال کنید، پوشهٔ کامل جدید را نصب و سپس فعال کنید. نسخهٔ قبلی را از طریق «حذف» وردپرس پاک نکنید و دو نسخه را هم‌زمان فعال نکنید. داده‌های قبلی، شورت‌کدها و ویجت‌های ذخیره‌شده از طریق لایهٔ سازگاری حفظ می‌شوند. [گزارش بررسی و دستورالعمل کامل](docs/rebrand-audit-fa.md).
+
+- لوگوی نهایی: `assets/images/ashna/ashna-secure-login.svg`
+- کیت لوگو: `deliverables/ashna-logo-kit.zip`
+- راهنمای فارسی: `deliverables/Ashna-Help-FA.pdf`
+- نسخهٔ بدون لایسنس: `deliverables/ashna-otp-no-license.zip`
 
 ---
 
@@ -10,7 +21,7 @@
 - **PHP حداقل 8.2**؛ وردپرس در فعال‌سازی استاندارد، نسخه‌های پایین‌تر را رد می‌کند. این تغییر، PHP هاست را ارتقا نمی‌دهد.
 - ionCube Loader فعال در PHP وب و سازگار با نسخهٔ PHP و فایل رمزگذاری‌شدهٔ لایسنس. حداقل PHP به معنی تضمین سازگاری فایل لایسنس با تمام نسخه‌های جدیدتر نیست.
 - فایل رسمی `RTL_License_c1595a7238d64f3a.php` با همان هش قبلی `4f106eb02a251f2a6951ca3f530596590081002d`؛ نسخهٔ جایگزین مخصوص PHP 7.4 استفاده نمی‌شود.
-- برای بستهٔ قابل نصب، از `deliverables/signa-otp-with-logo.zip` استفاده کنید. فایل واقعی لایسنس در مخزن موجود نیست؛ پیش از نصب/جایگزینی، فایل معتبر متناظر را کنار `signa.php` در بسته قرار دهید. از سایت و فایل لایسنس قبلی نسخهٔ پشتیبان بگیرید.
+- برای بستهٔ قابل نصب، از `deliverables/ashna-otp-with-logo.zip` استفاده کنید. فایل واقعی لایسنس در مخزن موجود نیست؛ پیش از نصب/جایگزینی، فایل معتبر متناظر را کنار `ashna.php` در بسته قرار دهید. از سایت و فایل لایسنس قبلی نسخهٔ پشتیبان بگیرید.
 
 نسخهٔ جداگانهٔ بدون لایسنس و ابزار عیب‌یابی، نیازمندی‌های مستقل خود را دارند. پیش از تغییر PHP سایت اصلی، سازگاری قالب، پرداخت و افزونه‌ها را روی کپی آزمایشی بررسی کنید.
 
@@ -46,35 +57,35 @@
 ## معماری ماژولار و توسعه‌پذیر (Clean Architecture v2.3)
 
 ```text
-Signa/
-├── signa.php                                      # فایل بوت‌استرپ سبک پلاگین
+Ashna/
+├── ashna.php                                      # فایل بوت‌استرپ سبک پلاگین
 ├── uninstall.php                                  # پاکسازی کامل دیتابیس و کرون‌ها هنگام حذف
 ├── includes/
-│   ├── class-signa-autoloader.php                 # بارگذار خودکار کلاس‌ها (SPL Autoloader)
-│   ├── class-signa-plugin.php                     # هسته مرکزی مدیریت چرخه حیات و سرویس‌ها
+│   ├── class-ashna-autoloader.php                 # بارگذار خودکار کلاس‌ها (SPL Autoloader)
+│   ├── class-ashna-plugin.php                     # هسته مرکزی مدیریت چرخه حیات و سرویس‌ها
 │   ├── core/                                      # لایه زیرساخت و هسته (Core Layer)
-│   │   ├── class-signa-activator.php              # مدیریت جداول دیتابیس و زمان‌بند WP-Cron
-│   │   ├── class-signa-helper.php                 # مدیریت تنظیمات با کش درون‌حافظه‌ای و نرمال‌سازی
-│   │   ├── class-signa-logger.php                 # ریپازیتوری لاگ‌ها، آمار و نمودار ۷ روزه
-│   │   └── class-signa-security.php               # موتور فایروال، Rate Limit، قفل امنیتی و کپچا
+│   │   ├── class-ashna-activator.php              # مدیریت جداول دیتابیس و زمان‌بند WP-Cron
+│   │   ├── class-ashna-helper.php                 # مدیریت تنظیمات با کش درون‌حافظه‌ای و نرمال‌سازی
+│   │   ├── class-ashna-logger.php                 # ریپازیتوری لاگ‌ها، آمار و نمودار ۷ روزه
+│   │   └── class-ashna-security.php               # موتور فایروال، Rate Limit، قفل امنیتی و کپچا
 │   ├── services/                                  # لایه سرویس‌های کاربردی (Application Services)
-│   │   ├── class-signa-auth.php                   # سرویس احراز هویت AJAX، ثبت‌نام خودکار و ورود
-│   │   ├── class-signa-frontend.php               # شورت‌کدها، مودال سراسری و جایگزین wp-login.php
-│   │   └── class-signa-woocommerce.php            # یکپارچگی کامل با ووکامرس و پروفایل کاربران
+│   │   ├── class-ashna-auth.php                   # سرویس احراز هویت AJAX، ثبت‌نام خودکار و ورود
+│   │   ├── class-ashna-frontend.php               # شورت‌کدها، مودال سراسری و جایگزین wp-login.php
+│   │   └── class-ashna-woocommerce.php            # یکپارچگی کامل با ووکامرس و پروفایل کاربران
 │   ├── gateways/                                  # لایه درایورهای ارسال پیام (Gateway Drivers)
-│   │   ├── interface-signa-gateway.php            # قرارداد استاندارد درگاه‌ها (Interface)
-│   │   ├── abstract-signa-gateway.php             # کلاس پایه انتزاعی درگاه‌ها (Abstract Base Class)
-│   │   ├── class-signa-gateway-manager.php        # مدیر درگاه‌ها و زنجیره ۳ مرحله‌ای Failover
-│   │   ├── class-signa-gateway-sandbox.php        # درایور آزمایشی (Sandbox)
-│   │   ├── class-signa-gateway-smsir.php          # درایور SMS.ir
-│   │   ├── class-signa-gateway-kavenegar.php      # درایور کاوه‌نگار
-│   │   ├── class-signa-gateway-melipayamak.php    # درایور ملی‌پیامک
-│   │   ├── class-signa-gateway-farazsms.php       # درایور فراز اس‌ام‌اس
-│   │   ├── class-signa-gateway-ippanel.php        # درایور آی‌پی‌پنل
-│   │   ├── class-signa-gateway-bale.php           # درایور پیام‌رسان بله (سفیر + ربات)
-│   │   └── class-signa-gateway-email.php          # درایور ایمیل وردپرس
+│   │   ├── interface-ashna-gateway.php            # قرارداد استاندارد درگاه‌ها (Interface)
+│   │   ├── abstract-ashna-gateway.php             # کلاس پایه انتزاعی درگاه‌ها (Abstract Base Class)
+│   │   ├── class-ashna-gateway-manager.php        # مدیر درگاه‌ها و زنجیره ۳ مرحله‌ای Failover
+│   │   ├── class-ashna-gateway-sandbox.php        # درایور آزمایشی (Sandbox)
+│   │   ├── class-ashna-gateway-smsir.php          # درایور SMS.ir
+│   │   ├── class-ashna-gateway-kavenegar.php      # درایور کاوه‌نگار
+│   │   ├── class-ashna-gateway-melipayamak.php    # درایور ملی‌پیامک
+│   │   ├── class-ashna-gateway-farazsms.php       # درایور فراز اس‌ام‌اس
+│   │   ├── class-ashna-gateway-ippanel.php        # درایور آی‌پی‌پنل
+│   │   ├── class-ashna-gateway-bale.php           # درایور پیام‌رسان بله (سفیر + ربات)
+│   │   └── class-ashna-gateway-email.php          # درایور ایمیل وردپرس
 │   └── admin/                                     # لایه پنل مدیریت (Admin UI & Partials)
-│       ├── class-signa-admin.php                  # کنترلر پنل مدیریت، AJAX و خروجی CSV
+│       ├── class-ashna-admin.php                  # کنترلر پنل مدیریت، AJAX و خروجی CSV
 │       └── views/
 │           ├── settings-page.php                  # پوسته اصلی داشبورد مدیریت
 │           ├── logs-page.php                      # صفحه گزارش و لاگ کدها
@@ -91,7 +102,7 @@ Signa/
 │   ├── css/ (frontend.css, admin.css)
 │   └── js/  (frontend.js, admin.js)
 └── templates/
-    ├── login-form.php                             # قالب فرم ورود (قابل بازنویسی در قالب: yourtheme/signa/login-form.php)
+    ├── login-form.php                             # قالب فرم ورود (قابل بازنویسی در قالب: yourtheme/ashna/login-form.php)
     ├── wc-myaccount-login.php                     # قالب جایگزین حساب کاربری ووکامرس
     └── email-otp.php                              # قالب HTML ایمیل کد تایید
 ```
@@ -100,12 +111,12 @@ Signa/
 
 ## افزودن درگاه پیامک سفارشی توسط توسعه‌دهندگان
 
-به‌واسطه معماری `Signa_Abstract_Gateway` و متد `Signa_Gateway_Manager::register_gateway()`، هر توسعه‌دهنده‌ای می‌تواند بدون دستکاری هسته افزونه، درگاه جدیدی را در قالب یا افزونه جانبی ثبت کند:
+به‌واسطه معماری `Ashna_Abstract_Gateway` و متد `Ashna_Gateway_Manager::register_gateway()`، هر توسعه‌دهنده‌ای می‌تواند بدون دستکاری هسته افزونه، درگاه جدیدی را در قالب یا افزونه جانبی ثبت کند:
 
 ```php
 add_action( 'init', function() {
-    if ( class_exists( 'Signa_Abstract_Gateway' ) ) {
-        class My_Custom_SMS_Gateway extends Signa_Abstract_Gateway {
+    if ( class_exists( 'Ashna_Abstract_Gateway' ) ) {
+        class My_Custom_SMS_Gateway extends Ashna_Abstract_Gateway {
             public function get_id()    { return 'my_gateway'; }
             public function get_title() { return 'درگاه اختصاصی من'; }
             public function send( $recipient, $code ) {
@@ -113,7 +124,7 @@ add_action( 'init', function() {
                 return true;
             }
         }
-        Signa_Gateway_Manager::register_gateway( new My_Custom_SMS_Gateway() );
+        Ashna_Gateway_Manager::register_gateway( new My_Custom_SMS_Gateway() );
     }
 } );
 ```

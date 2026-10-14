@@ -2,7 +2,7 @@
 /**
  * WooCommerce My Account OTP Login Wrapper Template
  *
- * @package Signa_OTP
+ * @package Ashna_OTP
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( function_exists( 'do_action' ) ) {
 $redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
 
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-echo Signa_Frontend::get_login_form_html(
+echo Ashna_Frontend::get_login_form_html(
 	array(
 		'redirect' => $redirect,
 		'context'  => 'wc-myaccount',

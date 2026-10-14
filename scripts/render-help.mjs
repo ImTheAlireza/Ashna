@@ -1,5 +1,5 @@
 // npm ci --prefix product-images/gallery-design
-// SIGNA_BUNDLED_LIBS=1 node scripts/render-help.mjs
+// ASHNA_BUNDLED_LIBS=1 node scripts/render-help.mjs
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
@@ -9,7 +9,7 @@ const require = createRequire(path.join(root, 'product-images/gallery-design/pac
 const { chromium: playwright } = require('playwright-core');
 const chromiumModule = require('@sparticuz/chromium');
 const chromium = chromiumModule.default || chromiumModule;
-if (process.env.SIGNA_BUNDLED_LIBS === '1') {
+if (process.env.ASHNA_BUNDLED_LIBS === '1') {
   const libs = await chromiumModule.inflate(path.resolve(path.dirname(require.resolve('@sparticuz/chromium')), '../bin/al2023.tar.br'));
   chromiumModule.setupLambdaEnvironment(path.join(libs, 'lib'));
 }
@@ -48,6 +48,6 @@ try {
     throw new Error('Guide layout validation failed: ' + errors.join(', '));
   }
   await fs.mkdir(path.join(root, 'deliverables'), { recursive: true });
-  await page.pdf({ path: path.join(root, 'deliverables/Signa-Help-FA.pdf'), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
+  await page.pdf({ path: path.join(root, 'deliverables/Ashna-Help-FA.pdf'), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
   console.log('PASS: 3 pages, Persian numerals verified, fonts/images loaded, no content/footer collision.');
 } finally { await browser.close(); }

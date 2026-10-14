@@ -1,31 +1,37 @@
 [
   {
-    "file": "signa-otp-with-logo.zip",
-    "bytes": 447359,
-    "sha256": "45c9f0490368cab30520e7d3843bd1df01a75ef6ac103c46e6735c49642e821b",
-    "files": 74
+    "file": "ashna-otp-with-logo.zip",
+    "bytes": 371365,
+    "sha256": "7280a8b922bb7f5ae77d25acfc8750770839ed28b88f2da1612c4a40e64b1d20",
+    "files": 83
   },
   {
-    "file": "signa-otp-no-license.zip",
-    "bytes": 444268,
-    "sha256": "b9168ee9eed7e0f3d3dd85ccb44f107e3b61c8d6ecc226a78a6980cd184c6b80",
-    "files": 74
+    "file": "ashna-otp-no-license.zip",
+    "bytes": 369012,
+    "sha256": "47f0a14af48dca3652f85d6c11d025668ca397ca703cd914e00d766c8cc27b08",
+    "files": 83
   },
   {
-    "file": "signa-website-source.zip",
-    "bytes": 2080231,
-    "sha256": "fcd6899377731ff0883592ae88f7842815bad87b34803a90ace848008d6aa22c",
-    "files": 32
+    "file": "ashna-website-source.zip",
+    "bytes": 1966011,
+    "sha256": "c30212e2ba69253e4f916b02c2b8549eb28f151aa785744f6460332015de12fd",
+    "files": 33
   },
   {
-    "file": "signa-activation-diagnostics.zip",
-    "bytes": 9990,
-    "sha256": "d000fb23dc3e7b9ca31763fe7cae7a1d0d2c3ff0caa9a7c926b1b812c55749a0",
+    "file": "ashna-activation-diagnostics.zip",
+    "bytes": 9991,
+    "sha256": "52bdea3ed8c193db8bdde229395ec8bf74faf91b2909722c2dda02d1dc86995d",
     "files": 3
   },
   {
-    "file": "Signa-Help-FA.pdf",
-    "bytes": 236971,
-    "sha256": "2c0929bd3a4b36fdde8885eea3a15b34bca91e9c0f7abf8d5076d75caae5eaf0"
+    "file": "ashna-logo-kit.zip",
+    "bytes": 79561,
+    "sha256": "36aca0b043d7b1faec5ba12bfe162e52e34b56a22af234a830414dd561085494",
+    "files": 14
+  },
+  {
+    "file": "Ashna-Help-FA.pdf",
+    "bytes": 157784,
+    "sha256": "03796dab33b8aee4445e2915f43f93483663ca96ea01128876c43a0841e579a1"
   }
 ]

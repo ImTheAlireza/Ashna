@@ -1,17 +1,17 @@
 [
   {
-    "file": "Signa-Rightchin-Package.zip",
-    "bytes": 646904,
-    "sha256": "b483738cffb15cbb9505dd9cd1d7d8ffd6bc4beaf2f50e9c34a9ba9191ff6d08"
+    "file": "Ashna-Rightchin-Package.zip",
+    "bytes": 490807,
+    "sha256": "c19ffb005310bd74a7a546bb1c42df0bbbcb7b3fbb81bd1242766293757e95b0"
   },
   {
-    "file": "../deliverables/Signa-Help-FA.pdf",
-    "bytes": 236971,
-    "sha256": "2c0929bd3a4b36fdde8885eea3a15b34bca91e9c0f7abf8d5076d75caae5eaf0"
+    "file": "../deliverables/Ashna-Help-FA.pdf",
+    "bytes": 157784,
+    "sha256": "03796dab33b8aee4445e2915f43f93483663ca96ea01128876c43a0841e579a1"
   },
   {
-    "file": "../deliverables/signa-otp-with-logo.zip",
-    "bytes": 447359,
-    "sha256": "45c9f0490368cab30520e7d3843bd1df01a75ef6ac103c46e6735c49642e821b"
+    "file": "../deliverables/ashna-otp-with-logo.zip",
+    "bytes": 371365,
+    "sha256": "7280a8b922bb7f5ae77d25acfc8750770839ed28b88f2da1612c4a40e64b1d20"
   }
 ]

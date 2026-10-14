@@ -213,29 +213,29 @@ body:hover .cursor-glow { opacity: 1; }
 }
 .card:hover { transform: translateY(-8px) scale(1.02); }
 
-/* ── Signa Card ─────────────────────── */
-.card-signa { background: var(--card-blue-bg); border: 1px solid var(--card-blue-border); }
-.card-signa:hover { box-shadow: 0 20px 60px var(--card-blue-hover); border-color: var(--card-blue-hover); }
-.signa-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-.signa-logo-img {
+/* ── Ashna Card ─────────────────────── */
+.card-ashna { background: var(--card-blue-bg); border: 1px solid var(--card-blue-border); }
+.card-ashna:hover { box-shadow: 0 20px 60px var(--card-blue-hover); border-color: var(--card-blue-hover); }
+.ashna-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.ashna-logo-img {
   width: 44px; height: 44px; border-radius: 11px; object-fit: contain;
   background: rgba(255,255,255,.9); padding: 4px; transition: background .4s;
 }
-[data-theme="light"] .signa-logo-img { background: rgba(147,197,253,.1); }
-.signa-meta .card-badge {
+[data-theme="light"] .ashna-logo-img { background: rgba(147,197,253,.1); }
+.ashna-meta .card-badge {
   background: rgba(147,197,253,.12); color: var(--blue);
   font-size: .65rem; font-weight: 700; padding: 3px 10px; border-radius: 100px;
   display: inline-block; margin-bottom: 4px;
 }
-.signa-meta h3 { font-size: 1.05rem; font-weight: 700; }
-.card-signa p { font-size: .84rem; color: var(--text2); line-height: 1.75; margin-bottom: 16px; }
-.card-signa .card-link {
+.ashna-meta h3 { font-size: 1.05rem; font-weight: 700; }
+.card-ashna p { font-size: .84rem; color: var(--text2); line-height: 1.75; margin-bottom: 16px; }
+.card-ashna .card-link {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: .82rem; font-weight: 600; color: var(--blue);
   transition: gap .3s var(--ease);
 }
-.card-signa .card-link:hover { gap: 8px; }
-.card-signa .card-link svg { width: 13px; height: 13px; }
+.card-ashna .card-link:hover { gap: 8px; }
+.card-ashna .card-link svg { width: 13px; height: 13px; }
 
 /* ── Feature Chips ──────────────────── */
 .features-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -306,11 +306,11 @@ body:hover .cursor-glow { opacity: 1; }
 }
 .card:hover .glow-orb { opacity: .55; transform: translateX(-50%) scale(1.3); }
 @keyframes orbPulse { 0%, 100% { opacity: .2; } 50% { opacity: .4; } }
-.card-signa .glow-orb { background: var(--card-blue-hover); }
+.card-ashna .glow-orb { background: var(--card-blue-hover); }
 .card-soon .glow-orb { background: var(--card-purple-hover); }
 
 /* ── Card Float ─────────────────────── */
-.card-signa { animation: float1 6s ease-in-out infinite; }
+.card-ashna { animation: float1 6s ease-in-out infinite; }
 .card-soon  { animation: float2 7s ease-in-out infinite; }
 @keyframes float1 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes float2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -400,7 +400,7 @@ footer a:hover { color: var(--text); }
   .products-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 2.2rem; }
   .phil-grid { grid-template-columns: 1fr; }
-  .card-signa, .card-soon { animation: none; }
+  .card-ashna, .card-soon { animation: none; }
 }
 @media (max-width: 600px) {
   .hero h1 { font-size: 1.7rem; }

@@ -2,18 +2,18 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-const require = createRequire(process.env.SIGNA_RENDER_MODULES || import.meta.url);
+const require = createRequire(process.env.ASHNA_RENDER_MODULES || import.meta.url);
 const { chromium: playwright } = require('playwright-core');
 const chromiumModule = require('@sparticuz/chromium');
 const chromium = chromiumModule.default || chromiumModule;
-if (process.env.SIGNA_BUNDLED_LIBS === '1') {
+if (process.env.ASHNA_BUNDLED_LIBS === '1') {
   const libs = await chromiumModule.inflate(path.resolve(path.dirname(require.resolve('@sparticuz/chromium')), '../bin/al2023.tar.br'));
   chromiumModule.setupLambdaEnvironment(path.join(libs, 'lib'));
 }
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const output = path.join(root, '.cache/gallery-render');
 await fs.mkdir(output, { recursive: true });
-const base = process.env.SIGNA_GALLERY_URL || 'http://127.0.0.1:8000/product-images/gallery-design/';
+const base = process.env.ASHNA_GALLERY_URL || 'http://127.0.0.1:8000/product-images/gallery-design/';
 const browser = await playwright.launch({ executablePath: process.env.CHROME_PATH || await chromium.executablePath(), args: chromium.args, headless: true });
 const report = [];
 try {

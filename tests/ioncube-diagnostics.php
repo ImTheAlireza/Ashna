@@ -2,7 +2,7 @@
 /** Message fixtures only: does not execute ionCube or a vendor license. */
 define('ABSPATH', __DIR__ . '/');
 function add_action() {}
-require __DIR__ . '/../tools/signa-activation-diagnostics/signa-activation-diagnostics.php';
+require __DIR__ . '/../tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php';
 function check($condition, $message) { if (!$condition) { throw new RuntimeException($message); } }
 $cases = array(
     array('The file /home/PRIVATE-TOKEN/RTL_License_c1595a7238d64f3a.php was encoded by the ionCube Encoder for PHP 8.2 and cannot run under PHP 7.4.',
@@ -35,7 +35,7 @@ $cases = array(
         array('reason' => 'unrecognized_loader_error')),
 );
 foreach ($cases as $i => $case) {
-    $result = Signa_Activation_Diagnostics::safe_error(array('type' => E_CORE_ERROR, 'message' => $case[0], 'file' => 'Unknown', 'line' => 0));
+    $result = Ashna_Activation_Diagnostics::safe_error(array('type' => E_CORE_ERROR, 'message' => $case[0], 'file' => 'Unknown', 'line' => 0));
     check($result['is_fatal'] && $result['category'] === 'ioncube', 'Lost Fatal/ionCube classification');
     $details = $result['ioncube_details'];
     $expected = array_merge(array('mentions_expected_license_file' => false), $case[1]);
@@ -46,6 +46,6 @@ foreach ($cases as $i => $case) {
         check(strpos($json, $secret) === false, 'Private data copied into report');
     }
 }
-$result = Signa_Activation_Diagnostics::safe_error(array('type' => E_NOTICE, 'message' => 'translation notice', 'file' => '/home/PRIVATE-TOKEN/functions.php', 'line' => 12));
+$result = Ashna_Activation_Diagnostics::safe_error(array('type' => E_NOTICE, 'message' => 'translation notice', 'file' => '/home/PRIVATE-TOKEN/functions.php', 'line' => 12));
 check(!isset($result['ioncube_details']) && !$result['is_fatal'], 'Unrelated Notice treated as Loader error');
 echo 'PASS all ' . count($cases) . " ionCube message fixtures\n";

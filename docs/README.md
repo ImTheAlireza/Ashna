@@ -2,14 +2,14 @@
 
 - `guide-fa.html`: منبع سه‌صفحه‌ای راهنمای PDF؛ راست‌به‌چپ با فونت‌های محلی Estedad و لوگوی تأییدشده.
 - `changelog-FA.txt`: تاریخچهٔ داخل بستهٔ راست‌چین.
-- خروجی اصلی: `deliverables/Signa-Help-FA.pdf`.
-- بستهٔ گردآوری‌شده: `rightchin/Signa-Rightchin-Package.zip`؛ فایل نصب داخلی عیناً آخرین `deliverables/signa-otp-with-logo.zip` است.
+- خروجی اصلی: `deliverables/Ashna-Help-FA.pdf`.
+- بستهٔ گردآوری‌شده: `rightchin/Ashna-Rightchin-Package.zip`؛ فایل نصب داخلی عیناً آخرین `deliverables/ashna-otp-with-logo.zip` است.
 
 بازسازی از ریشهٔ مخزن:
 
 ```sh
 npm ci --prefix product-images/gallery-design
-SIGNA_BUNDLED_LIBS=1 node scripts/render-help.mjs
+ASHNA_BUNDLED_LIBS=1 node scripts/render-help.mjs
 python scripts/package-rightchin.py
 ```
 
@@ -20,3 +20,5 @@ python scripts/package-rightchin.py
 اسکریپت بسته‌بندی، CRC و برابری بایتی PDF و ZIP داخلی با خروجی‌های فعلی را بررسی و checksumها را ثبت می‌کند. این بازسازی، ZIP نصب یا لایسنس را تغییر نمی‌دهد. اگر کد افزونه عوض شد، ابتدا بستهٔ نصب را با اسکریپت اصلی بازسازی کنید.
 
 **محدودیت انتشار:** یادداشت تهیه‌کننده در README بسته، نبود فایل واقعی لایسنس را اعلام می‌کند. PDF فقط راهنمای خریدار است و شامل جزئیات مخزن، هش، آزمایش‌های داخلی یا تاریخچهٔ عیب‌یابی نیست. پیش از افزودن لایسنس معتبر و انتشار نهایی، این توضیحات و checksum فایل نصب باید با محتویات واقعی هماهنگ شوند. آزمون‌های رندر یا checksum، تأیید اجرای لایسنس یا سلامت سایت مشتری نیستند.
+
+گزارش تغییر هویت و ارتقای امن: [rebrand-audit-fa.md](rebrand-audit-fa.md).

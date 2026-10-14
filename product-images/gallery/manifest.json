@@ -13,7 +13,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 102238
+    "bytes": 100244
   },
   {
     "file": "02-passkey",
@@ -29,7 +29,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 119840
+    "bytes": 118596
   },
   {
     "file": "03-channels",
@@ -45,7 +45,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 106208
+    "bytes": 105326
   },
   {
     "file": "04-failover",
@@ -61,11 +61,11 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 90920
+    "bytes": 90158
   },
   {
     "file": "05-gateways",
-    "title": "یک سیگنا، چندین اتصال\nبه سامانه‌های ارسال",
+    "title": "یک آشنا، چندین اتصال\nبه سامانه‌های ارسال",
     "font": "Estedad, sans-serif",
     "size": "43px",
     "weight": "900",
@@ -77,7 +77,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 115912
+    "bytes": 113170
   },
   {
     "file": "06-security",
@@ -93,7 +93,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 110590
+    "bytes": 109984
   },
   {
     "file": "07-integrations",
@@ -109,7 +109,7 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 103726
+    "bytes": 102602
   },
   {
     "file": "08-dashboard",
@@ -125,6 +125,6 @@
     "fontLoaded": true,
     "clippedTitles": false,
     "posterOverflow": false,
-    "bytes": 103340
+    "bytes": 102556
   }
 ]

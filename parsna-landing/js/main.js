@@ -170,7 +170,7 @@
      Security: Disable drag on sensitive elements
      ═══════════════════════════════════════ */
 
-  document.querySelectorAll('.signa-logo-img').forEach(function (img) {
+  document.querySelectorAll('.ashna-logo-img').forEach(function (img) {
     img.setAttribute('draggable', 'false');
   });
 

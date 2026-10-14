@@ -1,24 +1,24 @@
-"""Build the standalone temporary diagnostic plugin; never rebuild Signa itself."""
+"""Build the standalone temporary diagnostic plugin; never rebuild Ashna itself."""
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 import hashlib
 import json
 
 root = Path(__file__).resolve().parents[1]
-source = root / 'tools/signa-activation-diagnostics'
-output = root / 'deliverables/signa-activation-diagnostics.zip'
+source = root / 'tools/ashna-activation-diagnostics'
+output = root / 'deliverables/ashna-activation-diagnostics.zip'
 output.parent.mkdir(exist_ok=True)
-names = ['signa-activation-diagnostics.php', 'uninstall.php', 'README.md']
+names = ['ashna-activation-diagnostics.php', 'uninstall.php', 'README.md']
 with ZipFile(output, 'w', compression=ZIP_DEFLATED) as archive:
     for name in names:
-        info = ZipInfo('signa-activation-diagnostics/' + name, (2026, 10, 13, 0, 0, 0))
+        info = ZipInfo('ashna-activation-diagnostics/' + name, (2026, 10, 14, 0, 0, 0))
         info.compress_type = ZIP_DEFLATED
         info.external_attr = 0o100644 << 16
         archive.writestr(info, (source / name).read_bytes())
 with ZipFile(output) as archive:
     assert archive.testzip() is None
     for name in names:
-        assert archive.read('signa-activation-diagnostics/' + name) == (source / name).read_bytes()
+        assert archive.read('ashna-activation-diagnostics/' + name) == (source / name).read_bytes()
 record = {'file': output.name, 'bytes': output.stat().st_size,
           'sha256': hashlib.sha256(output.read_bytes()).hexdigest(), 'files': len(names)}
 manifest = root / 'deliverables/checksums.json'
