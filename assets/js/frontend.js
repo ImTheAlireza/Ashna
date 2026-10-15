@@ -92,9 +92,18 @@
 			P.loggedIn = isTruthy(data.logged_in) ? '1' : '';
 		}
 		if (data.captcha && data.captcha.token) {
-			$('.ashna-captcha-question').text(data.captcha.question);
-			$('.ashna-captcha-token').val(data.captcha.token);
-			$('.ashna-captcha-answer').val('');
+			// Each form gets its own single-use question.
+			var list = data.captchas && data.captchas.length ? data.captchas : [data.captcha];
+			$('.ashna-captcha-box.is-math').each(function (i) {
+				var $box = $(this);
+				var c = list[i] || null;
+				if (c && c.token) {
+					$box.find('.ashna-captcha-question').text(c.question);
+					$box.find('.ashna-captcha-token').val(c.token);
+					$box.find('.ashna-captcha-answer').val('');
+					$box.addClass('is-active').show();
+				}
+			});
 		}
 	}
 
@@ -190,6 +199,22 @@
 		var otpLength = parseInt($wrapper.attr('data-otp-length'), 10) || 5;
 		var redirectTo = $wrapper.attr('data-redirect') || '';
 		var currentIdentifier = '';
+		var resendToken = '';
+		var $mathBox = $stepRequest.find('.ashna-captcha-box.is-math');
+
+		// Single-use math captcha: every server answer may carry the next question. During an
+		// attack the server can also ask for a captcha on a form that normally has none.
+		function applyCaptcha(captcha, reveal) {
+			if (!captcha || !captcha.token || !$mathBox.length) {
+				return;
+			}
+			$mathBox.find('.ashna-captcha-question').text(captcha.question);
+			$mathBox.find('.ashna-captcha-token').val(captcha.token);
+			$mathBox.find('.ashna-captcha-answer').val('');
+			if (reveal && !$mathBox.hasClass('is-active')) {
+				$mathBox.addClass('is-active').slideDown(160);
+			}
+		}
 		var hasRequiredExtraFields = false;
 		var timerInterval = null;
 
@@ -360,17 +385,19 @@
 
 			var payload = {
 				action: 'ashna_request_otp',
-				identifier: identifier
+				identifier: identifier,
+				ashna_website: $stepRequest.find('.ashna-hp-input').val() || ''
 			};
+			if (resendToken && identifier === currentIdentifier) {
+				payload.resend_token = resendToken;
+			}
 
-			var $captchaAns = $stepRequest.find('.ashna-captcha-answer');
-			var $captchaTok = $stepRequest.find('.ashna-captcha-token');
 			var $arcaptchaTok = $stepRequest.find('[name="arcaptcha-token"]');
 			var $turnstileTok = $stepRequest.find('[name="cf-turnstile-response"]');
 
-			if ($captchaAns.length) {
-				payload.captcha_answer = toEnglishDigits($captchaAns.val());
-				payload.captcha_token = $captchaTok.val();
+			if ($mathBox.hasClass('is-active')) {
+				payload.captcha_answer = toEnglishDigits($mathBox.find('.ashna-captcha-answer').val());
+				payload.captcha_token = $mathBox.find('.ashna-captcha-token').val();
 			} else if ($arcaptchaTok.length) {
 				payload.captcha_token = $arcaptchaTok.val();
 			} else if ($turnstileTok.length) {
@@ -419,8 +446,12 @@
 
 			ashnaRequest(payload, { timeout: parseInt(ashnaOtpParams.sendTimeoutMs, 10) || 30000 })
 				.done(function (res) {
+					if (res && res.data && res.data.new_captcha) {
+						applyCaptcha(res.data.new_captcha, !res.success);
+					}
 					if (res && res.success) {
 						currentIdentifier = res.data.identifier;
+						resendToken = res.data.resend_token || '';
 						$recipientDisplay.text(res.data.masked || currentIdentifier);
 						$stepRequest.hide();
 						$stepPassword.hide();
@@ -473,10 +504,13 @@
 						}, 220);
 						listenForWebOTP();
 					} else {
-						if (res && res.data && res.data.new_captcha) {
-							$stepRequest.find('.ashna-captcha-question').text(res.data.new_captcha.question);
-							$stepRequest.find('.ashna-captcha-token').val(res.data.new_captcha.token);
-							$stepRequest.find('.ashna-captcha-answer').val('');
+						// A captcha is now needed while the visitor is on the code step (e.g. a resend
+						// from a new network): bring the first step back with the question.
+						if (res && res.data && res.data.new_captcha && !$stepRequest.is(':visible')) {
+							$stepVerify.hide();
+							$stepPassword.hide();
+							$identifierInput.val(currentIdentifier);
+							$stepRequest.fadeIn(180);
 						}
 						if (window.arcaptcha && typeof window.arcaptcha.reset === 'function') {
 							try {

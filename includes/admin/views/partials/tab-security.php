@@ -13,30 +13,82 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<!-- TOP BENTO ROW: Rate Limiting (Col 7) + Captcha Anti-Bot (Col 5) -->
 					<div class="ashna-bento-row">
 						<!-- Box 1: Rate Limiting & Brute-Force Protection -->
-						<div class="ashna-card ashna-col-7">
+						<?php
+						$attack_state = Ashna_Rate_Limiter::attack_mode_state();
+						$block_stats  = Ashna_Rate_Limiter::block_stats();
+						?>
+						<div class="ashna-card ashna-col-7" id="ashna-rate-limit-card">
 							<div class="ashna-card-head">
 								<div class="ashna-card-head-title">
 									<span class="ashna-card-icon is-blue">
 										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="8 12 11 15 16 9"/></svg>
 									</span>
 									<div>
-										<h2>محافظت از شارژ پنل و ضد اسپم</h2>
-										<p>جلوگیری خودکار از درخواست‌های رگباری و قفل موقت مهاجمان</p>
+										<h2>محافظت از شارژ پنل و ضد پیامک‌بمبر</h2>
+										<p>سقف دقیقه‌ای، ساعتی و روزانه برای هر شماره، هر آی‌پی و هر شبکه</p>
 									</div>
 								</div>
-								<span class="ashna-pill is-ok">محافظت خودکار</span>
+								<span class="ashna-pill <?php echo $attack_state ? 'is-err' : 'is-ok'; ?>"><?php echo $attack_state ? 'حالت حمله فعال' : 'محافظت خودکار'; ?></span>
 							</div>
+
+							<?php if ( $attack_state ) : ?>
+								<div class="ashna-info-note is-danger" id="ashna-attack-mode-note" style="margin-bottom:16px;">
+									<span>
+										<strong>حالت حمله فعال است:</strong>
+										<?php
+										echo esc_html(
+											sprintf(
+												'%s درخواست در یک دقیقه رسید؛ تا ساعت %s پاسخ‌دادن به کپچا برای همه اجباری است.',
+												number_format_i18n( (int) $attack_state['peak'] ),
+												wp_date( 'H:i', (int) $attack_state['until'] )
+											)
+										);
+										?>
+									</span>
+									<button type="button" class="ashna-btn-secondary ashna-end-attack-btn">پایان حالت حمله</button>
+								</div>
+							<?php endif; ?>
 
 							<div class="ashna-fields-grid ashna-cols-2">
 								<div class="ashna-field">
-									<label for="max_requests_per_hour">سقف پیامک هر شماره (در ساعت)</label>
+									<label for="max_requests_per_hour">سقف کد برای هر شماره (در ساعت)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_requests_per_hour]" id="max_requests_per_hour" value="<?php echo esc_attr( (string) $settings['max_requests_per_hour'] ); ?>" dir="ltr" />
-									<small>هر شماره موبایل چند بار در ساعت اجازه دریافت کد دارد؟</small>
+									<small>فاصله‌ی ارسال مجدد (پیش‌فرض ۶۰ ثانیه) هم یعنی حداکثر ۱ کد در دقیقه؛ در تب «روش و مسیر ورود».</small>
+								</div>
+								<div class="ashna-field">
+									<label for="max_requests_per_day">سقف کد برای هر شماره (در ۲۴ ساعت)</label>
+									<input type="text" inputmode="numeric" name="ashna[max_requests_per_day]" id="max_requests_per_day" value="<?php echo esc_attr( (string) $settings['max_requests_per_day'] ); ?>" dir="ltr" />
+									<small>جلوی مزاحمت طولانی برای یک شماره را می‌گیرد.</small>
+								</div>
+								<div class="ashna-field">
+									<label for="max_ip_requests_per_minute">سقف درخواست هر آی‌پی (در دقیقه)</label>
+									<input type="text" inputmode="numeric" name="ashna[max_ip_requests_per_minute]" id="max_ip_requests_per_minute" value="<?php echo esc_attr( (string) $settings['max_ip_requests_per_minute'] ); ?>" dir="ltr" />
+									<small>ارسال رگباری به شماره‌های مختلف از یک دستگاه</small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_ip_requests_per_hour">سقف درخواست هر آی‌پی (در ساعت)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_ip_requests_per_hour]" id="max_ip_requests_per_hour" value="<?php echo esc_attr( (string) $settings['max_ip_requests_per_hour'] ); ?>" dir="ltr" />
 									<small>جلوگیری از تست شماره‌های متعدد توسط یک دستگاه</small>
+								</div>
+								<div class="ashna-field">
+									<label for="max_subnet_requests_per_minute">سقف هر شبکه‌ی آی‌پی (در دقیقه)</label>
+									<input type="text" inputmode="numeric" name="ashna[max_subnet_requests_per_minute]" id="max_subnet_requests_per_minute" value="<?php echo esc_attr( (string) $settings['max_subnet_requests_per_minute'] ); ?>" dir="ltr" />
+									<small>آی‌پی‌های یک رنج (‎/24 و در IPv6 ‎/64) با هم شمرده می‌شوند. ۰ = خاموش</small>
+								</div>
+								<div class="ashna-field">
+									<label for="daily_send_cap">سقف ارسال کل سایت در روز</label>
+									<input type="text" inputmode="numeric" name="ashna[daily_send_cap]" id="daily_send_cap" value="<?php echo esc_attr( (string) $settings['daily_send_cap'] ); ?>" dir="ltr" />
+									<small>محافظ شارژ پنل: با رسیدن به سقف، ارسال تا فردا متوقف و به مدیر ایمیل می‌شود. ۰ = نامحدود</small>
+								</div>
+								<div class="ashna-field">
+									<label for="attack_mode_threshold">آستانه‌ی «حالت حمله» (درخواست در دقیقه، کل سایت)</label>
+									<input type="text" inputmode="numeric" name="ashna[attack_mode_threshold]" id="attack_mode_threshold" value="<?php echo esc_attr( (string) $settings['attack_mode_threshold'] ); ?>" dir="ltr" />
+									<small>با عبور از این عدد، کپچا برای همه اجباری و به مدیر ایمیل می‌شود (اگر کپچایی تنظیم نشده باشد، کپچای ریاضی). ۰ = خاموش</small>
+								</div>
+								<div class="ashna-field">
+									<label for="attack_mode_minutes">مدت «حالت حمله» (دقیقه)</label>
+									<input type="text" inputmode="numeric" name="ashna[attack_mode_minutes]" id="attack_mode_minutes" value="<?php echo esc_attr( (string) $settings['attack_mode_minutes'] ); ?>" dir="ltr" />
+									<small>بعد از این مدت، فرم خودکار به حالت عادی برمی‌گردد.</small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_verify_attempts">تعداد مجاز خطا در وارد کردن کد</label>
@@ -50,15 +102,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</div>
 							</div>
 
-							<div class="ashna-switch-row" style="margin-top:18px;">
-								<div class="ashna-switch-text">
-									<strong>تشخیص آی‌پی واقعی پشت کلودفلر و ابرآروان</strong>
-									<p>اگر سایت شما روی CDN است فعال کنید تا آی‌پی اصلی کاربر شناسایی شود.</p>
-								</div>
-								<label class="ashna-switch">
-									<input type="checkbox" name="ashna[trust_proxy_headers]" value="1" <?php checked( ! empty( $settings['trust_proxy_headers'] ), true ); ?> />
-									<span class="ashna-slider"></span>
-								</label>
+							<div class="ashna-info-note" style="margin-top:16px;">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+								<span>هر درخواست قبل از تماس با درگاه، سهمیه‌اش را رزرو می‌کند؛ حتی ده‌ها درخواست هم‌زمان برای یک شماره فقط یک پیامک می‌فرستند. فیلد تله‌ی نامرئی هم ربات‌های ساده را بی‌صدا رد می‌کند.</span>
 							</div>
 						</div>
 
@@ -112,6 +158,145 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
 								<span>در حال حاضر محدودساز هوشمند نرخ ارسال (Rate Limit) بدون ایجاد مزاحمت کپچا از فرم شما محافظت می‌کند.</span>
 							</div>
+						</div>
+					</div>
+
+					<!-- MIDDLE BENTO ROW: Real visitor IP behind CDN/proxy (Col 6) + Refused requests today (Col 6) -->
+					<?php
+					$ip_diag    = Ashna_IP::diagnostics();
+					$proxy_hint = Ashna_IP::untrusted_proxy_hint();
+					$reason_fa  = array(
+						'ashna_cooldown'                 => 'فاصله‌ی ارسال مجدد',
+						'ashna_rate_limit_recipient'     => 'سقف ساعتی شماره',
+						'ashna_rate_limit_recipient_day' => 'سقف روزانه‌ی شماره',
+						'ashna_rate_limit_ip_minute'     => 'سقف دقیقه‌ای آی‌پی',
+						'ashna_rate_limit_ip'            => 'سقف ساعتی آی‌پی',
+						'ashna_rate_limit_subnet'        => 'سقف شبکه',
+						'ashna_daily_cap'                => 'سقف روزانه‌ی سایت',
+						'ashna_honeypot'                 => 'فیلد تله (ربات)',
+						'ashna_captcha_empty'            => 'کپچای خالی',
+						'ashna_captcha_wrong'            => 'کپچای اشتباه',
+						'ashna_captcha_used'             => 'کپچای تکراری',
+						'ashna_captcha_expired'          => 'کپچای منقضی',
+						'ashna_captcha_missing'          => 'کپچای خالی',
+						'ashna_captcha_failed'           => 'کپچای ناموفق',
+						'ashna_arcaptcha_failed'         => 'کپچای ناموفق',
+						'ashna_locked_out'               => 'قفل موقت',
+						'ashna_blocked_ip'               => 'آی‌پی مسدود',
+						'ashna_blocked_recipient'        => 'شماره‌ی مسدود',
+					);
+					?>
+					<div class="ashna-bento-row" style="margin-top:20px;">
+						<div class="ashna-card ashna-col-6" id="ashna-real-ip-card">
+							<div class="ashna-card-head">
+								<div class="ashna-card-head-title">
+									<span class="ashna-card-icon is-cyan">
+										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+									</span>
+									<div>
+										<h2>تشخیص آی‌پی واقعی (CDN و پراکسی)</h2>
+										<p>هدر جعلی آی‌پی، محدودیت‌ها را دور نمی‌زند</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="ashna-switch-row">
+								<div class="ashna-switch-text">
+									<strong>خواندن آی‌پی بازدیدکننده از هدر CDN/پراکسی</strong>
+									<p>فقط از پراکسی‌های مورد اعتماد پذیرفته می‌شود: کلودفلر (خودکار)، شبکه‌ی داخلی سرور و فهرست زیر.</p>
+								</div>
+								<label class="ashna-switch">
+									<input type="checkbox" name="ashna[trust_proxy_headers]" value="1" <?php checked( ! empty( $settings['trust_proxy_headers'] ), true ); ?> />
+									<span class="ashna-slider"></span>
+								</label>
+							</div>
+
+							<div class="ashna-field" style="margin-top:14px;">
+								<label for="trusted_proxies">پراکسی‌ها و CDNهای مورد اعتماد (IP یا CIDR، هر خط یکی)</label>
+								<textarea name="ashna[trusted_proxies]" id="trusted_proxies" rows="3" dir="ltr" placeholder="185.143.232.0/22"><?php echo esc_textarea( $settings['trusted_proxies'] ); ?></textarea>
+								<small>اگر سایت پشت ابرآروان است، رنج‌های رسمی آن را اضافه کنید (<code dir="ltr">arvancloud.ir/fa/ips.txt</code>).</small>
+								<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+									<button type="button" class="ashna-btn-secondary ashna-fetch-arvan-btn">دریافت خودکار رنج‌های ابرآروان</button>
+								</div>
+							</div>
+
+							<?php if ( $proxy_hint ) : ?>
+								<div class="ashna-info-note is-warning" id="ashna-proxy-hint" style="margin-top:14px;">
+									<span>
+										<strong>احتمالاً سایت پشت CDN/پراکسی است که در فهرست نیست.</strong>
+										درخواست‌ها با هدر <code dir="ltr"><?php echo esc_html( implode( ', ', (array) $proxy_hint['headers'] ) ); ?></code> از آی‌پی <code dir="ltr"><?php echo esc_html( $proxy_hint['remote'] ); ?></code> رسیده‌اند. تا وقتی این آی‌پی مورد اعتماد نباشد، همه‌ی بازدیدکننده‌هایی که از آن عبور می‌کنند یک آی‌پی حساب می‌شوند و زودتر به سقف می‌رسند.
+										<?php if ( ! empty( $proxy_hint['arvan'] ) ) : ?>
+											هدر <code dir="ltr">AR-Real-IP</code> نشان می‌دهد سایت پشت ابرآروان است.
+										<?php endif; ?>
+									</span>
+									<button type="button" class="ashna-btn-secondary ashna-trust-proxy-btn" data-ip="<?php echo esc_attr( $proxy_hint['remote'] ); ?>">اعتماد به این آی‌پی</button>
+								</div>
+							<?php endif; ?>
+
+							<table class="ashna-modern-table" style="margin-top:14px;">
+								<tbody>
+									<tr>
+										<td>آی‌پی اتصال (REMOTE_ADDR)</td>
+										<td><code dir="ltr"><?php echo esc_html( $ip_diag['remote'] ); ?></code> <?php echo $ip_diag['trusted'] ? '<span class="ashna-pill is-ok">پراکسی مورد اعتماد</span>' : ''; ?></td>
+									</tr>
+									<tr>
+										<td>هدرهای پراکسی همین درخواست</td>
+										<td dir="ltr" style="font-size:12px;"><?php echo empty( $ip_diag['headers'] ) ? '—' : esc_html( implode( ' | ', array_map( static function ( $k, $v ) { return $k . ': ' . $v; }, array_keys( $ip_diag['headers'] ), $ip_diag['headers'] ) ) ); ?></td>
+									</tr>
+									<tr>
+										<td>آی‌پی شما از نگاه آشنا</td>
+										<td><code dir="ltr"><?php echo esc_html( $ip_diag['resolved'] ); ?></code></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="ashna-card ashna-col-6" id="ashna-blocked-card">
+							<div class="ashna-card-head">
+								<div class="ashna-card-head-title">
+									<span class="ashna-card-icon <?php echo $block_stats['total'] > 0 ? 'is-amber' : 'is-green'; ?>">
+										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+									</span>
+									<div>
+										<h2>درخواست‌های ردشده‌ی امروز</h2>
+										<p>هر درخواستی که به سقف خورد یا کپچا/تله را رد نکرد، بدون ارسال پیامک</p>
+									</div>
+								</div>
+								<span class="ashna-pill <?php echo $block_stats['total'] > 0 ? 'is-warn' : 'is-ok'; ?>"><?php echo esc_html( sprintf( '%s مورد', number_format_i18n( (int) $block_stats['total'] ) ) ); ?></span>
+							</div>
+
+							<?php if ( empty( $block_stats['total'] ) ) : ?>
+								<div class="ashna-empty-state-box">
+									<strong>امروز هیچ درخواستی رد نشده است</strong>
+									<p>اگر کسی تلاش به ارسال رگباری کند، این‌جا دیده می‌شود.</p>
+								</div>
+							<?php else : ?>
+								<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+									<?php foreach ( $block_stats['counts'] as $reason => $count ) : ?>
+										<span class="ashna-pill is-muted"><?php echo esc_html( ( isset( $reason_fa[ $reason ] ) ? $reason_fa[ $reason ] : $reason ) . ': ' . number_format_i18n( (int) $count ) ); ?></span>
+									<?php endforeach; ?>
+								</div>
+								<table class="ashna-modern-table">
+									<thead>
+										<tr>
+											<th>زمان</th>
+											<th>دلیل</th>
+											<th>شماره</th>
+											<th>آی‌پی</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php foreach ( array_slice( $block_stats['recent'], 0, 8 ) as $event ) : ?>
+											<tr>
+												<td dir="ltr" style="font-size:12px;"><?php echo esc_html( substr( (string) $event['time'], 11, 8 ) ); ?></td>
+												<td><?php echo esc_html( isset( $reason_fa[ $event['reason'] ] ) ? $reason_fa[ $event['reason'] ] : $event['reason'] ); ?></td>
+												<td dir="ltr"><?php echo esc_html( '' !== $event['recipient'] ? $event['recipient'] : '—' ); ?></td>
+												<td><code dir="ltr"><?php echo esc_html( $event['ip'] ); ?></code></td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+								</table>
+							<?php endif; ?>
 						</div>
 					</div>
 

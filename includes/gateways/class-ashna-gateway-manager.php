@@ -546,9 +546,10 @@ class Ashna_Gateway_Manager {
 	 * @param string $identifier_type   'phone' or 'email'.
 	 * @param string $forced_channel    Optional forced channel ('sms', 'bale', 'email').
 	 * @param string $forced_gateway_id Optional forced SMS gateway ID for testing.
+	 * @param int    $reservation_id    Log row reserved by Ashna_Rate_Limiter::reserve() (0 = none, e.g. admin tests).
 	 * @return array|WP_Error { code, channel, gateway, log_id, response, elapsed_ms, trace }
 	 */
-	public static function dispatch_otp( $recipient, $identifier_type = 'phone', $forced_channel = '', $forced_gateway_id = '' ) {
+	public static function dispatch_otp( $recipient, $identifier_type = 'phone', $forced_channel = '', $forced_gateway_id = '', $reservation_id = 0 ) {
 		$length   = absint( Ashna_Helper::get_option( 'otp_length', 5 ) );
 		$code     = Ashna_Helper::generate_otp_code( $length );
 		$otp_hash = wp_hash_password( $code );
@@ -567,17 +568,22 @@ class Ashna_Gateway_Manager {
 		$response_msg = $is_error ? $send_result->get_error_message() : $outcome['message'];
 		$trace        = Ashna_Failover::describe( $outcome['steps'] );
 
-		$log_id = Ashna_Logger::insert(
-			array(
-				'recipient'        => $recipient,
-				'channel'          => $outcome['channel'],
-				'gateway'          => $outcome['gateway'],
-				'otp_code'         => $code,
-				'otp_hash'         => $otp_hash,
-				'status'           => $is_error ? 'failed' : 'sent',
-				'response_message' => '' !== $trace ? $response_msg . ' | مسیر: ' . $trace : $response_msg,
-			)
+		$log_data = array(
+			'recipient'        => $recipient,
+			'channel'          => $outcome['channel'],
+			'gateway'          => $outcome['gateway'],
+			// Only the hash is needed to verify; the readable code is kept for the test gateway only.
+			'otp_code'         => 'sandbox' === $outcome['gateway'] ? $code : str_repeat( '•', strlen( $code ) ),
+			'otp_hash'         => $otp_hash,
+			'status'           => $is_error ? 'failed' : 'sent',
+			'response_message' => '' !== $trace ? $response_msg . ' | مسیر: ' . $trace : $response_msg,
 		);
+		if ( $reservation_id > 0 ) {
+			Ashna_Logger::complete( $reservation_id, $log_data );
+			$log_id = (int) $reservation_id;
+		} else {
+			$log_id = Ashna_Logger::insert( $log_data );
+		}
 
 		if ( $is_error ) {
 			return $send_result;

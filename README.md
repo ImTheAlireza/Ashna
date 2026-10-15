@@ -51,9 +51,13 @@
 - استودیو طراحی ظاهر با پیش‌نمایش زنده ایزوله (Live Preview)، ۴ قالب آماده، انتخابگر رنگ و CSS سفارشی
 
 ### ۳. امنیت، فایروال و کپچای بومی و جهانی
-- پشتیبانی از **آرکپچا (Arcaptcha.ir)**، **کپچای ریاضی داخلی**، **Cloudflare Turnstile** و **Google reCAPTCHA v3**
+- پشتیبانی از **آرکپچا (Arcaptcha.ir)**، **کپچای ریاضی داخلی** (یک‌بارمصرف)، **Cloudflare Turnstile** و **Google reCAPTCHA v3**
+- **ضد پیامک‌بمبر:** سقف دقیقه‌ای، ساعتی و روزانه برای هر شماره، هر IP و هر شبکه (‎/24 و ‎/64)، سقف ارسال روزانه‌ی کل سایت و «حالت حمله» که کپچا را برای همه اجباری می‌کند
+- **رزرو اتمیک سهمیه** قبل از تماس با درگاه: درخواست‌های هم‌زمان از سقف عبور نمی‌کنند
+- تشخیص امن IP: هدرهای CDN فقط از کلادفلر، شبکه‌ی داخلی یا پراکسی‌های تعریف‌شده (مثلاً ابرآروان) پذیرفته می‌شوند
+- فیلد تله‌ی نامرئی برای ربات‌ها و ذخیره‌ی فقط هش کد در دیتابیس
 - محافظت Brute-Force روی کدهای OTP و رمز عبور ثابت + جدول قفل‌های امنیتی فعال با قابلیت رفع مسدودی آنی (Unlock)
-- لیست سیاه (Blacklist) و لیست سفید (Whitelist) با پشتیبانی از الگوی `*` و تشخیص هوشمند IP پشت کلودفلر/ابرآروان
+- لیست سیاه (Blacklist) و لیست سفید (Whitelist) با پشتیبانی از الگوی `*`
 - پاکسازی خودکار روزانه لاگ‌های قدیمی با زمان‌بند استاندارد وردپرس (`WP-Cron`)
 
 ---
@@ -73,6 +77,8 @@ ashna-otp/
 │   │   ├── class-ashna-helper.php                 # مدیریت تنظیمات با کش درون‌حافظه‌ای و نرمال‌سازی
 │   │   ├── class-ashna-logger.php                 # ریپازیتوری لاگ‌ها، آمار و نمودار ۷ روزه
 │   │   ├── class-ashna-session.php                # نشست بومی وردپرس برای هر سه روش ورود + مسیر بعد از ورود
+│   │   ├── class-ashna-rate-limiter.php           # ضد پیامک‌بمبر: رزرو اتمیک، سقف‌ها، حالت حمله
+│   │   ├── class-ashna-ip.php                     # تشخیص امن IP پشت CDN و پراکسی
 │   │   └── class-ashna-security.php               # موتور فایروال، Rate Limit، قفل امنیتی و کپچا
 │   ├── services/                                  # لایه سرویس‌های کاربردی (Application Services)
 │   │   ├── class-ashna-auth.php                   # سرویس احراز هویت AJAX، ثبت‌نام خودکار و ورود
@@ -177,3 +183,10 @@ add_action( 'init', function() {
 - فیلترهای `ashna_otp_login_redirect` و `ashna_otp_pinned_redirect`: تغییر مسیر بعد از ورود.
 - فیلتر `ashna_otp_remember_login`: ماندگار بودن نشست.
 - فیلترهای `ashna_otp_phone_candidates` و `ashna_otp_is_staff_account`: یافتن حساب بر اساس شماره.
+
+### هوک‌های ضد پیامک‌بمبر
+
+- فیلتر `ashna_otp_client_ip( string $ip, string $remote )` و `ashna_otp_trusted_proxies( array $ranges )`: تشخیص IP.
+- فیلتر `ashna_otp_notify_admin( bool $send, string $topic )`: ایمیل مدیر در «حالت حمله» (`attack`) و پر شدن سقف روزانه (`daily_cap`).
+- اکشن `ashna_otp_attack_mode_started( int $count, int $until )`.
+- `Ashna_Rate_Limiter::reserve( $recipient, $ip )`: رزرو سهمیه در کد سفارشی (سه مرحله: `precheck()`، `Ashna_Logger::reserve()` و `recount()`).

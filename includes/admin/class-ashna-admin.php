@@ -56,6 +56,109 @@ class Ashna_Admin {
 		add_action( 'wp_ajax_ashna_admin_import_settings', array( $this, 'ajax_import_settings' ) );
 		add_action( 'wp_ajax_ashna_admin_reset_settings', array( $this, 'ajax_reset_settings' ) );
 		add_action( 'wp_ajax_ashna_admin_reset_gateway_health', array( $this, 'ajax_reset_gateway_health' ) );
+		add_action( 'wp_ajax_ashna_admin_end_attack_mode', array( $this, 'ajax_end_attack_mode' ) );
+		add_action( 'wp_ajax_ashna_admin_trust_proxy', array( $this, 'ajax_trust_proxy' ) );
+		add_action( 'wp_ajax_ashna_admin_fetch_arvan_ranges', array( $this, 'ajax_fetch_arvan_ranges' ) );
+		add_action( 'admin_notices', array( $this, 'proxy_hint_notice' ) );
+	}
+
+	/**
+	 * Warn when proxy headers arrive from an untrusted peer: until the CDN is trusted, every
+	 * visitor behind it shares one IP and reaches the per-IP limits sooner.
+	 */
+	public function proxy_hint_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( $screen && ! in_array( $screen->id, array( 'dashboard', 'plugins', 'toplevel_page_ashna-otp' ), true ) ) {
+			return;
+		}
+		$hint = Ashna_IP::untrusted_proxy_hint();
+		if ( ! $hint ) {
+			return;
+		}
+		printf(
+			'<div class="notice notice-warning"><p><strong>آشنا:</strong> %s <a href="%s">%s</a></p></div>',
+			esc_html( sprintf( 'درخواست‌های ورود با هدر CDN/پراکسی از آی‌پی %s می‌رسند که در فهرست پراکسی‌های مورد اعتماد نیست؛ تا اضافه نشود، کاربران پشت آن یک آی‌پی حساب می‌شوند.', $hint['remote'] ) ),
+			esc_url( admin_url( 'admin.php?page=ashna-otp#security_firewall' ) ),
+			'بررسی در «امنیت و ضد اسپم»'
+		);
+	}
+
+	/**
+	 * AJAX Handler: end attack mode now.
+	 */
+	public function ajax_end_attack_mode() {
+		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+		}
+		Ashna_Rate_Limiter::end_attack_mode();
+		$this->clean_output_buffers();
+		wp_send_json_success( array( 'message' => 'حالت حمله پایان یافت؛ فرم به حالت عادی برگشت.' ) );
+	}
+
+	/**
+	 * AJAX Handler: add a proxy/CDN address to the trusted list.
+	 */
+	public function ajax_trust_proxy() {
+		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+		}
+		$ip = isset( $_POST['ip'] ) ? Ashna_IP::valid( sanitize_text_field( wp_unslash( $_POST['ip'] ) ) ) : '';
+		if ( '' === $ip ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'آی‌پی نامعتبر است.' ) );
+		}
+		$settings = Ashna_Helper::get_settings();
+		$list     = array_filter( array_map( 'trim', preg_split( '/[\s,]+/', (string) $settings['trusted_proxies'] ) ) );
+		$list[]   = $ip;
+		$settings['trusted_proxies'] = implode( "\n", array_unique( $list ) );
+		Ashna_Helper::save_settings( $settings );
+		delete_option( 'ashna_otp_proxy_hint' );
+
+		$this->clean_output_buffers();
+		wp_send_json_success(
+			array(
+				'message' => 'آی‌پی به فهرست پراکسی‌های مورد اعتماد اضافه شد.',
+				'list'    => $settings['trusted_proxies'],
+			)
+		);
+	}
+
+	/**
+	 * AJAX Handler: download ArvanCloud's published edge ranges (admin action only).
+	 */
+	public function ajax_fetch_arvan_ranges() {
+		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+		}
+		$response = wp_remote_get( 'https://www.arvancloud.ir/fa/ips.txt', array( 'timeout' => 10 ) );
+		$ranges   = array();
+		if ( ! is_wp_error( $response ) && 200 === (int) wp_remote_retrieve_response_code( $response ) ) {
+			foreach ( preg_split( '/[\s,]+/', (string) wp_remote_retrieve_body( $response ) ) as $range ) {
+				$range = trim( $range );
+				if ( '' !== $range && Ashna_IP::valid_range( $range ) ) {
+					$ranges[] = $range;
+				}
+			}
+		}
+		$this->clean_output_buffers();
+		if ( empty( $ranges ) ) {
+			wp_send_json_error( array( 'message' => 'دریافت فهرست ابرآروان ممکن نشد؛ رنج‌ها را از arvancloud.ir/fa/ips.txt دستی اضافه کنید.' ) );
+		}
+		wp_send_json_success(
+			array(
+				'message' => sprintf( '%d رنج ابرآروان دریافت شد؛ برای اعمال، تنظیمات را ذخیره کنید.', count( $ranges ) ),
+				'ranges'  => array_values( array_unique( $ranges ) ),
+			)
+		);
 	}
 
 	/**
@@ -226,7 +329,16 @@ class Ashna_Admin {
 			'msgway_sms_line',
 			'msgway_messenger_provider',
 			'session_days',
+			'max_requests_per_day',
+			'max_ip_requests_per_minute',
+			'max_subnet_requests_per_minute',
+			'attack_mode_threshold',
+			'attack_mode_minutes',
+			'daily_send_cap',
 		);
+
+		// Integer settings where 0 means "off".
+		$zero_ok_keys = array( 'standalone_page_id', 'max_subnet_requests_per_minute', 'attack_mode_threshold', 'daily_send_cap' );
 
 		$textarea_keys = array(
 			'bale_message_template',
@@ -237,6 +349,7 @@ class Ashna_Admin {
 			'blocked_phones',
 			'blocked_ips',
 			'whitelisted_identifiers',
+			'trusted_proxies',
 		);
 
 		$url_keys = array(
@@ -260,7 +373,7 @@ class Ashna_Admin {
 					$clean[ $key ] = max( 20, min( 100, $val > 0 ? $val : 85 ) );
 				} elseif ( 'card_padding' === $key ) {
 					$clean[ $key ] = max( 16, min( 56, $val > 0 ? $val : 32 ) );
-				} elseif ( 'standalone_page_id' === $key ) {
+				} elseif ( in_array( $key, $zero_ok_keys, true ) ) {
 					$clean[ $key ] = $val;
 				} else {
 					$clean[ $key ] = $val > 0 ? $val : $default_val;
@@ -285,6 +398,17 @@ class Ashna_Admin {
 		$clean['gateway_timeout']  = max( 2, min( 15, $clean['gateway_timeout'] ) );
 		$clean['gateway_cooldown'] = max( 1, min( 60, $clean['gateway_cooldown'] ) );
 		$clean['session_days']     = max( 1, min( 365, $clean['session_days'] ) );
+		$clean['attack_mode_minutes'] = max( 5, min( 1440, $clean['attack_mode_minutes'] ) );
+
+		// Trusted proxies: keep valid IPs/CIDRs only, one per line.
+		$proxies = array();
+		foreach ( preg_split( '/[\s,]+/', (string) $clean['trusted_proxies'] ) as $range ) {
+			$range = trim( $range );
+			if ( '' !== $range && Ashna_IP::valid_range( $range ) ) {
+				$proxies[] = $range;
+			}
+		}
+		$clean['trusted_proxies'] = implode( "\n", array_unique( $proxies ) );
 		if ( ! in_array( $clean['default_user_role'], array( 'customer', 'subscriber' ), true ) ) {
 			$clean['default_user_role'] = Ashna_Auth::safe_registration_role( $clean['default_user_role'] );
 		}

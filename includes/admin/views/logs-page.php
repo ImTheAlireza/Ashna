@@ -205,6 +205,8 @@ $export_csv_url = wp_nonce_url(
 										<span class="ashna-pill is-err">خطا در ارسال</span>
 									<?php elseif ( 'sent' === $row->status ) : ?>
 										<span class="ashna-pill is-info">ارسال شده (فعال)</span>
+									<?php elseif ( 'pending' === $row->status ) : ?>
+										<span class="ashna-pill is-info">در حال ارسال</span>
 									<?php else : ?>
 										<span class="ashna-pill is-muted">منقضی شده</span>
 									<?php endif; ?>

@@ -225,7 +225,9 @@ class Ashna_Session {
 		nocache_headers();
 		$data = self::client_state();
 		if ( ! is_user_logged_in() && class_exists( 'Ashna_Security' ) && Ashna_Security::math_captcha_active() ) {
-			$data['captcha'] = Ashna_Security::generate_math_captcha();
+			// One single-use question per form on the page (inline form + popup + checkout box).
+			$data['captchas'] = array( Ashna_Security::generate_math_captcha(), Ashna_Security::generate_math_captcha(), Ashna_Security::generate_math_captcha() );
+			$data['captcha']  = $data['captchas'][0];
 		}
 		self::send_json( true, $data );
 	}

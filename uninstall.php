@@ -28,4 +28,12 @@ if ( ! empty( $settings['delete_data_on_uninstall'] ) ) {
 	delete_transient( 'ashna_bale_safir_token' );
 	delete_transient( 'ashna_admin_stats_cache' );
 	delete_transient( 'ashna_admin_chart_cache' );
+	delete_option( 'ashna_otp_attack_mode' );
+	delete_option( 'ashna_otp_block_stats' );
+	delete_option( 'ashna_otp_proxy_hint' );
+	delete_transient( 'ashna_otp_notified_attack' );
+	delete_transient( 'ashna_otp_notified_daily_cap' );
+	// Single-use captcha markers.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'ashna_otp_cap_' ) . '%' ) );
 }

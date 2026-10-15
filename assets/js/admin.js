@@ -765,6 +765,59 @@
 		});
 
 		// 9. Unlock Active Lockout Button
+		// QC 2: end attack mode / trust a CDN / load ArvanCloud ranges (no page reload).
+		$(document).on('click', '.ashna-end-attack-btn', function () {
+			var $btn = $(this);
+			$btn.prop('disabled', true);
+			$.post(ashnaAdminParams.ajaxUrl, { action: 'ashna_admin_end_attack_mode', nonce: ashnaAdminParams.nonce }).done(function (res) {
+				if (res && res.success) {
+					$('#ashna-attack-mode-note').slideUp(180);
+					showToast('✅ ' + res.data.message);
+				} else {
+					$btn.prop('disabled', false);
+				}
+			});
+		});
+
+		$(document).on('click', '.ashna-trust-proxy-btn', function () {
+			var $btn = $(this);
+			$btn.prop('disabled', true);
+			$.post(ashnaAdminParams.ajaxUrl, { action: 'ashna_admin_trust_proxy', nonce: ashnaAdminParams.nonce, ip: $btn.attr('data-ip') }).done(function (res) {
+				if (res && res.success) {
+					$('#trusted_proxies').val(res.data.list);
+					$('#ashna-proxy-hint').slideUp(180);
+					showToast('✅ ' + res.data.message);
+				} else {
+					$btn.prop('disabled', false);
+					showToast('❌ ' + ((res && res.data && res.data.message) || 'خطا'));
+				}
+			});
+		});
+
+		$(document).on('click', '.ashna-fetch-arvan-btn', function () {
+			var $btn = $(this);
+			$btn.prop('disabled', true);
+			$.post(ashnaAdminParams.ajaxUrl, { action: 'ashna_admin_fetch_arvan_ranges', nonce: ashnaAdminParams.nonce })
+				.done(function (res) {
+					if (res && res.success) {
+						var $ta = $('#trusted_proxies');
+						var current = $ta.val().split(/[\s,]+/).filter(Boolean);
+						res.data.ranges.forEach(function (r) {
+							if (current.indexOf(r) === -1) {
+								current.push(r);
+							}
+						});
+						$ta.val(current.join('\n')).trigger('change');
+						showToast('✅ ' + res.data.message);
+					} else {
+						showToast('❌ ' + ((res && res.data && res.data.message) || 'خطا'));
+					}
+				})
+				.always(function () {
+					$btn.prop('disabled', false);
+				});
+		});
+
 		$(document).on('click', '.ashna-unlock-btn', function () {
 			var $btn = $(this);
 			var target = $btn.attr('data-target');

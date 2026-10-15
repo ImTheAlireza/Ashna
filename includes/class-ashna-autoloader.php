@@ -22,6 +22,8 @@ class Ashna_Autoloader {
 		'Ashna_Helper'              => 'includes/core/class-ashna-helper.php',
 		'Ashna_Security'            => 'includes/core/class-ashna-security.php',
 		'Ashna_Session'             => 'includes/core/class-ashna-session.php',
+		'Ashna_IP'                  => 'includes/core/class-ashna-ip.php',
+		'Ashna_Rate_Limiter'        => 'includes/core/class-ashna-rate-limiter.php',
 		'Ashna_Passkey'             => 'includes/core/class-ashna-passkey.php',
 		'Ashna_Logger'              => 'includes/core/class-ashna-logger.php',
 		'Ashna_Auth'                => 'includes/services/class-ashna-auth.php',

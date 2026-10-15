@@ -43,6 +43,7 @@ class Ashna_Logger {
 			'status'           => 'sent',
 			'attempts'         => 0,
 			'ip_address'       => Ashna_Helper::get_client_ip(),
+			'ip_subnet'        => '',
 			'response_message' => '',
 			'expires_at'       => $expires_at,
 			'verified_at'      => null,
@@ -50,6 +51,9 @@ class Ashna_Logger {
 		);
 
 		$row = wp_parse_args( $data, $defaults );
+		if ( '' === $row['ip_subnet'] ) {
+			$row['ip_subnet'] = Ashna_IP::subnet( $row['ip_address'] );
+		}
 
 		// Expire previous active codes for this recipient
 		self::expire_previous_codes( $row['recipient'] );
@@ -66,12 +70,13 @@ class Ashna_Logger {
 				'status'           => $row['status'],
 				'attempts'         => (int) $row['attempts'],
 				'ip_address'       => $row['ip_address'],
+				'ip_subnet'        => $row['ip_subnet'],
 				'response_message' => $row['response_message'],
 				'expires_at'       => $row['expires_at'],
 				'verified_at'      => $row['verified_at'],
 				'created_at'       => $row['created_at'],
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 
 		if ( false === $result ) {
@@ -80,6 +85,82 @@ class Ashna_Logger {
 
 		self::flush_stats_cache();
 		return (int) $wpdb->insert_id;
+	}
+
+	/**
+	 * Reserve a send slot BEFORE any gateway is contacted.
+	 *
+	 * The row exists from the first millisecond, so concurrent requests count it and a burst
+	 * of parallel requests cannot all pass the limits before anything was logged.
+	 *
+	 * @param string $recipient Normalized phone or email.
+	 * @param string $ip        Visitor IP.
+	 * @param string $subnet    Visitor network (/24 or /64).
+	 * @return int Reservation (log row) ID, 0 on failure.
+	 */
+	public static function reserve( $recipient, $ip, $subnet ) {
+		global $wpdb;
+		$now = current_time( 'mysql' );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = $wpdb->insert(
+			self::table_name(),
+			array(
+				'recipient'        => $recipient,
+				'channel'          => 'pending',
+				'gateway'          => '',
+				'otp_code'         => '',
+				'otp_hash'         => '',
+				'status'           => 'pending',
+				'attempts'         => 0,
+				'ip_address'       => $ip,
+				'ip_subnet'        => $subnet,
+				'response_message' => '',
+				'expires_at'       => $now,
+				'created_at'       => $now,
+			),
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s' )
+		);
+
+		return false === $result ? 0 : (int) $wpdb->insert_id;
+	}
+
+	/**
+	 * Turn a reservation into the final log entry once the gateways answered.
+	 *
+	 * @param int   $id   Reservation ID.
+	 * @param array $data channel, gateway, otp_code (display value), otp_hash, status (sent|failed), response_message.
+	 * @return bool
+	 */
+	public static function complete( $id, array $data ) {
+		global $wpdb;
+		$table = self::table_name();
+
+		if ( isset( $data['status'] ) && 'sent' === $data['status'] ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$recipient = $wpdb->get_var( $wpdb->prepare( "SELECT recipient FROM {$table} WHERE id = %d", $id ) );
+			if ( $recipient ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET status = 'expired' WHERE recipient = %s AND status = 'sent' AND id <> %d", $recipient, $id ) );
+			}
+		}
+
+		$expiry_sec = absint( Ashna_Helper::get_option( 'otp_expiry', 120 ) );
+		$fields     = array_intersect_key( $data, array_flip( array( 'channel', 'gateway', 'otp_code', 'otp_hash', 'status', 'response_message' ) ) );
+
+		$fields['expires_at'] = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) + $expiry_sec );
+		return self::update( $id, $fields );
+	}
+
+	/**
+	 * Remove a reservation that was refused by the limits.
+	 *
+	 * @param int $id Reservation ID.
+	 */
+	public static function delete( $id ) {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->delete( self::table_name(), array( 'id' => absint( $id ) ), array( '%d' ) );
 	}
 
 	/**
@@ -142,7 +223,7 @@ class Ashna_Logger {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE recipient = %s ORDER BY id DESC LIMIT 1",
+				"SELECT * FROM {$table} WHERE recipient = %s AND status <> 'pending' AND channel <> 'passkey' ORDER BY id DESC LIMIT 1",
 				$recipient
 			)
 		);
@@ -366,5 +447,6 @@ class Ashna_Logger {
 	 */
 	public static function run_scheduled_cleanup() {
 		self::clear_logs( false );
+		Ashna_Security::purge_used_captcha_tokens();
 	}
 }

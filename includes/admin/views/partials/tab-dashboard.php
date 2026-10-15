@@ -430,6 +430,8 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 													<span class="ashna-pill is-err">خطا</span>
 												<?php elseif ( 'sent' === $rlog->status ) : ?>
 													<span class="ashna-pill is-info">ارسال شده</span>
+												<?php elseif ( 'pending' === $rlog->status ) : ?>
+													<span class="ashna-pill is-info">در حال ارسال</span>
 												<?php else : ?>
 													<span class="ashna-pill is-muted">منقضی</span>
 												<?php endif; ?>

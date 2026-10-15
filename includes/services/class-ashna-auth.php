@@ -70,56 +70,92 @@ class Ashna_Auth {
 
 	/**
 	 * Handle AJAX Request OTP
+	 *
+	 * Order matters for SMS-bombing protection: cheap checks first (nonce, honeypot, captcha),
+	 * then the account lookup, then an atomic reservation of the send slot (per-minute/hour/day
+	 * limits per number, IP and network, daily credit guard) and only then the gateway call.
 	 */
 	public function ajax_request_otp() {
 		Ashna_Session::verify_request();
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
-		if ( empty( $raw_identifier ) ) {
-			$this->send_error( array( 'message' => 'لطفاً شماره موبایل یا ایمیل خود را وارد کنید.' ) );
-		}
+		$parsed         = Ashna_Helper::parse_identifier( $raw_identifier );
+		$type           = $parsed['type'];
+		$identifier     = $parsed['normalized'];
+		$ip             = Ashna_Helper::get_client_ip();
 
-		// Verify Captcha if enabled
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$captcha_ok = Ashna_Security::verify_captcha( wp_unslash( $_POST ) );
-		if ( is_wp_error( $captcha_ok ) ) {
-			$this->send_error(
+		// Honeypot: a field people never see. Bots that fill every input get a normal-looking
+		// answer, but nothing is sent and nothing is stored.
+		if ( ! empty( $_POST['ashna_website'] ) ) {
+			Ashna_Rate_Limiter::record_block( 'ashna_honeypot', 'invalid' !== $type ? $identifier : '', $ip );
+			$this->send_success(
 				array(
-					'message'     => $captcha_ok->get_error_message(),
-					'new_captcha' => 'math' === Ashna_Helper::get_option( 'captcha_type' ) ? Ashna_Security::generate_math_captcha() : null,
+					'message'       => 'کد تایید ارسال شد.',
+					'identifier'    => $identifier,
+					'masked'        => Ashna_Helper::mask_identifier( $identifier ),
+					'type'          => $type,
+					'channel'       => 'sms',
+					'cooldown'      => absint( Ashna_Helper::get_option( 'resend_cooldown', 60 ) ),
+					'expiry'        => absint( Ashna_Helper::get_option( 'otp_expiry', 120 ) ),
+					'otp_length'    => absint( Ashna_Helper::get_option( 'otp_length', 5 ) ),
+					'is_new_user'   => false,
+					'require_name'  => 'disabled',
+					'require_email' => 'disabled',
 				)
 			);
 		}
 
-		$parsed     = Ashna_Helper::parse_identifier( $raw_identifier );
-		$type       = $parsed['type'];
-		$identifier = $parsed['normalized'];
+		if ( empty( $raw_identifier ) ) {
+			$this->send_error( array( 'message' => 'لطفاً شماره موبایل یا ایمیل خود را وارد کنید.' ) );
+		}
+
+		// Captcha: the configured one, or the math captcha while attack mode is on. A resend
+		// ticket from this visitor's previous successful request for the same number replaces it.
+		$resend_ticket = isset( $_POST['resend_token'] ) ? sanitize_text_field( wp_unslash( $_POST['resend_token'] ) ) : '';
+		$has_ticket    = 'invalid' !== $type && Ashna_Security::valid_resend_ticket( $resend_ticket, $identifier );
+		if ( Ashna_Rate_Limiter::captcha_required() && ! $has_ticket ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$captcha_ok = Ashna_Security::verify_captcha( wp_unslash( $_POST ) );
+			if ( is_wp_error( $captcha_ok ) ) {
+				Ashna_Rate_Limiter::record_block( $captcha_ok->get_error_code(), 'invalid' !== $type ? $identifier : '', $ip );
+				$this->send_error(
+					array(
+						'message'     => $captcha_ok->get_error_message(),
+						'code'        => $captcha_ok->get_error_code(),
+						'new_captcha' => self::next_math_captcha(),
+					)
+				);
+			}
+		}
+
 		$login_mode = Ashna_Helper::get_option( 'login_mode', 'phone_and_email' );
 
 		if ( 'invalid' === $type ) {
 			if ( 'phone_only' === $login_mode ) {
-				$this->send_error( array( 'message' => 'شماره موبایل وارد شده معتبر نیست. (مثال: 09123456789)' ) );
+				$message = 'شماره موبایل وارد شده معتبر نیست. (مثال: 09123456789)';
 			} elseif ( 'email_only' === $login_mode ) {
-				$this->send_error( array( 'message' => 'آدرس ایمیل وارد شده معتبر نیست.' ) );
+				$message = 'آدرس ایمیل وارد شده معتبر نیست.';
 			} else {
-				$this->send_error( array( 'message' => 'لطفاً یک شماره موبایل معتبر (مثل 09123456789) یا آدرس ایمیل صحیح وارد کنید.' ) );
+				$message = 'لطفاً یک شماره موبایل معتبر (مثل 09123456789) یا آدرس ایمیل صحیح وارد کنید.';
 			}
+			$this->send_error( array( 'message' => $message, 'new_captcha' => self::next_math_captcha() ) );
 		}
 
 		if ( 'phone_only' === $login_mode && 'phone' !== $type ) {
-			$this->send_error( array( 'message' => 'ورود فقط با شماره موبایل امکان‌پذیر است.' ) );
+			$this->send_error( array( 'message' => 'ورود فقط با شماره موبایل امکان‌پذیر است.', 'new_captcha' => self::next_math_captcha() ) );
 		}
 
 		if ( 'email_only' === $login_mode && 'email' !== $type ) {
-			$this->send_error( array( 'message' => 'ورود فقط با آدرس ایمیل امکان‌پذیر است.' ) );
+			$this->send_error( array( 'message' => 'ورود فقط با آدرس ایمیل امکان‌پذیر است.', 'new_captcha' => self::next_math_captcha() ) );
 		}
 
 		$account = self::resolve_account( $identifier, $type );
 		if ( $account['error'] ) {
 			$this->send_error(
 				array(
-					'message' => $account['error']->get_error_message(),
-					'code'    => $account['error']->get_error_code(),
+					'message'     => $account['error']->get_error_message(),
+					'code'        => $account['error']->get_error_code(),
+					'new_captcha' => self::next_math_captcha(),
 				)
 			);
 		}
@@ -127,26 +163,28 @@ class Ashna_Auth {
 		$auto_register = (bool) Ashna_Helper::get_option( 'auto_register', 1 );
 
 		if ( ! $existing_user && ! $auto_register ) {
-			$this->send_error( array( 'message' => 'حساب کاربری با این مشخصات یافت نشد.' ) );
+			$this->send_error( array( 'message' => 'حساب کاربری با این مشخصات یافت نشد.', 'new_captcha' => self::next_math_captcha() ) );
 		}
 
-		$can_request = Ashna_Security::can_request_otp( $identifier );
-		if ( is_wp_error( $can_request ) ) {
-			$data = $can_request->get_error_data();
+		$reservation = Ashna_Rate_Limiter::reserve( $identifier, $ip );
+		if ( is_wp_error( $reservation ) ) {
+			$data = $reservation->get_error_data();
 			$this->send_error(
 				array(
-					'message'   => $can_request->get_error_message(),
-					'code'      => $can_request->get_error_code(),
-					'remaining' => isset( $data['remaining'] ) ? (int) $data['remaining'] : 0,
+					'message'     => $reservation->get_error_message(),
+					'code'        => $reservation->get_error_code(),
+					'remaining'   => isset( $data['remaining'] ) ? (int) $data['remaining'] : 0,
+					'new_captcha' => self::next_math_captcha(),
 				)
 			);
 		}
 
-		$dispatch = Ashna_Gateway_Manager::dispatch_otp( $identifier, $type );
+		$dispatch = Ashna_Gateway_Manager::dispatch_otp( $identifier, $type, '', '', $reservation );
 		if ( is_wp_error( $dispatch ) ) {
 			$this->send_error(
 				array(
-					'message' => 'خطا در ارسال کد تایید: ' . $dispatch->get_error_message(),
+					'message'     => 'خطا در ارسال کد تایید: ' . $dispatch->get_error_message(),
+					'new_captcha' => self::next_math_captcha(),
 				)
 			);
 		}
@@ -182,7 +220,20 @@ class Ashna_Auth {
 			$response_data['debug_code'] = $dispatch['code'];
 		}
 
+		// Resends of this number from this visitor skip the captcha (limits still apply).
+		$response_data['resend_token'] = Ashna_Security::resend_ticket( $identifier );
+		$response_data['new_captcha']  = self::next_math_captcha();
+
 		$this->send_success( $response_data );
+	}
+
+	/**
+	 * A fresh math captcha when it is in use (single-use tokens must be replaced after every request).
+	 *
+	 * @return array|null
+	 */
+	private static function next_math_captcha() {
+		return Ashna_Security::math_captcha_active() ? Ashna_Security::generate_math_captcha() : null;
 	}
 
 	/**

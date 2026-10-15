@@ -3291,3 +3291,33 @@
 	color: #059669;
 	border-color: rgba(16, 185, 129, 0.3);
 }
+
+/* QC 2 — SMS-bombing protection */
+.ashna-info-note.is-danger {
+	background: rgba(239, 68, 68, 0.09);
+	border-color: rgba(239, 68, 68, 0.3);
+	color: var(--s-text-primary);
+}
+
+#ashna-app-shell #ashna-attack-mode-note,
+#ashna-app-shell #ashna-proxy-hint {
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-top: 0;
+}
+
+#ashna-app-shell #ashna-proxy-hint {
+	margin-top: 14px;
+}
+
+#ashna-app-shell #ashna-attack-mode-note .ashna-btn-secondary,
+#ashna-app-shell #ashna-proxy-hint .ashna-btn-secondary {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+#ashna-app-shell #ashna-real-ip-card .ashna-modern-table td:first-child {
+	color: var(--s-text-muted);
+	white-space: nowrap;
+	width: 42%;
+}

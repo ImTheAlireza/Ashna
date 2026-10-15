@@ -54,7 +54,8 @@ $terms_text       = Ashna_Helper::get_option( 'terms_text', 'ورود و ثبت�
 $terms_url        = trim( (string) Ashna_Helper::get_option( 'terms_url', '' ) );
 $captcha_type     = Ashna_Helper::get_option( 'captcha_type', 'none' );
 $captcha_site_key = trim( (string) Ashna_Helper::get_option( 'captcha_site_key', '' ) );
-$math_captcha     = 'math' === $captcha_type ? Ashna_Security::generate_math_captcha() : null;
+$effective_cap    = Ashna_Security::effective_captcha_type();
+$math_captcha     = 'math' === $effective_cap ? Ashna_Security::generate_math_captcha() : null;
 
 if ( 'phone_only' === $login_mode ) {
 	$input_label       = 'شماره موبایل';
@@ -242,11 +243,18 @@ $wrapper_classes = sprintf(
 				</div>
 			</div>
 
-			<?php if ( 'math' === $captcha_type && $math_captcha ) : ?>
-				<div class="ashna-field-group ashna-captcha-box">
+			<?php if ( 'math' === $effective_cap && $math_captcha ) : ?>
+				<div class="ashna-field-group ashna-captcha-box is-math is-active">
 					<label class="ashna-label ashna-captcha-question"><?php echo esc_html( $math_captcha['question'] ); ?></label>
 					<input type="text" inputmode="numeric" name="captcha_answer" class="ashna-input ashna-captcha-answer" placeholder="پاسخ عدد را وارد کنید..." dir="rtl" required />
 					<input type="hidden" name="captcha_token" class="ashna-captcha-token" value="<?php echo esc_attr( $math_captcha['token'] ); ?>" />
+				</div>
+			<?php elseif ( 'none' === $effective_cap ) : ?>
+				<!-- Shown only if the site switches to attack mode (captcha for everyone) -->
+				<div class="ashna-field-group ashna-captcha-box is-math" style="display:none;">
+					<label class="ashna-label ashna-captcha-question"></label>
+					<input type="text" inputmode="numeric" name="captcha_answer" class="ashna-input ashna-captcha-answer" placeholder="پاسخ عدد را وارد کنید..." dir="rtl" />
+					<input type="hidden" name="captcha_token" class="ashna-captcha-token" value="" />
 				</div>
 			<?php elseif ( 'arcaptcha' === $captcha_type && ! empty( $captcha_site_key ) ) : ?>
 				<div class="ashna-field-group ashna-captcha-box" style="display:flex;justify-content:center;">
@@ -267,6 +275,10 @@ $wrapper_classes = sprintf(
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
+
+			<div class="ashna-hp" aria-hidden="true">
+				<label>اگر انسان هستید این فیلد را خالی بگذارید <input type="text" name="ashna_website" class="ashna-hp-input" value="" tabindex="-1" autocomplete="off" /></label>
+			</div>
 
 			<button type="submit" class="ashna-btn ashna-btn-primary ashna-submit-request">
 				<span class="ashna-btn-text"><?php echo esc_html( $btn_text ); ?></span>

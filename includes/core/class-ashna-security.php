@@ -61,30 +61,118 @@ class Ashna_Security {
 	}
 
 	/**
-	 * Whether the built-in math captcha is in use.
+	 * Captcha the form must pass right now: the configured one, or the built-in math captcha
+	 * when attack mode is on and nothing (usable) is configured.
+	 *
+	 * @return string none|math|arcaptcha|recaptcha_v3|turnstile
+	 */
+	public static function effective_captcha_type() {
+		$type = (string) Ashna_Helper::get_option( 'captcha_type', 'none' );
+		if ( in_array( $type, array( 'arcaptcha', 'recaptcha_v3', 'turnstile' ), true ) && '' === trim( (string) Ashna_Helper::get_option( 'captcha_secret_key', '' ) ) ) {
+			$type = 'none'; // Not configured yet: behaves like no captcha.
+		}
+		if ( ( '' === $type || 'none' === $type ) && class_exists( 'Ashna_Rate_Limiter' ) && Ashna_Rate_Limiter::attack_mode_active() ) {
+			return 'math';
+		}
+		return '' === $type ? 'none' : $type;
+	}
+
+	/**
+	 * Whether the built-in math captcha is in use (configured or forced by attack mode).
 	 *
 	 * @return bool
 	 */
 	public static function math_captcha_active() {
-		return 'math' === Ashna_Helper::get_option( 'captcha_type', 'none' );
+		return 'math' === self::effective_captcha_type();
 	}
 
 	/**
-	 * Generate a stateless HMAC Math Captcha challenge
+	 * Generate a stateless HMAC Math Captcha challenge (single use, valid for one hour)
 	 *
 	 * @return array { question: string, token: string }
 	 */
 	public static function generate_math_captcha() {
-		$a      = wp_rand( 2, 9 );
-		$b      = wp_rand( 1, 9 );
+		$a      = wp_rand( 11, 49 );
+		$b      = wp_rand( 2, 9 );
 		$answer = (string) ( $a + $b );
 		$ts     = time();
-		$sig    = hash_hmac( 'sha256', $answer . '|' . $ts, wp_salt( 'auth' ) );
+		$rand   = bin2hex( random_bytes( 6 ) ); // two visitors in the same second must never share a token
+		$sig    = hash_hmac( 'sha256', $answer . '|' . $ts . '|' . $rand, wp_salt( 'auth' ) );
 
 		return array(
 			'question' => sprintf( 'حاصل جمع %d + %d چند می‌شود؟', $a, $b ),
-			'token'    => $ts . '.' . $sig,
+			'token'    => $ts . '.' . $rand . '.' . $sig,
 		);
+	}
+
+	/**
+	 * Mark a captcha token as used. Atomic: of two parallel requests with the same token,
+	 * exactly one gets true.
+	 *
+	 * @param string $sig Token signature.
+	 * @return bool True the first time.
+	 */
+	private static function consume_captcha_token( $sig ) {
+		global $wpdb;
+		$name = 'ashna_otp_cap_' . substr( preg_replace( '/[^a-f0-9]/', '', strtolower( (string) $sig ) ), 0, 40 );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$inserted = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", $name, (string) ( time() + 2 * HOUR_IN_SECONDS ) ) );
+		return 1 === (int) $inserted;
+	}
+
+	/**
+	 * Delete used-captcha markers older than their token lifetime (daily cron).
+	 */
+	public static function purge_used_captcha_tokens() {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s", $wpdb->esc_like( 'ashna_otp_cap_' ) . '%', (string) time() ) );
+	}
+
+	/**
+	 * Count a wrong/missing captcha for this IP; 10 within 10 minutes lock the IP.
+	 */
+	private static function captcha_strike() {
+		$ip  = Ashna_Helper::get_client_ip();
+		$key = 'ashna_capfail_' . md5( $ip );
+		$n   = (int) get_transient( $key ) + 1;
+		set_transient( $key, $n, 10 * MINUTE_IN_SECONDS );
+		if ( $n >= 10 ) {
+			delete_transient( $key );
+			self::trigger_ip_lockout( $ip );
+		}
+	}
+
+	/**
+	 * Ticket that lets the same visitor (same IP) ask for a resend for the same number
+	 * without solving the captcha again. Resends still obey every rate limit.
+	 *
+	 * @param string $recipient Normalized recipient.
+	 * @return string
+	 */
+	public static function resend_ticket( $recipient ) {
+		$ts = time();
+		return $ts . '.' . hash_hmac( 'sha256', 'resend|' . $recipient . '|' . Ashna_Helper::get_client_ip() . '|' . $ts, wp_salt( 'nonce' ) );
+	}
+
+	/**
+	 * Whether a resend ticket is valid for this recipient and visitor (15 minutes).
+	 *
+	 * @param string $ticket    Ticket.
+	 * @param string $recipient Normalized recipient.
+	 * @return bool
+	 */
+	public static function valid_resend_ticket( $ticket, $recipient ) {
+		if ( ! is_string( $ticket ) || false === strpos( $ticket, '.' ) ) {
+			return false;
+		}
+		list( $ts, $sig ) = explode( '.', $ticket, 2 );
+		$ts               = (int) $ts;
+		if ( $ts <= 0 || time() - $ts > 15 * MINUTE_IN_SECONDS || $ts > time() + MINUTE_IN_SECONDS ) {
+			return false;
+		}
+		$expected = hash_hmac( 'sha256', 'resend|' . $recipient . '|' . Ashna_Helper::get_client_ip() . '|' . $ts, wp_salt( 'nonce' ) );
+		return hash_equals( $expected, (string) $sig );
 	}
 
 	/**
@@ -94,8 +182,22 @@ class Ashna_Security {
 	 * @return true|WP_Error
 	 */
 	public static function verify_captcha( $post_data ) {
-		$captcha_type = Ashna_Helper::get_option( 'captcha_type', 'none' );
-		if ( 'none' === $captcha_type || empty( $captcha_type ) ) {
+		$result = self::check_captcha( $post_data );
+		if ( is_wp_error( $result ) ) {
+			self::captcha_strike();
+		}
+		return $result;
+	}
+
+	/**
+	 * Captcha check without side effects on failure.
+	 *
+	 * @param array $post_data Submitted POST data.
+	 * @return true|WP_Error
+	 */
+	private static function check_captcha( $post_data ) {
+		$captcha_type = self::effective_captcha_type();
+		if ( 'none' === $captcha_type ) {
 			return true;
 		}
 
@@ -112,12 +214,25 @@ class Ashna_Security {
 				return new WP_Error( 'ashna_captcha_invalid', 'توکن امنیتی کپچا نامعتبر است.' );
 			}
 
-			list( $ts, $sig ) = explode( '.', $token, 2 );
-			if ( time() - (int) $ts > 900 ) {
+			$parts = explode( '.', $token );
+			if ( 3 === count( $parts ) ) {
+				list( $ts, $rand, $sig ) = $parts;
+				$signed                  = $answer . '|' . $ts . '|' . $rand;
+			} else {
+				// Tokens issued before the per-token random part (cached pages, at most one hour old).
+				list( $ts, $sig ) = explode( '.', $token, 2 );
+				$signed           = $answer . '|' . $ts;
+			}
+			if ( time() - (int) $ts > HOUR_IN_SECONDS ) {
 				return new WP_Error( 'ashna_captcha_expired', 'سوال امنیتی منقضی شده است. لطفاً دوباره تلاش کنید.' );
 			}
 
-			$expected_sig = hash_hmac( 'sha256', $answer . '|' . $ts, wp_salt( 'auth' ) );
+			// Single use, right or wrong: a solved (or brute-forced) token cannot be replayed.
+			if ( ! self::consume_captcha_token( $sig ) ) {
+				return new WP_Error( 'ashna_captcha_used', 'این سوال امنیتی قبلاً استفاده شده است. لطفاً به سوال جدید پاسخ دهید.' );
+			}
+
+			$expected_sig = hash_hmac( 'sha256', $signed, wp_salt( 'auth' ) );
 			if ( ! hash_equals( $expected_sig, $sig ) ) {
 				return new WP_Error( 'ashna_captcha_wrong', 'پاسخ سوال امنیتی (کپچا) اشتباه است.' );
 			}
@@ -201,80 +316,27 @@ class Ashna_Security {
 	}
 
 	/**
-	 * Check if a recipient or IP can request a new OTP
+	 * Read-only check whether a recipient/IP may request a code now (backward-compatible API;
+	 * the request flow itself reserves its slot atomically with Ashna_Rate_Limiter::reserve()).
 	 *
 	 * @param string $recipient Normalized phone or email.
 	 * @return true|WP_Error
 	 */
 	public static function can_request_otp( $recipient ) {
-		global $wpdb;
-
 		$ip = Ashna_Helper::get_client_ip();
 
 		$blacklist = self::check_blacklist( $recipient, $ip );
 		if ( is_wp_error( $blacklist ) ) {
 			return $blacklist;
 		}
-
 		if ( self::is_whitelisted( $recipient, $ip ) ) {
 			return true;
 		}
-
 		$lockout_status = self::check_lockout( $recipient, $ip );
 		if ( is_wp_error( $lockout_status ) ) {
 			return $lockout_status;
 		}
-
-		// 1. Check resend cooldown
-		$remaining_cooldown = self::get_resend_remaining( $recipient );
-		if ( $remaining_cooldown > 0 ) {
-			return new WP_Error(
-				'ashna_cooldown',
-				sprintf( 'لطفاً %d ثانیه دیگر برای درخواست مجدد کد صبر کنید.', $remaining_cooldown ),
-				array( 'remaining' => $remaining_cooldown )
-			);
-		}
-
-		$table        = Ashna_Logger::table_name();
-		$one_hour_ago = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) - HOUR_IN_SECONDS );
-
-		// 2. Check hourly limit per recipient
-		$max_recipient = max( 1, absint( Ashna_Helper::get_option( 'max_requests_per_hour', 5 ) ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$recipient_count = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE recipient = %s AND created_at >= %s",
-				$recipient,
-				$one_hour_ago
-			)
-		);
-
-		if ( $recipient_count >= $max_recipient ) {
-			return new WP_Error(
-				'ashna_rate_limit_recipient',
-				'تعداد درخواست‌های کد برای این شماره/ایمیل بیش از حد مجاز در یک ساعت گذشته است. لطفاً کمی بعد تلاش کنید.'
-			);
-		}
-
-		// 3. Check hourly limit per IP
-		$max_ip = max( 2, absint( Ashna_Helper::get_option( 'max_ip_requests_per_hour', 15 ) ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$ip_count = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE ip_address = %s AND created_at >= %s",
-				$ip,
-				$one_hour_ago
-			)
-		);
-
-		if ( $ip_count >= $max_ip ) {
-			return new WP_Error(
-				'ashna_rate_limit_ip',
-				'تعداد درخواست‌های ارسالی از آی‌پی شما بیش از حد مجاز است. لطفاً یک ساعت دیگر تلاش کنید.'
-			);
-		}
-
-		return true;
+		return Ashna_Rate_Limiter::evaluate( $recipient, $ip, Ashna_IP::subnet( $ip ), 0 );
 	}
 
 	/**
@@ -382,6 +444,28 @@ class Ashna_Security {
 			'expires_ts' => $now_ts + $duration,
 		);
 
+		update_option( 'ashna_active_lockouts', $lockouts, false );
+	}
+
+	/**
+	 * Lock out an IP (e.g. repeated wrong captcha answers).
+	 *
+	 * @param string $ip IP.
+	 */
+	public static function trigger_ip_lockout( $ip ) {
+		$duration = max( 60, absint( Ashna_Helper::get_option( 'lockout_duration', 900 ) ) );
+		set_transient( 'ashna_lock_ip_' . md5( $ip ), 1, $duration );
+
+		$lockouts = get_option( 'ashna_active_lockouts', array() );
+		if ( ! is_array( $lockouts ) ) {
+			$lockouts = array();
+		}
+		$lockouts[ $ip ] = array(
+			'target'     => $ip,
+			'ip'         => $ip,
+			'locked_at'  => current_time( 'mysql' ),
+			'expires_ts' => time() + $duration,
+		);
 		update_option( 'ashna_active_lockouts', $lockouts, false );
 	}
 

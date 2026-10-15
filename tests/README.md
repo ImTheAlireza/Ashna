@@ -92,7 +92,7 @@ PHP_BINARY=/path/to/php python tests/run-failover.py
 The same file also runs inside a disposable full WordPress install: require its
 `wp-load.php` (with Ashna active), then include `tests/failover.php`.
 
-## Full WordPress tests (QC 1 session)
+## Full WordPress tests (QC 1 session, QC 2 security)
 
 `tests/run-full-wp.py <name>` copies the current source (no-license layout) into a
 disposable WordPress install and runs `tests/<name>.php` there with real auth
@@ -113,3 +113,11 @@ WooCommerce, Dokan and Paid Memberships Pro cannot be installed offline, so
 verbatim from getdokan/dokan (develop, v5.3.0); PMPro's `pmpro_login_redirect()` is
 verbatim except its membership lookup. Storage/bootstrapping helpers are simplified
 and marked as such. These fixtures are not a substitute for testing on a real store.
+
+`tests/security.php` (QC 2) moves log rows back in time instead of sleeping, and
+replays **every distinct interleaving** of three parallel requests through the
+limiter's three steps (`precheck()` → `Ashna_Logger::reserve()` → `recount()`):
+280 orders (1680 / 3!, since the requests in each check are interchangeable) for
+the per-number cooldown, the per-IP minute limit and the site-wide daily cap. A real
+multi-process burst was tried first and dropped: the SQLite test site serialized
+the PHP processes, so it could not demonstrate concurrency either way.

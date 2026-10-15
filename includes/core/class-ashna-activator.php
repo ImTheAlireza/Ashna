@@ -14,7 +14,7 @@ class Ashna_Activator {
 	/**
 	 * Database schema version
 	 */
-	const DB_VERSION = '2.3.0';
+	const DB_VERSION = '2.4.0';
 
 	/**
 	 * Run on plugin activation
@@ -81,6 +81,7 @@ class Ashna_Activator {
 			status varchar(32) NOT NULL DEFAULT 'sent',
 			attempts smallint(5) unsigned NOT NULL DEFAULT 0,
 			ip_address varchar(64) NOT NULL DEFAULT '',
+			ip_subnet varchar(64) NOT NULL DEFAULT '',
 			response_message text NULL,
 			expires_at datetime NOT NULL,
 			verified_at datetime NULL,
@@ -88,6 +89,7 @@ class Ashna_Activator {
 			PRIMARY KEY  (id),
 			KEY recipient_idx (recipient),
 			KEY ip_address_idx (ip_address),
+			KEY ip_subnet_idx (ip_subnet,created_at),
 			KEY status_idx (status),
 			KEY created_at_idx (created_at)
 		) {$charset_collate};";

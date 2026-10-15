@@ -188,7 +188,14 @@ class Ashna_Helper {
 			'max_ip_requests_per_hour'  => 15,
 			'max_verify_attempts'       => 5,
 			'lockout_duration'          => 900,               // 15 minutes
-			'trust_proxy_headers'       => 1,
+			'trust_proxy_headers'       => 1,                 // read proxy headers, but only from trusted proxies (Cloudflare, private network, list below)
+			'trusted_proxies'           => '',                // extra proxy/CDN IPs or CIDRs (e.g. ArvanCloud ranges), one per line
+			'max_requests_per_day'      => 10,                // codes per mobile/e-mail per 24 hours
+			'max_ip_requests_per_minute' => 5,                // code requests per IP per minute
+			'max_subnet_requests_per_minute' => 20,           // per /24 (IPv4) or /64 (IPv6) network per minute; 0 = off
+			'attack_mode_threshold'     => 20,                // site-wide requests per minute that switch on attack mode; 0 = off
+			'attack_mode_minutes'       => 30,                // how long attack mode (captcha for everyone) lasts
+			'daily_send_cap'            => 0,                 // max codes sent site-wide per day (credit guard); 0 = unlimited
 			'captcha_type'              => 'none',            // none | arcaptcha | math | recaptcha_v3 | turnstile
 			'captcha_site_key'          => '',
 			'captcha_secret_key'        => '',
@@ -381,26 +388,12 @@ class Ashna_Helper {
 	}
 
 	/**
-	 * Get client IP address safely
+	 * Get the visitor's IP address (proxy headers only from trusted proxies; see Ashna_IP).
 	 *
 	 * @return string
 	 */
 	public static function get_client_ip() {
-		$keys = self::get_option( 'trust_proxy_headers', 1 )
-			? array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' )
-			: array( 'REMOTE_ADDR' );
-
-		foreach ( $keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ] ) ) {
-				$ip_list = explode( ',', sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) ) );
-				$ip      = trim( $ip_list[0] );
-				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					return $ip;
-				}
-			}
-		}
-
-		return '127.0.0.1';
+		return Ashna_IP::client();
 	}
 
 	/**
