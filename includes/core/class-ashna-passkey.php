@@ -531,7 +531,9 @@ class Ashna_Passkey {
 			Ashna_Auth::login_response(
 				$user,
 				$redirect_to,
-				sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name )
+				sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name ),
+				array(),
+				array( 'form' => isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '' ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified at the top.
 			)
 		);
 	}

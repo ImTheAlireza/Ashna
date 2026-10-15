@@ -74,6 +74,7 @@ function ashna_fixture_dokan( $dashboard_page_id ) {
 
 	require_once __DIR__ . '/dokan-lite-excerpt.php';
 	add_filter( 'woocommerce_login_redirect', 'dokan_after_login_redirect', 1, 2 );
+	add_filter( 'woocommerce_registration_redirect', 'ashna_fixture_dokan_registration_redirect', 10, 1 );
 	add_action( 'user_register', 'dokan_admin_user_register' );
 	$GLOBALS['ashna_fixture_dokan_registration'] = new Ashna_Fixture_Dokan_Registration();
 }
@@ -111,6 +112,51 @@ function ashna_fixture_pmpro() {
 	}
 
 	add_filter( 'login_redirect', 'pmpro_login_redirect', 10, 3 );
+
+	/** includes/login.php — pmpro_login_url(), verbatim except the PMPro pages global (simplified). */
+	function pmpro_login_url( $redirect = '', $force_reauth = false ) {
+		$login_url = home_url( '/membership-login/' );
+		if ( ! empty( $redirect ) ) {
+			$login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
+		}
+		if ( $force_reauth ) {
+			$login_url = add_query_arg( 'reauth', '1', $login_url );
+		}
+		return apply_filters( 'pmpro_login_url', $login_url, $redirect, $force_reauth );
+	}
+
+	// shortcodes/pmpro_login.php registers [pmpro_login]; the fixture prints a marker form.
+	add_shortcode(
+		'pmpro_login',
+		function () {
+			return '<form class="pmpro-login-form">PMPRO-LOGIN</form>';
+		}
+	);
+}
+
+/* -------------------------------------------------------------------------
+ * MemberPress (closed source): only the public [mepr-login-form] shortcode name.
+ * ----------------------------------------------------------------------- */
+function ashna_fixture_memberpress() {
+	if ( ! shortcode_exists( 'mepr-login-form' ) ) {
+		add_shortcode(
+			'mepr-login-form',
+			function () {
+				return '<form class="mepr-login-form">MEPR-LOGIN</form>';
+			}
+		);
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Ultimate Member — ultimatemember/ultimatemember (master), GPL-2.0-or-later.
+ * ----------------------------------------------------------------------- */
+function ashna_fixture_um( array $role_data ) {
+	$GLOBALS['ashna_fixture_um_roles'] = $role_data;
+	$GLOBALS['ashna_fixture_um_mails'] = array();
+	if ( ! function_exists( 'UM' ) ) {
+		require_once __DIR__ . '/ultimate-member-excerpt.php';
+	}
 }
 
 function ashna_fixture_remove_roles() {

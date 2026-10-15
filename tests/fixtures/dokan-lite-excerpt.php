@@ -26,6 +26,35 @@ function dokan_admin_user_register( $user_id ) {
 	}
 }
 
+/** Verbatim except the sub-page helper (not needed for the dashboard root): includes/functions.php */
+function dokan_get_navigation_url( $name = '', $new_url = false ) {
+    $page_id = (int) dokan_get_option( 'dashboard', 'dokan_pages', 0 );
+
+    if ( ! $page_id ) {
+        return '';
+    }
+
+    $url = rtrim( get_permalink( $page_id ), '/' ) . '/';
+
+    return apply_filters( 'dokan_get_navigation_url', esc_url( $url ), $name, $new_url );
+}
+
+/** Verbatim: includes/Vendor/SetupWizard.php::filter_woocommerce_registration_redirect() (as a function). */
+function ashna_fixture_dokan_registration_redirect( $url ) {
+
+        $user = wp_get_current_user();
+
+        if ( in_array( 'seller', $user->roles, true ) ) {
+            $url = dokan_get_navigation_url();
+
+            if ( 'off' === dokan_get_option( 'disable_welcome_wizard', 'dokan_selling', 'off' ) ) {
+                $url = apply_filters( 'dokan_seller_setup_wizard_url', site_url( '?page=dokan-seller-setup' ) );
+            }
+        }
+
+        return $url;
+    }
+
 /** Verbatim: includes/functions.php */
 function dokan_is_user_seller( $user_id, $exclude_staff = false ) {
     if ( $exclude_staff && user_can( $user_id, 'vendor_staff' ) ) {

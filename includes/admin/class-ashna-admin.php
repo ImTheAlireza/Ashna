@@ -301,6 +301,9 @@ class Ashna_Admin {
 			'session_remember',
 			'respect_login_gates',
 			'respect_plugin_redirects',
+			'login_url_to_ashna',
+			'replace_member_forms',
+			'dokan_vendor_signup',
 		);
 
 		$int_keys = array(
@@ -363,6 +366,21 @@ class Ashna_Admin {
 		);
 
 		foreach ( $defaults as $key => $default_val ) {
+			if ( 'role_redirects' === $key ) {
+				// role => URL; unknown roles and empty URLs are dropped.
+				$clean[ $key ] = array();
+				$roles         = function_exists( 'wp_roles' ) ? wp_roles()->get_names() : array();
+				if ( isset( $raw[ $key ] ) && is_array( $raw[ $key ] ) ) {
+					foreach ( $raw[ $key ] as $role => $url ) {
+						$role = sanitize_key( $role );
+						$url  = esc_url_raw( trim( (string) $url ) );
+						if ( '' !== $url && isset( $roles[ $role ] ) ) {
+							$clean[ $key ][ $role ] = $url;
+						}
+					}
+				}
+				continue;
+			}
 			if ( in_array( $key, $checkbox_keys, true ) ) {
 				$clean[ $key ] = ! empty( $raw[ $key ] ) ? 1 : 0;
 			} elseif ( in_array( $key, $int_keys, true ) ) {

@@ -369,6 +369,7 @@ class Ashna_Frontend {
 			'form_layout'        => '',
 			'card_position'      => '',
 			'context'            => 'shortcode',
+			'vendor_mode'        => '',
 		);
 		$args     = wp_parse_args( $args, $defaults );
 
@@ -399,6 +400,7 @@ class Ashna_Frontend {
 				'layout'         => '',
 				'position'       => '',
 				'show_if_logged' => 'no',
+				'vendor'         => '', // "yes": dedicated Dokan vendor sign-up form
 			),
 			$atts,
 			'ashna_otp_login'
@@ -428,7 +430,8 @@ class Ashna_Frontend {
 				'primary_color' => $atts['primary_color'],
 				'form_layout'   => $atts['layout'],
 				'card_position' => $atts['position'],
-				'context'       => 'shortcode',
+				'context'       => 'yes' === $atts['vendor'] ? 'vendor-signup' : 'shortcode',
+				'vendor_mode'   => 'yes' === $atts['vendor'] ? 'only' : '',
 			)
 		);
 	}

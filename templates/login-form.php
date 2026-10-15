@@ -54,6 +54,8 @@ $terms_text       = Ashna_Helper::get_option( 'terms_text', 'ورود و ثبت�
 $terms_url        = trim( (string) Ashna_Helper::get_option( 'terms_url', '' ) );
 $captcha_type     = Ashna_Helper::get_option( 'captcha_type', 'none' );
 $captcha_site_key = trim( (string) Ashna_Helper::get_option( 'captcha_site_key', '' ) );
+$vendor_mode      = ! empty( $args['vendor_mode'] ) && 'only' === $args['vendor_mode'] ? 'only' : '';
+$vendor_signup    = class_exists( 'Ashna_Integration_Dokan' ) && Ashna_Integration_Dokan::vendor_signup_allowed( 'only' === $vendor_mode );
 $effective_cap    = Ashna_Security::effective_captcha_type();
 $math_captcha     = 'math' === $effective_cap ? Ashna_Security::generate_math_captcha() : null;
 
@@ -328,6 +330,48 @@ $wrapper_classes = sprintf(
 					<input type="email" name="user_email" class="ashna-input ashna-reg-email" placeholder="مثلاً: name@example.com" dir="rtl" />
 				</div>
 			</div>
+
+			<?php if ( $vendor_signup ) : ?>
+				<!-- Dokan: sign up as a vendor (shown to new users only) -->
+				<div class="ashna-vendor-signup" data-mode="<?php echo esc_attr( 'only' === $vendor_mode ? 'only' : 'optional' ); ?>" style="display:none;">
+					<?php if ( 'only' === $vendor_mode ) : ?>
+						<input type="hidden" name="account_type" value="seller" />
+						<input type="hidden" name="vendor_form_nonce" value="<?php echo esc_attr( wp_create_nonce( Ashna_Integration_Dokan::VENDOR_FORM_ACTION ) ); ?>" />
+						<div class="ashna-vendor-title">ثبت‌نام فروشنده</div>
+					<?php else : ?>
+						<div class="ashna-account-type" role="radiogroup" aria-label="نوع حساب">
+							<label class="ashna-account-choice"><input type="radio" name="account_type" value="customer" checked /><span>خریدار هستم</span></label>
+							<label class="ashna-account-choice"><input type="radio" name="account_type" value="seller" /><span>فروشنده هستم</span></label>
+						</div>
+					<?php endif; ?>
+					<div class="ashna-vendor-fields"<?php echo 'only' === $vendor_mode ? '' : ' style="display:none;"'; ?>>
+						<div class="ashna-field-row-2">
+							<div class="ashna-field-group">
+								<label class="ashna-label">نام</label>
+								<input type="text" name="fname" class="ashna-input" autocomplete="given-name" dir="rtl" />
+							</div>
+							<div class="ashna-field-group">
+								<label class="ashna-label">نام خانوادگی</label>
+								<input type="text" name="lname" class="ashna-input" autocomplete="family-name" dir="rtl" />
+							</div>
+						</div>
+						<div class="ashna-field-group">
+							<label class="ashna-label">نام فروشگاه</label>
+							<input type="text" name="shopname" class="ashna-input ashna-shopname" dir="rtl" />
+						</div>
+						<div class="ashna-field-group">
+							<label class="ashna-label">آدرس فروشگاه (حروف انگلیسی)</label>
+							<input type="text" name="shopurl" class="ashna-input ashna-shopurl" dir="ltr" placeholder="my-shop" autocomplete="off" />
+							<small class="ashna-shopurl-preview" dir="ltr"><?php echo esc_html( Ashna_Integration_Dokan::store_url_base() ); ?><span class="ashna-shopurl-slug"></span></small>
+							<small class="ashna-shopurl-status" aria-live="polite"></small>
+						</div>
+						<div class="ashna-field-group ashna-vendor-phone-group" style="display:none;">
+							<label class="ashna-label">شماره موبایل فروشگاه</label>
+							<input type="tel" name="phone" class="ashna-input" dir="ltr" placeholder="09123456789" />
+						</div>
+					</div>
+				</div>
+			<?php endif; ?>
 
 			<div class="ashna-field-group">
 				<label class="ashna-label" style="text-align:center;">کد تایید <?php echo esc_html( (string) $otp_length ); ?> رقمی را وارد کنید</label>

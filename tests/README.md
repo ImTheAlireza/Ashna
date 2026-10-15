@@ -92,7 +92,7 @@ PHP_BINARY=/path/to/php python tests/run-failover.py
 The same file also runs inside a disposable full WordPress install: require its
 `wp-load.php` (with Ashna active), then include `tests/failover.php`.
 
-## Full WordPress tests (QC 1 session, QC 2 security)
+## Full WordPress tests (QC 1 session, QC 2 security, QC 4 integrations)
 
 `tests/run-full-wp.py <name>` copies the current source (no-license layout) into a
 disposable WordPress install and runs `tests/<name>.php` there with real auth
@@ -121,3 +121,11 @@ limiter's three steps (`precheck()` → `Ashna_Logger::reserve()` → `recount()
 the per-number cooldown, the per-IP minute limit and the site-wide daily cap. A real
 multi-process burst was tried first and dropped: the SQLite test site serialized
 the PHP processes, so it could not demonstrate concurrency either way.
+
+`tests/integrations.php` (QC 4) runs Dokan's real sign-up code: the `Registration`
+class, `dokan_after_login_redirect()`, the vendor setup wizard's
+`woocommerce_registration_redirect` callback and helpers are verbatim excerpts of
+getdokan/dokan v5.3.0 (`tests/fixtures/dokan-lite-excerpt.php`). Ultimate Member
+(`tests/fixtures/ultimate-member-excerpt.php`), Paid Memberships Pro and MemberPress
+are stand-ins with the upstream function names, statuses and shortcodes. A final
+check on a site with the real plugins installed is still required.

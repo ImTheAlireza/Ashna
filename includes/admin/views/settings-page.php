@@ -360,7 +360,7 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 
 					<button type="button" class="ashna-nav-item" data-tab="woocommerce">
 						<svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-						<span class="ashna-nav-label">ووکامرس و المنتور</span>
+						<span class="ashna-nav-label">ووکامرس و یکپارچگی‌ها</span>
 					</button>
 
 					<div class="ashna-sidebar-group-title">امنیت و ابزارها</div>

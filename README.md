@@ -84,6 +84,11 @@ ashna-otp/
 │   │   ├── class-ashna-auth.php                   # سرویس احراز هویت AJAX، ثبت‌نام خودکار و ورود
 │   │   ├── class-ashna-frontend.php               # شورت‌کدها، مودال سراسری و جایگزین wp-login.php
 │   │   └── class-ashna-woocommerce.php            # یکپارچگی کامل با ووکامرس و پروفایل کاربران
+│   ├── integrations/                              # یکپارچگی با افزونه‌های دیگر
+│   │   ├── class-ashna-integrations.php           # صفحه‌ی ورود یکپارچه، فرم‌های ورود عضویت، مسیر نقش‌محور
+│   │   ├── class-ashna-integration-dokan.php      # دکان: ورود و ثبت‌نام فروشنده با کد
+│   │   ├── class-ashna-integration-um.php         # Ultimate Member: وضعیت حساب و مسیر بعد از ورود
+│   │   └── elementor/                             # ویجت‌های المنتور
 │   ├── gateways/                                  # لایه درایورهای ارسال پیام (Gateway Drivers)
 │   │   ├── interface-ashna-gateway.php            # قرارداد استاندارد درگاه‌ها (Interface)
 │   │   ├── abstract-ashna-gateway.php             # کلاس پایه انتزاعی درگاه‌ها (Abstract Base Class)
@@ -190,3 +195,18 @@ add_action( 'init', function() {
 - فیلتر `ashna_otp_notify_admin( bool $send, string $topic )`: ایمیل مدیر در «حالت حمله» (`attack`) و پر شدن سقف روزانه (`daily_cap`).
 - اکشن `ashna_otp_attack_mode_started( int $count, int $until )`.
 - `Ashna_Rate_Limiter::reserve( $recipient, $ip )`: رزرو سهمیه در کد سفارشی (سه مرحله: `precheck()`، `Ashna_Logger::reserve()` و `recount()`).
+
+---
+
+## یکپارچگی با دکان و افزونه‌های عضویت
+
+- **Dokan:** فروشنده بعد از ورود به پیشخوان فروشندگی می‌رود (`woocommerce_login_redirect` خود دکان). ثبت‌نام فروشنده داخل فرم کد یکبارمصرف انجام می‌شود (نام فروشگاه، آدرس فروشگاه، نام و نام خانوادگی، با موبایل تأییدشده به‌عنوان شماره‌ی فروشگاه) و خود دکان فروشنده را می‌سازد. فروشنده‌ی تازه به «راه‌اندازی فروشگاه» دکان می‌رود. صفحه‌ی جداگانه‌ی ثبت‌نام فروشنده: `[ashna_otp_login vendor="yes"]`.
+- **Ultimate Member:** وضعیت حساب (در انتظار تأیید، ردشده، غیرفعال) رعایت می‌شود، کاربر جدید وضعیت نقشش را می‌گیرد و فرم ورود UM با فرم آشنا جایگزین می‌شود.
+- **Paid Memberships Pro / MemberPress:** لینک و شورت‌کد ورود (`[pmpro_login]`، `[mepr-login-form]`) با آشنا؛ مسیر بعد از ورود PMPro از فیلتر `login_redirect`.
+- **همه‌ی افزونه‌ها:** با انتخاب «برگه ورود تمام‌صفحه»، `wp_login_url()` و `wp_registration_url()` به صفحه‌ی آشنا می‌روند. مسیر بعد از ورود را می‌توان برای هر نقش جدا تعیین کرد.
+
+هوک‌های توسعه‌دهنده:
+
+- فیلترهای `ashna_otp_registration_data` و `ashna_otp_registration_errors`: افزودن و اعتبارسنجی فیلدهای ثبت‌نام (قبل از بررسی کد).
+- اکشن‌های `ashna_otp_before_register_user` و `ashna_otp_after_register_user`: پیش و پس از ساخت حساب.
+- فیلتر `ashna_otp_default_redirect( string $redirect, WP_User $user, array $context )`: مقصد پیش‌فرض یک یکپارچگی، وقتی صفحه‌ای درخواست نشده (`$context['form']` مثلاً `member-ultimatemember`).

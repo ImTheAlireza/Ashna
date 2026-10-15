@@ -247,6 +247,7 @@ class Ashna_Auth {
 		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
 		$full_name      = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
 		$extra_email    = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+		$form_context   = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
 
 		$parsed     = Ashna_Helper::parse_identifier( $raw_identifier );
 		$type       = $parsed['type'];
@@ -268,6 +269,17 @@ class Ashna_Auth {
 		$user        = $account['user'];
 		$is_new_user = false;
 
+		/**
+		 * Extra sign-up data from the form (e.g. Dokan vendor fields). Only used for new accounts.
+		 *
+		 * @param array  $extra      Data passed to register_user().
+		 * @param array  $post       Raw request (unslashed).
+		 * @param string $identifier Normalized phone/email.
+		 * @param string $type       phone|email.
+		 */
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- integrations sanitize their own fields.
+		$registration = (array) apply_filters( 'ashna_otp_registration_data', array( 'full_name' => $full_name, 'user_email' => $extra_email ), wp_unslash( $_POST ), $identifier, $type );
+
 		if ( ! $user ) {
 			if ( ! Ashna_Helper::get_option( 'auto_register', 1 ) ) {
 				$this->send_error( array( 'message' => 'ثبت‌نام خودکار غیرفعال است.' ) );
@@ -276,12 +288,33 @@ class Ashna_Auth {
 			$name_mode  = Ashna_Helper::get_option( 'require_name_on_register', 'optional' );
 			$email_mode = Ashna_Helper::get_option( 'require_email_on_register', 'disabled' );
 
-			if ( 'required' === $name_mode && empty( $full_name ) ) {
+			if ( 'required' === $name_mode && empty( $registration['full_name'] ) ) {
 				$this->send_error( array( 'message' => 'لطفاً نام و نام خانوادگی خود را وارد کنید.' ) );
 			}
 
 			if ( 'phone' === $type && 'required' === $email_mode && ( empty( $extra_email ) || ! is_email( $extra_email ) ) ) {
 				$this->send_error( array( 'message' => 'لطفاً یک آدرس ایمیل معتبر وارد کنید.' ) );
+			}
+		}
+
+		if ( ! $user ) {
+			/**
+			 * Validate sign-up data BEFORE the code is checked, so a mistake does not burn the code.
+			 *
+			 * @param null|WP_Error $error        Error to stop the sign-up.
+			 * @param array         $registration Sign-up data.
+			 * @param string        $identifier   Normalized phone/email.
+			 * @param string        $type         phone|email.
+			 */
+			$registration_error = apply_filters( 'ashna_otp_registration_errors', null, $registration, $identifier, $type );
+			if ( is_wp_error( $registration_error ) ) {
+				$this->send_error(
+					array(
+						'message' => $registration_error->get_error_message(),
+						'code'    => $registration_error->get_error_code(),
+						'field'   => (string) $registration_error->get_error_data(),
+					)
+				);
 			}
 		}
 
@@ -296,14 +329,7 @@ class Ashna_Auth {
 		}
 
 		if ( ! $user ) {
-			$user = self::register_user(
-				$identifier,
-				$type,
-				array(
-					'full_name'  => $full_name,
-					'user_email' => $extra_email,
-				)
-			);
+			$user = self::register_user( $identifier, $type, $registration );
 			if ( is_wp_error( $user ) ) {
 				$this->send_error( array( 'message' => $user->get_error_message() ) );
 			}
@@ -320,6 +346,7 @@ class Ashna_Auth {
 				'method'      => 'otp',
 				'identifier'  => $identifier,
 				'is_new_user' => $is_new_user,
+				'form'        => $form_context,
 			)
 		);
 		if ( is_wp_error( $logged_in ) ) {
@@ -337,7 +364,11 @@ class Ashna_Auth {
 				$user,
 				$redirect_to,
 				$is_new_user ? 'ثبت‌نام و ورود شما با موفقیت انجام شد! در حال انتقال...' : 'ورود با موفقیت انجام شد! در حال انتقال...',
-				array( 'is_new_user' => $is_new_user )
+				array( 'is_new_user' => $is_new_user ),
+				array(
+					'is_new_user' => $is_new_user,
+					'form'        => $form_context,
+				)
 			)
 		);
 	}
@@ -352,10 +383,11 @@ class Ashna_Auth {
 	 * @param string  $redirect_to Requested redirect.
 	 * @param string  $message     Message.
 	 * @param array   $extra       Extra fields.
+	 * @param array   $context     Redirect context { is_new_user, form }.
 	 * @return array
 	 */
-	public static function login_response( $user, $redirect_to, $message, $extra = array() ) {
-		$redirect = Ashna_Session::redirect_url( $user, $redirect_to );
+	public static function login_response( $user, $redirect_to, $message, $extra = array(), $context = array() ) {
+		$redirect = Ashna_Session::redirect_url( $user, $redirect_to, $context );
 		$state    = Ashna_Session::client_state();
 
 		$payload = array_merge(
@@ -392,6 +424,7 @@ class Ashna_Auth {
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
 		$password       = isset( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
+		$form_context   = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
 
 		if ( empty( $raw_identifier ) || empty( $password ) ) {
 			$this->send_error( array( 'message' => 'لطفاً شناسه کاربری و رمز عبور را وارد کنید.' ) );
@@ -446,6 +479,7 @@ class Ashna_Auth {
 				'method'        => 'password',
 				'identifier'    => $identifier,
 				'authenticated' => true,
+				'form'          => $form_context,
 			)
 		);
 		if ( is_wp_error( $logged_in ) ) {
@@ -457,7 +491,7 @@ class Ashna_Auth {
 			);
 		}
 
-		$this->send_success( self::login_response( $authenticated, $redirect_to, 'ورود با موفقیت انجام شد! در حال انتقال...' ) );
+		$this->send_success( self::login_response( $authenticated, $redirect_to, 'ورود با موفقیت انجام شد! در حال انتقال...', array(), array( 'form' => $form_context ) ) );
 	}
 
 	/**
@@ -774,6 +808,39 @@ class Ashna_Auth {
 	 * @return WP_User|WP_Error
 	 */
 	public static function register_user( $identifier, $type = 'phone', $extra = array() ) {
+		/**
+		 * Fires before Ashna creates an account (integrations prepare their own sign-up here).
+		 *
+		 * @param string $identifier Normalized phone/email.
+		 * @param string $type       phone|email.
+		 * @param array  $extra      Sign-up data.
+		 */
+		do_action( 'ashna_otp_before_register_user', $identifier, $type, $extra );
+		try {
+			$result = self::create_account( $identifier, $type, $extra );
+		} finally {
+			/**
+			 * Fires after the account creation attempt, also when it failed.
+			 *
+			 * @param WP_User|WP_Error $result     New user or error.
+			 * @param string           $identifier Normalized phone/email.
+			 * @param string           $type       phone|email.
+			 * @param array            $extra      Sign-up data.
+			 */
+			do_action( 'ashna_otp_after_register_user', isset( $result ) ? $result : new WP_Error( 'ashna_register_failed', '' ), $identifier, $type, $extra );
+		}
+		return $result;
+	}
+
+	/**
+	 * Create the account (see register_user()).
+	 *
+	 * @param string $identifier Normalized phone or email.
+	 * @param string $type       'phone' or 'email'.
+	 * @param array  $extra      Extra profile fields.
+	 * @return WP_User|WP_Error
+	 */
+	private static function create_account( $identifier, $type, $extra ) {
 		$prefix = sanitize_key( Ashna_Helper::get_option( 'username_prefix', '' ) );
 
 		if ( 'email' === $type ) {

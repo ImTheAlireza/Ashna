@@ -204,6 +204,81 @@
 
 		// Single-use math captcha: every server answer may carry the next question. During an
 		// attack the server can also ask for a captcha on a form that normally has none.
+		// Dokan vendor sign-up (only rendered when Dokan is active).
+		var $vendorBox = $stepVerify.find('.ashna-vendor-signup');
+		var shopUrlEdited = false;
+		var shopUrlTimer = null;
+		var nameRequired = false;
+		var emailRequired = false;
+
+		function isSeller() {
+			// Shown only to new users. Check the box itself: the code step may still be fading in.
+			if (!$vendorBox.length || $vendorBox.css('display') === 'none') {
+				return false;
+			}
+			var $fixed = $vendorBox.find('input[type="hidden"][name="account_type"]');
+			if ($fixed.length) {
+				return $fixed.val() === 'seller';
+			}
+			return $vendorBox.find('input[name="account_type"]:checked').val() === 'seller';
+		}
+
+		function shopSlug(v) {
+			var str = String(v || '').toLowerCase();
+			if (str.normalize) {
+				str = str.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+			}
+			return str.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+		}
+
+		function refreshVendorState() {
+			var seller = isSeller();
+			$vendorBox.find('.ashna-vendor-fields').toggle(seller);
+			// A vendor gives first/last name in the vendor fields.
+			if (seller) {
+				$regNameGroup.hide();
+			} else if (nameRequired !== false) {
+				$regNameGroup.toggle(nameRequired !== 'disabled');
+			}
+			$newUserBox.toggle($regNameGroup.css('display') !== 'none' || $regEmailGroup.css('display') !== 'none');
+			hasRequiredExtraFields = seller || (!seller && nameRequired === 'required') || emailRequired === 'required';
+		}
+
+		function checkShopUrl() {
+			var $url = $vendorBox.find('.ashna-shopurl');
+			var $status = $vendorBox.find('.ashna-shopurl-status');
+			var slug = shopSlug($url.val());
+			$vendorBox.find('.ashna-shopurl-slug').text(slug);
+			if (!slug) {
+				$status.removeClass('is-ok is-taken').text('');
+				return;
+			}
+			ashnaRequest({ action: 'ashna_dokan_check_shopurl', shopurl: slug }).done(function (res) {
+				if (!res || !res.success || shopSlug($url.val()) !== res.data.slug) {
+					return;
+				}
+				$status
+					.toggleClass('is-ok', !!res.data.available)
+					.toggleClass('is-taken', !res.data.available)
+					.text(res.data.available ? '✓ این آدرس آزاد است' : '✕ این آدرس قبلاً گرفته شده است');
+			});
+		}
+
+		$vendorBox.on('change', 'input[name="account_type"]', refreshVendorState);
+		$vendorBox.on('input', '.ashna-shopname', function () {
+			if (!shopUrlEdited) {
+				$vendorBox.find('.ashna-shopurl').val(shopSlug($(this).val())).trigger('ashna:slug');
+			}
+		});
+		$vendorBox.on('input ashna:slug', '.ashna-shopurl', function (e) {
+			if (e.type === 'input') {
+				shopUrlEdited = $(this).val() !== '';
+			}
+			$vendorBox.find('.ashna-shopurl-slug').text(shopSlug($(this).val()));
+			clearTimeout(shopUrlTimer);
+			shopUrlTimer = setTimeout(checkShopUrl, 450);
+		});
+
 		function applyCaptcha(captcha, reveal) {
 			if (!captcha || !captcha.token || !$mathBox.length) {
 				return;
@@ -462,6 +537,13 @@
 						$regEmailGroup.hide();
 						$newUserBox.hide();
 
+						nameRequired = res.data.is_new_user ? res.data.require_name || 'disabled' : false;
+						emailRequired = res.data.is_new_user ? res.data.require_email || 'disabled' : false;
+						if ($vendorBox.length) {
+							$vendorBox.toggle(!!res.data.is_new_user);
+							$vendorBox.find('.ashna-vendor-phone-group').toggle(res.data.type === 'email');
+						}
+
 						if (res.data.is_new_user) {
 							var showBox = false;
 							if (res.data.require_name && res.data.require_name !== 'disabled') {
@@ -483,6 +565,9 @@
 							if (showBox) {
 								$newUserBox.show();
 							}
+						}
+						if ($vendorBox.length) {
+							refreshVendorState();
 						}
 
 						$stepVerify.fadeIn(200);
@@ -577,14 +662,23 @@
 			hideAlert();
 			setLoading($verifyBtn, true);
 
-			ashnaRequest({
+			var verifyPayload = {
 				action: 'ashna_verify_otp',
 				identifier: currentIdentifier,
 				code: code,
 				full_name: $stepVerify.find('.ashna-reg-fullname').val() || '',
 				user_email: $stepVerify.find('.ashna-reg-email').val() || '',
-				redirect_to: redirectTo
-			})
+				redirect_to: redirectTo,
+				context: $wrapper.attr('data-context') || ''
+			};
+			if (isSeller()) {
+				verifyPayload.account_type = 'seller';
+				$vendorBox.find('.ashna-vendor-fields input, input[name="vendor_form_nonce"]').each(function () {
+					verifyPayload[this.name] = toEnglishDigits($(this).val());
+				});
+			}
+
+			ashnaRequest(verifyPayload)
 				.done(function (res) {
 					if (res && res.success) {
 						showAlert(res.data.message, 'success');
@@ -613,6 +707,10 @@
 						var errMsg = res && res.data && res.data.message ? res.data.message : ashnaOtpParams.i18n.networkError;
 						showAlert(errMsg, 'error');
 						setLoading($verifyBtn, false);
+						if (res && res.data && res.data.field) {
+							$stepVerify.find('[name="' + res.data.field + '"]').trigger('focus');
+							return;
+						}
 						if ($wrapper.attr('data-error-shake') !== '0') {
 							var $digitsWrap = $stepVerify.find('.ashna-otp-digits');
 							$digitsWrap.addClass('ashna-shake');
@@ -663,7 +761,8 @@
 				action: 'ashna_password_login',
 				identifier: idVal,
 				password: pwVal,
-				redirect_to: redirectTo
+				redirect_to: redirectTo,
+				context: $wrapper.attr('data-context') || ''
 			})
 				.done(function (res) {
 					if (res && res.success) {
@@ -736,7 +835,8 @@
 								client_data_json: bufferToBase64url(assertion.response.clientDataJSON),
 								authenticator_data: bufferToBase64url(assertion.response.authenticatorData),
 								signature: bufferToBase64url(assertion.response.signature),
-								redirect_to: redirectTo
+								redirect_to: redirectTo,
+								context: $wrapper.attr('data-context') || ''
 							});
 						})
 						.then(function (verifyRes) {

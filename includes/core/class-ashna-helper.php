@@ -182,6 +182,10 @@ class Ashna_Helper {
 			'wc_checkout_otp_box'       => 1,
 			'wp_login_integration'      => 0,
 			'enable_global_modal'       => 1,
+			'login_url_to_ashna'        => 1,                 // every front-end "log in"/"register" link (wp_login_url, PMPro, Dokan) → Ashna login page (needs a standalone page)
+			'replace_member_forms'      => 1,                 // guest login forms of PMPro / Ultimate Member / MemberPress shortcodes → Ashna form
+			'role_redirects'            => array(),           // role => URL after sign-in
+			'dokan_vendor_signup'       => 1,                 // vendor sign-up inside the OTP form when Dokan is active
 
 			// 6. Security, Firewall & Captcha
 			'max_requests_per_hour'     => 5,

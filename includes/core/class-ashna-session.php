@@ -242,9 +242,17 @@ class Ashna_Session {
 	 *
 	 * @param WP_User $user      Signed-in user.
 	 * @param string  $requested Redirect requested by the form/URL.
+	 * @param array   $context   { is_new_user: bool, form: string (form context, e.g. member-ultimatemember) }.
 	 * @return string
 	 */
-	public static function redirect_url( $user, $requested = '' ) {
+	public static function redirect_url( $user, $requested = '', $context = array() ) {
+		$context   = wp_parse_args(
+			$context,
+			array(
+				'is_new_user' => false,
+				'form'        => '',
+			)
+		);
 		$fallback  = home_url( '/' );
 		$requested = is_string( $requested ) && '' !== trim( $requested ) ? wp_validate_redirect( trim( $requested ), '' ) : '';
 
@@ -256,15 +264,39 @@ class Ashna_Session {
 		$redirect = '' !== $requested ? $requested : self::default_redirect();
 
 		if ( Ashna_Helper::get_option( 'respect_plugin_redirects', 1 ) ) {
-			// wp-login.php semantics: plugins (e.g. Paid Memberships Pro) choose a page when none was requested.
-			$from_login = apply_filters( 'login_redirect', $requested, $requested, $user );
+			$chosen = $requested;
+			if ( '' === $requested ) {
+				/**
+				 * Destination an integration picks when nothing was requested (e.g. Ultimate Member's
+				 * per-role "after login" setting on its login page).
+				 *
+				 * @param string  $redirect Current destination.
+				 * @param WP_User $user     User.
+				 * @param array   $context  Sign-in context.
+				 */
+				$filtered = (string) apply_filters( 'ashna_otp_default_redirect', $redirect, $user, $context );
+				if ( $filtered !== $redirect ) {
+					$redirect = $filtered;
+					$chosen   = $filtered;
+				}
+			}
+
+			// wp-login.php semantics: plugins (e.g. Paid Memberships Pro) pick a page when the
+			// destination is still empty; a requested or integration-chosen page is passed on.
+			$from_login = apply_filters( 'login_redirect', $chosen, $requested, $user );
 			if ( is_string( $from_login ) && '' !== $from_login ) {
 				$redirect = $from_login;
 			}
 
-			// WooCommerce My Account semantics.
+			// WooCommerce semantics: sign-ups use the registration redirect (Dokan: vendor setup
+			// wizard / dashboard), sign-ins the My Account login redirect (Dokan: vendor dashboard).
 			if ( class_exists( 'WooCommerce' ) ) {
-				$redirect = self::woocommerce_login_redirect( $redirect, $user, $requested );
+				if ( $context['is_new_user'] ) {
+					$filtered = apply_filters( 'woocommerce_registration_redirect', $redirect );
+					$redirect = is_string( $filtered ) && '' !== $filtered ? str_replace( array( '&#038;', '&amp;' ), '&', $filtered ) : $redirect;
+				} else {
+					$redirect = self::woocommerce_login_redirect( $redirect, $user, $requested );
+				}
 			}
 		}
 

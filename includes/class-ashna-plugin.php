@@ -81,6 +81,7 @@ final class Ashna_Plugin {
 		new Ashna_Passkey();
 		Ashna_Frontend::instance();
 		Ashna_WooCommerce::instance();
+		Ashna_Integrations::init();
 
 		if ( did_action( 'elementor/loaded' ) || class_exists( '\Elementor\Plugin' ) ) {
 			Ashna_Elementor::instance();

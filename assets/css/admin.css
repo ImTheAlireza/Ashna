@@ -3321,3 +3321,65 @@
 	white-space: nowrap;
 	width: 42%;
 }
+
+/* QC 4 — integrations */
+#ashna-app-shell .ashna-check-list {
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: 12.5px;
+	line-height: 1.7;
+	color: var(--s-text-secondary);
+}
+
+#ashna-app-shell .ashna-check-list li {
+	position: relative;
+	padding-right: 20px;
+}
+
+#ashna-app-shell .ashna-check-list li::before {
+	content: "✓";
+	position: absolute;
+	right: 0;
+	color: #10b981;
+	font-weight: 800;
+}
+
+#ashna-app-shell .ashna-integrations-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+#ashna-app-shell .ashna-integrations-table td {
+	font-size: 12.5px;
+	line-height: 1.7;
+	vertical-align: top;
+	overflow-wrap: anywhere;
+}
+
+#ashna-app-shell .ashna-integrations-table td:first-child {
+	width: 32%;
+}
+
+#ashna-app-shell .ashna-integrations-table code,
+#ashna-app-shell .ashna-check-list code {
+	white-space: normal;
+	word-break: break-all;
+}
+
+#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+	#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.ashna-col-12 {
+	grid-column: span 12;
+}
