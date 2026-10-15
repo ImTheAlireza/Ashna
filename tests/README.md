@@ -290,7 +290,7 @@ integrations 62, scenarios 190):
 | 6.8.3 | 7.4, 8.0, 8.1, 8.2, 8.3, 8.4, 8.5 | all pass |
 | 7.1.3 | 8.5 (7.4, 8.3 in the QA pass) | all pass |
 | 6.4.13 | 8.1 | all pass |
-| 5.8.18 | 7.4 | 590/593: the three failures come from the old test driver (below) |
+| 5.8.18 | 7.4 | 584/587: three checks fail and two are skipped, all of them from the old test driver (below) |
 
 ```sh
 ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli \
@@ -299,7 +299,7 @@ ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/nod
 
 Known limits of the test tools (not of Ashna):
 - php-wasm's PHP 7.4 build aborts the process inside `libxml_clear_errors()`. On 7.4 the DOM pass of the XSS scanner is therefore skipped (the literal-needle pass still runs; the markup is identical on PHP 8, where the parsed scan runs).
-- The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. Only checks that depend on those SQL features fail there: the used-captcha-marker purge (security), the CSV round trip of a quote+backslash message and the uninstall table drop (scenarios). The attacks suite detects the driver and skips its two wildcard-search checks with a printed note instead of failing. MySQL and the official SQLite driver handle all of them; both are verified on 6.4–7.1.
+- The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. Only checks that depend on those SQL features fail there: the used-captcha-marker purge (security), the CSV round trip of a quote+backslash message and the uninstall table drop (scenarios). The attacks suite detects the driver and skips its two wildcard-search checks with a printed note instead of failing, which is why it reports 197 of 199 there. MySQL and the official SQLite driver handle all of them; both are verified on 6.4–7.1.
 - A suite that crashes midway leaves its fixture roles (`customer`, `seller`) in the site database, which makes the session suite's "no WooCommerce → subscriber" check fail. Remove them (or rebuild the site) before the next run.
 
 ### Browser QA
