@@ -91,3 +91,25 @@ PHP_BINARY=/path/to/php python tests/run-failover.py
 
 The same file also runs inside a disposable full WordPress install: require its
 `wp-load.php` (with Ashna active), then include `tests/failover.php`.
+
+## Full WordPress tests (QC 1 session)
+
+`tests/run-full-wp.py <name>` copies the current source (no-license layout) into a
+disposable WordPress install and runs `tests/<name>.php` there with real auth
+cookies, `WP_Session_Tokens`, nonces, users and roles:
+
+```sh
+PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py session
+```
+
+`ASHNA_TEST_WP_SITE` selects the site (default `.cache/wp-cli-site`, WordPress 6.8.3
+on SQLite with Ashna active). `tests/lib/wp-harness.php` turns `wp_send_json()` into
+captured responses and replays captured auth cookies as the next "browser request";
+everything it changes is rolled back at the end.
+
+WooCommerce, Dokan and Paid Memberships Pro cannot be installed offline, so
+`tests/fixtures/` reproduces the code Ashna integrates with. Dokan's
+`dokan_after_login_redirect()`, the `Registration` class and helpers are copied
+verbatim from getdokan/dokan (develop, v5.3.0); PMPro's `pmpro_login_redirect()` is
+verbatim except its membership lookup. Storage/bootstrapping helpers are simplified
+and marked as such. These fixtures are not a substitute for testing on a real store.

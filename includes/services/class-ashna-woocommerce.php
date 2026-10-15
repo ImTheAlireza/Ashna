@@ -161,14 +161,19 @@ class Ashna_WooCommerce {
 			$phone = get_user_meta( $user->ID, 'digits_phone', true );
 		}
 		$bale_chat_id = get_user_meta( $user->ID, 'ashna_bale_chat_id', true );
+		$can_edit     = self::can_edit_verified_phone( $user->ID );
 		?>
 		<h2>اطلاعات ورود یکبارمصرف (آشنا)</h2>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th><label for="ashna_phone">شماره موبایل تایید شده</label></th>
 				<td>
-					<input type="text" name="ashna_phone" id="ashna_phone" value="<?php echo esc_attr( $phone ); ?>" class="regular-text" dir="ltr" placeholder="09123456789" />
-					<p class="description">شماره موبایل کاربر برای ورود با کد یکبارمصرف (فرمت استاندارد: 09123456789).</p>
+					<input type="text" name="ashna_phone" id="ashna_phone" value="<?php echo esc_attr( $phone ); ?>" class="regular-text" dir="ltr" placeholder="09123456789" <?php disabled( ! $can_edit ); ?> />
+					<?php if ( $can_edit ) : ?>
+						<p class="description">شماره موبایل کاربر برای ورود با کد یکبارمصرف (فرمت استاندارد: 09123456789). حساب‌های مدیریتی فقط با شماره‌ای که اینجا ثبت شده با کد وارد می‌شوند.</p>
+					<?php else : ?>
+						<p class="description">این شماره با ورود موفق با کد تایید شده است و فقط مدیر سایت می‌تواند آن را تغییر دهد.</p>
+					<?php endif; ?>
 				</td>
 			</tr>
 			<tr>
@@ -183,6 +188,20 @@ class Ashna_WooCommerce {
 	}
 
 	/**
+	 * The verified phone decides which account an OTP opens, so users may not change their
+	 * own value (that would let anyone claim another person's number); site admins can.
+	 *
+	 * @param int $user_id Profile being edited.
+	 * @return bool
+	 */
+	private static function can_edit_verified_phone( $user_id ) {
+		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+			return false;
+		}
+		return get_current_user_id() !== (int) $user_id || current_user_can( 'manage_options' );
+	}
+
+	/**
 	 * Save Ashna phone & Bale chat ID from user profile screen
 	 *
 	 * @param int $user_id User ID.
@@ -193,7 +212,7 @@ class Ashna_WooCommerce {
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		if ( isset( $_POST['ashna_phone'] ) ) {
+		if ( isset( $_POST['ashna_phone'] ) && self::can_edit_verified_phone( $user_id ) ) {
 			$raw_phone  = sanitize_text_field( wp_unslash( $_POST['ashna_phone'] ) );
 			$normalized = ! empty( $raw_phone ) ? Ashna_Helper::normalize_phone( $raw_phone ) : '';
 			if ( ! empty( $normalized ) ) {

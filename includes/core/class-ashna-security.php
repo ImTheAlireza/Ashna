@@ -61,6 +61,15 @@ class Ashna_Security {
 	}
 
 	/**
+	 * Whether the built-in math captcha is in use.
+	 *
+	 * @return bool
+	 */
+	public static function math_captcha_active() {
+		return 'math' === Ashna_Helper::get_option( 'captcha_type', 'none' );
+	}
+
+	/**
 	 * Generate a stateless HMAC Math Captcha challenge
 	 *
 	 * @return array { question: string, token: string }

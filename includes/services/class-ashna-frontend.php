@@ -141,7 +141,10 @@ class Ashna_Frontend {
 			'ashnaOtpParams',
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-				'nonce'          => wp_create_nonce( 'ashna_otp_nonce' ),
+				'nonce'          => wp_create_nonce( Ashna_Session::NONCE_ACTION ),
+				// Session freshness: pages may come from a cache or the back/forward cache.
+				'loggedIn'       => is_user_logged_in(),
+				'renderedAt'     => time(),
 				'otpLength'      => absint( Ashna_Helper::get_option( 'otp_length', 5 ) ),
 				'captchaType'    => $captcha_type,
 				'captchaSiteKey' => $site_key,

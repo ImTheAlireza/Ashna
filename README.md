@@ -72,6 +72,7 @@ ashna-otp/
 │   │   ├── class-ashna-activator.php              # مدیریت جداول دیتابیس و زمان‌بند WP-Cron
 │   │   ├── class-ashna-helper.php                 # مدیریت تنظیمات با کش درون‌حافظه‌ای و نرمال‌سازی
 │   │   ├── class-ashna-logger.php                 # ریپازیتوری لاگ‌ها، آمار و نمودار ۷ روزه
+│   │   ├── class-ashna-session.php                # نشست بومی وردپرس برای هر سه روش ورود + مسیر بعد از ورود
 │   │   └── class-ashna-security.php               # موتور فایروال، Rate Limit، قفل امنیتی و کپچا
 │   ├── services/                                  # لایه سرویس‌های کاربردی (Application Services)
 │   │   ├── class-ashna-auth.php                   # سرویس احراز هویت AJAX، ثبت‌نام خودکار و ورود
@@ -154,3 +155,25 @@ add_action( 'init', function() {
 - بدون اعلام صریح، نوع خطا از وضعیت شبکه و کد HTTP تشخیص داده می‌شود.
 - فیلتر `ashna_otp_failover_budget`: سقف زمان کل ارسال یک کد (ثانیه).
 - اکشن `ashna_otp_gateway_failure`: بعد از هر تلاش ناموفق، با آرگومان‌های `$gateway_id, $type, $wp_error, $ms, $sidelined`.
+
+---
+
+## نشست کاربر بعد از ورود (هماهنگ با هسته وردپرس و ووکامرس)
+
+آشنا نشست یا توکن جداگانه نمی‌سازد. ورود با کد، رمز عبور یا Passkey همان نشستی را می‌سازد که `wp-login.php` می‌سازد:
+
+- کوکی‌های استاندارد وردپرس با `WP_Session_Tokens`، تغییر کاربر جاری در همان درخواست و اجرای هوک `wp_login`؛
+- انتقال فوری سبد خرید و نشست مهمان ووکامرس به مشتری (مثل `wc_set_customer_auth_cookie()`)؛
+- ورود مجدد، نشست قبلیِ همان مرورگر را حذف می‌کند و تعویض حساب تمیز انجام می‌شود؛
+- قبل از ساخت نشست، فیلتر `wp_authenticate_user` (افزونه‌های تأیید عضویت، مسدودسازی و محدودکننده‌ی ورود) و در چندسایته `is_user_spammy()` بررسی می‌شود؛
+- ورود با رمز از `wp_authenticate()` و کل زنجیره‌ی `authenticate` عبور می‌کند (تأیید دومرحله‌ای رعایت می‌شود)؛
+- مسیر بعد از ورود از فیلترهای `login_redirect` و `woocommerce_login_redirect` هم پیروی می‌کند (مثلاً پیشخوان فروشنده‌ی Dokan).
+
+هوک‌های توسعه‌دهنده:
+
+- فیلتر `ashna_otp_can_login( true|WP_Error $allowed, WP_User $user, array $context )`: رد کردن ورود.
+- اکشن `ashna_otp_logged_in( WP_User $user, array $context )`: بعد از هر ورود موفق (`$context['method']`: `otp`، `password` یا `passkey`).
+- فیلتر `ashna_otp_login_response( array $payload, WP_User $user )`: افزودن داده به پاسخ ورود (مثلاً توکن برای فرانت‌اند هدلس).
+- فیلترهای `ashna_otp_login_redirect` و `ashna_otp_pinned_redirect`: تغییر مسیر بعد از ورود.
+- فیلتر `ashna_otp_remember_login`: ماندگار بودن نشست.
+- فیلترهای `ashna_otp_phone_candidates` و `ashna_otp_is_staff_account`: یافتن حساب بر اساس شماره.

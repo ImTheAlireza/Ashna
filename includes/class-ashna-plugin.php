@@ -76,6 +76,7 @@ final class Ashna_Plugin {
 		Ashna_Activator::maybe_upgrade();
 		Ashna_Failover::ensure_probe_scheduled();
 
+		Ashna_Session::init();
 		Ashna_Auth::instance();
 		new Ashna_Passkey();
 		Ashna_Frontend::instance();

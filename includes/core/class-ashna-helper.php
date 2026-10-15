@@ -48,6 +48,10 @@ class Ashna_Helper {
 			'redirect_url'              => '',
 			'custom_redirect_url'       => '',
 			'admin_redirect_url'        => '',
+			'session_remember'          => 1,                 // keep users signed in on this device (WordPress "remember me")
+			'session_days'              => 14,                // length of a remembered session, in days (1–365)
+			'respect_login_gates'       => 1,                 // let approval / ban / lockout plugins refuse a sign-in (wp_authenticate_user)
+			'respect_plugin_redirects'  => 1,                 // apply login_redirect + woocommerce_login_redirect (membership plugins, Dokan)
 			'send_welcome_message'      => 0,
 			'welcome_message_text'      => 'به {site_name} خوش آمدید! حساب کاربری شما با موفقیت ایجاد شد.',
 			'show_debug_code_in_toast'  => 0,

@@ -473,6 +473,45 @@ $svg_faceid      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 								<input type="text" name="ashna[custom_redirect_url]" id="custom_redirect_url" value="<?php echo esc_attr( $custom_redir_val ); ?>" dir="ltr" placeholder="https://yoursite.com/dashboard" />
 							</div>
 
+							<!-- Session: WordPress-native, consistent with WooCommerce and other plugins -->
+							<div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;" id="ashna-session-settings">
+								<div class="ashna-switch-row">
+									<div class="ashna-switch-text">
+										<strong>ماندن در حساب روی این دستگاه</strong>
+										<p>نشست استاندارد وردپرس («مرا به خاطر بسپار») ساخته شود؛ با خاموش‌کردن، با بستن مرورگر از حساب خارج می‌شود.</p>
+									</div>
+									<label class="ashna-switch">
+										<input type="checkbox" name="ashna[session_remember]" value="1" <?php checked( ! empty( $settings['session_remember'] ), true ); ?> />
+										<span class="ashna-slider"></span>
+									</label>
+								</div>
+								<div class="ashna-field">
+									<label for="session_days">مدت ماندگاری نشست (روز)</label>
+									<input type="text" inputmode="numeric" name="ashna[session_days]" id="session_days" value="<?php echo esc_attr( (string) $settings['session_days'] ); ?>" dir="ltr" />
+									<small>پیش‌فرض وردپرس ۱۴ روز است. ورود دوباره، نشست قبلی همان مرورگر را جایگزین می‌کند.</small>
+								</div>
+								<div class="ashna-switch-row">
+									<div class="ashna-switch-text">
+										<strong>رعایت قوانین ورود افزونه‌های دیگر</strong>
+										<p>حساب‌هایی که افزونه‌های امنیتی یا عضویت (در انتظار تأیید، مسدود، قفل‌شده) اجازه ورودشان را نمی‌دهند، با کد هم وارد نشوند.</p>
+									</div>
+									<label class="ashna-switch">
+										<input type="checkbox" name="ashna[respect_login_gates]" value="1" <?php checked( ! empty( $settings['respect_login_gates'] ), true ); ?> />
+										<span class="ashna-slider"></span>
+									</label>
+								</div>
+								<div class="ashna-switch-row">
+									<div class="ashna-switch-text">
+										<strong>رعایت مسیر بعد از ورودِ ووکامرس و افزونه‌های دیگر</strong>
+										<p>همان فیلترهای صفحه ورود وردپرس و حساب کاربری ووکامرس اعمال شود؛ مثلاً فروشنده‌های دکان به پیشخوان فروشندگی بروند.</p>
+									</div>
+									<label class="ashna-switch">
+										<input type="checkbox" name="ashna[respect_plugin_redirects]" value="1" <?php checked( ! empty( $settings['respect_plugin_redirects'] ), true ); ?> />
+										<span class="ashna-slider"></span>
+									</label>
+								</div>
+							</div>
+
 							<div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
 								<div class="ashna-switch-row">
 									<div class="ashna-switch-text">

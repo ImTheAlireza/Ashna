@@ -204,7 +204,7 @@ class Ashna_Passkey {
 	 * AJAX: Generate WebAuthn Registration Options for logged-in user
 	 */
 	public function ajax_register_options() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'برای ثبت کلید بیومتریک ابتدا وارد حساب کاربری خود شوید.' ) );
@@ -264,7 +264,7 @@ class Ashna_Passkey {
 	 * AJAX: Verify WebAuthn Registration & Save User's Public Key
 	 */
 	public function ajax_register_verify() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'نشست کاربری شما منقضی شده است.' ) );
@@ -350,7 +350,7 @@ class Ashna_Passkey {
 	 * AJAX: Delete a Passkey for the current user
 	 */
 	public function ajax_delete_passkey() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
@@ -368,15 +368,14 @@ class Ashna_Passkey {
 	 * AJAX: Generate WebAuthn Login Challenge (Assertion Options)
 	 */
 	public function ajax_login_options() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! Ashna_Helper::get_option( 'enable_passkey', 1 ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک در حال حاضر غیرفعال است.' ) );
 		}
 
-		$ip        = Ashna_Helper::get_client_ip();
 		$challenge = self::base64url_encode( random_bytes( 32 ) );
-		$token_key = 'ashna_pk_auth_' . md5( $ip . '_' . $challenge );
+		$token_key = 'ashna_pk_auth_' . md5( $challenge ); // 256-bit random challenge; not tied to an IP that may change mid-flow.
 
 		set_transient( $token_key, $challenge, 120 );
 
@@ -414,7 +413,7 @@ class Ashna_Passkey {
 	 * AJAX: Verify WebAuthn Cryptographic Assertion & Log User In
 	 */
 	public function ajax_login_verify() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! Ashna_Helper::get_option( 'enable_passkey', 1 ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک غیرفعال است.' ) );
@@ -438,8 +437,7 @@ class Ashna_Passkey {
 		}
 
 		$challenge = isset( $client_data['challenge'] ) ? sanitize_text_field( $client_data['challenge'] ) : '';
-		$ip        = Ashna_Helper::get_client_ip();
-		$token_key = 'ashna_pk_auth_' . md5( $ip . '_' . $challenge );
+		$token_key = 'ashna_pk_auth_' . md5( $challenge );
 		$saved_ch  = get_transient( $token_key );
 		delete_transient( $token_key );
 
@@ -484,20 +482,40 @@ class Ashna_Passkey {
 		$signature_bin = self::base64url_decode( $signature_b64 );
 		$signed_data   = $auth_data_bin . hash( 'sha256', $client_data_raw, true );
 
-		if ( function_exists( 'openssl_verify' ) ) {
-			$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 );
-			if ( 1 !== $verified ) {
-				wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
-			}
+		// Fail closed: without OpenSSL the signature cannot be checked, so nobody is signed in.
+		if ( ! function_exists( 'openssl_verify' ) ) {
+			wp_send_json_error( array( 'message' => 'ورود بیومتریک روی این سرور در دسترس نیست (افزونه OpenSSL در PHP فعال نیست).' ) );
+		}
+		$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( 1 !== $verified ) {
+			wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
 		}
 
 		// Update last_used timestamp
 		$passkeys[ $cred_id ]['last_used'] = current_time( 'mysql' );
 		update_user_meta( $user->ID, self::META_CREDENTIALS, $passkeys );
 
-		// Log successful Passkey login in Ashna Logs
 		$phone      = get_user_meta( $user->ID, 'ashna_phone', true );
 		$identifier = $phone ? $phone : $user->user_email;
+
+		// Sign in through the shared WordPress-native session (same gates, cookies and hooks as OTP).
+		$logged_in = Ashna_Session::login(
+			$user,
+			array(
+				'method'     => 'passkey',
+				'identifier' => $identifier,
+			)
+		);
+		if ( is_wp_error( $logged_in ) ) {
+			wp_send_json_error(
+				array(
+					'message' => $logged_in->get_error_message(),
+					'code'    => $logged_in->get_error_code(),
+				)
+			);
+		}
+
+		// Log successful Passkey login in Ashna Logs
 		Ashna_Logger::insert(
 			array(
 				'recipient'        => $identifier ? $identifier : $user->user_login,
@@ -509,30 +527,11 @@ class Ashna_Passkey {
 			)
 		);
 
-		// Log the user into WordPress
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true );
-		do_action( 'wp_login', $user->user_login, $user );
-
-		// Resolve redirect URL
-		$behavior = Ashna_Helper::get_option( 'redirect_behavior', 'auto' );
-		if ( 'custom' === $behavior && ! empty( Ashna_Helper::get_option( 'custom_redirect_url' ) ) ) {
-			$final_redirect = Ashna_Helper::get_option( 'custom_redirect_url' );
-		} elseif ( 'my_account' === $behavior && function_exists( 'wc_get_page_permalink' ) ) {
-			$final_redirect = wc_get_page_permalink( 'myaccount' );
-		} elseif ( 'home' === $behavior ) {
-			$final_redirect = home_url( '/' );
-		} elseif ( ! empty( $redirect_to ) ) {
-			$final_redirect = $redirect_to;
-		} else {
-			$final_redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
-		}
-
 		wp_send_json_success(
-			array(
-				'message'  => sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name ),
-				'redirect' => $final_redirect,
+			Ashna_Auth::login_response(
+				$user,
+				$redirect_to,
+				sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name )
 			)
 		);
 	}

@@ -72,7 +72,7 @@ class Ashna_Auth {
 	 * Handle AJAX Request OTP
 	 */
 	public function ajax_request_otp() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
 		if ( empty( $raw_identifier ) ) {
@@ -114,7 +114,16 @@ class Ashna_Auth {
 			$this->send_error( array( 'message' => 'ورود فقط با آدرس ایمیل امکان‌پذیر است.' ) );
 		}
 
-		$existing_user = self::find_user( $identifier, $type );
+		$account = self::resolve_account( $identifier, $type );
+		if ( $account['error'] ) {
+			$this->send_error(
+				array(
+					'message' => $account['error']->get_error_message(),
+					'code'    => $account['error']->get_error_code(),
+				)
+			);
+		}
+		$existing_user = $account['user'];
 		$auto_register = (bool) Ashna_Helper::get_option( 'auto_register', 1 );
 
 		if ( ! $existing_user && ! $auto_register ) {
@@ -180,7 +189,7 @@ class Ashna_Auth {
 	 * Handle AJAX Verify OTP & Unified Login / Auto-Register
 	 */
 	public function ajax_verify_otp() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
 		$raw_code       = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
@@ -196,7 +205,16 @@ class Ashna_Auth {
 			$this->send_error( array( 'message' => 'شناسه کاربری نامعتبر است.' ) );
 		}
 
-		$user        = self::find_user( $identifier, $type );
+		$account = self::resolve_account( $identifier, $type );
+		if ( $account['error'] ) {
+			$this->send_error(
+				array(
+					'message' => $account['error']->get_error_message(),
+					'code'    => $account['error']->get_error_code(),
+				)
+			);
+		}
+		$user        = $account['user'];
 		$is_new_user = false;
 
 		if ( ! $user ) {
@@ -245,29 +263,76 @@ class Ashna_Auth {
 			}
 		}
 
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true, is_ssl() );
-		do_action( 'wp_login', $user->user_login, $user );
-		do_action( 'ashna_otp_user_authenticated', $user, $identifier, $type, $is_new_user );
-
-		$final_redirect = self::resolve_redirect_url( $redirect_to, $user );
-
-		$this->send_success(
+		$logged_in = Ashna_Session::login(
+			$user,
 			array(
-				'message'     => $is_new_user ? 'ثبت‌نام و ورود شما با موفقیت انجام شد! در حال انتقال...' : 'ورود با موفقیت انجام شد! در حال انتقال...',
-				'redirect_to' => $final_redirect,
-				'user_id'     => $user->ID,
+				'method'      => 'otp',
+				'identifier'  => $identifier,
 				'is_new_user' => $is_new_user,
 			)
 		);
+		if ( is_wp_error( $logged_in ) ) {
+			$this->send_error(
+				array(
+					'message' => $logged_in->get_error_message(),
+					'code'    => $logged_in->get_error_code(),
+				)
+			);
+		}
+		do_action( 'ashna_otp_user_authenticated', $user, $identifier, $type, $is_new_user );
+
+		$this->send_success(
+			self::login_response(
+				$user,
+				$redirect_to,
+				$is_new_user ? 'ثبت‌نام و ورود شما با موفقیت انجام شد! در حال انتقال...' : 'ورود با موفقیت انجام شد! در حال انتقال...',
+				array( 'is_new_user' => $is_new_user )
+			)
+		);
+	}
+
+	/**
+	 * Success payload shared by every sign-in path.
+	 *
+	 * The nonce belongs to the new session, so follow-up requests on the same page (for
+	 * example registering a passkey right after the OTP step) are accepted.
+	 *
+	 * @param WP_User $user        Signed-in user.
+	 * @param string  $redirect_to Requested redirect.
+	 * @param string  $message     Message.
+	 * @param array   $extra       Extra fields.
+	 * @return array
+	 */
+	public static function login_response( $user, $redirect_to, $message, $extra = array() ) {
+		$redirect = Ashna_Session::redirect_url( $user, $redirect_to );
+		$state    = Ashna_Session::client_state();
+
+		$payload = array_merge(
+			array(
+				'message'     => $message,
+				'redirect_to' => $redirect,
+				'redirect'    => $redirect,
+				'user_id'     => $user->ID,
+				'nonce'       => $state['nonce'],
+				'logged_in'   => $state['logged_in'],
+			),
+			$extra
+		);
+
+		/**
+		 * Filters the sign-in response (e.g. to add a token for a headless front end).
+		 *
+		 * @param array   $payload Response data.
+		 * @param WP_User $user    Signed-in user.
+		 */
+		return apply_filters( 'ashna_otp_login_response', $payload, $user );
 	}
 
 	/**
 	 * Handle AJAX Password Login Fallback (with Brute-Force Protection)
 	 */
 	public function ajax_password_login() {
-		check_ajax_referer( 'ashna_otp_nonce', 'nonce' );
+		Ashna_Session::verify_request();
 
 		if ( ! Ashna_Helper::get_option( 'allow_password_login', 0 ) ) {
 			$this->send_error( array( 'message' => 'ورود با رمز عبور غیرفعال است.' ) );
@@ -289,104 +354,333 @@ class Ashna_Auth {
 			$this->send_error( array( 'message' => $lockout->get_error_message() ) );
 		}
 
-		$user = 'invalid' !== $parsed['type'] ? self::find_user( $identifier, $parsed['type'] ) : get_user_by( 'login', $identifier );
-		if ( ! $user || ! wp_check_password( $password, $user->user_pass, $user->ID ) ) {
+		// Locate the account, then let WordPress authenticate it through the full `authenticate`
+		// filter chain (2FA, login limiters, membership approval ...) exactly like wp-login.php.
+		$user = null;
+		foreach ( self::password_candidates( $identifier, $parsed['type'] ) as $candidate ) {
+			if ( wp_check_password( $password, $candidate->user_pass, $candidate->ID ) ) {
+				$user = $candidate;
+				break;
+			}
+		}
+
+		$generic = 'نام کاربری/شماره یا رمز عبور اشتباه است.';
+		if ( ! $user ) {
 			Ashna_Security::record_failed_password_attempt( $identifier );
-			$this->send_error( array( 'message' => 'نام کاربری/شماره یا رمز عبور اشتباه است.' ) );
+			do_action( 'wp_login_failed', $raw_identifier, new WP_Error( 'incorrect_password', $generic ) );
+			$this->send_error( array( 'message' => $generic ) );
+		}
+
+		$authenticated = wp_authenticate( $user->user_login, $password );
+		if ( is_wp_error( $authenticated ) ) {
+			$credential_errors = array( 'incorrect_password', 'invalid_username', 'invalid_email', 'empty_password', 'empty_username' );
+			if ( in_array( $authenticated->get_error_code(), $credential_errors, true ) ) {
+				Ashna_Security::record_failed_password_attempt( $identifier );
+				$this->send_error( array( 'message' => $generic ) );
+			}
+			$readable = Ashna_Session::readable_error( $authenticated );
+			$this->send_error(
+				array(
+					'message' => $readable->get_error_message(),
+					'code'    => $readable->get_error_code(),
+				)
+			);
 		}
 
 		Ashna_Security::clear_password_attempts( $identifier );
 
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true, is_ssl() );
-		do_action( 'wp_login', $user->user_login, $user );
-
-		$this->send_success(
+		$logged_in = Ashna_Session::login(
+			$authenticated,
 			array(
-				'message'     => 'ورود با موفقیت انجام شد! در حال انتقال...',
-				'redirect_to' => self::resolve_redirect_url( $redirect_to, $user ),
+				'method'        => 'password',
+				'identifier'    => $identifier,
+				'authenticated' => true,
 			)
+		);
+		if ( is_wp_error( $logged_in ) ) {
+			$this->send_error(
+				array(
+					'message' => $logged_in->get_error_message(),
+					'code'    => $logged_in->get_error_code(),
+				)
+			);
+		}
+
+		$this->send_success( self::login_response( $authenticated, $redirect_to, 'ورود با موفقیت انجام شد! در حال انتقال...' ) );
+	}
+
+	/**
+	 * Accounts a password sign-in may belong to (a phone can match more than one account).
+	 *
+	 * @param string $identifier Normalized phone/email or raw username.
+	 * @param string $type       phone|email|invalid.
+	 * @return WP_User[]
+	 */
+	private static function password_candidates( $identifier, $type ) {
+		if ( 'email' === $type ) {
+			$user = get_user_by( 'email', $identifier );
+			if ( ! $user ) {
+				$user = get_user_by( 'login', $identifier );
+			}
+			return $user ? array( $user ) : array();
+		}
+		if ( 'phone' !== $type ) {
+			$user = get_user_by( 'login', $identifier );
+			return $user ? array( $user ) : array();
+		}
+
+		$ids = array();
+		foreach ( self::verified_phone_lookups( $identifier ) as $meta_query ) {
+			$ids = array_merge( $ids, self::user_ids_by_meta( $meta_query, 5 ) );
+		}
+		$ids = array_merge( $ids, self::unverified_phone_candidates( $identifier ) );
+
+		$users = array();
+		foreach ( array_slice( array_values( array_unique( array_map( 'absint', $ids ) ) ), 0, 5 ) as $id ) {
+			$user = get_user_by( 'id', $id );
+			if ( $user ) {
+				$users[] = $user;
+			}
+		}
+		return $users;
+	}
+
+	/**
+	 * Find an existing WordPress user by normalized phone or email (backward-compatible API).
+	 * Supports users registered via Ashna, Digits, WooCommerce, MihanPanel, or standard WP login.
+	 *
+	 * @param string $identifier Normalized phone (09XXXXXXXXX) or email.
+	 * @param string $type       'phone' or 'email'.
+	 * @return WP_User|false False when no account — or no single safe account — matches.
+	 */
+	public static function find_user( $identifier, $type = 'phone' ) {
+		$account = self::resolve_account( $identifier, $type );
+		return $account['user'] ? $account['user'] : false;
+	}
+
+	/**
+	 * Resolve the account that owns a phone/email, without guessing.
+	 *
+	 * 1. Phones verified by an OTP sign-in (Ashna, then Digits) are trusted.
+	 * 2. Unverified profile data (WooCommerce billing phone, legacy "mobile" field, phone-like
+	 *    usernames) is used only for ordinary accounts that have no other verified phone.
+	 *    Staff accounts (admins, shop managers, editors ...) are never opened through
+	 *    unverified data: one mistyped billing phone must not hand out admin access.
+	 * 3. When more than one account matches, nobody is signed in and nothing is created.
+	 *
+	 * @param string $identifier Normalized phone or email.
+	 * @param string $type       'phone' or 'email'.
+	 * @return array { user: WP_User|null, error: WP_Error|null }
+	 */
+	public static function resolve_account( $identifier, $type = 'phone' ) {
+		$none = array(
+			'user'  => null,
+			'error' => null,
+		);
+
+		if ( 'email' === $type ) {
+			$user = get_user_by( 'email', $identifier );
+			return $user ? array( 'user' => $user, 'error' => null ) : $none;
+		}
+		if ( 'phone' !== $type || '' === (string) $identifier ) {
+			return $none;
+		}
+
+		// 1. Verified phones.
+		foreach ( self::verified_phone_lookups( $identifier ) as $meta_query ) {
+			$ids = self::user_ids_by_meta( $meta_query, 2 );
+			if ( 1 === count( $ids ) ) {
+				$user = get_user_by( 'id', $ids[0] );
+				if ( $user ) {
+					return array( 'user' => $user, 'error' => null );
+				}
+			} elseif ( count( $ids ) > 1 ) {
+				return array( 'user' => null, 'error' => self::ambiguous_error() );
+			}
+		}
+
+		// 2. Unverified profile data.
+		/**
+		 * Extra candidate user IDs for a phone (integrations, custom profile fields).
+		 *
+		 * @param int[]  $ids        Candidate IDs.
+		 * @param string $identifier Normalized phone (09XXXXXXXXX).
+		 */
+		$ids = apply_filters( 'ashna_otp_phone_candidates', self::unverified_phone_candidates( $identifier ), $identifier );
+		$ids = array_values( array_unique( array_filter( array_map( 'absint', (array) $ids ) ) ) );
+
+		$eligible  = array();
+		$staff_hit = false;
+		foreach ( $ids as $id ) {
+			$user = get_user_by( 'id', $id );
+			if ( ! $user ) {
+				continue;
+			}
+			if ( self::is_staff_account( $user ) ) {
+				$staff_hit = true;
+				continue;
+			}
+			if ( self::has_other_verified_phone( $user->ID, $identifier ) ) {
+				continue;
+			}
+			$eligible[] = $user;
+		}
+
+		if ( 1 === count( $eligible ) ) {
+			return array( 'user' => $eligible[0], 'error' => null );
+		}
+		if ( count( $eligible ) > 1 ) {
+			return array( 'user' => null, 'error' => self::ambiguous_error() );
+		}
+		if ( $staff_hit ) {
+			return array(
+				'user'  => null,
+				'error' => new WP_Error( 'ashna_staff_phone_unverified', 'ورود با کد یکبارمصرف برای این شماره فعال نیست. لطفاً با رمز عبور وارد شوید یا با پشتیبانی سایت تماس بگیرید.' ),
+			);
+		}
+
+		return $none;
+	}
+
+	/**
+	 * Whether an account has staff capabilities (never opened through unverified phone data).
+	 *
+	 * @param WP_User $user User.
+	 * @return bool
+	 */
+	public static function is_staff_account( $user ) {
+		$is_staff = false;
+		foreach ( array( 'manage_options', 'edit_users', 'promote_users', 'activate_plugins', 'manage_woocommerce', 'edit_others_posts' ) as $cap ) {
+			if ( user_can( $user, $cap ) ) {
+				$is_staff = true;
+				break;
+			}
+		}
+		return (bool) apply_filters( 'ashna_otp_is_staff_account', $is_staff, $user );
+	}
+
+	/**
+	 * Meta queries for phones verified by an OTP sign-in (Ashna first, then Digits).
+	 *
+	 * @param string $identifier Normalized phone.
+	 * @return array[]
+	 */
+	private static function verified_phone_lookups( $identifier ) {
+		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true );
+		$intl_raw  = Ashna_Helper::to_international_phone( $identifier, false );
+		$no_zero   = ltrim( $identifier, '0' );
+
+		return array(
+			array(
+				array(
+					'key'   => 'ashna_phone',
+					'value' => $identifier,
+				),
+			),
+			array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'digits_phone',
+					'value'   => array( $intl_plus, $intl_raw, $identifier, $no_zero ),
+					'compare' => 'IN',
+				),
+				array(
+					'key'     => 'digits_phone_no',
+					'value'   => array( $no_zero, $identifier ),
+					'compare' => 'IN',
+				),
+			),
 		);
 	}
 
 	/**
-	 * Find existing WordPress user by normalized phone or email
-	 * Supports users registered via Ashna, Digits, WooCommerce, MihanPanel, or standard WP login
+	 * Candidate IDs from unverified profile data.
 	 *
-	 * @param string $identifier Normalized phone (09XXXXXXXXX) or email.
-	 * @param string $type       'phone' or 'email'.
-	 * @return WP_User|false
+	 * @param string $identifier Normalized phone.
+	 * @return int[]
 	 */
-	public static function find_user( $identifier, $type = 'phone' ) {
-		if ( 'email' === $type ) {
-			return get_user_by( 'email', $identifier );
-		}
+	private static function unverified_phone_candidates( $identifier ) {
+		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true );
+		$intl_raw  = Ashna_Helper::to_international_phone( $identifier, false );
+		$no_zero   = ltrim( $identifier, '0' );
 
-		// 1. Fast check by ashna_phone meta
-		$users = get_users(
+		$ids = self::user_ids_by_meta(
 			array(
-				'meta_key'   => 'ashna_phone',
-				'meta_value' => $identifier,
-				'number'     => 1,
-			)
-		);
-		if ( ! empty( $users ) ) {
-			return $users[0];
-		}
-
-		// 2. Check across WooCommerce, Digits, and other OTP plugin meta keys in all phone formats
-		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true );  // +989123456789
-		$intl_raw  = Ashna_Helper::to_international_phone( $identifier, false ); // 989123456789
-		$no_zero   = ltrim( $identifier, '0' );                                  // 9123456789
-
-		$compat_users = get_users(
-			array(
-				'meta_query' => array(
-					'relation' => 'OR',
-					array(
-						'key'     => 'billing_phone',
-						'value'   => array( $identifier, $intl_plus, $intl_raw, $no_zero ),
-						'compare' => 'IN',
-					),
-					array(
-						'key'     => 'digits_phone',
-						'value'   => array( $intl_plus, $intl_raw, $identifier, $no_zero ),
-						'compare' => 'IN',
-					),
-					array(
-						'key'     => 'digits_phone_no',
-						'value'   => array( $no_zero, $identifier ),
-						'compare' => 'IN',
-					),
-					array(
-						'key'     => 'mobile',
-						'value'   => array( $identifier, $intl_plus, $no_zero ),
-						'compare' => 'IN',
-					),
+				'relation' => 'OR',
+				array(
+					'key'     => 'billing_phone',
+					'value'   => array( $identifier, $intl_plus, $intl_raw, $no_zero ),
+					'compare' => 'IN',
 				),
-				'number'     => 1,
-			)
+				array(
+					'key'     => 'mobile',
+					'value'   => array( $identifier, $intl_plus, $no_zero ),
+					'compare' => 'IN',
+				),
+			),
+			5
 		);
-		if ( ! empty( $compat_users ) ) {
-			return $compat_users[0];
-		}
 
-		// 3. Check by user_login matching common phone formats (0912..., 98912..., +98912..., 912..., or prefixed)
 		$login_candidates = array( $identifier, $intl_raw, $intl_plus, $no_zero, 'u_' . $identifier );
 		$custom_prefix    = sanitize_key( Ashna_Helper::get_option( 'username_prefix', '' ) );
 		if ( ! empty( $custom_prefix ) ) {
 			$login_candidates[] = $custom_prefix . $identifier;
 		}
-
 		foreach ( array_unique( $login_candidates ) as $candidate_login ) {
 			$user_by_login = get_user_by( 'login', $candidate_login );
 			if ( $user_by_login ) {
-				return $user_by_login;
+				$ids[] = (int) $user_by_login->ID;
 			}
 		}
 
+		return array_values( array_unique( $ids ) );
+	}
+
+	/**
+	 * Whether the account already has a different verified phone.
+	 *
+	 * @param int    $user_id    User ID.
+	 * @param string $identifier Normalized phone.
+	 * @return bool
+	 */
+	private static function has_other_verified_phone( $user_id, $identifier ) {
+		$verified = (string) get_user_meta( $user_id, 'ashna_phone', true );
+		if ( '' !== $verified ) {
+			return Ashna_Helper::normalize_phone( $verified ) !== $identifier;
+		}
+		$digits = (string) get_user_meta( $user_id, 'digits_phone', true );
+		if ( '' !== $digits ) {
+			return Ashna_Helper::normalize_phone( $digits ) !== $identifier;
+		}
 		return false;
+	}
+
+	/**
+	 * User IDs matching a meta query.
+	 *
+	 * @param array $meta_query Meta query.
+	 * @param int   $limit      Max IDs.
+	 * @return int[]
+	 */
+	private static function user_ids_by_meta( $meta_query, $limit = 2 ) {
+		$ids = get_users(
+			array(
+				'meta_query'  => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'number'      => $limit,
+				'fields'      => 'ID',
+				'count_total' => false,
+			)
+		);
+		return array_values( array_map( 'absint', (array) $ids ) );
+	}
+
+	/**
+	 * Error for a phone shared by several accounts.
+	 *
+	 * @return WP_Error
+	 */
+	private static function ambiguous_error() {
+		return new WP_Error( 'ashna_ambiguous_account', 'این شماره به بیش از یک حساب کاربری متصل است. لطفاً با ایمیل یا رمز عبور وارد شوید یا با پشتیبانی سایت تماس بگیرید.' );
 	}
 
 	/**
@@ -454,10 +748,7 @@ class Ashna_Auth {
 				: '';
 		}
 
-		$desired_role = Ashna_Helper::get_option( 'default_user_role', 'customer' );
-		if ( 'customer' === $desired_role && ! wp_roles()->is_role( 'customer' ) ) {
-			$desired_role = get_option( 'default_role', 'subscriber' );
-		}
+		$desired_role = self::safe_registration_role( Ashna_Helper::get_option( 'default_user_role', 'customer' ) );
 
 		$full_name    = ! empty( $extra['full_name'] ) ? trim( $extra['full_name'] ) : '';
 		$first_name   = '';
@@ -481,6 +772,13 @@ class Ashna_Auth {
 			'role'         => $desired_role,
 		);
 
+		$woocommerce = class_exists( 'WooCommerce' );
+		if ( $woocommerce ) {
+			// Same customer pipeline as WooCommerce's own registration (wc_create_new_customer()).
+			$userdata         = (array) apply_filters( 'woocommerce_new_customer_data', $userdata );
+			$userdata['role'] = self::safe_registration_role( isset( $userdata['role'] ) ? $userdata['role'] : $desired_role );
+		}
+
 		$user_id = wp_insert_user( $userdata );
 		if ( is_wp_error( $user_id ) ) {
 			return $user_id;
@@ -499,48 +797,47 @@ class Ashna_Auth {
 
 		update_user_meta( $user_id, 'ashna_registered_via_otp', 1 );
 
+		if ( $woocommerce ) {
+			// Lets WooCommerce (new-account e-mail) and its extensions treat the account as a customer sign-up.
+			do_action( 'woocommerce_created_customer', $user_id, $userdata, true );
+		}
+
 		do_action( 'ashna_otp_user_registered', $user_id, $identifier, $type, $extra );
 
 		return get_user_by( 'id', $user_id );
 	}
 
 	/**
-	 * Resolve redirect URL after login (supports role-based & referer redirects)
+	 * Role for accounts created by Ashna. Roles with staff capabilities are refused even if
+	 * selected by mistake (or injected through a settings import).
 	 *
-	 * @param string  $requested_redirect Redirect passed from form.
-	 * @param WP_User $user               Authenticated user.
+	 * @param string $role Requested role.
 	 * @return string
 	 */
-	private static function resolve_redirect_url( $requested_redirect, $user ) {
-		$admin_redirect = trim( (string) Ashna_Helper::get_option( 'admin_redirect_url', '' ) );
-		if ( ! empty( $admin_redirect ) && user_can( $user, 'manage_options' ) ) {
-			return esc_url_raw( $admin_redirect );
+	public static function safe_registration_role( $role ) {
+		$roles = wp_roles();
+		$role  = sanitize_key( (string) $role );
+		if ( 'customer' === $role && ! $roles->is_role( 'customer' ) ) {
+			$role = sanitize_key( (string) get_option( 'default_role', 'subscriber' ) );
 		}
 
-		if ( ! empty( $requested_redirect ) ) {
-			return wp_validate_redirect( $requested_redirect, home_url( '/' ) );
+		$role = (string) apply_filters( 'ashna_otp_registration_role', $role );
+
+		$dangerous = array( 'manage_options', 'edit_users', 'create_users', 'promote_users', 'delete_users', 'activate_plugins', 'install_plugins', 'edit_plugins', 'edit_theme_options', 'manage_woocommerce', 'edit_others_posts', 'unfiltered_html', 'manage_network' );
+		$role_obj  = $roles->get_role( $role );
+		$is_safe   = (bool) $role_obj;
+		if ( $role_obj ) {
+			foreach ( $dangerous as $cap ) {
+				if ( $role_obj->has_cap( $cap ) ) {
+					$is_safe = false;
+					break;
+				}
+			}
 		}
 
-		$behavior            = Ashna_Helper::get_option( 'redirect_behavior', 'auto' );
-		$configured_redirect = trim( (string) Ashna_Helper::get_option( 'custom_redirect_url', '' ) );
-		if ( empty( $configured_redirect ) ) {
-			$configured_redirect = trim( (string) Ashna_Helper::get_option( 'redirect_url', '' ) );
+		if ( $is_safe ) {
+			return $role;
 		}
-
-		if ( 'custom' === $behavior && ! empty( $configured_redirect ) ) {
-			$redirect = esc_url_raw( $configured_redirect );
-		} elseif ( 'my_account' === $behavior || 'myaccount' === $behavior ) {
-			$redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : admin_url( 'profile.php' );
-		} elseif ( 'home' === $behavior ) {
-			$redirect = home_url( '/' );
-		} elseif ( ( 'auto' === $behavior || 'referer' === $behavior ) && wp_get_referer() ) {
-			$redirect = wp_validate_redirect( wp_get_referer(), home_url( '/' ) );
-		} elseif ( function_exists( 'wc_get_page_permalink' ) ) {
-			$redirect = wc_get_page_permalink( 'myaccount' );
-		} else {
-			$redirect = home_url( '/' );
-		}
-
-		return apply_filters( 'ashna_otp_login_redirect', $redirect, $user );
+		return $roles->is_role( 'customer' ) ? 'customer' : 'subscriber';
 	}
 }

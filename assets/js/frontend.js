@@ -65,6 +65,106 @@
 		return typeof window !== 'undefined' && typeof window.PublicKeyCredential !== 'undefined' && navigator.credentials;
 	}
 
+	/* ------------------------------------------------------------------
+	 * Session-aware AJAX. Every request carries the newest nonce. A stale
+	 * nonce (page cache, sign-in/out in another tab, expired session) is
+	 * answered by the server with a fresh one and the request is retried
+	 * once, so a re-login never ends in "-1" / 403. After a sign-in the
+	 * server returns the nonce of the *new* session (e.g. for registering
+	 * a passkey right away).
+	 * ---------------------------------------------------------------- */
+	var P = window.ashnaOtpParams || {};
+	var sessionRefresh = null;
+	var renderedLoggedIn = P.loggedIn === true || P.loggedIn === 1 || P.loggedIn === '1';
+
+	function isTruthy(v) {
+		return v === true || v === 1 || v === '1';
+	}
+
+	function applySessionState(data) {
+		if (!data) {
+			return;
+		}
+		if (data.nonce) {
+			P.nonce = data.nonce;
+		}
+		if (typeof data.logged_in !== 'undefined') {
+			P.loggedIn = isTruthy(data.logged_in) ? '1' : '';
+		}
+		if (data.captcha && data.captcha.token) {
+			$('.ashna-captcha-question').text(data.captcha.question);
+			$('.ashna-captcha-token').val(data.captcha.token);
+			$('.ashna-captcha-answer').val('');
+		}
+	}
+
+	function refreshSession() {
+		if (!sessionRefresh) {
+			sessionRefresh = $.ajax({
+				url: P.ajaxUrl,
+				type: 'POST',
+				dataType: 'json',
+				cache: false,
+				data: { action: 'ashna_refresh_session' }
+			})
+				.done(function (res) {
+					if (res && res.success) {
+						applySessionState(res.data);
+					}
+				})
+				.always(function () {
+					sessionRefresh = null;
+				});
+		}
+		return sessionRefresh;
+	}
+
+	function isStaleNonce(xhr) {
+		if (!xhr || xhr.status !== 403) {
+			return false;
+		}
+		var json = xhr.responseJSON;
+		if (json && json.data && json.data.code === 'ashna_nonce_expired') {
+			return true;
+		}
+		var text = String(xhr.responseText || '').trim();
+		return text === '-1' || text === '0';
+	}
+
+	function ashnaRequest(data, options) {
+		var deferred = $.Deferred();
+		var send = function (isRetry) {
+			$.ajax(
+				$.extend({ url: P.ajaxUrl, type: 'POST', dataType: 'json' }, options || {}, {
+					data: $.extend({}, data, { nonce: P.nonce })
+				})
+			)
+				.done(function (res) {
+					if (res && res.success && res.data) {
+						applySessionState({ nonce: res.data.nonce, logged_in: res.data.logged_in });
+					}
+					deferred.resolve(res);
+				})
+				.fail(function (xhr, textStatus, errorThrown) {
+					if (!isRetry && isStaleNonce(xhr)) {
+						var json = xhr.responseJSON;
+						if (json && json.data && json.data.nonce) {
+							applySessionState(json.data);
+							send(true);
+						} else {
+							refreshSession().always(function () {
+								send(true);
+							});
+						}
+						return;
+					}
+					deferred.reject(xhr, textStatus, errorThrown);
+				});
+		};
+		send(false);
+		return deferred.promise();
+	}
+
 	function initOtpWrapper($wrapper) {
 		if ($wrapper.data('ashna-initialized')) {
 			return;
@@ -260,7 +360,6 @@
 
 			var payload = {
 				action: 'ashna_request_otp',
-				nonce: ashnaOtpParams.nonce,
 				identifier: identifier
 			};
 
@@ -318,13 +417,7 @@
 				}, parseInt(ashnaOtpParams.failoverHintMs, 10) || 5500));
 			}
 
-			$.ajax({
-				url: ashnaOtpParams.ajaxUrl,
-				type: 'POST',
-				dataType: 'json',
-				data: payload,
-				timeout: parseInt(ashnaOtpParams.sendTimeoutMs, 10) || 30000
-			})
+			ashnaRequest(payload, { timeout: parseInt(ashnaOtpParams.sendTimeoutMs, 10) || 30000 })
 				.done(function (res) {
 					if (res && res.success) {
 						currentIdentifier = res.data.identifier;
@@ -450,19 +543,13 @@
 			hideAlert();
 			setLoading($verifyBtn, true);
 
-			$.ajax({
-				url: ashnaOtpParams.ajaxUrl,
-				type: 'POST',
-				dataType: 'json',
-				data: {
-					action: 'ashna_verify_otp',
-					nonce: ashnaOtpParams.nonce,
-					identifier: currentIdentifier,
-					code: code,
-					full_name: $stepVerify.find('.ashna-reg-fullname').val() || '',
-					user_email: $stepVerify.find('.ashna-reg-email').val() || '',
-					redirect_to: redirectTo
-				}
+			ashnaRequest({
+				action: 'ashna_verify_otp',
+				identifier: currentIdentifier,
+				code: code,
+				full_name: $stepVerify.find('.ashna-reg-fullname').val() || '',
+				user_email: $stepVerify.find('.ashna-reg-email').val() || '',
+				redirect_to: redirectTo
 			})
 				.done(function (res) {
 					if (res && res.success) {
@@ -538,17 +625,11 @@
 			hideAlert();
 			setLoading($pwBtn, true);
 
-			$.ajax({
-				url: ashnaOtpParams.ajaxUrl,
-				type: 'POST',
-				dataType: 'json',
-				data: {
-					action: 'ashna_password_login',
-					nonce: ashnaOtpParams.nonce,
-					identifier: idVal,
-					password: pwVal,
-					redirect_to: redirectTo
-				}
+			ashnaRequest({
+				action: 'ashna_password_login',
+				identifier: idVal,
+				password: pwVal,
+				redirect_to: redirectTo
 			})
 				.done(function (res) {
 					if (res && res.success) {
@@ -586,9 +667,8 @@
 			hideAlert();
 			setLoading($pkBtn, true);
 
-			$.post(ashnaOtpParams.ajaxUrl, {
+			ashnaRequest({
 				action: 'ashna_passkey_login_options',
-				nonce: ashnaOtpParams.nonce,
 				identifier: toEnglishDigits($identifierInput.val()).trim()
 			})
 				.done(function (res) {
@@ -616,9 +696,8 @@
 					navigator.credentials
 						.get({ publicKey: publicKey })
 						.then(function (assertion) {
-							return $.post(ashnaOtpParams.ajaxUrl, {
+							return ashnaRequest({
 								action: 'ashna_passkey_login_verify',
-								nonce: ashnaOtpParams.nonce,
 								credential_id: bufferToBase64url(assertion.rawId),
 								client_data_json: bufferToBase64url(assertion.response.clientDataJSON),
 								authenticator_data: bufferToBase64url(assertion.response.authenticatorData),
@@ -633,7 +712,7 @@
 								} catch (e) {}
 								showAlert(verifyRes.data.message || 'ورود بیومتریک موفق!', 'success');
 								setTimeout(function () {
-									window.location.href = verifyRes.data.redirect || window.location.href;
+									window.location.href = verifyRes.data.redirect_to || verifyRes.data.redirect || window.location.href;
 								}, 500);
 							} else {
 								showAlert((verifyRes && verifyRes.data && verifyRes.data.message) || 'تایید بیومتریک ناموفق بود.', 'error');
@@ -682,9 +761,8 @@
 			onError('مرورگر شما از استاندارد بیومتریک WebAuthn پشتیبانی نمی‌کند.');
 			return;
 		}
-		$.post(ashnaOtpParams.ajaxUrl, {
-			action: 'ashna_passkey_register_options',
-			nonce: ashnaOtpParams.nonce
+		ashnaRequest({
+			action: 'ashna_passkey_register_options'
 		})
 			.done(function (res) {
 				if (!res || !res.success || !res.data) {
@@ -733,9 +811,8 @@
 							authDataB64 = bufferToBase64url(cred.response.getAuthenticatorData());
 						}
 
-						return $.post(ashnaOtpParams.ajaxUrl, {
+						return ashnaRequest({
 							action: 'ashna_passkey_register_verify',
-							nonce: ashnaOtpParams.nonce,
 							credential_id: bufferToBase64url(cred.rawId),
 							client_data_json: bufferToBase64url(cred.response.clientDataJSON),
 							authenticator_data: authDataB64,
@@ -834,6 +911,25 @@
 			autoDetectFormContrast($w);
 		});
 
+		// A page served from a cache can be hours old: renew the nonce (and math captcha)
+		// before the visitor starts typing instead of failing on submit.
+		var renderedAt = parseInt(P.renderedAt, 10) || 0;
+		if (P.ajaxUrl && $('.ashna-otp-wrapper').length && renderedAt && Math.abs(Date.now() / 1000 - renderedAt) > 600) {
+			refreshSession();
+		}
+
+		// Back/forward cache: the visitor may have signed in or out since this page was shown.
+		window.addEventListener('pageshow', function (e) {
+			if (!e.persisted || !P.ajaxUrl) {
+				return;
+			}
+			refreshSession().done(function (res) {
+				if (res && res.success && res.data && isTruthy(res.data.logged_in) !== renderedLoggedIn) {
+					window.location.reload();
+				}
+			});
+		});
+
 		var $modal = $('#ashna-otp-modal');
 		$(document).on('click', '.ashna-open-modal, a[href="#ashna-login-modal"]', function (e) {
 			if ($modal.length) {
@@ -887,9 +983,8 @@
 			var $btn = $(this);
 			var credId = $btn.attr('data-cred-id');
 			$btn.prop('disabled', true).text('...');
-			$.post(ashnaOtpParams.ajaxUrl, {
+			ashnaRequest({
 				action: 'ashna_passkey_delete',
-				nonce: ashnaOtpParams.nonce,
 				credential_id: credId
 			}).done(function (res) {
 				if (res && res.success) {

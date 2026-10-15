@@ -195,6 +195,9 @@ class Ashna_Admin {
 			'delete_data_on_uninstall',
 			'gateway_adaptive',
 			'gateway_probe',
+			'session_remember',
+			'respect_login_gates',
+			'respect_plugin_redirects',
 		);
 
 		$int_keys = array(
@@ -222,6 +225,7 @@ class Ashna_Admin {
 			'gateway_cooldown',
 			'msgway_sms_line',
 			'msgway_messenger_provider',
+			'session_days',
 		);
 
 		$textarea_keys = array(
@@ -280,6 +284,10 @@ class Ashna_Admin {
 		$clean['form_max_width']   = max( 320, min( 640, $clean['form_max_width'] ) );
 		$clean['gateway_timeout']  = max( 2, min( 15, $clean['gateway_timeout'] ) );
 		$clean['gateway_cooldown'] = max( 1, min( 60, $clean['gateway_cooldown'] ) );
+		$clean['session_days']     = max( 1, min( 365, $clean['session_days'] ) );
+		if ( ! in_array( $clean['default_user_role'], array( 'customer', 'subscriber' ), true ) ) {
+			$clean['default_user_role'] = Ashna_Auth::safe_registration_role( $clean['default_user_role'] );
+		}
 
 		return $clean;
 	}
