@@ -2,7 +2,7 @@
 /**
  * Email OTP HTML Template
  *
- * @package Signa_OTP
+ * @package Ashna
  * @var string $heading
  * @var string $body_text
  * @var string $code

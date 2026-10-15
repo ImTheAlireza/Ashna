@@ -35,7 +35,7 @@ page escaping and nonce-protected clearing are checked. The test never calls a
 license verifier. This is not a live WordPress/hosting/ionCube integration test.
 
 Build its independent ZIP with `python scripts/package-activation-diagnostics.py`.
-This does not change or rebuild either existing Signa edition.
+This does not change or rebuild either existing Ashna edition.
 
 `PHP_BINARY=/path/to/php python tests/run-activation-diagnostics.py` also verifies
 14 synthetic ionCube message fixtures (PHP target mismatch, minimum Loader,
@@ -64,6 +64,6 @@ PHP_BINARY=/path/to/php python tests/run-php-requirement.py
 
 This extracts the unmodified `validate_plugin_requirements()` function and uses
 isolated metadata/UI/dependency stubs. PHP 7.4, 8.0 and 8.1 must be rejected;
-8.2 and 8.3 pass the version check without loading Signa or a license. This does
+8.2 and 8.3 pass the version check without loading Ashna or a license. This does
 not certify the vendor-encoded license on all newer PHP releases. Direct-source
 bootstrap tests on older PHP are not a declaration of licensed-package support.
