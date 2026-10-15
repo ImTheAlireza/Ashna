@@ -118,7 +118,7 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 								</span>
 								<div class="ashna-quick-text">
 									<strong><?php echo esc_html( $active_gw_title ); ?></strong>
-									<small><?php echo empty( $backup_names ) ? 'بدون درگاه پشتیبان (Failover)' : sprintf( '%d پشتیبان فعال (%s)', count( $backup_names ), implode( '، ', $backup_names ) ); ?></small>
+									<small><?php echo esc_html( empty( $backup_names ) ? 'بدون درگاه پشتیبان (Failover)' : sprintf( '%d پشتیبان فعال (%s)', count( $backup_names ), implode( '، ', $backup_names ) ) ); ?></small>
 								</div>
 							</div>
 						</div>

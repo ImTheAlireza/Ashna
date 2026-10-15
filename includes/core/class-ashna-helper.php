@@ -260,6 +260,31 @@ class Ashna_Helper {
 	}
 
 	/**
+	 * Site-local "now" on the scale used for created_at / expires_at (site wall clock, formatted
+	 * with gmdate()). Same value as current_time( 'timestamp' ).
+	 *
+	 * Never strtotime( current_time( 'mysql' ) ): strtotime() reads PHP's default timezone, which
+	 * some plugins change with date_default_timezone_set() (Site Health warns about it). With
+	 * Tehran as the default, codes would be born expired and minute limits would span 3.5 hours.
+	 *
+	 * @return int
+	 */
+	public static function local_now() {
+		return time() + (int) ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+	}
+
+	/**
+	 * A stored local datetime ('Y-m-d H:i:s') on the local_now() scale, independent of PHP's timezone.
+	 *
+	 * @param string $datetime Local datetime from the log table.
+	 * @return int 0 when it cannot be parsed.
+	 */
+	public static function local_ts( $datetime ) {
+		$parsed = date_create_immutable_from_format( '!Y-m-d H:i:s', (string) $datetime, new DateTimeZone( 'UTC' ) );
+		return $parsed ? $parsed->getTimestamp() : 0;
+	}
+
+	/**
 	 * Get a specific setting value
 	 *
 	 * @param string $key     Setting key.
@@ -346,9 +371,10 @@ class Ashna_Helper {
 	 * @return array { type: 'phone'|'email'|'invalid', normalized: string }
 	 */
 	public static function parse_identifier( $input ) {
-		$converted = self::convert_digits( $input );
+		$converted = trim( (string) self::convert_digits( $input ) );
 
-		if ( is_email( $converted ) ) {
+		// 191 = the log table's recipient column (utf8mb4 index limit); no real address is longer.
+		if ( strlen( $converted ) <= 191 && is_email( $converted ) ) {
 			return array(
 				'type'       => 'email',
 				'normalized' => strtolower( sanitize_email( $converted ) ),

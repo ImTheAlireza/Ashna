@@ -76,12 +76,15 @@ if ( 'phone_only' === $login_mode ) {
 	$input_mode        = 'text';
 }
 
-$title         = ! empty( $args['title'] ) ? $args['title'] : Ashna_Helper::get_option( 'form_title', 'ورود / ثبت‌نام' );
+$form_heading  = ! empty( $args['title'] ) ? $args['title'] : Ashna_Helper::get_option( 'form_title', 'ورود / ثبت‌نام' );
 $subtitle      = ! empty( $args['subtitle'] ) ? $args['subtitle'] : Ashna_Helper::get_option( 'form_subtitle', 'برای ادامه، شماره موبایل یا ایمیل خود را وارد کنید.' );
 $btn_text      = ! empty( $args['button_text'] ) ? $args['button_text'] : Ashna_Helper::get_option( 'button_text', 'دریافت کد تایید' );
 $verify_text   = ! empty( $args['verify_button_text'] ) ? $args['verify_button_text'] : Ashna_Helper::get_option( 'verify_button_text', 'تایید و ورود به حساب' );
 $redirect_to   = ! empty( $args['redirect'] ) ? $args['redirect'] : '';
 $context       = ! empty( $args['context'] ) ? $args['context'] : 'shortcode';
+// On the wp-login.php takeover, staff accounts can always use their password (see Ashna_Auth::ajax_password_login()).
+$staff_password_only = ! $allow_password && 'wp-login' === $context && Ashna_Auth::login_takeover_active();
+$show_password       = $allow_password || $staff_password_only;
 $form_layout   = ! empty( $args['form_layout'] ) ? $args['form_layout'] : Ashna_Helper::get_option( 'form_layout', 'card' );
 $card_position = ! empty( $args['card_position'] ) ? $args['card_position'] : Ashna_Helper::get_option( 'card_position', 'center' );
 $modal_style   = Ashna_Helper::get_option( 'modal_style', 'center' );
@@ -208,7 +211,7 @@ $wrapper_classes = sprintf(
 					<img src="<?php echo esc_url( ASHNA_OTP_URL . 'assets/images/ashna-icon.svg' ); ?>" width="44" height="44" alt="" />
 				</div>
 			<?php endif; ?>
-			<h3 class="ashna-otp-title"><?php echo esc_html( $title ); ?></h3>
+			<h3 class="ashna-otp-title"><?php echo esc_html( $form_heading ); ?></h3>
 			<p class="ashna-otp-subtitle" data-default-subtitle="<?php echo esc_attr( $subtitle ); ?>">
 				<?php echo esc_html( $subtitle ); ?>
 			</p>
@@ -298,10 +301,10 @@ $wrapper_classes = sprintf(
 				</div>
 			<?php endif; ?>
 
-			<?php if ( $allow_password ) : ?>
+			<?php if ( $show_password ) : ?>
 				<div class="ashna-alt-action">
 					<button type="button" class="ashna-btn-link ashna-switch-to-password">
-						ورود با رمز عبور ثابت
+						<?php echo esc_html( $staff_password_only ? 'ورود مدیران سایت با رمز عبور' : 'ورود با رمز عبور ثابت' ); ?>
 					</button>
 				</div>
 			<?php endif; ?>
@@ -424,16 +427,17 @@ $wrapper_classes = sprintf(
 			</div>
 		</form>
 
-		<?php if ( $allow_password ) : ?>
+		<?php if ( $show_password ) : ?>
 			<!-- Optional Step 3: Password Login Fallback -->
 			<form class="ashna-otp-form ashna-step-password" style="display:none;" novalidate>
 				<div class="ashna-field-group">
-					<label class="ashna-label">شماره موبایل، ایمیل یا نام کاربری</label>
-					<input type="text" name="pw_identifier" class="ashna-input ashna-pw-identifier" placeholder="شماره موبایل یا نام کاربری" dir="rtl" required />
+					<?php $ashna_pw_id = wp_unique_id( 'ashna-pw-' ); ?>
+					<label class="ashna-label" for="<?php echo esc_attr( $ashna_pw_id ); ?>-user">شماره موبایل، ایمیل یا نام کاربری</label>
+					<input type="text" id="<?php echo esc_attr( $ashna_pw_id ); ?>-user" name="pw_identifier" class="ashna-input ashna-pw-identifier" placeholder="شماره موبایل یا نام کاربری" dir="rtl" autocomplete="username" required />
 				</div>
 				<div class="ashna-field-group">
-					<label class="ashna-label">رمز عبور</label>
-					<input type="password" name="password" class="ashna-input ashna-pw-input" placeholder="رمز عبور خود را وارد کنید" dir="rtl" required />
+					<label class="ashna-label" for="<?php echo esc_attr( $ashna_pw_id ); ?>-pass">رمز عبور</label>
+					<input type="password" id="<?php echo esc_attr( $ashna_pw_id ); ?>-pass" name="password" class="ashna-input ashna-pw-input" placeholder="رمز عبور خود را وارد کنید" dir="rtl" autocomplete="current-password" required />
 				</div>
 				<button type="submit" class="ashna-btn ashna-btn-primary ashna-submit-password">
 					<span class="ashna-btn-text">ورود به حساب</span>

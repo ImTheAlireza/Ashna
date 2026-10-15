@@ -18,7 +18,7 @@ if ( ! empty( $settings['delete_data_on_uninstall'] ) ) {
 	global $wpdb;
 
 	$logs_table = $wpdb->prefix . 'ashna_otp_logs';
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the plugin's own table.
 	$wpdb->query( "DROP TABLE IF EXISTS {$logs_table}" );
 
 	delete_option( 'ashna_otp_settings' );

@@ -48,7 +48,7 @@ final class Ashna_Plugin {
 		register_deactivation_hook( ASHNA_OTP_FILE, array( 'Ashna_Activator', 'deactivate' ) );
 
 		add_action( 'ashna_otp_daily_cleanup', array( 'Ashna_Logger', 'run_scheduled_cleanup' ) );
-		add_filter( 'cron_schedules', array( 'Ashna_Failover', 'register_cron_schedule' ) ); // phpcs:ignore WordPress.WP.CronInterval.CronSchedulesInterval -- 5-minute gateway health probe, background only.
+		add_filter( 'cron_schedules', array( 'Ashna_Failover', 'register_cron_schedule' ) ); // phpcs:ignore WordPress.WP.CronInterval.CronSchedulesInterval, WordPress.WP.CronInterval.ChangeDetected -- 5-minute gateway health probe, background only.
 		add_action( 'ashna_otp_gateway_probe', array( 'Ashna_Failover', 'run_probe' ) );
 		add_filter( 'plugin_action_links_' . ASHNA_OTP_BASENAME, array( $this, 'plugin_action_links' ) );
 

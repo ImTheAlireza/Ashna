@@ -129,13 +129,16 @@ class Ashna_Rate_Limiter {
 		global $wpdb;
 		$table  = Ashna_Logger::table_name();
 		$limits = self::limits();
-		$now    = strtotime( current_time( 'mysql' ) );
+		$now    = Ashna_Helper::local_now();
 		$extra  = $upto_id ? 0 : 1;
 		$upto   = $upto_id ? $wpdb->prepare( ' AND id <= %d', $upto_id ) : '';
 		$before = $upto_id ? $wpdb->prepare( ' AND id < %d', $upto_id ) : '';
 		$at     = static function ( $seconds ) use ( $now ) {
 			return gmdate( 'Y-m-d H:i:s', $now - $seconds );
 		};
+		// Upper bound for the short windows: rows "from the future" were written before the clock went
+		// back (DST ends, or the site timezone was changed) and must not count as this minute.
+		$soon = $at( -5 );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
 
@@ -144,18 +147,19 @@ class Ashna_Rate_Limiter {
 			$wpdb->prepare(
 				"SELECT COUNT(*) AS day_count,
 				        SUM(CASE WHEN created_at >= %s THEN 1 ELSE 0 END) AS hour_count,
-				        MAX(CASE WHEN created_at >= %s{$before} THEN created_at ELSE NULL END) AS last_recent
+				        MAX(CASE WHEN created_at >= %s AND created_at <= %s{$before} THEN created_at ELSE NULL END) AS last_recent
 				 FROM {$table}
 				 WHERE recipient = %s AND status <> 'failed' AND channel <> 'passkey' AND created_at >= %s{$upto}",
 				$at( HOUR_IN_SECONDS ),
 				$at( max( 1, $limits['cooldown'] ) ),
+				$soon,
 				$recipient,
 				$at( DAY_IN_SECONDS )
 			)
 		);
 
 		if ( $limits['cooldown'] > 0 && $number && ! empty( $number->last_recent ) ) {
-			$remaining = max( 1, $limits['cooldown'] - ( $now - strtotime( $number->last_recent ) ) );
+			$remaining = min( $limits['cooldown'], max( 1, $limits['cooldown'] - ( $now - Ashna_Helper::local_ts( $number->last_recent ) ) ) );
 			return new WP_Error(
 				'ashna_cooldown',
 				sprintf( 'لطفاً %d ثانیه دیگر برای درخواست مجدد کد صبر کنید.', $remaining ),
@@ -172,10 +176,11 @@ class Ashna_Rate_Limiter {
 		// IP: per minute and per hour.
 		$by_ip = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT COUNT(*) AS hour_count, SUM(CASE WHEN created_at >= %s THEN 1 ELSE 0 END) AS minute_count
+				"SELECT COUNT(*) AS hour_count, SUM(CASE WHEN created_at >= %s AND created_at <= %s THEN 1 ELSE 0 END) AS minute_count
 				 FROM {$table}
 				 WHERE ip_address = %s AND channel <> 'passkey' AND created_at >= %s{$upto}",
 				$at( MINUTE_IN_SECONDS ),
+				$soon,
 				$ip,
 				$at( HOUR_IN_SECONDS )
 			)
@@ -191,9 +196,10 @@ class Ashna_Rate_Limiter {
 		if ( $limits['subnet_minute'] > 0 && '' !== $subnet ) {
 			$net_count = (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$table} WHERE ip_subnet = %s AND channel <> 'passkey' AND created_at >= %s{$upto}",
+					"SELECT COUNT(*) FROM {$table} WHERE ip_subnet = %s AND channel <> 'passkey' AND created_at >= %s AND created_at <= %s{$upto}",
 					$subnet,
-					$at( MINUTE_IN_SECONDS )
+					$at( MINUTE_IN_SECONDS ),
+					$soon
 				)
 			);
 			if ( $net_count + $extra > $limits['subnet_minute'] ) {
@@ -231,9 +237,11 @@ class Ashna_Rate_Limiter {
 		}
 		global $wpdb;
 		$table = Ashna_Logger::table_name();
-		$since = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) - MINUTE_IN_SECONDS );
+		$now   = Ashna_Helper::local_now();
+		$since = gmdate( 'Y-m-d H:i:s', $now - MINUTE_IN_SECONDS );
+		$soon  = gmdate( 'Y-m-d H:i:s', $now + 5 ); // Rows from before a clock change are not "this minute".
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE channel <> 'passkey' AND created_at >= %s", $since ) );
+		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE channel <> 'passkey' AND created_at >= %s AND created_at <= %s", $since, $soon ) );
 		if ( $count < $limits['attack_trigger'] ) {
 			return;
 		}
@@ -313,7 +321,7 @@ class Ashna_Rate_Limiter {
 	 * @param string $ip        IP.
 	 */
 	public static function record_block( $reason, $recipient = '', $ip = '' ) {
-		$today = gmdate( 'Y-m-d', (int) strtotime( current_time( 'mysql' ) ) );
+		$today = gmdate( 'Y-m-d', Ashna_Helper::local_now() );
 		$stats = get_option( self::STATS_OPTION, array() );
 		if ( ! is_array( $stats ) || ! isset( $stats['day'] ) || $today !== $stats['day'] ) {
 			$stats = array(
@@ -346,7 +354,7 @@ class Ashna_Rate_Limiter {
 	 */
 	public static function block_stats() {
 		$stats = get_option( self::STATS_OPTION, array() );
-		$today = gmdate( 'Y-m-d', (int) strtotime( current_time( 'mysql' ) ) );
+		$today = gmdate( 'Y-m-d', Ashna_Helper::local_now() );
 		if ( ! is_array( $stats ) || ! isset( $stats['day'] ) || $today !== $stats['day'] ) {
 			return array(
 				'day'    => $today,

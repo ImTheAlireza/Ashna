@@ -73,6 +73,11 @@ function sign_in( $identifier, array $extra = array(), $request = true ) {
 
 $login_page = make_page( 'Ashna Login' );
 
+/** What Dokan's own login redirect returns: get_permalink() of the dashboard page (dokan_get_navigation_url() appends a slash, which differs under plain permalinks). */
+function dokan_dashboard_permalink() {
+	return get_permalink( (int) dokan_get_option( 'dashboard', 'dokan_pages' ) );
+}
+
 scenario(
 	'Every front-end login link leads to Ashna\'s login page',
 	function () use ( $login_page ) {
@@ -196,11 +201,11 @@ scenario(
 		check( 'Dokan nonce bypass removed again', true === apply_filters( 'dokan_register_nonce_check', true ) );
 
 		$res = sign_in( $phone );
-		check( 'returning vendor → vendor dashboard (woocommerce_login_redirect)', dokan_get_navigation_url() === data_of( $res, 'redirect_to' ), data_of( $res, 'redirect_to' ) );
+		check( 'returning vendor → vendor dashboard (woocommerce_login_redirect)', dokan_dashboard_permalink() === data_of( $res, 'redirect_to' ), array( dokan_dashboard_permalink(), data_of( $res, 'redirect_to' ) ) );
 
 		$GLOBALS['ashna_fixture_dokan_options']['dokan_selling'] = array( 'disable_welcome_wizard' => 'on' );
 		$res = sign_in( random_phone(), array( 'account_type' => 'seller', 'fname' => 'a', 'lname' => 'b', 'shopname' => 'Shop B', 'shopurl' => 'shop-b-' . wp_rand( 1000, 9999 ) ) );
-		check( 'setup wizard switched off in Dokan → straight to the dashboard', dokan_get_navigation_url() === data_of( $res, 'redirect_to' ), data_of( $res, 'redirect_to' ) );
+		check( 'setup wizard switched off in Dokan → straight to the dashboard', in_array( data_of( $res, 'redirect_to' ), array( dokan_get_navigation_url(), dokan_dashboard_permalink() ), true ), data_of( $res, 'redirect_to' ) );
 		unset( $GLOBALS['ashna_fixture_dokan_options']['dokan_selling'] );
 
 		$res = sign_in( random_phone(), array( 'account_type' => 'customer' ) );

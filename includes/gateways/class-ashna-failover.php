@@ -699,7 +699,7 @@ final class Ashna_Failover {
 		// Numbered steps joined with «؛»: glyphs every Persian font has (arrows are often missing).
 		$digits = array( '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' );
 		foreach ( $parts as $i => $part ) {
-			$parts[ $i ] = str_replace( range( 0, 9 ), $digits, (string) ( $i + 1 ) ) . ') ' . $part;
+			$parts[ $i ] = str_replace( array_map( 'strval', range( 0, 9 ) ), $digits, (string) ( $i + 1 ) ) . ') ' . $part;
 		}
 		return implode( '؛ ', $parts );
 	}

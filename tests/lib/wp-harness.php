@@ -31,6 +31,29 @@ set_error_handler(
 
 require_once ABSPATH . 'wp-admin/includes/user.php';
 
+/*
+ * WordPress's own warnings (_doing_it_wrong, deprecated functions / hooks / arguments / classes)
+ * are raised from core files, so the handler above cannot attribute them. Record every one that
+ * Ashna code is on the call stack for; ashna_t_finish() fails the suite if there are any.
+ */
+$GLOBALS['ashna_t_wp_notices'] = array();
+foreach ( array( 'doing_it_wrong_run', 'deprecated_function_run', 'deprecated_hook_run', 'deprecated_argument_run', 'deprecated_class_run', 'deprecated_file_included' ) as $ashna_t_hook ) {
+	add_action(
+		$ashna_t_hook,
+		function ( $what = '', $message = '' ) use ( $ashna_t_hook ) {
+			foreach ( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ) as $frame ) { // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
+				if ( isset( $frame['file'] ) && false !== strpos( $frame['file'], '/ashna-otp/' ) ) {
+					$GLOBALS['ashna_t_wp_notices'][] = $ashna_t_hook . ': ' . $what . ' ' . ( is_scalar( $message ) ? $message : '' ) . ' (' . basename( $frame['file'] ) . ':' . $frame['line'] . ')';
+					break;
+				}
+			}
+		},
+		10,
+		2
+	);
+}
+unset( $ashna_t_hook );
+
 class Ashna_Test_Halt extends Exception {}
 
 class Ashna_T {
@@ -150,14 +173,19 @@ function browser_signed_in() {
 	wp_get_current_user(); // determine_current_user from the cookies, like a real request.
 }
 
-/** Run an AJAX action as the current browser. */
+/**
+ * Run an AJAX action as the current browser.
+ *
+ * Input is slashed exactly like wp-settings.php does (wp_magic_quotes), so handlers that forget
+ * wp_unslash() store "O\'Brien" here too, and ones that unslash twice lose real backslashes.
+ */
 function ajax( $action, array $post = array(), array $server = array() ) {
-	$_POST    = $post;
-	$_REQUEST = $post;
+	$_POST    = wp_slash( array( 'action' => $action ) + $post );
+	$_REQUEST = $_POST;
 	$_GET     = array();
 	$saved    = $_SERVER;
 	foreach ( $server as $key => $value ) {
-		$_SERVER[ $key ] = $value;
+		$_SERVER[ $key ] = wp_slash( $value );
 	}
 	Ashna_T::$status = 200;
 	$hook = ( is_user_logged_in() ? 'wp_ajax_' : 'wp_ajax_nopriv_' ) . $action;
@@ -243,6 +271,8 @@ function ashna_t_cleanup() {
 
 function ashna_t_finish( $suite ) {
 	ashna_t_cleanup();
+	$notices = array_values( array_unique( $GLOBALS['ashna_t_wp_notices'] ) );
+	check( 'WordPress raised no _doing_it_wrong / deprecation notice for Ashna code', empty( $notices ), array_slice( $notices, 0, 5 ) );
 	printf( "\n%d passed, %d failed in %s scenarios\n", Ashna_T::$pass, Ashna_T::$fail, $suite );
 	exit( Ashna_T::$fail > 0 ? 1 : 0 );
 }

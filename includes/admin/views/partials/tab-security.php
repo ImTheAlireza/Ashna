@@ -371,7 +371,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<tbody>
 										<?php foreach ( $active_lockouts as $lock_key => $lock_info ) : ?>
 											<tr>
-												<td><strong dir="ltr"><?php echo esc_html( $lock_info['target'] ); ?></strong></td>
+												<td><?php if ( 0 === strpos( (string) $lock_info['target'], 'user:' ) ) : ?><strong>حساب کاربری <span dir="ltr"><?php echo esc_html( substr( $lock_info['target'], 5 ) ); ?></span></strong><?php else : ?><strong dir="ltr"><?php echo esc_html( $lock_info['target'] ); ?></strong><?php endif; ?></td>
 												<td><code dir="ltr"><?php echo esc_html( $lock_info['ip'] ); ?></code></td>
 												<td><?php echo esc_html( (string) ceil( $lock_info['remaining_sec'] / 60 ) ); ?> دقیقه</td>
 												<td>

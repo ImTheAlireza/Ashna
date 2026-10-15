@@ -57,7 +57,7 @@ class Ashna_Gateway_Email extends Ashna_Abstract_Gateway {
 		$raw_subject = Ashna_Helper::get_option( 'email_subject', 'کد تایید ورود به {site_name}' );
 		$subject     = str_replace(
 			array( '{site_name}', '{code}', '{expiry}' ),
-			array( $site_name, $code, $expiry_seconds ),
+			array( (string) $site_name, (string) $code, (string) $expiry_seconds ),
 			$raw_subject
 		);
 
@@ -65,7 +65,7 @@ class Ashna_Gateway_Email extends Ashna_Abstract_Gateway {
 		$raw_body  = Ashna_Helper::get_option( 'email_body_text', 'برای ورود به حساب کاربری خود در {site_name}، کد تایید زیر را در فرم ورود وارد نمایید:' );
 		$body_text = str_replace(
 			array( '{site_name}', '{code}', '{expiry}' ),
-			array( $site_name, $code, $expiry_seconds ),
+			array( (string) $site_name, (string) $code, (string) $expiry_seconds ),
 			$raw_body
 		);
 

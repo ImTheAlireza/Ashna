@@ -425,8 +425,7 @@ class Ashna_Elementor_Login_Widget extends \Elementor\Widget_Base {
 		$radius       = isset( $settings['border_radius']['size'] ) ? absint( $settings['border_radius']['size'] ) : null;
 		$max_width    = isset( $settings['form_max_width']['size'] ) ? absint( $settings['form_max_width']['size'] ) : null;
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo Ashna_Frontend::get_login_form_html(
+		$form_html = Ashna_Frontend::get_login_form_html(
 			array(
 				'title'              => $settings['form_title'] ?? '',
 				'subtitle'           => $settings['form_subtitle'] ?? '',
@@ -453,5 +452,6 @@ class Ashna_Elementor_Login_Widget extends \Elementor\Widget_Base {
 				'context'            => 'elementor',
 			)
 		);
+		echo $form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside templates/login-form.php.
 	}
 }

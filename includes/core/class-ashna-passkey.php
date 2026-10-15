@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- every AJAX handler below calls Ashna_Session::verify_request() first.
 class Ashna_Passkey {
 
 	/**
@@ -64,7 +65,7 @@ class Ashna_Passkey {
 	 * @return string
 	 */
 	public static function base64url_encode( $data ) {
-		return rtrim( strtr( base64_encode( $data ), '+/', '-_' ), '=' );
+		return rtrim( strtr( base64_encode( $data ), '+/', '-_' ), '=' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- WebAuthn base64url / PEM encoding.
 	}
 
 	/**
@@ -78,7 +79,7 @@ class Ashna_Passkey {
 		if ( $remainder ) {
 			$data .= str_repeat( '=', 4 - $remainder );
 		}
-		return (string) base64_decode( strtr( $data, '-_', '+/' ) );
+		return (string) base64_decode( strtr( $data, '-_', '+/' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- WebAuthn base64url decoding.
 	}
 
 	/**
@@ -121,7 +122,7 @@ class Ashna_Passkey {
 			'last_used'      => current_time( 'mysql' ),
 		);
 
-		update_user_meta( $user_id, self::META_CREDENTIALS, $passkeys );
+		update_user_meta( $user_id, self::META_CREDENTIALS, wp_slash( $passkeys ) ); // Meta API unslashes.
 
 		// Ensure index meta exists for O(1) lookup by credential ID
 		$indexed = get_user_meta( $user_id, self::META_CRED_INDEX, false );
@@ -146,7 +147,7 @@ class Ashna_Passkey {
 		}
 
 		unset( $passkeys[ $cred_id ] );
-		update_user_meta( $user_id, self::META_CREDENTIALS, $passkeys );
+		update_user_meta( $user_id, self::META_CREDENTIALS, wp_slash( $passkeys ) ); // Meta API unslashes.
 		delete_user_meta( $user_id, self::META_CRED_INDEX, $cred_id );
 		return true;
 	}
@@ -165,8 +166,8 @@ class Ashna_Passkey {
 
 		$users = get_users(
 			array(
-				'meta_key'   => self::META_CRED_INDEX,
-				'meta_value' => $cred_id,
+				'meta_key'   => self::META_CRED_INDEX, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one indexed lookup per passkey sign-in.
+				'meta_value' => $cred_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				'number'     => 1,
 			)
 		);
@@ -318,10 +319,10 @@ class Ashna_Passkey {
 
 		// Convert SPKI DER to standard PEM Public Key & validate with OpenSSL
 		$spki_der = self::base64url_decode( $spki_b64 );
-		$pem_key  = "-----BEGIN PUBLIC KEY-----\n" . chunk_split( base64_encode( $spki_der ), 64, "\n" ) . "-----END PUBLIC KEY-----\n";
+		$pem_key  = "-----BEGIN PUBLIC KEY-----\n" . chunk_split( base64_encode( $spki_der ), 64, "\n" ) . "-----END PUBLIC KEY-----\n"; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- WebAuthn base64url / PEM encoding.
 
 		if ( function_exists( 'openssl_pkey_get_public' ) ) {
-			$pkey_res = @openssl_pkey_get_public( $pem_key );
+			$pkey_res = @openssl_pkey_get_public( $pem_key ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- an invalid key returns false and is handled.
 			if ( false === $pkey_res ) {
 				wp_send_json_error( array( 'message' => 'کلید عمومی تولیدشده توسط دستگاه قابل تایید نیست.' ) );
 			}
@@ -486,14 +487,14 @@ class Ashna_Passkey {
 		if ( ! function_exists( 'openssl_verify' ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک روی این سرور در دسترس نیست (افزونه OpenSSL در PHP فعال نیست).' ) );
 		}
-		$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- a malformed signature returns -1/false and is refused below.
 		if ( 1 !== $verified ) {
 			wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
 		}
 
 		// Update last_used timestamp
 		$passkeys[ $cred_id ]['last_used'] = current_time( 'mysql' );
-		update_user_meta( $user->ID, self::META_CREDENTIALS, $passkeys );
+		update_user_meta( $user->ID, self::META_CREDENTIALS, wp_slash( $passkeys ) ); // Meta API unslashes.
 
 		$phone      = get_user_meta( $user->ID, 'ashna_phone', true );
 		$identifier = $phone ? $phone : $user->user_email;
@@ -604,3 +605,4 @@ class Ashna_Passkey {
 		return ob_get_clean();
 	}
 }
+// phpcs:enable WordPress.Security.NonceVerification.Missing

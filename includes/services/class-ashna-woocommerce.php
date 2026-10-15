@@ -19,6 +19,13 @@ class Ashna_WooCommerce {
 	private static $instance = null;
 
 	/**
+	 * The checkout sign-in box was printed in this request (classic hook or checkout block).
+	 *
+	 * @var bool
+	 */
+	private static $checkout_box_shown = false;
+
+	/**
 	 * Get instance
 	 *
 	 * @return Ashna_WooCommerce
@@ -36,6 +43,7 @@ class Ashna_WooCommerce {
 	private function __construct() {
 		add_filter( 'wc_get_template', array( $this, 'override_myaccount_login_template' ), 99, 2 );
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'render_checkout_otp_box' ), 5 );
+		add_filter( 'render_block_woocommerce/checkout', array( $this, 'prepend_checkout_otp_box' ), 10, 1 ); // Block checkout (default since WooCommerce 8.3).
 		add_filter( 'woocommerce_checkout_get_value', array( $this, 'prefill_checkout_billing_phone' ), 10, 2 );
 
 		add_filter( 'manage_users_columns', array( $this, 'add_user_phone_column' ) );
@@ -66,35 +74,51 @@ class Ashna_WooCommerce {
 	}
 
 	/**
-	 * Render OTP quick login box on WooCommerce Checkout for guests
+	 * Render OTP quick login box on the classic (shortcode) WooCommerce Checkout for guests.
 	 */
 	public function render_checkout_otp_box() {
-		if ( is_user_logged_in() || ! Ashna_Helper::get_option( 'wc_checkout_otp_box', 1 ) ) {
-			return;
+		echo $this->checkout_otp_box_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts below.
+	}
+
+	/**
+	 * Same box above the block-based Checkout (rendered outside the block's React root).
+	 *
+	 * @param string $block_content Rendered checkout block.
+	 * @return string
+	 */
+	public function prepend_checkout_otp_box( $block_content ) {
+		if ( is_admin() || wp_is_json_request() ) {
+			return $block_content;
 		}
+		return $this->checkout_otp_box_html() . $block_content;
+	}
+
+	/**
+	 * Checkout sign-in box markup (empty for signed-in visitors, when disabled, or when already shown).
+	 *
+	 * @return string
+	 */
+	private function checkout_otp_box_html() {
+		if ( self::$checkout_box_shown || is_user_logged_in() || ! Ashna_Helper::get_option( 'wc_checkout_otp_box', 1 ) ) {
+			return '';
+		}
+		self::$checkout_box_shown = true;
 
 		$checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : '';
-		?>
-		<div class="ashna-wc-checkout-banner" dir="rtl">
-			<div class="ashna-wc-checkout-notice">
-				<span>برای ثبت سریع‌تر سفارش، می‌توانید با کد یکبارمصرف (بدون رمز عبور) وارد شوید:</span>
-				<button type="button" class="ashna-btn ashna-btn-sm ashna-toggle-checkout-otp">
-					ورود سریع با کد تایید (OTP)
-				</button>
-			</div>
-			<div class="ashna-wc-checkout-form-holder" style="display:none;margin-top:16px;">
-				<?php
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo Ashna_Frontend::get_login_form_html(
-					array(
-						'redirect' => $checkout_url,
-						'context'  => 'wc-checkout',
-					)
-				);
-				?>
-			</div>
-		</div>
-		<?php
+		$form_html    = Ashna_Frontend::get_login_form_html(
+			array(
+				'redirect' => $checkout_url,
+				'context'  => 'wc-checkout',
+			)
+		);
+
+		return '<div class="ashna-wc-checkout-banner" dir="rtl">'
+			. '<div class="ashna-wc-checkout-notice">'
+			. '<span>' . esc_html( 'برای ثبت سریع‌تر سفارش، می‌توانید با کد یکبارمصرف (بدون رمز عبور) وارد شوید:' ) . '</span>'
+			. '<button type="button" class="ashna-btn ashna-btn-sm ashna-toggle-checkout-otp" aria-expanded="false">' . esc_html( 'ورود سریع با کد تایید (OTP)' ) . '</button>'
+			. '</div>'
+			. '<div class="ashna-wc-checkout-form-holder" style="display:none;margin-top:16px;">' . $form_html . '</div>' // Escaped inside templates/login-form.php.
+			. '</div>';
 	}
 
 	/**

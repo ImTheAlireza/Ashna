@@ -650,8 +650,12 @@
 		});
 
 		// Step 2: Verify OTP
+		var verifyInFlight = false; // One check at a time: fast typing must not fire extra (wrong) attempts.
 		$stepVerify.on('submit', function (e) {
 			e.preventDefault();
+			if (verifyInFlight) {
+				return;
+			}
 			var code = syncDigitsToHidden();
 			if (code.length < otpLength) {
 				showAlert('لطفاً کد تایید را به صورت کامل وارد کنید.', 'error');
@@ -678,9 +682,14 @@
 				});
 			}
 
+			verifyInFlight = true;
 			ashnaRequest(verifyPayload)
+				.always(function () {
+					verifyInFlight = false;
+				})
 				.done(function (res) {
 					if (res && res.success) {
+						verifyInFlight = true; // Signed in: keep the form locked until the page moves on.
 						showAlert(res.data.message, 'success');
 						var finalUrl = res.data.redirect_to || window.location.href;
 						var $enrollStep = $wrapper.find('.ashna-step-passkey-enroll');
@@ -711,12 +720,21 @@
 							$stepVerify.find('[name="' + res.data.field + '"]').trigger('focus');
 							return;
 						}
+						// Empty the boxes for the next try: left-over digits would make every key of the
+						// corrected code auto-submit another (wrong) attempt and could lock the user out.
+						var resetDigits = function () {
+							clearDigits();
+							$digitBoxes.eq(0).trigger('focus');
+						};
 						if ($wrapper.attr('data-error-shake') !== '0') {
 							var $digitsWrap = $stepVerify.find('.ashna-otp-digits');
 							$digitsWrap.addClass('ashna-shake');
 							setTimeout(function () {
 								$digitsWrap.removeClass('ashna-shake');
+								resetDigits();
 							}, 480);
+						} else {
+							resetDigits();
 						}
 					}
 				})
@@ -1090,7 +1108,9 @@
 		});
 
 		$(document).on('click', '.ashna-toggle-checkout-otp', function () {
-			$('.ashna-wc-checkout-form-holder').slideToggle(200);
+			var $btn = $(this);
+			$btn.closest('.ashna-wc-checkout-banner').find('.ashna-wc-checkout-form-holder').slideToggle(200);
+			$btn.attr('aria-expanded', $btn.attr('aria-expanded') === 'true' ? 'false' : 'true');
 		});
 
 		// WooCommerce My Account / [ashna_passkey_manager] Register & Delete Buttons

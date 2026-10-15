@@ -1,12 +1,23 @@
 /*
  * Ashna – web font declarations (shared by admin preview and frontend).
  *
- * Estedad is bundled (SIL Open Font License 1.1, see assets/fonts/estedad/LICENSE.txt).
+ * Bundled (SIL Open Font License 1.1):
+ *   Vazirmatn v33.003 variable font – assets/fonts/vazirmatn/OFL.txt (default family)
+ *   Estedad – assets/fonts/estedad/LICENSE.txt
  *
  * IRANSans, YekanBakh and Dana are commercial fonts and are NOT bundled.
  * Place a licensed .woff2 file at the path below to activate them; until then the
  * browser falls back to the next family in the stack (Vazirmatn).
  */
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url('../fonts/vazirmatn/Vazirmatn-Variable.woff2') format('woff2-variations'),
+		url('../fonts/vazirmatn/Vazirmatn-Variable.woff2') format('woff2');
+}
 
 @font-face {
 	font-family: 'Estedad';

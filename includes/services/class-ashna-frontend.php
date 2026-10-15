@@ -45,31 +45,14 @@ class Ashna_Frontend {
 		add_shortcode( 'ashna_otp_form', array( $this, 'shortcode_login_form' ) );
 		add_shortcode( 'ashna_otp_button', array( $this, 'shortcode_modal_button' ) );
 
-		add_filter( 'wp_resource_hints', array( $this, 'add_resource_hints' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'render_global_modal' ) );
 		add_action( 'template_redirect', array( $this, 'maybe_render_standalone_page' ), 1 );
 
-		if ( Ashna_Helper::get_option( 'wp_login_integration', 0 ) ) {
+		// Recovery: define( 'ASHNA_DISABLE_LOGIN_TAKEOVER', true ); in wp-config.php restores the classic page.
+		if ( Ashna_Auth::login_takeover_active() ) {
 			add_action( 'login_init', array( $this, 'intercept_wp_login_page' ), 1 );
 		}
-	}
-
-	/**
-	 * Add preconnect hint for jsDelivr font CDN to reduce latency
-	 *
-	 * @param array  $urls          URLs to print for resource hints.
-	 * @param string $relation_type The relation type the URLs are printed for.
-	 * @return array
-	 */
-	public function add_resource_hints( $urls, $relation_type ) {
-		if ( 'preconnect' === $relation_type ) {
-			$urls[] = array(
-				'href'        => 'https://cdn.jsdelivr.net',
-				'crossorigin' => 'anonymous',
-			);
-		}
-		return $urls;
 	}
 
 	/**
@@ -78,17 +61,12 @@ class Ashna_Frontend {
 	 * @param bool $force Force enqueueing guest-only scripts (e.g. inside Elementor editor).
 	 */
 	public function enqueue_assets( $force = false ) {
-		wp_enqueue_style(
-			'ashna-vazirmatn-font',
-			'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
-			array(),
-			'33.003'
-		);
-
+		// Vazirmatn and Estedad ship with the plugin (no CDN: jsDelivr is slow or filtered for many
+		// Iranian visitors, and a blocked stylesheet in <head> delays the whole page).
 		wp_enqueue_style(
 			'ashna-fonts',
 			ASHNA_OTP_URL . 'assets/css/fonts.css',
-			array( 'ashna-vazirmatn-font' ),
+			array(),
 			ASHNA_OTP_VERSION
 		);
 
@@ -98,7 +76,7 @@ class Ashna_Frontend {
 		wp_enqueue_style(
 			'ashna-otp-frontend',
 			ASHNA_OTP_URL . 'assets/css/frontend.css',
-			array( 'ashna-vazirmatn-font', 'ashna-fonts' ),
+			array( 'ashna-fonts' ),
 			$css_ver
 		);
 
@@ -281,7 +259,7 @@ class Ashna_Frontend {
 			<meta charset="<?php bloginfo( 'charset' ); ?>">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title><?php echo esc_html( get_bloginfo( 'name' ) . ' — ورود / ثبت‌نام' ); ?></title>
-			<?php wp_print_styles( array( 'ashna-vazirmatn-font', 'ashna-fonts', 'ashna-otp-frontend' ) ); ?>
+			<?php wp_print_styles( array( 'ashna-fonts', 'ashna-otp-frontend' ) ); ?>
 			<style>
 				body.ashna-standalone-login {
 					margin: 0;
@@ -327,13 +305,13 @@ class Ashna_Frontend {
 		</head>
 		<body class="ashna-standalone-login">
 			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo self::get_login_form_html(
+			$form_html = self::get_login_form_html(
 				array(
 					'redirect' => $redirect_to,
 					'context'  => $context,
 				)
 			);
+			echo $form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside templates/login-form.php.
 			?>
 			<?php if ( $show_back_link ) : ?>
 				<div class="ashna-back-to-site">

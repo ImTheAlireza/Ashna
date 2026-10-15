@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<div class="ashna-switch-row">
 									<div class="ashna-switch-text">
 										<strong>جایگزینی کامل صفحه ورود وردپرس (wp-login.php)</strong>
-										<p>حذف فرم قدیمی وردپرس در <code>wp-login.php</code> و نمایش صفحه اختصاصی آشنا.</p>
+										<p>حذف فرم قدیمی وردپرس در <code>wp-login.php</code> و نمایش صفحه اختصاصی آشنا. مدیران سایت در این صفحه همیشه می‌توانند با رمز عبور وارد شوند. اگر به هر دلیل وارد نشدید، افزودن <code dir="ltr">define( 'ASHNA_DISABLE_LOGIN_TAKEOVER', true );</code> به <code>wp-config.php</code> صفحه ورود کلاسیک را برمی‌گرداند.</p>
 									</div>
 									<label class="ashna-switch">
 										<input type="checkbox" name="ashna[wp_login_integration]" value="1" <?php checked( $settings['wp_login_integration'], 1 ); ?> />

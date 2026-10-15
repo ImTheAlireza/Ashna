@@ -22,6 +22,35 @@ class Ashna_Logger {
 	}
 
 	/**
+	 * Column sizes of the log table (characters; response_message is a TEXT column, kept short).
+	 *
+	 * On MySQL, wpdb refuses the whole INSERT/UPDATE when one value is longer than its column, so
+	 * values are trimmed first (gateway error pages can be long; addresses are already capped).
+	 *
+	 * @param array $row Column => value.
+	 * @return array
+	 */
+	private static function fit_columns( array $row ) {
+		$limits = array(
+			'recipient'        => 191,
+			'channel'          => 32,
+			'gateway'          => 50,
+			'otp_code'         => 20,
+			'otp_hash'         => 255,
+			'status'           => 32,
+			'ip_address'       => 64,
+			'ip_subnet'        => 64,
+			'response_message' => 2000,
+		);
+		foreach ( $limits as $column => $max ) {
+			if ( isset( $row[ $column ] ) && is_string( $row[ $column ] ) && mb_strlen( $row[ $column ], 'UTF-8' ) > $max ) {
+				$row[ $column ] = mb_substr( $row[ $column ], 0, $max, 'UTF-8' );
+			}
+		}
+		return $row;
+	}
+
+	/**
 	 * Insert a new OTP log/session entry
 	 *
 	 * @param array $data Log data.
@@ -30,9 +59,10 @@ class Ashna_Logger {
 	public static function insert( $data ) {
 		global $wpdb;
 
-		$now_local  = current_time( 'mysql' );
+		$now_ts     = Ashna_Helper::local_now();
+		$now_local  = gmdate( 'Y-m-d H:i:s', $now_ts );
 		$expiry_sec = absint( Ashna_Helper::get_option( 'otp_expiry', 120 ) );
-		$expires_at = gmdate( 'Y-m-d H:i:s', strtotime( $now_local ) + $expiry_sec );
+		$expires_at = gmdate( 'Y-m-d H:i:s', $now_ts + $expiry_sec );
 
 		$defaults = array(
 			'recipient'        => '',
@@ -54,6 +84,7 @@ class Ashna_Logger {
 		if ( '' === $row['ip_subnet'] ) {
 			$row['ip_subnet'] = Ashna_IP::subnet( $row['ip_address'] );
 		}
+		$row = self::fit_columns( $row );
 
 		// Expire previous active codes for this recipient
 		self::expire_previous_codes( $row['recipient'] );
@@ -101,20 +132,27 @@ class Ashna_Logger {
 	public static function reserve( $recipient, $ip, $subnet ) {
 		global $wpdb;
 		$now = current_time( 'mysql' );
+		$fit = self::fit_columns(
+			array(
+				'recipient'  => (string) $recipient,
+				'ip_address' => (string) $ip,
+				'ip_subnet'  => (string) $subnet,
+			)
+		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->insert(
 			self::table_name(),
 			array(
-				'recipient'        => $recipient,
+				'recipient'        => $fit['recipient'],
 				'channel'          => 'pending',
 				'gateway'          => '',
 				'otp_code'         => '',
 				'otp_hash'         => '',
 				'status'           => 'pending',
 				'attempts'         => 0,
-				'ip_address'       => $ip,
-				'ip_subnet'        => $subnet,
+				'ip_address'       => $fit['ip_address'],
+				'ip_subnet'        => $fit['ip_subnet'],
 				'response_message' => '',
 				'expires_at'       => $now,
 				'created_at'       => $now,
@@ -148,7 +186,7 @@ class Ashna_Logger {
 		$expiry_sec = absint( Ashna_Helper::get_option( 'otp_expiry', 120 ) );
 		$fields     = array_intersect_key( $data, array_flip( array( 'channel', 'gateway', 'otp_code', 'otp_hash', 'status', 'response_message' ) ) );
 
-		$fields['expires_at'] = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) + $expiry_sec );
+		$fields['expires_at'] = gmdate( 'Y-m-d H:i:s', Ashna_Helper::local_now() + $expiry_sec );
 		return self::update( $id, $fields );
 	}
 
@@ -180,13 +218,14 @@ class Ashna_Logger {
 		global $wpdb;
 		$table = self::table_name();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix (%i needs WP 6.2).
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$table} SET status = 'expired' WHERE recipient = %s AND status = 'sent'",
 				$recipient
 			)
 		);
+		// phpcs:enable
 	}
 
 	/**
@@ -201,7 +240,7 @@ class Ashna_Logger {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$updated = (bool) $wpdb->update(
 			self::table_name(),
-			$fields,
+			self::fit_columns( $fields ),
 			array( 'id' => absint( $id ) )
 		);
 		if ( $updated ) {
@@ -220,13 +259,14 @@ class Ashna_Logger {
 		global $wpdb;
 		$table = self::table_name();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix (%i needs WP 6.2).
 		return $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$table} WHERE recipient = %s AND status <> 'pending' AND channel <> 'passkey' ORDER BY id DESC LIMIT 1",
 				$recipient
 			)
 		);
+		// phpcs:enable
 	}
 
 	/**
@@ -274,13 +314,13 @@ class Ashna_Logger {
 		$limit     = absint( $args['per_page'] );
 
 		if ( ! empty( $values ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders live in $where_sql.
 			$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}", $values ) );
 
 			$query_values   = $values;
 			$query_values[] = $limit;
 			$query_values[] = $offset;
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- placeholders live in $where_sql.
 			$items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY id DESC LIMIT %d OFFSET %d", $query_values ) );
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -308,7 +348,7 @@ class Ashna_Logger {
 
 		global $wpdb;
 		$table = self::table_name();
-		$today = gmdate( 'Y-m-d 00:00:00', strtotime( current_time( 'mysql' ) ) );
+		$today = gmdate( 'Y-m-d 00:00:00', Ashna_Helper::local_now() );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$agg = $wpdb->get_row(
@@ -360,10 +400,10 @@ class Ashna_Logger {
 
 		global $wpdb;
 		$table    = self::table_name();
-		$now_ts   = strtotime( current_time( 'mysql' ) );
+		$now_ts   = Ashna_Helper::local_now();
 		$start_dt = gmdate( 'Y-m-d 00:00:00', $now_ts - ( ( $days - 1 ) * DAY_IN_SECONDS ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix (%i needs WP 6.2).
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT DATE(created_at) as day_date,
@@ -378,6 +418,7 @@ class Ashna_Logger {
 			),
 			OBJECT_K
 		);
+		// phpcs:enable
 
 		$chart   = array();
 		$max_val = 1;
@@ -434,7 +475,7 @@ class Ashna_Logger {
 		}
 
 		$days   = max( 1, absint( Ashna_Helper::get_option( 'log_retention_days', 30 ) ) );
-		$cutoff = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) ) - ( $days * DAY_IN_SECONDS ) );
+		$cutoff = gmdate( 'Y-m-d H:i:s', Ashna_Helper::local_now() - ( $days * DAY_IN_SECONDS ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$res = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $cutoff ) );

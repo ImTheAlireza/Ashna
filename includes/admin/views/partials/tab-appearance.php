@@ -1044,7 +1044,7 @@ $split_features_list = array_filter( array_map( 'trim', explode( "\n", (string) 
 
 									<!-- 4. Form Entrance Animation & Interactive Micro-Interactions -->
 									<div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--s-border);">
-										<label class="ashna-section-label">ج) انیمیشن ورود فرم و تغییر مراحل (Form Entrance & Step Choreography)</label>
+										<label class="ashna-section-label">ج) انیمیشن ورود فرم و تغییر مراحل (Form Entrance &amp; Step Choreography)</label>
 										<div class="ashna-choice-grid ashna-cols-2" style="margin-bottom:14px;">
 											<label class="ashna-choice-card <?php echo 'fade_up' === $form_animation ? 'selected' : ''; ?>">
 												<input type="radio" name="ashna[form_animation]" class="ashna-anim-radio" value="fade_up" <?php checked( $form_animation, 'fade_up' ); ?> />
@@ -1146,7 +1146,7 @@ $split_features_list = array_filter( array_map( 'trim', explode( "\n", (string) 
 												</div>
 											</div>
 											<div class="ashna-switch-text" style="flex:1;">
-												<strong>افکت لرزش الاستیک و نئون قرمز هنگام کد اشتباه (Error Shake & Crimson Glow)</strong>
+												<strong>افکت لرزش الاستیک و نئون قرمز هنگام کد اشتباه (Error Shake &amp; Crimson Glow)</strong>
 												<p>در صورت وارد کردن کد نادرست، خانه‌های کد با انیمیشن لرزش فنری، موج نوری قرمز و بنر هشدار متحرک به کاربر بازخورد بصری می‌دهند.</p>
 											</div>
 											<label class="ashna-switch">

@@ -352,8 +352,8 @@ class Ashna_Security {
 		}
 
 		$cooldown = absint( Ashna_Helper::get_option( 'resend_cooldown', 60 ) );
-		$created  = strtotime( $latest->created_at );
-		$now      = strtotime( current_time( 'mysql' ) );
+		$created  = Ashna_Helper::local_ts( $latest->created_at );
+		$now      = Ashna_Helper::local_now();
 		$elapsed  = $now - $created;
 
 		if ( $elapsed < $cooldown ) {
@@ -393,30 +393,62 @@ class Ashna_Security {
 	}
 
 	/**
-	 * Record a failed password attempt and trigger lockout if threshold reached
+	 * Lock key shared by every way of naming one account (phone, e-mail, username in any letter
+	 * case), so switching identifiers does not reset the failed-password counter.
 	 *
-	 * @param string $identifier User identifier.
+	 * @param WP_User $user Account.
+	 * @return string
 	 */
-	public static function record_failed_password_attempt( $identifier ) {
-		$key          = 'ashna_pw_try_' . md5( $identifier );
-		$attempts     = (int) get_transient( $key ) + 1;
+	public static function account_lock_key( $user ) {
+		return 'user:' . strtolower( $user->user_login );
+	}
+
+	/**
+	 * Record a failed password attempt and lock out when a threshold is reached.
+	 *
+	 * Counted three ways: the identifier typed, each account it may belong to, and the client IP
+	 * (one address guessing across many accounts is locked after 4× the per-account limit).
+	 *
+	 * @param string   $identifier   Normalized phone/email or username.
+	 * @param string[] $account_keys account_lock_key() of the matching accounts.
+	 */
+	public static function record_failed_password_attempt( $identifier, $account_keys = array() ) {
 		$max_attempts = max( 2, absint( Ashna_Helper::get_option( 'max_verify_attempts', 5 ) ) );
+		$targets      = array_unique( array_merge( array( (string) $identifier ), array_map( 'strval', (array) $account_keys ) ) );
 
-		set_transient( $key, $attempts, 15 * MINUTE_IN_SECONDS );
+		foreach ( $targets as $target ) {
+			$key      = 'ashna_pw_try_' . md5( $target );
+			$attempts = (int) get_transient( $key ) + 1;
+			set_transient( $key, $attempts, 15 * MINUTE_IN_SECONDS );
+			if ( $attempts >= $max_attempts ) {
+				delete_transient( $key );
+				self::trigger_lockout( $target );
+			}
+		}
 
-		if ( $attempts >= $max_attempts ) {
-			delete_transient( $key );
-			self::trigger_lockout( $identifier );
+		$ip = Ashna_Helper::get_client_ip();
+		if ( '' === $ip || self::is_whitelisted( (string) $identifier, $ip ) ) {
+			return;
+		}
+		$ip_key      = 'ashna_pw_try_ip_' . md5( $ip );
+		$ip_attempts = (int) get_transient( $ip_key ) + 1;
+		set_transient( $ip_key, $ip_attempts, 15 * MINUTE_IN_SECONDS );
+		if ( $ip_attempts >= $max_attempts * 4 ) {
+			delete_transient( $ip_key );
+			self::trigger_ip_lockout( $ip );
 		}
 	}
 
 	/**
 	 * Clear failed password attempts on successful login
 	 *
-	 * @param string $identifier User identifier.
+	 * @param string   $identifier   User identifier.
+	 * @param string[] $account_keys account_lock_key() of the signed-in account.
 	 */
-	public static function clear_password_attempts( $identifier ) {
-		delete_transient( 'ashna_pw_try_' . md5( $identifier ) );
+	public static function clear_password_attempts( $identifier, $account_keys = array() ) {
+		foreach ( array_merge( array( (string) $identifier ), (array) $account_keys ) as $target ) {
+			delete_transient( 'ashna_pw_try_' . md5( $target ) );
+		}
 	}
 
 	/**
@@ -431,19 +463,41 @@ class Ashna_Security {
 		set_transient( 'ashna_lock_' . md5( $recipient ), 1, $duration );
 		set_transient( 'ashna_lock_ip_' . md5( $ip ), 1, $duration );
 
+		self::remember_lockout(
+			$recipient,
+			array(
+				'target'     => $recipient,
+				'ip'         => $ip,
+				'locked_at'  => current_time( 'mysql' ),
+				'expires_ts' => time() + $duration,
+			)
+		);
+	}
+
+	/**
+	 * Add an entry to the admin's lockout list (the transients do the blocking; this list only
+	 * feeds the Security tab). Kept to the newest 500 entries so an attack cannot bloat it.
+	 *
+	 * @param string $key   Target key.
+	 * @param array  $entry Lockout details.
+	 */
+	private static function remember_lockout( $key, array $entry ) {
 		$lockouts = get_option( 'ashna_active_lockouts', array() );
 		if ( ! is_array( $lockouts ) ) {
 			$lockouts = array();
 		}
-
-		$now_ts                 = time();
-		$lockouts[ $recipient ] = array(
-			'target'     => $recipient,
-			'ip'         => $ip,
-			'locked_at'  => current_time( 'mysql' ),
-			'expires_ts' => $now_ts + $duration,
-		);
-
+		unset( $lockouts[ $key ] );
+		$lockouts[ $key ] = $entry;
+		if ( count( $lockouts ) > 500 ) {
+			$now      = time();
+			$lockouts = array_filter(
+				$lockouts,
+				static function ( $info ) use ( $now ) {
+					return isset( $info['expires_ts'] ) && $info['expires_ts'] > $now;
+				}
+			);
+			$lockouts = array_slice( $lockouts, -500, null, true );
+		}
 		update_option( 'ashna_active_lockouts', $lockouts, false );
 	}
 
@@ -456,17 +510,15 @@ class Ashna_Security {
 		$duration = max( 60, absint( Ashna_Helper::get_option( 'lockout_duration', 900 ) ) );
 		set_transient( 'ashna_lock_ip_' . md5( $ip ), 1, $duration );
 
-		$lockouts = get_option( 'ashna_active_lockouts', array() );
-		if ( ! is_array( $lockouts ) ) {
-			$lockouts = array();
-		}
-		$lockouts[ $ip ] = array(
-			'target'     => $ip,
-			'ip'         => $ip,
-			'locked_at'  => current_time( 'mysql' ),
-			'expires_ts' => time() + $duration,
+		self::remember_lockout(
+			$ip,
+			array(
+				'target'     => $ip,
+				'ip'         => $ip,
+				'locked_at'  => current_time( 'mysql' ),
+				'expires_ts' => time() + $duration,
+			)
 		);
-		update_option( 'ashna_active_lockouts', $lockouts, false );
 	}
 
 	/**
@@ -556,10 +608,13 @@ class Ashna_Security {
 			return new WP_Error( 'ashna_invalid_state', 'کد تایید منقضی یا نامعتبر شده است. لطفاً مجدداً درخواست کد دهید.' );
 		}
 
-		$now        = strtotime( current_time( 'mysql' ) );
-		$expires_at = strtotime( $record->expires_at );
+		$now        = Ashna_Helper::local_now();
+		$expires_at = Ashna_Helper::local_ts( $record->expires_at );
+		$expiry_sec = absint( Ashna_Helper::get_option( 'otp_expiry', 120 ) );
 
-		if ( $now > $expires_at ) {
+		// A code that would stay valid longer than the expiry setting was issued before the clock
+		// went back (DST ended, or the site timezone was changed): treat it as expired too.
+		if ( $now > $expires_at || $expires_at - $now > $expiry_sec + 5 ) {
 			Ashna_Logger::update( $record->id, array( 'status' => 'expired' ) );
 			return new WP_Error( 'ashna_expired_code', 'مهلت استفاده از این کد به پایان رسیده است. لطفاً کد جدید دریافت کنید.' );
 		}

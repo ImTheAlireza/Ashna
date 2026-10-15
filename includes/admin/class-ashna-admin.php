@@ -19,6 +19,13 @@ class Ashna_Admin {
 	private static $instance = null;
 
 	/**
+	 * Output-buffer level before Ashna's admin-AJAX buffer was opened (null outside those requests).
+	 *
+	 * @var int|null
+	 */
+	private static $ajax_buffer_level = null;
+
+	/**
 	 * Track if settings were already saved during the current request
 	 *
 	 * @var bool
@@ -42,7 +49,9 @@ class Ashna_Admin {
 	 */
 	private function __construct() {
 		if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && strpos( sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ), 'ashna_admin_' ) === 0 ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			@ob_start();
+			// Catch stray notices other plugins print during our AJAX requests (removed before replying).
+			self::$ajax_buffer_level = ob_get_level();
+			ob_start();
 		}
 
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
@@ -227,16 +236,9 @@ class Ashna_Admin {
 		}
 
 		wp_enqueue_style(
-			'ashna-vazirmatn-font',
-			'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
-			array(),
-			'33.003'
-		);
-
-		wp_enqueue_style(
 			'ashna-fonts',
 			ASHNA_OTP_URL . 'assets/css/fonts.css',
-			array( 'ashna-vazirmatn-font' ),
+			array(),
 			ASHNA_OTP_VERSION
 		);
 
@@ -244,7 +246,7 @@ class Ashna_Admin {
 		$js_file  = ASHNA_OTP_PATH . 'assets/js/admin.js';
 
 		// Inject CSS & JS directly from disk via WordPress inline APIs to bypass aggressive browser/CDN/LiteSpeed static file caches
-		wp_register_style( 'ashna-otp-admin-core', false, array( 'ashna-vazirmatn-font', 'ashna-fonts' ), ASHNA_OTP_VERSION );
+		wp_register_style( 'ashna-otp-admin-core', false, array( 'ashna-fonts' ), ASHNA_OTP_VERSION );
 		wp_enqueue_style( 'ashna-otp-admin-core' );
 		if ( file_exists( $css_file ) ) {
 			wp_add_inline_style( 'ashna-otp-admin-core', (string) file_get_contents( $css_file ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
@@ -372,14 +374,17 @@ class Ashna_Admin {
 				$roles         = function_exists( 'wp_roles' ) ? wp_roles()->get_names() : array();
 				if ( isset( $raw[ $key ] ) && is_array( $raw[ $key ] ) ) {
 					foreach ( $raw[ $key ] as $role => $url ) {
-						$role = sanitize_key( $role );
-						$url  = esc_url_raw( trim( (string) $url ) );
+						$role = sanitize_key( (string) $role );
+						$url  = is_scalar( $url ) ? esc_url_raw( trim( (string) $url ) ) : '';
 						if ( '' !== $url && isset( $roles[ $role ] ) ) {
 							$clean[ $key ][ $role ] = $url;
 						}
 					}
 				}
 				continue;
+			}
+			if ( isset( $raw[ $key ] ) && ! is_scalar( $raw[ $key ] ) ) {
+				unset( $raw[ $key ] ); // A list/object where one value belongs (tampered request): keep the default.
 			}
 			if ( in_array( $key, $checkbox_keys, true ) ) {
 				$clean[ $key ] = ! empty( $raw[ $key ] ) ? 1 : 0;
@@ -438,8 +443,15 @@ class Ashna_Admin {
 	 * Clean all active PHP output buffers before emitting JSON
 	 */
 	private function clean_output_buffers() {
-		while ( ob_get_level() > 0 ) {
-			@ob_end_clean();
+		if ( null !== self::$ajax_buffer_level ) {
+			// Drop only what was printed after our own buffer started; outer buffers (compression,
+			// caching, the server's own) belong to someone else and stay untouched.
+			while ( ob_get_level() > self::$ajax_buffer_level + 1 ) {
+				ob_end_clean();
+			}
+		}
+		if ( ob_get_level() > 0 && ob_get_length() ) {
+			ob_clean();
 		}
 	}
 
@@ -493,36 +505,58 @@ class Ashna_Admin {
 
 		// 3. Export CSV Logs
 		if ( isset( $_GET['ashna_export_logs_csv'] ) && check_admin_referer( 'ashna_export_csv_action', 'nonce' ) ) {
-			$logs_data = Ashna_Logger::get_logs( array( 'per_page' => 2000, 'paged' => 1 ) );
 			header( 'Content-Type: text/csv; charset=utf-8' );
 			header( 'Content-Disposition: attachment; filename=ashna-otp-logs-' . gmdate( 'Y-m-d' ) . '.csv' );
 
 			$out = fopen( 'php://output', 'w' );
-			// UTF-8 BOM for Excel Persian support
-			fwrite( $out, "\xEF\xBB\xBF" );
-			fputcsv( $out, array( 'ID', 'Recipient', 'Channel', 'Gateway', 'OTP Code', 'Status', 'Attempts', 'IP Address', 'Response', 'Created At', 'Verified At' ) );
-
-			foreach ( $logs_data['items'] as $row ) {
-				fputcsv(
-					$out,
-					array(
-						$row->id,
-						$row->recipient,
-						$row->channel,
-						$row->gateway,
-						$row->otp_code,
-						$row->status,
-						$row->attempts,
-						$row->ip_address,
-						$row->response_message,
-						$row->created_at,
-						$row->verified_at,
-					)
-				);
-			}
-			fclose( $out );
+			self::write_logs_csv( $out );
+			fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- php://output stream, not a file.
 			exit;
 		}
+	}
+
+	/**
+	 * Write the latest 2000 log rows as CSV (UTF-8 BOM for Excel).
+	 *
+	 * @param resource $out Writable stream.
+	 */
+	public static function write_logs_csv( $out ) {
+		$logs_data = Ashna_Logger::get_logs(
+			array(
+				'per_page' => 2000,
+				'paged'    => 1,
+			)
+		);
+		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
+		// Plain RFC 4180 quoting (empty $escape): PHP 8.4 deprecates relying on the old "\\" default.
+		fputcsv( $out, array( 'ID', 'Recipient', 'Channel', 'Gateway', 'OTP Code', 'Status', 'Attempts', 'IP Address', 'Response', 'Created At', 'Verified At' ), ',', '"', '' );
+		foreach ( $logs_data['items'] as $row ) {
+			fputcsv(
+				$out,
+				array_map(
+					array( __CLASS__, 'csv_cell' ),
+					array( $row->id, $row->recipient, $row->channel, $row->gateway, $row->otp_code, $row->status, $row->attempts, $row->ip_address, $row->response_message, $row->created_at, $row->verified_at )
+				),
+				',',
+				'"',
+				''
+			);
+		}
+	}
+
+	/**
+	 * Neutralize spreadsheet formulas: a cell starting with = + - @ (or tab/CR) is prefixed
+	 * with an apostrophe, so e.g. an e-mail like "=1+1@x.co" is shown as text in Excel.
+	 *
+	 * @param mixed $value Cell value.
+	 * @return string
+	 */
+	public static function csv_cell( $value ) {
+		$value = (string) $value;
+		if ( '' !== $value && in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+		return $value;
 	}
 
 	/**
@@ -657,7 +691,9 @@ class Ashna_Admin {
 			wp_send_json_error( array( 'message' => 'فرمت فایل یا متن JSON معتبر نیست.' ) );
 		}
 
-		$clean = $this->sanitize_settings_payload( $decoded );
+		// A file from an older version (or a partial one) lacks newer keys. On/off settings that
+		// are missing must keep their defaults instead of being read as "unchecked" (= off).
+		$clean = $this->sanitize_settings_payload( array_merge( Ashna_Helper::default_settings(), $decoded ) );
 		Ashna_Helper::save_settings( $clean );
 		Ashna_Failover::reset_circuits();
 

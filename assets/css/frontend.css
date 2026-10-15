@@ -402,7 +402,8 @@
 
 .ashna-req-badge {
 	font-size: 11px;
-	color: var(--ashna-muted);
+	color: inherit; /* label colour at 80%: ~7:1 on light cards, still readable on dark ones */
+	opacity: 0.8;
 	font-weight: 400;
 }
 
@@ -1083,7 +1084,7 @@
 
 .ashna-btn-passkey {
 	background: rgba(16, 185, 129, 0.1) !important;
-	color: #059669 !important;
+	color: #047857 !important; /* 5:1 on the tint (WCAG AA); #059669 was 3.4:1 */
 	border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
 	display: inline-flex;
 	align-items: center;
@@ -1104,6 +1105,10 @@
 	border-color: #10b981 !important;
 	transform: translateY(-1px);
 	box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.25);
+}
+
+.ashna-theme-dark .ashna-btn-passkey {
+	color: #6ee7b7 !important; /* light green on dark cards */
 }
 
 .ashna-pk-enroll-icon {
@@ -1175,7 +1180,7 @@
 	gap: 6px;
 	padding: 9px 16px;
 	border-radius: 10px;
-	background: #10b981;
+	background: #047857; /* white text 5.5:1 (WCAG AA); #10b981 was 2.5:1 */
 	color: #ffffff !important;
 	border: none;
 	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
@@ -1186,7 +1191,7 @@
 }
 
 .ashna-btn-register-passkey:hover {
-	background: #059669;
+	background: #065f46;
 }
 
 .ashna-pk-list {
@@ -1316,7 +1321,7 @@
 	font-weight: 700;
 }
 .ashna-otp-wrapper .ashna-shopurl-status.is-ok {
-	color: #059669;
+	color: #047857;
 }
 .ashna-otp-wrapper .ashna-shopurl-status.is-taken {
 	color: #dc2626;

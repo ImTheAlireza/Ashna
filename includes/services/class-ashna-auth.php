@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- every AJAX handler below calls Ashna_Session::verify_request() first.
 class Ashna_Auth {
 
 	/**
@@ -181,9 +182,17 @@ class Ashna_Auth {
 
 		$dispatch = Ashna_Gateway_Manager::dispatch_otp( $identifier, $type, '', '', $reservation );
 		if ( is_wp_error( $dispatch ) ) {
+			// The provider's reason ("credit too low", "invalid API key", "check SMTP" ...) is kept in
+			// the logs; visitors get a plain message, administrators and debug mode see the detail.
+			$show_detail = current_user_can( 'manage_options' ) || Ashna_Helper::get_option( 'show_debug_code_in_toast', 0 );
 			$this->send_error(
 				array(
-					'message'     => 'خطا در ارسال کد تایید: ' . $dispatch->get_error_message(),
+					'message'     => $show_detail
+						? 'خطا در ارسال کد تایید: ' . $dispatch->get_error_message()
+						: ( 'email' === $type
+							? 'ارسال ایمیل کد تایید در حال حاضر ممکن نشد. لطفاً چند دقیقه دیگر دوباره تلاش کنید.'
+							: 'ارسال کد تایید در حال حاضر ممکن نشد. لطفاً چند دقیقه دیگر دوباره تلاش کنید.' ),
+					'code'        => 'ashna_send_failed',
 					'new_captcha' => self::next_math_captcha(),
 				)
 			);
@@ -417,14 +426,22 @@ class Ashna_Auth {
 	public function ajax_password_login() {
 		Ashna_Session::verify_request();
 
-		if ( ! Ashna_Helper::get_option( 'allow_password_login', 0 ) ) {
+		$form_context = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
+		// With password sign-in switched off, the wp-login.php takeover still lets staff accounts use
+		// their password (they cannot use an unverified phone, and the classic form is gone), so an
+		// administrator is never locked out. Customers stay code-only.
+		$password_enabled = (bool) Ashna_Helper::get_option( 'allow_password_login', 0 );
+		$staff_only       = ! $password_enabled && 'wp-login' === $form_context && self::login_takeover_active();
+		if ( ! $password_enabled && ! $staff_only ) {
 			$this->send_error( array( 'message' => 'ورود با رمز عبور غیرفعال است.' ) );
 		}
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
-		$password       = isset( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// Not unslashed on purpose: WordPress hashes and checks passwords exactly as posted (slashed)
+		// in wp-login.php, profile edits, password resets and WooCommerce, so "p'ss" is stored as the
+		// hash of "p\'ss". Unslashing here would lock out everyone with ' " or \ in their password.
+		$password = isset( $_POST['password'] ) && is_string( $_POST['password'] ) ? $_POST['password'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
-		$form_context   = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
 
 		if ( empty( $raw_identifier ) || empty( $password ) ) {
 			$this->send_error( array( 'message' => 'لطفاً شناسه کاربری و رمز عبور را وارد کنید.' ) );
@@ -440,17 +457,40 @@ class Ashna_Auth {
 
 		// Locate the account, then let WordPress authenticate it through the full `authenticate`
 		// filter chain (2FA, login limiters, membership approval ...) exactly like wp-login.php.
-		$user = null;
+		// Accounts locked by earlier failures (under any of their identifiers) are skipped.
+		$candidates   = array();
+		$account_keys = array();
+		$locked_error = null;
 		foreach ( self::password_candidates( $identifier, $parsed['type'] ) as $candidate ) {
+			if ( $staff_only && ! self::is_staff_account( $candidate ) ) {
+				continue;
+			}
+			$account_key = Ashna_Security::account_lock_key( $candidate );
+			$locked      = Ashna_Security::check_lockout( $account_key );
+			if ( is_wp_error( $locked ) ) {
+				$locked_error = $locked;
+				continue;
+			}
+			$candidates[]   = $candidate;
+			$account_keys[] = $account_key;
+		}
+		if ( empty( $candidates ) && $locked_error ) {
+			$this->send_error( array( 'message' => $locked_error->get_error_message() ) );
+		}
+
+		$user = null;
+		foreach ( $candidates as $candidate ) {
 			if ( wp_check_password( $password, $candidate->user_pass, $candidate->ID ) ) {
 				$user = $candidate;
 				break;
 			}
 		}
 
-		$generic = 'نام کاربری/شماره یا رمز عبور اشتباه است.';
+		$generic = $staff_only
+			? 'اطلاعات ورود صحیح نیست. ورود با رمز عبور در این صفحه فقط برای مدیران سایت است؛ مشتریان لطفاً با کد یکبارمصرف وارد شوند.'
+			: 'نام کاربری/شماره یا رمز عبور اشتباه است.';
 		if ( ! $user ) {
-			Ashna_Security::record_failed_password_attempt( $identifier );
+			Ashna_Security::record_failed_password_attempt( $identifier, $account_keys );
 			do_action( 'wp_login_failed', $raw_identifier, new WP_Error( 'incorrect_password', $generic ) );
 			$this->send_error( array( 'message' => $generic ) );
 		}
@@ -459,7 +499,7 @@ class Ashna_Auth {
 		if ( is_wp_error( $authenticated ) ) {
 			$credential_errors = array( 'incorrect_password', 'invalid_username', 'invalid_email', 'empty_password', 'empty_username' );
 			if ( in_array( $authenticated->get_error_code(), $credential_errors, true ) ) {
-				Ashna_Security::record_failed_password_attempt( $identifier );
+				Ashna_Security::record_failed_password_attempt( $identifier, array( Ashna_Security::account_lock_key( $user ) ) );
 				$this->send_error( array( 'message' => $generic ) );
 			}
 			$readable = Ashna_Session::readable_error( $authenticated );
@@ -471,7 +511,7 @@ class Ashna_Auth {
 			);
 		}
 
-		Ashna_Security::clear_password_attempts( $identifier );
+		Ashna_Security::clear_password_attempts( $identifier, array( Ashna_Security::account_lock_key( $authenticated ) ) );
 
 		$logged_in = Ashna_Session::login(
 			$authenticated,
@@ -625,6 +665,18 @@ class Ashna_Auth {
 		}
 
 		return $none;
+	}
+
+	/**
+	 * Whether Ashna currently replaces wp-login.php (setting on, no recovery constant).
+	 *
+	 * @return bool
+	 */
+	public static function login_takeover_active() {
+		if ( defined( 'ASHNA_DISABLE_LOGIN_TAKEOVER' ) && ASHNA_DISABLE_LOGIN_TAKEOVER ) {
+			return false;
+		}
+		return (bool) Ashna_Helper::get_option( 'wp_login_integration', 0 );
 	}
 
 	/**
@@ -897,7 +949,9 @@ class Ashna_Auth {
 			$userdata['role'] = self::safe_registration_role( isset( $userdata['role'] ) ? $userdata['role'] : $desired_role );
 		}
 
-		$user_id = wp_insert_user( $userdata );
+		// wp_insert_user() unslashes every field it stores (it expects request-style input), so slash
+		// once; otherwise a backslash typed in a name silently disappears.
+		$user_id = wp_insert_user( wp_slash( $userdata ) );
 		if ( is_wp_error( $user_id ) ) {
 			return $user_id;
 		}
@@ -907,10 +961,10 @@ class Ashna_Auth {
 		}
 
 		if ( ! empty( $first_name ) ) {
-			update_user_meta( $user_id, 'billing_first_name', $first_name );
+			update_user_meta( $user_id, 'billing_first_name', wp_slash( $first_name ) );
 		}
 		if ( ! empty( $last_name ) ) {
-			update_user_meta( $user_id, 'billing_last_name', $last_name );
+			update_user_meta( $user_id, 'billing_last_name', wp_slash( $last_name ) );
 		}
 
 		update_user_meta( $user_id, 'ashna_registered_via_otp', 1 );
@@ -959,3 +1013,4 @@ class Ashna_Auth {
 		return $roles->is_role( 'customer' ) ? 'customer' : 'subscriber';
 	}
 }
+// phpcs:enable WordPress.Security.NonceVerification.Missing

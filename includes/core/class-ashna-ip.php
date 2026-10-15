@@ -246,8 +246,8 @@ class Ashna_IP {
 			list( $range, $bits ) = explode( '/', $range, 2 );
 			$bits                 = (int) $bits;
 		}
-		$ip_bin    = @inet_pton( (string) $ip ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		$range_bin = @inet_pton( $range ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		$ip_bin    = @inet_pton( (string) $ip ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$range_bin = @inet_pton( $range ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		if ( false === $ip_bin || false === $range_bin || strlen( $ip_bin ) !== strlen( $range_bin ) ) {
 			return false;
 		}
@@ -273,7 +273,7 @@ class Ashna_IP {
 	 * @return string
 	 */
 	public static function subnet( $ip ) {
-		$bin = @inet_pton( (string) $ip ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		$bin = @inet_pton( (string) $ip ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		if ( false === $bin ) {
 			return '';
 		}
@@ -299,7 +299,7 @@ class Ashna_IP {
 		if ( ! filter_var( $value, FILTER_VALIDATE_IP ) ) {
 			return '';
 		}
-		$bin = @inet_pton( $value ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		$bin = @inet_pton( $value ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		return false === $bin ? '' : inet_ntop( $bin );
 	}
 

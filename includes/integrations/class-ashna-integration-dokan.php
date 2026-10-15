@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- every AJAX handler below calls Ashna_Session::verify_request() first.
 class Ashna_Integration_Dokan {
 
 	/**
@@ -312,3 +313,4 @@ class Ashna_Integration_Dokan {
 		);
 	}
 }
+// phpcs:enable WordPress.Security.NonceVerification.Missing

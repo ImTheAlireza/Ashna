@@ -222,8 +222,8 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 	private function resolve_bale_chat_id( $phone ) {
 		$users = get_users(
 			array(
-				'meta_key'   => 'ashna_phone',
-				'meta_value' => $phone,
+				'meta_key'   => 'ashna_phone', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- single lookup when sending via the Bale bot.
+				'meta_value' => $phone, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				'number'     => 1,
 				'fields'     => 'ID',
 			)

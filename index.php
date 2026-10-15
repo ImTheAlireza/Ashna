@@ -33,4 +33,16 @@ if ( ! defined( 'ASHNA_OTP_BASENAME' ) ) {
 	define( 'ASHNA_OTP_BASENAME', plugin_basename( __FILE__ ) );
 }
 
+// WooCommerce feature compatibility: Ashna never reads or writes orders (safe with HPOS), and its
+// checkout sign-in box is rendered on the block checkout as well as the classic one.
+add_action(
+	'before_woocommerce_init',
+	static function () {
+		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ASHNA_OTP_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', ASHNA_OTP_FILE, true );
+		}
+	}
+);
+
 require_once ASHNA_OTP_PATH . 'ashna.php';
