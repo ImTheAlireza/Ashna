@@ -41,6 +41,7 @@ class Ashna_Gateway_Manager {
 				'melipayamak' => new Ashna_Gateway_Melipayamak(),
 				'farazsms'    => new Ashna_Gateway_Farazsms(),
 				'ippanel'     => new Ashna_Gateway_Ippanel(),
+				'msgway'      => new Ashna_Gateway_Msgway(),
 			),
 			self::$custom_gateways
 		);
@@ -107,21 +108,63 @@ class Ashna_Gateway_Manager {
 	 */
 	public static function has_fallback() {
 		$strategy = Ashna_Helper::get_option( 'mobile_delivery_channel', 'sms' );
-		if ( in_array( $strategy, array( 'bale_fallback_sms', 'sms_fallback_bale', 'both' ), true ) ) {
+		if ( in_array( $strategy, array( 'bale_fallback_sms', 'sms_fallback_bale', 'both', 'messenger_fallback_sms' ), true ) ) {
 			return true;
 		}
-		return 'bale' !== $strategy && count( self::get_backup_sms_gateways() ) > 0;
+		return ! in_array( $strategy, array( 'bale', 'messenger' ), true ) && count( self::get_backup_sms_gateways() ) > 0;
 	}
 
 	/**
 	 * Delivery channel a gateway belongs to.
 	 *
 	 * @param Ashna_Gateway_Interface $gateway Gateway.
-	 * @return string sms | bale | email
+	 * @return string sms | bale | messenger | email
 	 */
-	private static function channel_of( $gateway ) {
-		$id = $gateway->get_id();
-		return in_array( $id, array( 'bale', 'email' ), true ) ? $id : 'sms';
+	public static function channel_of( $gateway ) {
+		return method_exists( $gateway, 'get_channel' ) ? (string) $gateway->get_channel() : 'sms';
+	}
+
+	/**
+	 * Gateways on the configured delivery path, for the background probe.
+	 *
+	 * @return array<int, Ashna_Gateway_Interface>
+	 */
+	public static function probe_targets() {
+		$strategy = Ashna_Helper::get_option( 'mobile_delivery_channel', 'sms' );
+		$targets  = array();
+		if ( ! in_array( $strategy, array( 'bale', 'messenger' ), true ) ) {
+			$targets = self::get_sms_chain();
+		}
+		if ( in_array( $strategy, array( 'bale', 'bale_fallback_sms', 'sms_fallback_bale', 'both' ), true ) ) {
+			$targets[] = new Ashna_Gateway_Bale();
+		}
+		if ( in_array( $strategy, array( 'messenger', 'messenger_fallback_sms' ), true ) ) {
+			$targets[] = new Ashna_Gateway_Msgway_Messenger();
+		}
+
+		$unique = array();
+		foreach ( $targets as $gateway ) {
+			if ( 'sandbox' !== $gateway->get_id() ) {
+				$unique[ $gateway->get_id() ] = $gateway;
+			}
+		}
+		return array_values( $unique );
+	}
+
+	/**
+	 * First gateway a visitor's OTP goes to (used for the form's timing hints).
+	 *
+	 * @return Ashna_Gateway_Interface
+	 */
+	public static function first_mobile_gateway() {
+		$strategy = Ashna_Helper::get_option( 'mobile_delivery_channel', 'sms' );
+		if ( in_array( $strategy, array( 'bale', 'bale_fallback_sms' ), true ) ) {
+			return new Ashna_Gateway_Bale();
+		}
+		if ( in_array( $strategy, array( 'messenger', 'messenger_fallback_sms' ), true ) ) {
+			return new Ashna_Gateway_Msgway_Messenger();
+		}
+		return self::get_active_sms_gateway();
 	}
 
 	/**
@@ -188,7 +231,7 @@ class Ashna_Gateway_Manager {
 				break;
 			}
 
-			$slot = Ashna_Failover::gateway_timeout();
+			$slot = Ashna_Failover::slot_for( $id );
 			if ( 'trial' === $state ) {
 				Ashna_Failover::claim_trial( $id );
 				$slot = min( $slot, Ashna_Failover::TRIAL_TIMEOUT );
@@ -332,6 +375,9 @@ class Ashna_Gateway_Manager {
 		if ( 'bale' === $gateway->get_id() ) {
 			return 'ارسال موفق از طریق پیام‌رسان بله';
 		}
+		if ( 'messenger' === self::channel_of( $gateway ) ) {
+			return 'ارسال موفق از طریق ' . $gateway->get_title();
+		}
 		if ( 0 === $position || false === $position ) {
 			return 'ارسال موفق از طریق ' . $gateway->get_title();
 		}
@@ -377,6 +423,8 @@ class Ashna_Gateway_Manager {
 			return self::deliver_both( $sms, $bale, $recipient, $code, $force );
 		}
 
+		$messenger = new Ashna_Gateway_Msgway_Messenger();
+
 		switch ( $strategy ) {
 			case 'bale':
 				$chain = array( $bale );
@@ -387,6 +435,12 @@ class Ashna_Gateway_Manager {
 			case 'sms_fallback_bale':
 				$chain = array_merge( $sms, array( $bale ) );
 				break;
+			case 'messenger':
+				$chain = array( $messenger );
+				break;
+			case 'messenger_fallback_sms':
+				$chain = array_merge( array( $messenger ), $sms );
+				break;
 			case 'sms':
 			default:
 				$chain = $sms;
@@ -395,14 +449,21 @@ class Ashna_Gateway_Manager {
 
 		$run     = self::send_via_chain( $chain, $recipient, $code, $force );
 		$gateway = $run['gateway'] ? $run['gateway'] : ( $run['attempted'] ? $run['attempted'] : $chain[0] );
-		$channel = 'bale' === $gateway->get_id() ? 'bale' : 'sms';
+		$channel = self::channel_of( $gateway );
+		$first   = self::channel_of( $chain[0] );
 
 		if ( is_wp_error( $run['result'] ) ) {
 			$message = $run['result']->get_error_message();
 		} elseif ( 'bale' === $channel ) {
-			$message = 'bale' === $chain[0]->get_id() ? 'ارسال موفق از طریق پیام‌رسان بله' : 'ارسال از طریق بله پس از عدم موفقیت پیامک';
-		} elseif ( 'bale' === $chain[0]->get_id() ) {
-			$message = sprintf( 'ارسال از طریق پیامک با %s، پس از عدم موفقیت بله', $gateway->get_title() );
+			$message = 'bale' === $first ? 'ارسال موفق از طریق پیام‌رسان بله' : 'ارسال از طریق بله پس از عدم موفقیت پیامک';
+		} elseif ( 'messenger' === $channel ) {
+			$message = 'ارسال موفق از طریق ' . $gateway->get_title();
+		} elseif ( 'sms' !== $first ) {
+			$message = sprintf(
+				'ارسال از طریق پیامک با %s، پس از عدم موفقیت %s',
+				$gateway->get_title(),
+				'bale' === $first ? 'بله' : 'پیام‌رسان‌های ایرانی'
+			);
 		} else {
 			$message = self::summarize( $run, $sms );
 		}

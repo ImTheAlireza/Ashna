@@ -204,16 +204,9 @@
 			}
 		});
 
-		$('#farazsms_auth_type').on('change', function () {
-			var isUserPass = $(this).val() === 'userpass';
-			$('#farazsms-apikey-wrap').toggle(!isUserPass);
-			$('#farazsms-userpass-wrap').toggle(isUserPass);
-		});
-
-		$('#ippanel_auth_type').on('change', function () {
-			var isUserPass = $(this).val() === 'userpass';
-			$('#ippanel-apikey-wrap').toggle(!isUserPass);
-			$('#ippanel-userpass-wrap').toggle(isUserPass);
+		// Rahpayam: the provider ID is only needed for "other messenger".
+		$('#msgway_messenger_mode').on('change', function () {
+			$('#msgway-provider-wrap').toggle($(this).val() === 'custom');
 		});
 
 		$('input[name="ashna[bale_mode]"]').on('change', function () {
@@ -819,6 +812,10 @@
 								$row.find('.ashna-gw-health-state').html('<span class="ashna-pill is-muted">هنوز استفاده نشده</span>');
 							}
 							$row.find('.ashna-gw-health-num, .ashna-gw-health-error').text('—');
+							$row.find('.ashna-gw-probe').remove();
+							if ($row.attr('data-gw') !== 'sandbox') {
+								$row.find('.ashna-gw-health-slot').text((parseFloat($('#gateway_timeout').val()) || 5).toFixed(1) + ' ثانیه');
+							}
 						});
 						showToast('✅ ' + res.data.message);
 					} else {

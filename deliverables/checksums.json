@@ -1,15 +1,15 @@
 [
   {
     "file": "ashna-otp.zip",
-    "bytes": 346255,
-    "sha256": "762a61e82ac9750de33f8c3b3769b47d17627597c0990afd065c9105f31d94d7",
-    "files": 73
+    "bytes": 355053,
+    "sha256": "4c92ec251810e584c244903ce3db99d2db4ae0a722216656aab2e492359a77e9",
+    "files": 75
   },
   {
     "file": "ashna-otp-no-license.zip",
-    "bytes": 344047,
-    "sha256": "af5b490c782a6134d190a434971e2d80b96df9d9fffc6888505d9c1138e9866c",
-    "files": 73
+    "bytes": 352845,
+    "sha256": "5a1c7008fb49eb1cb02593fd32d9b21dfb77f1c11ede808808659fada4cf0d2b",
+    "files": 75
   },
   {
     "file": "signa-website-source.zip",

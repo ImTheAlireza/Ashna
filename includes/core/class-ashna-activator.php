@@ -29,6 +29,7 @@ class Ashna_Activator {
 		if ( ! wp_next_scheduled( 'ashna_otp_daily_cleanup' ) ) {
 			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'ashna_otp_daily_cleanup' );
 		}
+		Ashna_Failover::ensure_probe_scheduled();
 
 		update_option( 'ashna_otp_db_version', self::DB_VERSION );
 	}
@@ -41,6 +42,7 @@ class Ashna_Activator {
 		if ( $timestamp ) {
 			wp_unschedule_event( $timestamp, 'ashna_otp_daily_cleanup' );
 		}
+		Ashna_Failover::unschedule_probe();
 	}
 
 	/**

@@ -30,12 +30,14 @@ $strategy_labels = array(
 	'sms_fallback_bale' => 'اول پیامک ← سپس بله',
 	'bale'              => 'فقط پیام‌رسان بله',
 	'both'              => 'ارسال همزمان (پیامک + بله)',
+	'messenger'         => 'فقط پیام‌رسان‌های ایرانی (راه‌پیام)',
+	'messenger_fallback_sms' => 'اول پیام‌رسان‌های ایرانی ← سپس پیامک',
 );
 $active_strategy_label = isset( $strategy_labels[ $settings['mobile_delivery_channel'] ] )
 	? $strategy_labels[ $settings['mobile_delivery_channel'] ]
 	: $settings['mobile_delivery_channel'];
 
-$step1_done = ( 'sandbox' !== $settings['active_sms_gateway'] ) || ! empty( $settings['bale_client_id'] ) || ! empty( $settings['bale_bot_token'] );
+$step1_done = ( 'sandbox' !== $settings['active_sms_gateway'] ) || ! empty( $settings['bale_api_key'] ) || ! empty( $settings['bale_bot_token'] ) || ! empty( $settings['msgway_api_key'] );
 $step2_done = ! empty( $settings['mobile_delivery_channel'] );
 $step3_done = ! empty( $settings['enable_passkey'] );
 $step4_done = 'none' !== $settings['captcha_type'];
@@ -140,6 +142,12 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
 										<span class="ashna-flow-sep is-plus">+</span>
 										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+									<?php elseif ( 'messenger_fallback_sms' === $settings['mobile_delivery_channel'] ) : ?>
+										<span class="ashna-flow-node is-messenger" title="پیام‌رسان‌های ایرانی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+										<span class="ashna-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+									<?php elseif ( 'messenger' === $settings['mobile_delivery_channel'] ) : ?>
+										<span class="ashna-flow-node is-messenger" title="پیام‌رسان‌های ایرانی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
 									<?php elseif ( 'bale' === $settings['mobile_delivery_channel'] ) : ?>
 										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 									<?php else : ?>

@@ -193,6 +193,8 @@ class Ashna_Admin {
 			'error_shake_effect',
 			'trust_proxy_headers',
 			'delete_data_on_uninstall',
+			'gateway_adaptive',
+			'gateway_probe',
 		);
 
 		$int_keys = array(
@@ -218,6 +220,8 @@ class Ashna_Admin {
 			'log_retention_days',
 			'gateway_timeout',
 			'gateway_cooldown',
+			'msgway_sms_line',
+			'msgway_messenger_provider',
 		);
 
 		$textarea_keys = array(
@@ -318,7 +322,6 @@ class Ashna_Admin {
 			$clean = $this->sanitize_settings_payload( $raw );
 
 			Ashna_Helper::save_settings( $clean );
-			delete_transient( 'ashna_bale_safir_token' );
 			Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 			$this->settings_saved_in_request = true;
 
@@ -385,7 +388,6 @@ class Ashna_Admin {
 		$clean = $this->sanitize_settings_payload( $raw );
 
 		Ashna_Helper::save_settings( $clean );
-		delete_transient( 'ashna_bale_safir_token' );
 		Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 
 		$this->clean_output_buffers();
@@ -507,7 +509,6 @@ class Ashna_Admin {
 
 		$clean = $this->sanitize_settings_payload( $decoded );
 		Ashna_Helper::save_settings( $clean );
-		delete_transient( 'ashna_bale_safir_token' );
 		Ashna_Failover::reset_circuits();
 
 		$this->clean_output_buffers();
@@ -526,7 +527,6 @@ class Ashna_Admin {
 		}
 
 		Ashna_Helper::save_settings( Ashna_Helper::default_settings() );
-		delete_transient( 'ashna_bale_safir_token' );
 		Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 
 		$this->clean_output_buffers();
@@ -542,7 +542,6 @@ class Ashna_Admin {
 			$clean = $this->sanitize_settings_payload( $raw );
 
 			Ashna_Helper::save_settings( $clean );
-			delete_transient( 'ashna_bale_safir_token' );
 			Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 			$this->settings_saved_in_request = true;
 			$_GET['settings-updated']        = 'true';

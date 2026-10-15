@@ -46,6 +46,26 @@ abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 	}
 
 	/**
+	 * Delivery channel of this gateway (sms | bale | messenger | email).
+	 * Used to keep a rejected number from cascading inside the same channel.
+	 *
+	 * @return string
+	 */
+	public function get_channel() {
+		return 'sms';
+	}
+
+	/**
+	 * Base URL checked by the background health probe (a HEAD request; any
+	 * HTTP answer means reachable). Empty: the gateway is not probed.
+	 *
+	 * @return string
+	 */
+	public function get_probe_url() {
+		return '';
+	}
+
+	/**
 	 * Helper to read a setting option
 	 *
 	 * @param string $key     Option key.
@@ -78,10 +98,7 @@ abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 			return $limits;
 		}
 
-		if ( ! self::$curl_hook_added ) {
-			add_action( 'http_api_curl', array( __CLASS__, 'apply_connect_timeout' ), 10, 3 );
-			self::$curl_hook_added = true;
-		}
+		self::ensure_curl_hook();
 
 		$args                          = is_array( $args ) ? $args : array();
 		$args['timeout']               = $limits['timeout'];
@@ -99,6 +116,16 @@ abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 		);
 
 		return $response;
+	}
+
+	/**
+	 * Register the connect-timeout hook once.
+	 */
+	public static function ensure_curl_hook() {
+		if ( ! self::$curl_hook_added ) {
+			add_action( 'http_api_curl', array( __CLASS__, 'apply_connect_timeout' ), 10, 3 );
+			self::$curl_hook_added = true;
+		}
 	}
 
 	/**

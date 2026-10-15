@@ -3244,3 +3244,50 @@
 	color: var(--s-text-muted);
 	font-size: 12px;
 }
+
+.ashna-info-note.is-warning {
+	background: rgba(245, 158, 11, 0.1);
+	border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ashna-gw-logo.is-msgway {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+}
+
+/* Collapsible legacy credentials (e.g. Melipayamak username/password) */
+#ashna-app-shell .ashna-legacy-details {
+	margin-top: 14px;
+	border: 1px dashed var(--s-border-input);
+	border-radius: 10px;
+	padding: 10px 14px;
+}
+
+#ashna-app-shell .ashna-legacy-details summary {
+	cursor: pointer;
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+#ashna-app-shell .ashna-legacy-details[open] summary {
+	margin-bottom: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-state small.ashna-gw-probe {
+	display: block;
+	margin-top: 4px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-gw-health-slot {
+	white-space: nowrap;
+	color: var(--s-text-secondary);
+}
+
+.ashna-flow-node.is-messenger {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+	border-color: rgba(16, 185, 129, 0.3);
+}

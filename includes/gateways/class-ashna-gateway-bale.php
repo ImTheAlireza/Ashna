@@ -1,6 +1,10 @@
 <?php
 /**
- * Bale Messenger OTP Gateway (Safir Official OTP API + Bale Bot API)
+ * Bale Messenger OTP Gateway (Safir v3 OTP API + Bale Bot API)
+ *
+ * Safir v3 (docs.bale.ai/safir): one request per code, authenticated with the
+ * organisation's api-access-key; the code is delivered by Bale's official
+ * verification bot with your bot's name and a copy button.
  *
  * @package Ashna
  */
@@ -10,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
+
+	/** Safir v3 message endpoint. */
+	const SAFIR_URL = 'https://safir.bale.ai/api/v3/send_message';
 
 	/**
 	 * Get gateway ID
@@ -30,16 +37,32 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 	}
 
 	/**
-	 * Send OTP via Bale Messenger (Safir OTP API or Bot API)
+	 * Delivery channel.
 	 *
-	 * @param string $recipient Normalized phone number or chat_id.
+	 * @return string
+	 */
+	public function get_channel() {
+		return 'bale';
+	}
+
+	/**
+	 * Host checked by the background health probe.
+	 *
+	 * @return string
+	 */
+	public function get_probe_url() {
+		return 'bot' === Ashna_Helper::get_option( 'bale_mode', 'safir' ) ? 'https://tapi.bale.ai/' : 'https://safir.bale.ai/';
+	}
+
+	/**
+	 * Send OTP via Bale Messenger (Safir v3 or Bot API)
+	 *
+	 * @param string $recipient Normalized phone number.
 	 * @param string $code      OTP code.
 	 * @return true|WP_Error
 	 */
 	public function send( $recipient, $code ) {
-		$mode = Ashna_Helper::get_option( 'bale_mode', 'safir' );
-
-		if ( 'bot' === $mode ) {
+		if ( 'bot' === Ashna_Helper::get_option( 'bale_mode', 'safir' ) ) {
 			return $this->send_via_bot( $recipient, $code );
 		}
 
@@ -47,57 +70,63 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 	}
 
 	/**
-	 * Send OTP using Bale Safir v2 Official OTP API
+	 * Send OTP using Safir v3 (single request, no token exchange).
 	 *
 	 * @param string $recipient Normalized phone number.
 	 * @param string $code      OTP code.
 	 * @return true|WP_Error
 	 */
 	private function send_via_safir( $recipient, $code ) {
-		$token = $this->get_safir_access_token();
-		if ( is_wp_error( $token ) ) {
-			return $token;
-		}
+		$api_key = trim( (string) Ashna_Helper::get_option( 'bale_api_key' ) );
+		$bot_id  = absint( Ashna_Helper::get_option( 'bale_bot_id' ) );
 
-		$intl_phone = Ashna_Helper::to_international_phone( $recipient, false ); // 98912xxxxxxx
+		if ( empty( $api_key ) || empty( $bot_id ) ) {
+			return new WP_Error( 'bale_safir_config', 'کلید دسترسی (api-access-key) یا شناسه عددی بازوی سفیر بله تنظیم نشده است.' );
+		}
 
 		$payload = array(
-			'phone' => $intl_phone,
-			'otp'   => (int) $code,
+			// Idempotency key: Safir never delivers the same request_id twice.
+			'request_id'   => wp_generate_uuid4(),
+			'bot_id'       => $bot_id,
+			'phone_number' => Ashna_Helper::to_international_phone( $recipient, false ), // 98912xxxxxxx
+			'message_data' => array(
+				'otp_message' => array(
+					'otp' => (string) $code,
+				),
+			),
 		);
 
-		$response = $this->safir_send_request( $token, $payload );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
+		$response = $this->remote_post(
+			self::SAFIR_URL,
+			array(
+				'headers' => array(
+					'Content-Type'   => 'application/json',
+					'api-access-key' => $api_key,
+				),
+				'body'    => wp_json_encode( $payload ),
+			)
+		);
 
-		// Expired token (401): refresh once and retry. Both calls share the
-		// gateway's failover time slot, so this can no longer stall the visitor.
-		if ( 401 === (int) wp_remote_retrieve_response_code( $response ) ) {
-			delete_transient( 'ashna_bale_safir_token' );
-			$token = $this->get_safir_access_token();
-			if ( is_wp_error( $token ) ) {
-				return $token;
-			}
-			$response = $this->safir_send_request( $token, $payload );
-			if ( is_wp_error( $response ) ) {
-				return $response;
-			}
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error( 'bale_safir_http_error', 'خطای ارتباط با وب‌سرویس سفیر بله: ' . $response->get_error_message() );
 		}
 
 		$http_code = (int) wp_remote_retrieve_response_code( $response );
 		$body      = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		if ( 200 === $http_code ) {
+		if ( $http_code >= 200 && $http_code < 300 && ! empty( $body['message_id'] ) && empty( $body['error_data'] ) ) {
 			return true;
 		}
 
-		$error_msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['error'] ) ? $body['error'] : 'خطا در ارسال کد از طریق سفیر بله (کد HTTP: ' . $http_code . ')' );
+		$error_msg = isset( $body['message'] ) ? (string) $body['message'] : 'خطا در ارسال کد از طریق سفیر بله (کد HTTP: ' . $http_code . ')';
 		$type      = '';
-		if ( isset( $body['error_data'][0]['code'] ) ) {
-			$type = self::safir_error_type( (int) $body['error_data'][0]['code'] );
-			if ( ! empty( $body['error_data'][0]['description'] ) ) {
-				$error_msg = (string) $body['error_data'][0]['description'];
+		$error     = isset( $body['error_data'][0] ) ? $body['error_data'][0] : ( isset( $body['error'] ) && is_array( $body['error'] ) ? $body['error'] : null );
+		if ( is_array( $error ) ) {
+			if ( isset( $error['code'] ) ) {
+				$type = self::safir_error_type( (int) $error['code'] );
+			}
+			if ( ! empty( $error['description'] ) ) {
+				$error_msg = (string) $error['description'];
 			}
 		}
 
@@ -117,6 +146,7 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 		$map = array(
 			2  => 'server',  // InternalServerError.
 			3  => 'server',  // RateLimitExceeded.
+			4  => 'api',     // InvalidInput.
 			8  => 'input',   // InvalidPhone.
 			17 => 'api',     // NotBaleUser.
 			20 => 'account', // PaymentRequired.
@@ -126,83 +156,9 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 	}
 
 	/**
-	 * POST one OTP to the Safir send endpoint.
-	 *
-	 * @param string $token   Access token.
-	 * @param array  $payload Request payload.
-	 * @return array|WP_Error HTTP response, or WP_Error on transport failure.
-	 */
-	private function safir_send_request( $token, $payload ) {
-		$response = $this->remote_post(
-			'https://safir.bale.ai/api/v2/send_otp',
-			array(
-				'headers' => array(
-					'Content-Type'  => 'application/json',
-					'Authorization' => 'Bearer ' . $token,
-				),
-				'body'    => wp_json_encode( $payload ),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'bale_safir_http_error', 'خطای ارتباط با وب‌سرویس سفیر بله: ' . $response->get_error_message() );
-		}
-
-		return $response;
-	}
-
-	/**
-	 * Retrieve OAuth2 Access Token from Bale Safir API
-	 *
-	 * @return string|WP_Error
-	 */
-	private function get_safir_access_token() {
-		$cached = get_transient( 'ashna_bale_safir_token' );
-		if ( ! empty( $cached ) ) {
-			return $cached;
-		}
-
-		$client_id     = trim( (string) Ashna_Helper::get_option( 'bale_client_id' ) );
-		$client_secret = trim( (string) Ashna_Helper::get_option( 'bale_client_secret' ) );
-
-		if ( empty( $client_id ) || empty( $client_secret ) ) {
-			return new WP_Error( 'bale_safir_config', 'شناسه کاربری (Client ID) و رمز عبور (Client Secret) سفیر بله تنظیم نشده است.' );
-		}
-
-		$response = $this->remote_post(
-			'https://safir.bale.ai/api/v2/auth/token',
-			array(
-				'headers' => array(
-					'Content-Type' => 'application/x-www-form-urlencoded',
-				),
-				'body'    => array(
-					'grant_type'    => 'client_credentials',
-					'client_id'     => $client_id,
-					'client_secret' => $client_secret,
-					'scope'         => 'read',
-				),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'bale_token_http_error', 'خطا در دریافت توکن سفیر بله: ' . $response->get_error_message() );
-		}
-
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-		if ( ! empty( $body['access_token'] ) ) {
-			$expires_in = isset( $body['expires_in'] ) ? max( 60, (int) $body['expires_in'] - 60 ) : 3500;
-			set_transient( 'ashna_bale_safir_token', $body['access_token'], $expires_in );
-			return $body['access_token'];
-		}
-
-		$err = isset( $body['error_description'] ) ? $body['error_description'] : 'عدم امکان احراز هویت در وب‌سرویس سفیر بله';
-		return new WP_Error( 'bale_token_error', $err );
-	}
-
-	/**
 	 * Send OTP via Bale Bot API (tapi.bale.ai)
 	 *
-	 * @param string $recipient Normalized phone number or chat_id.
+	 * @param string $recipient Normalized phone number.
 	 * @param string $code      OTP code.
 	 * @return true|WP_Error
 	 */
@@ -212,7 +168,7 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 			return new WP_Error( 'bale_bot_config', 'توکن ربات بله (Bot Token) در تنظیمات وارد نشده است.' );
 		}
 
-		// Resolve chat_id from user_meta if recipient is a phone number
+		// The bot can only message users who started it; their chat_id is stored on the profile.
 		$chat_id = $this->resolve_bale_chat_id( $recipient );
 		if ( empty( $chat_id ) ) {
 			return new WP_Error( 'bale_no_chat_id', 'شناسه چت بله (Chat ID) برای این شماره یافت نشد.' );
@@ -229,10 +185,8 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 			$template
 		);
 
-		$url = sprintf( 'https://tapi.bale.ai/bot%s/sendMessage', rawurlencode( $bot_token ) );
-
 		$response = $this->remote_post(
-			$url,
+			sprintf( 'https://tapi.bale.ai/bot%s/sendMessage', rawurlencode( $bot_token ) ),
 			array(
 				'headers' => array(
 					'Content-Type' => 'application/json',

@@ -79,21 +79,27 @@ $bale_mode = isset( $settings['bale_mode'] ) ? $settings['bale_mode'] : 'safir';
 								</label>
 							</div>
 
-							<!-- Safir Mode Fields -->
+							<!-- Safir v3 Fields -->
 							<div id="ashna-bale-safir-box" style="margin-top:18px; <?php echo 'safir' === $bale_mode ? '' : 'display:none;'; ?>">
+								<?php if ( empty( $settings['bale_api_key'] ) && ( ! empty( $settings['bale_client_id'] ) || in_array( $settings['mobile_delivery_channel'], array( 'bale', 'bale_fallback_sms', 'sms_fallback_bale', 'both' ), true ) ) ) : ?>
+									<div class="ashna-info-note is-warning" style="margin:0 0 14px;">
+										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+										<span>برای ارسال با سفیر نسخه‌ی ۳، کلید دسترسی (api-access-key) و شناسه بازو را از پنل کسب‌وکار بله وارد کنید. Client ID و Client Secret نسخه‌ی قبلی سفیر دیگر کار نمی‌کنند.</span>
+									</div>
+								<?php endif; ?>
 								<div class="ashna-fields-grid ashna-cols-2">
 									<div class="ashna-field">
-										<label for="bale_client_id">شناسه کاربری سفیر (Client ID)</label>
-										<input type="text" name="ashna[bale_client_id]" id="bale_client_id" value="<?php echo esc_attr( $settings['bale_client_id'] ); ?>" dir="ltr" placeholder="Client ID" />
+										<label for="bale_api_key">کلید دسترسی سفیر (api-access-key)</label>
+										<input type="text" name="ashna[bale_api_key]" id="bale_api_key" value="<?php echo esc_attr( $settings['bale_api_key'] ); ?>" dir="ltr" placeholder="api-access-key" />
 									</div>
 									<div class="ashna-field">
-										<label for="bale_client_secret">رمز عبور سفیر (Client Secret)</label>
-										<input type="password" name="ashna[bale_client_secret]" id="bale_client_secret" value="<?php echo esc_attr( $settings['bale_client_secret'] ); ?>" dir="ltr" placeholder="Client Secret" />
+										<label for="bale_bot_id">شناسه عددی بازو (bot_id)</label>
+										<input type="text" inputmode="numeric" name="ashna[bale_bot_id]" id="bale_bot_id" value="<?php echo esc_attr( $settings['bale_bot_id'] ); ?>" dir="ltr" placeholder="123456789" />
 									</div>
 								</div>
 								<div class="ashna-info-note" style="margin-top:14px;">
 									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-									<span>در سرویس رسمی <code>safir.bale.ai</code> نیازی به قالب متن نیست؛ کد تایید با فرمت استاندارد بله مستقیماً به شماره موبایل کاربر ارسال می‌شود.</span>
+									<span>سفیر نسخه‌ی ۳: هر کد فقط با یک درخواست ارسال می‌شود. کلید و شناسه‌ی بازو را بعد از ساخت سفیر در <code>business.bale.ai</code> می‌گیرید. کد از طرف بازوی رسمی «رمز یکبارمصرف» بله، با نام بازوی شما و دکمه‌ی کپی ارسال می‌شود.</span>
 								</div>
 							</div>
 
@@ -154,6 +160,76 @@ $bale_mode = isset( $settings['bale_mode'] ) ? $settings['bale_mode'] : 'safir';
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
 								<span>رنگ دکمه و کادر کد در ایمیل، خودکار با رنگ برند شما در تب «طراحی ظاهر» هماهنگ می‌شود.</span>
 							</div>
+						</div>
+					</div>
+
+					<?php $msgway_mode = isset( $settings['msgway_messenger_mode'] ) ? $settings['msgway_messenger_mode'] : 'smart'; ?>
+					<!-- Rahpayam (MsgWay): Iranian messengers + SMS through one API -->
+					<div class="ashna-card" id="ashna-msgway-card" style="margin-top:20px;">
+						<div class="ashna-card-head">
+							<div class="ashna-card-head-title">
+								<span class="ashna-card-icon is-green">
+									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+								</span>
+								<div>
+									<h2>پیام‌رسان‌های ایرانی با راه‌پیام</h2>
+									<p>ارسال کد در ایتا، روبیکا، بله، گپ و آی‌گپ با یک کلید؛ پیامک راه‌پیام هم به‌عنوان درگاه پیامک قابل انتخاب است</p>
+								</div>
+							</div>
+							<span class="ashna-pill is-ok">یک API، پنج پیام‌رسان</span>
+						</div>
+
+						<div class="ashna-fields-grid ashna-cols-3">
+							<div class="ashna-field">
+								<label for="msgway_api_key">کلید API راه‌پیام (apiKey)</label>
+								<input type="text" name="ashna[msgway_api_key]" id="msgway_api_key" value="<?php echo esc_attr( $settings['msgway_api_key'] ); ?>" dir="ltr" placeholder="msgway.com ← پروژه‌ها" />
+							</div>
+							<div class="ashna-field">
+								<label for="msgway_messenger_mode">مسیر ارسال در پیام‌رسان‌ها</label>
+								<select name="ashna[msgway_messenger_mode]" id="msgway_messenger_mode">
+									<option value="smart" <?php selected( $msgway_mode, 'smart' ); ?>>ارسال هوشمند راه‌پیام (پیشنهادی)</option>
+									<option value="gap" <?php selected( $msgway_mode, 'gap' ); ?>>فقط پیام‌رسان گپ</option>
+									<option value="igap" <?php selected( $msgway_mode, 'igap' ); ?>>فقط پیام‌رسان آی‌گپ</option>
+									<option value="custom" <?php selected( $msgway_mode, 'custom' ); ?>>پیام‌رسان دیگر (ایتا، بله، روبیکا) با شناسه</option>
+								</select>
+								<small>در حالت هوشمند، راه‌پیام از بین پیام‌رسان‌هایی که در پنلش فعال کرده‌اید مسیر را انتخاب می‌کند.</small>
+							</div>
+							<div class="ashna-field">
+								<label for="msgway_messenger_template_id">شناسه الگوی پیام‌رسان (templateID)</label>
+								<input type="text" inputmode="numeric" name="ashna[msgway_messenger_template_id]" id="msgway_messenger_template_id" value="<?php echo esc_attr( $settings['msgway_messenger_template_id'] ); ?>" dir="ltr" placeholder="مثلاً 10" />
+							</div>
+							<div class="ashna-field" id="msgway-provider-wrap" style="<?php echo 'custom' === $msgway_mode ? '' : 'display:none;'; ?>">
+								<label for="msgway_messenger_provider">شناسه پیام‌رسان در راه‌پیام (provider)</label>
+								<input type="text" inputmode="numeric" name="ashna[msgway_messenger_provider]" id="msgway_messenger_provider" value="<?php echo esc_attr( (string) $settings['msgway_messenger_provider'] ); ?>" dir="ltr" placeholder="از مستندات پنل راه‌پیام" />
+							</div>
+							<div class="ashna-field">
+								<label for="msgway_sms_template_id">شناسه الگوی پیامک راه‌پیام</label>
+								<input type="text" inputmode="numeric" name="ashna[msgway_sms_template_id]" id="msgway_sms_template_id" value="<?php echo esc_attr( $settings['msgway_sms_template_id'] ); ?>" dir="ltr" placeholder="مثلاً 3 (الگوی پیش‌فرض کد تایید)" />
+								<small>فقط وقتی لازم است که راه‌پیام را به‌عنوان درگاه پیامک هم انتخاب کنید.</small>
+							</div>
+							<div class="ashna-field">
+								<label for="msgway_sms_line">خط ارسال پیامک راه‌پیام</label>
+								<select name="ashna[msgway_sms_line]" id="msgway_sms_line">
+									<?php
+									$msgway_lines = array(
+										0 => 'پیش‌فرض راه‌پیام',
+										1 => 'سرشماره 3000',
+										2 => 'سرشماره 2000',
+										3 => 'سرشماره 9000',
+										4 => 'سرشماره 5000',
+										5 => 'سرشماره 50004',
+									);
+									foreach ( $msgway_lines as $line_id => $line_label ) :
+										?>
+										<option value="<?php echo esc_attr( (string) $line_id ); ?>" <?php selected( (int) $settings['msgway_sms_line'], $line_id ); ?>><?php echo esc_html( $line_label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+						</div>
+
+						<div class="ashna-info-note" style="margin-top:16px;">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+							<span>برای استفاده، در تب «روش و مسیر ورود» یکی از گزینه‌های «پیام‌رسان‌های ایرانی» را انتخاب کنید. الگوها باید در پنل راه‌پیام تأیید شده باشند. کد تایید را خود آشنا می‌سازد و بررسی می‌کند.</span>
 						</div>
 					</div>
 				</section>

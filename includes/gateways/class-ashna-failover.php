@@ -31,6 +31,21 @@ final class Ashna_Failover {
 	/** A new gateway attempt needs at least this much of the budget left. */
 	const MIN_ATTEMPT = 1.0;
 
+	/** Learned time slot: successes needed before a gateway's own speed is used. */
+	const ADAPTIVE_MIN_SAMPLES = 5;
+
+	/** Learned time slot: multiple of the gateway's average response time. */
+	const ADAPTIVE_FACTOR = 4;
+
+	/** Learned time slot never drops below this (seconds). */
+	const ADAPTIVE_FLOOR = 2.0;
+
+	/** WP-Cron hook of the background health probe. */
+	const PROBE_HOOK = 'ashna_otp_gateway_probe';
+
+	/** Probe interval in seconds. */
+	const PROBE_INTERVAL = 300;
+
 	/**
 	 * Error types that mean the gateway itself is down or unusable. Only these
 	 * sideline a gateway; recipient-specific errors (e.g. "no Bale account")
@@ -99,6 +114,37 @@ final class Ashna_Failover {
 		 * @param float $budget Default: 3 × gateway timeout, clamped to 8–20 seconds.
 		 */
 		return max( 2.0, (float) apply_filters( 'ashna_otp_failover_budget', $budget ) );
+	}
+
+	/**
+	 * Whether gateways get a time slot learned from their own response times.
+	 *
+	 * @return bool
+	 */
+	public static function adaptive_enabled() {
+		return (bool) Ashna_Helper::get_option( 'gateway_adaptive', 1 );
+	}
+
+	/**
+	 * Time slot for one attempt on a gateway.
+	 *
+	 * A provider that usually answers in 0.4s does not need 5 seconds: after
+	 * ADAPTIVE_MIN_SAMPLES successes the slot is 4x its average response time,
+	 * at least 2 seconds and never more than the configured maximum.
+	 *
+	 * @param string $id Gateway ID.
+	 * @return float Seconds.
+	 */
+	public static function slot_for( $id ) {
+		$cap = self::gateway_timeout();
+		if ( ! self::adaptive_enabled() ) {
+			return $cap;
+		}
+		$row = self::get( $id );
+		if ( (int) $row['ok'] < self::ADAPTIVE_MIN_SAMPLES || (int) $row['avg_ms'] <= 0 ) {
+			return $cap;
+		}
+		return max( self::ADAPTIVE_FLOOR, min( $cap, self::ADAPTIVE_FACTOR * (int) $row['avg_ms'] / 1000 ) );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -214,6 +260,10 @@ final class Ashna_Failover {
 			'avg_ms'     => 0,
 			'last_type'  => '',
 			'last_error' => '',
+			'by_probe'   => false, // Circuit opened by the background probe.
+			'last_probe' => 0,
+			'probe_ok'   => null,
+			'probe_ms'   => 0,
 		);
 	}
 
@@ -290,6 +340,7 @@ final class Ashna_Failover {
 		$row['open_until'] = 0;
 		$row['opens']      = 0;
 		$row['streak']     = 0;
+		$row['by_probe']   = false;
 		$row['ok']         = (int) $row['ok'] + 1;
 		$row['last_ok']    = time();
 		$row['last_ms']    = $ms;
@@ -303,10 +354,11 @@ final class Ashna_Failover {
 	 * @param string $id      Gateway ID.
 	 * @param string $type    Error type from classify().
 	 * @param string $message Error message.
-	 * @param int    $ms      Duration in milliseconds.
+	 * @param int    $ms       Duration in milliseconds.
+	 * @param bool   $by_probe Failure seen by the background probe, not a visitor.
 	 * @return bool Whether the circuit is open now.
 	 */
-	public static function record_failure( $id, $type, $message, $ms ) {
+	public static function record_failure( $id, $type, $message, $ms, $by_probe = false ) {
 		$row               = self::get( $id );
 		$row['streak']     = (int) $row['streak'] + 1;
 		$row['fail']       = (int) $row['fail'] + 1;
@@ -320,6 +372,7 @@ final class Ashna_Failover {
 			$row['opens']      = min( 10, (int) $row['opens'] + 1 );
 			$cooldown          = min( self::cooldown() * pow( 2, $row['opens'] - 1 ), max( self::cooldown(), self::MAX_COOLDOWN ) );
 			$row['open_until'] = time() + (int) $cooldown;
+			$row['by_probe']   = (bool) $by_probe;
 			$opened            = true;
 		}
 
@@ -350,6 +403,7 @@ final class Ashna_Failover {
 				$row['open_until']   = 0;
 				$row['opens']        = 0;
 				$row['streak']       = 0;
+				$row['by_probe']     = false;
 				self::$health[ $id ] = $row;
 			}
 		}
@@ -362,6 +416,120 @@ final class Ashna_Failover {
 	public static function reset_all() {
 		self::$health = array();
 		delete_option( self::OPTION );
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Background health probe (WP-Cron)
+	 * ------------------------------------------------------------------- */
+
+	/**
+	 * Add the 5-minute schedule used by the probe.
+	 *
+	 * @param array $schedules WP-Cron schedules.
+	 * @return array
+	 */
+	public static function register_cron_schedule( $schedules ) {
+		$schedules['ashna_five_minutes'] = array(
+			'interval' => self::PROBE_INTERVAL,
+			'display'  => 'هر ۵ دقیقه (آشنا)',
+		);
+		return $schedules;
+	}
+
+	/**
+	 * Schedule the probe if it is not scheduled yet.
+	 */
+	public static function ensure_probe_scheduled() {
+		if ( function_exists( 'wp_next_scheduled' ) && ! wp_next_scheduled( self::PROBE_HOOK ) ) {
+			wp_schedule_event( time() + 60, 'ashna_five_minutes', self::PROBE_HOOK );
+		}
+	}
+
+	/**
+	 * Remove the probe schedule.
+	 */
+	public static function unschedule_probe() {
+		$timestamp = wp_next_scheduled( self::PROBE_HOOK );
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, self::PROBE_HOOK );
+		}
+	}
+
+	/**
+	 * Check every gateway on the delivery path (WP-Cron, every 5 minutes).
+	 *
+	 * Runs in WordPress's background cron request, never in a visitor's
+	 * request. A gateway whose host does not answer is sidelined before any
+	 * visitor reaches it, so even the first visitor of an outage waits 0s.
+	 *
+	 * @return array<string, string> Gateway ID => ok | skipped | error type.
+	 */
+	public static function run_probe() {
+		$results = array();
+		if ( ! Ashna_Helper::get_option( 'gateway_probe', 1 ) ) {
+			return $results;
+		}
+		foreach ( Ashna_Gateway_Manager::probe_targets() as $gateway ) {
+			$results[ $gateway->get_id() ] = self::probe( $gateway );
+		}
+		return $results;
+	}
+
+	/**
+	 * Probe one gateway with a HEAD request to its API host. Any HTTP answer
+	 * below 500 means reachable; nothing is sent and no credit is used.
+	 *
+	 * @param Ashna_Gateway_Interface $gateway Gateway.
+	 * @return string ok | skipped | error type.
+	 */
+	public static function probe( $gateway ) {
+		$url = method_exists( $gateway, 'get_probe_url' ) ? (string) $gateway->get_probe_url() : '';
+		if ( '' === $url ) {
+			return 'skipped';
+		}
+
+		Ashna_Abstract_Gateway::ensure_curl_hook();
+		$id       = $gateway->get_id();
+		$started  = microtime( true );
+		$response = wp_remote_head(
+			$url,
+			array(
+				'timeout'               => self::TRIAL_TIMEOUT,
+				'redirection'           => 0,
+				'ashna_connect_timeout' => 2.0,
+			)
+		);
+		$ms = (int) round( ( microtime( true ) - $started ) * 1000 );
+
+		$type    = '';
+		$message = '';
+		if ( is_wp_error( $response ) ) {
+			$type    = self::classify_transport_message( $response->get_error_message(), 'network' );
+			$message = $response->get_error_message();
+		} elseif ( (int) wp_remote_retrieve_response_code( $response ) >= 500 ) {
+			$type    = 'server';
+			$message = 'HTTP ' . (int) wp_remote_retrieve_response_code( $response );
+		}
+
+		$row               = self::get( $id );
+		$row['last_probe'] = time();
+		$row['probe_ms']   = $ms;
+		$row['probe_ok']   = '' === $type;
+
+		if ( '' === $type ) {
+			// Reachable again: a circuit the probe opened is tried right away.
+			if ( ! empty( $row['by_probe'] ) && (int) $row['open_until'] > time() ) {
+				$row['open_until'] = time();
+			}
+			self::put( $id, $row );
+			return 'ok';
+		}
+
+		self::put( $id, $row );
+		if ( 'closed' === self::state( $id ) ) {
+			self::record_failure( $id, $type, 'بررسی خودکار: ' . $message, $ms, true );
+		}
+		return $type;
 	}
 
 	/* ---------------------------------------------------------------------

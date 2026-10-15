@@ -30,6 +30,15 @@ class Ashna_Gateway_Smsir extends Ashna_Abstract_Gateway {
 	}
 
 	/**
+	 * Host checked by the background health probe.
+	 *
+	 * @return string
+	 */
+	public function get_probe_url() {
+		return 'https://api.sms.ir/';
+	}
+
+	/**
 	 * Send OTP via SMS.ir Verify API v1
 	 *
 	 * @param string $recipient Normalized phone number.

@@ -70,12 +70,15 @@ bootstrap tests on older PHP are not a declaration of licensed-package support.
 
 ## Fast-failover engine (QC 3)
 
-`tests/failover.php` exercises 21 scenarios against simulated gateways through
+`tests/failover.php` exercises 29 scenarios against simulated gateways through
 the real `pre_http_request` filter: short per-gateway timeouts, the total
 budget, circuit breaker (skip, trial after cooldown, backoff, recovery), error
-classification (timeout/connect/server/auth/account/api/config/input), Bale
-token refresh + retry, channel fallback, "both" strategy, admin tests that
-bypass the breaker and exceptions in custom gateways. A simulated "hang" really
+classification (timeout/connect/server/auth/account/api/config/input), learned
+time slots, the background health probe (HEAD requests, early trial, switch),
+channel fallback, "both" strategy, admin tests that bypass the breaker,
+exceptions in custom gateways, and the exact request format of the current
+provider APIs: Safir v3, Rahpayam (smart / messenger / SMS), FarazSMS
+(iranpayamak), Melipayamak console (+ legacy fallback) and IPPanel Edge. A simulated "hang" really
 sleeps for the timeout WordPress was given, so the timing assertions are real
 (the run takes about 20 seconds).
 

@@ -65,11 +65,14 @@ if ( ! $ashna_full_wp ) {
 	function get_user_meta( $user_id, $key = '', $single = false ) { return ''; }
 	function add_query_arg( $args, $url ) { return $url . '?' . http_build_query( $args ); }
 	function wp_mail( $to, $subject, $message, $headers = '' ) { return true; }
-	function wp_remote_post( $url, $args = array() ) {
-		$args = array_merge( array( 'timeout' => 5 ), $args );
+	function wp_remote_request( $url, $args = array() ) {
+		$args = array_merge( array( 'timeout' => 5, 'method' => 'GET' ), $args );
 		$pre  = apply_filters( 'pre_http_request', false, $args, $url );
 		return false !== $pre ? $pre : new WP_Error( 'http_request_failed', 'Network access is disabled in tests.' );
 	}
+	function wp_remote_post( $url, $args = array() ) { return wp_remote_request( $url, array_merge( $args, array( 'method' => 'POST' ) ) ); }
+	function wp_remote_head( $url, $args = array() ) { return wp_remote_request( $url, array_merge( $args, array( 'method' => 'HEAD' ) ) ); }
+	function wp_generate_uuid4() { return sprintf( '%04x%04x-%04x-4%03x-%04x-%04x%04x%04x', mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xfff ), mt_rand( 0x8000, 0xbfff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ) ); }
 	function wp_remote_retrieve_body( $response ) { return is_wp_error( $response ) || ! isset( $response['body'] ) ? '' : $response['body']; }
 	function wp_remote_retrieve_response_code( $response ) { return is_wp_error( $response ) || ! isset( $response['response']['code'] ) ? '' : $response['response']['code']; }
 
@@ -120,13 +123,20 @@ function ok_response( $host, $path ) {
 	if ( false !== strpos( $host, 'payamak-panel' ) ) {
 		return http_response( 200, array( 'RetStatus' => 1, 'StrRetStatus' => 'Ok', 'Value' => '1234' ) );
 	}
+	if ( false !== strpos( $host, 'console.melipayamak' ) ) {
+		return http_response( 200, array( 'recId' => 4815162342, 'status' => 'ارسال موفق بود' ) );
+	}
+	if ( false !== strpos( $host, 'iranpayamak' ) ) {
+		return http_response( 200, array( 'status' => 'success', 'data' => array( 'message_id' => 77 ) ) );
+	}
+	if ( false !== strpos( $host, 'msgway' ) ) {
+		return http_response( 200, array( 'status' => 'success', 'referenceID' => '1650364661182050044' ) );
+	}
 	if ( false !== strpos( $host, 'edge.ippanel' ) ) {
 		return http_response( 200, array( 'meta' => array( 'status' => true ), 'data' => array() ) );
 	}
 	if ( false !== strpos( $host, 'safir.bale.ai' ) ) {
-		return false !== strpos( $path, 'token' )
-			? http_response( 200, array( 'access_token' => 'fresh-token', 'expires_in' => 3600 ) )
-			: http_response( 200, array( 'message_id' => 'm-1' ) );
+		return http_response( 200, array( 'message_id' => 'BvQjaR.fIKt7kH.EXTddgYduJ2' ) );
 	}
 	return http_response( 200, '{}' );
 }
@@ -134,11 +144,12 @@ function ok_response( $host, $path ) {
 add_filter(
 	'pre_http_request',
 	function ( $pre, $args, $url ) {
-		$host = (string) parse_url( $url, PHP_URL_HOST );
-		$path = (string) parse_url( $url, PHP_URL_PATH );
-		$mode = 'ok';
+		$host   = (string) parse_url( $url, PHP_URL_HOST );
+		$path   = (string) parse_url( $url, PHP_URL_PATH );
+		$method = isset( $args['method'] ) ? strtoupper( $args['method'] ) : 'POST';
+		$mode   = 'ok';
 		foreach ( $GLOBALS['sim'] as $pattern => $behaviour ) {
-			if ( false !== strpos( $host . $path, $pattern ) ) {
+			if ( false !== strpos( $method . ' ' . $host . $path, $pattern ) ) {
 				if ( is_array( $behaviour ) ) {
 					$mode = count( $behaviour ) > 1 ? array_shift( $GLOBALS['sim'][ $pattern ] ) : $behaviour[0];
 				} else {
@@ -148,11 +159,24 @@ add_filter(
 			}
 		}
 		$GLOBALS['calls'][] = array(
+			'method'  => $method,
 			'host'    => $host,
 			'path'    => $path,
+			'url'     => $url,
 			'timeout' => (float) $args['timeout'],
 			'connect' => isset( $args['ashna_connect_timeout'] ) ? (float) $args['ashna_connect_timeout'] : null,
+			'headers' => isset( $args['headers'] ) ? $args['headers'] : array(),
+			'body'    => isset( $args['body'] ) && is_string( $args['body'] ) ? json_decode( $args['body'], true ) : null,
 		);
+
+		if ( 0 === strpos( (string) $mode, 'slow:' ) ) {
+			$delay = (float) substr( $mode, 5 );
+			usleep( (int) ( min( $delay, (float) $args['timeout'] ) * 1000000 ) );
+			if ( $delay > (float) $args['timeout'] ) {
+				return new WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out' );
+			}
+			return 'HEAD' === $method ? http_response( 404, '' ) : ok_response( $host, $path );
+		}
 
 		switch ( $mode ) {
 			case 'hang':
@@ -168,10 +192,12 @@ add_filter(
 				return http_response( 411, array( 'return' => array( 'status' => 411, 'message' => 'گیرنده نامعتبر است' ), 'entries' => null ) );
 			case 'kav418':
 				return http_response( 418, array( 'return' => array( 'status' => 418, 'message' => 'اعتبار حساب شما کافی نیست' ), 'entries' => null ) );
+			case 'msgway400':
+				return http_response( 400, array( 'status' => 'error', 'error' => array( 'code' => '1103', 'message' => 'الگو یافت نشد' ) ) );
 			case 'safir17':
 				return http_response( 400, array( 'message' => 'not a bale user', 'error_data' => array( array( 'phone_number' => '989121234567', 'code' => 17, 'description' => 'کاربر اکانت بله ندارد' ) ) ) );
 			default:
-				return ok_response( $host, $path );
+				return 'HEAD' === $method ? http_response( 404, '' ) : ok_response( $host, $path );
 		}
 	},
 	10,
@@ -203,12 +229,17 @@ function configure( array $overrides = array() ) {
 			'melipayamak_password'    => 'pass',
 			'melipayamak_body_id'     => 123,
 			'backup_sms_gateway_3'    => 'none',
-			'ippanel_auth_type'       => 'edge',
 			'ippanel_api_key'         => 'ippanel-key',
 			'ippanel_pattern_code'    => 'pattern',
+			'farazsms_api_key'        => 'faraz-key',
+			'farazsms_pattern_code'   => 'faraz-pattern',
 			'bale_mode'               => 'safir',
-			'bale_client_id'          => 'client',
-			'bale_client_secret'      => 'secret',
+			'bale_api_key'            => 'safir-access-key',
+			'bale_bot_id'             => '123456789',
+			'msgway_api_key'          => 'msgway-key',
+			'msgway_sms_template_id'  => '3',
+			'msgway_messenger_template_id' => '10',
+			'msgway_messenger_mode'   => 'smart',
 			'mobile_delivery_channel' => 'sms',
 			'gateway_timeout'         => 2,
 			'gateway_cooldown'        => 1,
@@ -255,6 +286,28 @@ function calls_to( $needle ) {
 			$GLOBALS['calls'],
 			function ( $call ) use ( $needle ) {
 				return false !== strpos( $call['host'] . $call['path'], $needle );
+			}
+		)
+	);
+}
+
+function heads_to( $needle ) {
+	return array_values(
+		array_filter(
+			calls_to( $needle ),
+			function ( $call ) {
+				return 'HEAD' === $call['method'];
+			}
+		)
+	);
+}
+
+function posts_to( $needle ) {
+	return array_values(
+		array_filter(
+			calls_to( $needle ),
+			function ( $call ) {
+				return 'POST' === $call['method'];
 			}
 		)
 	);
@@ -389,27 +442,29 @@ check( 0 === count( calls_to( 'ippanel' ) ), 'budget: gateway called after the b
 check( false !== strpos( last_log_message(), 'امتحان نشد' ), 'budget: trace does not mention the untried gateway' );
 pass( 'total budget caps a fully broken chain', $t );
 
-// 12. Bale first, token endpoint hangs: Bale gets one short slot, then SMS delivers.
+// 12. Bale (Safir v3) hangs: Bale gets one short slot, then SMS delivers.
 fresh_start( array( 'mobile_delivery_channel' => 'bale_fallback_sms' ) );
-sim( array( 'safir.bale.ai/api/v2/auth/token' => 'hang' ) );
+sim( array( 'safir.bale.ai' => 'hang' ) );
 list( $r, $t ) = dispatch();
 check( ! is_wp_error( $r ) && 'sms' === $r['channel'] && 'smsir' === $r['gateway'], 'bale-timeout: SMS fallback failed' );
 check( $t >= 1.9 && $t < 2.8, sprintf( 'bale-timeout: waited %.2fs (expected about 2s)', $t ) );
 check( 'open' === Ashna_Failover::state( 'bale' ), 'bale-timeout: Bale not sidelined' );
-pass( 'Bale token hang is bounded, SMS takes over', $t );
+pass( 'Bale hang is bounded, SMS takes over', $t );
 
-// 13. Bale expired token: 401 -> refresh -> retry, all inside one slot.
+// 13. Safir v3 request: one call, api-access-key header, bot_id, otp_message, idempotency key.
 fresh_start( array( 'mobile_delivery_channel' => 'bale' ) );
-sim( array( 'safir.bale.ai/api/v2/send_otp' => array( '401', 'ok' ) ) );
-set_transient( 'ashna_bale_safir_token', 'stale-token', 3600 );
-list( $r, $t ) = dispatch();
-check( ! is_wp_error( $r ) && 'bale' === $r['channel'], 'bale-401: retry failed' );
-check( 3 === count( calls_to( 'safir.bale.ai' ) ), 'bale-401: expected send, token, send' );
-pass( 'Bale 401 refresh + retry succeeds', $t );
+sim( array() );
+list( $r, $t ) = dispatch( '09121234567' );
+$safir = posts_to( 'safir.bale.ai' );
+check( ! is_wp_error( $r ) && 'bale' === $r['channel'] && 1 === count( $safir ), 'safir-v3: expected exactly one request' );
+check( '/api/v3/send_message' === $safir[0]['path'] && 'safir-access-key' === $safir[0]['headers']['api-access-key'], 'safir-v3: wrong endpoint or auth header' );
+$b = $safir[0]['body'];
+check( 123456789 === $b['bot_id'] && '989121234567' === $b['phone_number'] && $r['code'] === $b['message_data']['otp_message']['otp'] && 36 === strlen( $b['request_id'] ), 'safir-v3: wrong payload ' . json_encode( $b ) );
+pass( 'Bale uses Safir v3 (single request)', $t );
 
 // 14. "Not a Bale user": falls back to SMS without sidelining Bale for everyone.
 fresh_start( array( 'mobile_delivery_channel' => 'bale_fallback_sms' ) );
-sim( array( 'safir.bale.ai/api/v2/send_otp' => 'safir17' ) );
+sim( array( 'safir.bale.ai/api/v3/send_message' => 'safir17' ) );
 list( $r, $t ) = dispatch();
 check( ! is_wp_error( $r ) && 'sms' === $r['channel'], 'not-bale-user: no SMS fallback' );
 check( 'closed' === Ashna_Failover::state( 'bale' ), 'not-bale-user: Bale was sidelined' );
@@ -471,6 +526,114 @@ check( ! Ashna_Gateway_Manager::has_fallback(), 'fallback: reported without back
 configure( array( 'backup_sms_gateway_1' => 'none', 'backup_sms_gateway_2' => 'none', 'mobile_delivery_channel' => 'bale_fallback_sms' ) );
 check( Ashna_Gateway_Manager::has_fallback(), 'fallback: channel fallback not detected' );
 pass( 'settings save closes circuits; fallback detection' );
+
+// 21. Learned time slot: a fast provider (0.2s) gets 2s instead of the 5s maximum.
+fresh_start( array( 'gateway_timeout' => 5 ) );
+sim( array( 'api.sms.ir' => 'slow:0.2' ) );
+for ( $i = 0; $i < Ashna_Failover::ADAPTIVE_MIN_SAMPLES; $i++ ) {
+	dispatch( '0912000000' . $i );
+}
+check( abs( Ashna_Failover::slot_for( 'smsir' ) - 2.0 ) < 0.01, 'adaptive: slot is ' . Ashna_Failover::slot_for( 'smsir' ) );
+sim( array( 'api.sms.ir' => 'hang' ) );
+list( $r, $t ) = dispatch( '09121234580' );
+check( ! is_wp_error( $r ) && 'kavenegar' === $r['gateway'] && $t >= 1.9 && $t < 2.8, sprintf( 'adaptive: first visitor waited %.2fs (expected ~2s, not 5s)', $t ) );
+configure( array( 'gateway_timeout' => 5, 'gateway_adaptive' => 0 ) );
+check( 5.0 === Ashna_Failover::slot_for( 'smsir' ), 'adaptive: switch off not honoured' );
+pass( 'learned time slot: 2s instead of 5s for a fast gateway', $t );
+
+// 22. Background probe: an unreachable host is sidelined before any visitor arrives.
+fresh_start( array( 'gateway_timeout' => 5 ) );
+sim( array( 'HEAD api.sms.ir' => 'refused', 'POST api.sms.ir' => 'hang' ) );
+$probe = Ashna_Failover::run_probe();
+check( 'connect' === $probe['smsir'] && 'ok' === $probe['kavenegar'] && ! isset( $probe['sandbox'] ), 'probe: wrong results ' . json_encode( $probe ) );
+check( 'open' === Ashna_Failover::state( 'smsir' ) && ! empty( Ashna_Failover::get( 'smsir' )['by_probe'] ), 'probe: primary not sidelined' );
+$GLOBALS['calls'] = array();
+list( $r, $t ) = dispatch( '09121234581' );
+check( ! is_wp_error( $r ) && 'kavenegar' === $r['gateway'] && 0 === count( posts_to( 'sms.ir' ) ) && $t < 0.5, sprintf( 'probe: first visitor still waited %.2fs', $t ) );
+pass( 'probe sidelines a dead gateway before the first visitor', $t );
+
+// 23. Probe sees the host again: a probe-opened circuit gets an immediate trial;
+//     a circuit opened by real sends keeps its cooldown.
+sim( array() );
+Ashna_Failover::run_probe();
+check( 'trial' === Ashna_Failover::state( 'smsir' ), 'probe-recovery: no early trial' );
+fresh_start();
+sim( array( 'POST api.sms.ir' => 'refused' ) );
+dispatch();
+sim( array() );
+Ashna_Failover::run_probe();
+check( 'open' === Ashna_Failover::state( 'smsir' ), 'probe-recovery: real-send circuit was cut short' );
+configure( array( 'gateway_probe' => 0 ) );
+check( array() === Ashna_Failover::run_probe(), 'probe: switch off not honoured' );
+pass( 'probe recovery rules and switch' );
+
+// 24. Iranian messengers via Rahpayam (smart route), with SMS fallback strategy.
+fresh_start( array( 'mobile_delivery_channel' => 'messenger_fallback_sms' ) );
+sim( array() );
+list( $r, $t ) = dispatch( '09121234567' );
+$mw = posts_to( 'api.msgway.com' );
+check( ! is_wp_error( $r ) && 'messenger' === $r['channel'] && 'msgway_messenger' === $r['gateway'] && 1 === count( $mw ), 'msgway: not delivered by messenger' );
+$b = $mw[0]['body'];
+check( 'smart' === $b['method'] && '+989121234567' === $b['mobile'] && 10 === $b['templateID'] && $r['code'] === $b['code'] && ! isset( $b['provider'] ), 'msgway: wrong smart payload ' . json_encode( $b ) );
+check( 'msgway-key' === $mw[0]['headers']['apiKey'] && 'fa' === $mw[0]['headers']['accept-language'] && '/send' === $mw[0]['path'], 'msgway: wrong headers/endpoint' );
+pass( 'Rahpayam smart messenger route', $t );
+
+// 25. Rahpayam fixed messenger (Gap = provider 2); template error falls back to SMS, not sidelined.
+fresh_start( array( 'mobile_delivery_channel' => 'messenger_fallback_sms', 'msgway_messenger_mode' => 'gap' ) );
+sim( array() );
+dispatch();
+check( 'messenger' === posts_to( 'api.msgway.com' )[0]['body']['method'] && 2 === posts_to( 'api.msgway.com' )[0]['body']['provider'], 'msgway-gap: provider 2 not sent' );
+sim( array( 'api.msgway.com' => 'msgway400' ) );
+list( $r, $t ) = dispatch( '09121234582' );
+check( ! is_wp_error( $r ) && 'sms' === $r['channel'] && 'closed' === Ashna_Failover::state( 'msgway_messenger' ), 'msgway-error: wrong fallback or sidelined' );
+check( false !== strpos( last_log_message(), 'الگو یافت نشد' ), 'msgway-error: provider message missing from the log' );
+fresh_start( array( 'mobile_delivery_channel' => 'messenger', 'msgway_messenger_mode' => 'custom', 'msgway_messenger_provider' => 0 ) );
+sim( array() );
+list( $r, $t ) = dispatch();
+check( is_wp_error( $r ) && 0 === count( calls_to( 'msgway' ) ), 'msgway-custom: missing provider must not call the API' );
+pass( 'Rahpayam gap/custom modes and fallback', $t );
+
+// 26. Rahpayam as a plain SMS gateway in the chain (line 3000 = provider 1).
+fresh_start( array( 'active_sms_gateway' => 'msgway', 'msgway_sms_line' => 1 ) );
+sim( array() );
+list( $r, $t ) = dispatch();
+$b = posts_to( 'api.msgway.com' )[0]['body'];
+check( ! is_wp_error( $r ) && 'msgway' === $r['gateway'] && 'sms' === $r['channel'] && 'sms' === $b['method'] && 1 === $b['provider'] && 3 === $b['templateID'], 'msgway-sms: wrong payload ' . json_encode( $b ) );
+pass( 'Rahpayam SMS gateway', $t );
+
+// 27. Latest provider APIs: FarazSMS (iranpayamak), Melipayamak console + legacy, IPPanel Edge.
+fresh_start( array( 'active_sms_gateway' => 'farazsms', 'farazsms_param_name' => 'otp' ) );
+sim( array() );
+list( $r ) = dispatch( '09121234567' );
+$c = posts_to( 'iranpayamak' )[0];
+check( ! is_wp_error( $r ) && '/ws/v1/sms/pattern' === $c['path'] && 'faraz-key' === $c['headers']['Api-Key'], 'faraz: wrong endpoint/auth' );
+check( 'faraz-pattern' === $c['body']['code'] && array( 'otp' => $r['code'] ) === $c['body']['attributes'] && '09121234567' === $c['body']['recipient'] && ! isset( $c['body']['line_number'] ), 'faraz: wrong payload ' . json_encode( $c['body'] ) );
+
+fresh_start( array( 'active_sms_gateway' => 'melipayamak', 'melipayamak_api_key' => 'meli-key' ) );
+sim( array() );
+list( $r ) = dispatch( '09121234567' );
+$c = posts_to( 'console.melipayamak.com' )[0];
+check( ! is_wp_error( $r ) && '/api/send/shared/meli-key' === $c['path'] && 123 === $c['body']['bodyId'] && array( $r['code'] ) === $c['body']['args'], 'meli-console: wrong request ' . json_encode( $c ) );
+fresh_start( array( 'active_sms_gateway' => 'melipayamak', 'melipayamak_api_key' => '' ) );
+sim( array() );
+list( $r ) = dispatch();
+check( ! is_wp_error( $r ) && 1 === count( posts_to( 'rest.payamak-panel.com' ) ), 'meli-legacy: username/password fallback not used' );
+
+fresh_start( array( 'active_sms_gateway' => 'ippanel' ) );
+sim( array() );
+list( $r ) = dispatch( '09121234567' );
+$c = posts_to( 'edge.ippanel.com' )[0];
+check( ! is_wp_error( $r ) && 'pattern' === $c['body']['sending_type'] && array( '+989121234567' ) === $c['body']['recipients'] && array( 'code' => $r['code'] ) === $c['body']['params'] && 'ippanel-key' === $c['headers']['Authorization'], 'ippanel: wrong request ' . json_encode( $c['body'] ) );
+pass( 'FarazSMS / Melipayamak / IPPanel use their current APIs' );
+
+// 28. Probe targets follow the delivery path.
+configure( array( 'mobile_delivery_channel' => 'messenger' ) );
+$ids = array_map( function ( $g ) { return $g->get_id(); }, Ashna_Gateway_Manager::probe_targets() );
+check( array( 'msgway_messenger' ) === $ids, 'targets: messenger-only ' . json_encode( $ids ) );
+configure( array( 'mobile_delivery_channel' => 'sms_fallback_bale', 'active_sms_gateway' => 'sandbox' ) );
+$ids = array_map( function ( $g ) { return $g->get_id(); }, Ashna_Gateway_Manager::probe_targets() );
+check( array( 'kavenegar', 'melipayamak', 'bale' ) === $ids, 'targets: sms+bale ' . json_encode( $ids ) );
+pass( 'probe targets follow the delivery path' );
 
 // 20. Classification table.
 $cases = array(

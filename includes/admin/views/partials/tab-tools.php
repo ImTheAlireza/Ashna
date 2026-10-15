@@ -34,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<select id="ashna_test_channel">
 									<option value="sms">پیامک (درگاه انتخابی)</option>
 									<option value="bale">پیام‌رسان بله (Bale)</option>
+									<option value="messenger">پیام‌رسان‌های ایرانی (راه‌پیام)</option>
 									<option value="email">ایمیل (wp_mail)</option>
 								</select>
 							</div>

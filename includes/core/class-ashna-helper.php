@@ -27,7 +27,7 @@ class Ashna_Helper {
 		return array(
 			// 1. General & Auth Flow Settings
 			'login_mode'                => 'phone_and_email', // phone_only | phone_and_email | email_only
-			'mobile_delivery_channel'   => 'sms',             // sms | bale | bale_fallback_sms | sms_fallback_bale | both
+			'mobile_delivery_channel'   => 'sms',             // sms | bale | bale_fallback_sms | sms_fallback_bale | both | messenger | messenger_fallback_sms
 			'otp_length'                => 5,
 			'otp_expiry'                => 120,               // seconds
 			'resend_cooldown'           => 60,                // seconds
@@ -60,6 +60,8 @@ class Ashna_Helper {
 			'backup_sms_gateway_3'      => 'none',            // 3rd priority failover
 			'gateway_timeout'           => 5,                 // seconds to wait for one gateway before failing over (2–15)
 			'gateway_cooldown'          => 5,                 // minutes a failing gateway is skipped before a quick re-check (1–60)
+			'gateway_adaptive'          => 1,                 // learn each gateway's normal response time and fail over sooner
+			'gateway_probe'             => 1,                 // background health check of the delivery path every 5 minutes
 
 			// SMS.ir Settings
 			'smsir_api_key'             => '',
@@ -70,33 +72,36 @@ class Ashna_Helper {
 			'kavenegar_api_key'         => '',
 			'kavenegar_template'        => '',
 
-			// Melipayamak Settings
+			// Melipayamak Settings (console API key; username/password = legacy REST fallback)
+			'melipayamak_api_key'       => '',
 			'melipayamak_username'      => '',
 			'melipayamak_password'      => '',
 			'melipayamak_body_id'       => '',
 
-			// FarazSMS Settings
-			'farazsms_auth_type'        => 'apikey',          // apikey | userpass
+			// FarazSMS Settings (api.iranpayamak.com)
 			'farazsms_api_key'          => '',
-			'farazsms_username'         => '',
-			'farazsms_password'         => '',
-			'farazsms_from_number'      => '+983000505',
+			'farazsms_from_number'      => '',                // optional sender line
 			'farazsms_pattern_code'     => '',
-			'farazsms_param_name'       => 'verification-code',
+			'farazsms_param_name'       => 'code',
 
-			// IPPanel Settings
-			'ippanel_auth_type'         => 'edge',            // edge | apikey | userpass
+			// IPPanel Settings (Edge API)
 			'ippanel_api_key'           => '',
-			'ippanel_username'          => '',
-			'ippanel_password'          => '',
 			'ippanel_from_number'       => '+983000505',
 			'ippanel_pattern_code'      => '',
 			'ippanel_param_name'        => 'code',
 
+			// Rahpayam / MsgWay (SMS gateway + Iranian messengers)
+			'msgway_api_key'               => '',
+			'msgway_sms_template_id'       => '',
+			'msgway_sms_line'              => 0,              // 0 = Rahpayam default line
+			'msgway_messenger_mode'        => 'smart',        // smart | gap | igap | custom
+			'msgway_messenger_template_id' => '',
+			'msgway_messenger_provider'    => 0,              // provider ID for "custom"
+
 			// 3. Bale Messenger & Email Settings
-			'bale_mode'                 => 'safir',           // safir | bot
-			'bale_client_id'            => '',
-			'bale_client_secret'        => '',
+			'bale_mode'                 => 'safir',           // safir (Safir v3) | bot
+			'bale_api_key'              => '',                // Safir v3 api-access-key
+			'bale_bot_id'               => '',                // Safir v3 numeric bot ID
 			'bale_bot_token'            => '',
 			'bale_message_template'     => "کد تایید ورود شما به {site_name}:\n*{code}*\nاین کد تا {expiry} ثانیه معتبر است.",
 

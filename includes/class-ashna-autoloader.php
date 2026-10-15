@@ -38,6 +38,8 @@ class Ashna_Autoloader {
 		'Ashna_Gateway_Farazsms'    => 'includes/gateways/class-ashna-gateway-farazsms.php',
 		'Ashna_Gateway_Ippanel'     => 'includes/gateways/class-ashna-gateway-ippanel.php',
 		'Ashna_Gateway_Bale'        => 'includes/gateways/class-ashna-gateway-bale.php',
+		'Ashna_Gateway_Msgway'      => 'includes/gateways/class-ashna-gateway-msgway.php',
+		'Ashna_Gateway_Msgway_Messenger' => 'includes/gateways/class-ashna-gateway-msgway-messenger.php',
 		'Ashna_Gateway_Email'       => 'includes/gateways/class-ashna-gateway-email.php',
 		'Ashna_Admin'               => 'includes/admin/class-ashna-admin.php',
 	);

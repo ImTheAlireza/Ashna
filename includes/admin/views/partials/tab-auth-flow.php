@@ -17,6 +17,7 @@ $svg_bale_real   = Ashna_Helper::get_bale_logo_svg( 22 );
 $svg_arrow       = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
 $svg_check       = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 $svg_fingerprint = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/><path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/></svg>';
+$svg_messenger   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg>';
 $svg_faceid      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
 ?>
 				<section class="ashna-panel" id="ashna-tab-auth_flow">
@@ -100,7 +101,7 @@ $svg_faceid      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 									</span>
 									<div>
 										<h2>۲. کد تایید چطور به موبایل برسد؟</h2>
-										<p>ترکیب پیامک و پیام‌رسان بله برای کاهش هزینه و جلوگیری از قطعی</p>
+										<p>ترکیب پیامک، بله و پیام‌رسان‌های ایرانی برای کاهش هزینه و جلوگیری از قطعی</p>
 									</div>
 								</div>
 							</div>
@@ -197,6 +198,43 @@ $svg_faceid      = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 									<div class="ashna-choice-body">
 										<strong>پیامک و بله به صورت همزمان</strong>
 										<small>کد تایید در یک لحظه هم پیامک می‌شود و هم در پیام‌رسان بله ارسال می‌گردد تا کاربر هر کدام را زودتر دید وارد شود</small>
+									</div>
+								</label>
+
+								<!-- 6. Iranian messengers (Rahpayam) -> Fallback SMS -->
+								<label class="ashna-choice-card <?php echo 'messenger_fallback_sms' === $settings['mobile_delivery_channel'] ? 'selected' : ''; ?>">
+									<input type="radio" name="ashna[mobile_delivery_channel]" value="messenger_fallback_sms" <?php checked( $settings['mobile_delivery_channel'], 'messenger_fallback_sms' ); ?> />
+									<div class="ashna-choice-card-top">
+										<div class="ashna-flow-icons" title="اول پیام‌رسان‌های ایرانی ← بعد پیامک">
+											<span class="ashna-flow-node is-messenger"><?php echo $svg_messenger; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="ashna-flow-sep"><?php echo $svg_arrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="ashna-flow-node is-sms"><?php echo $svg_sms; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										</div>
+										<div class="ashna-choice-top-left">
+											<span class="ashna-choice-tag is-green">ارزان‌تر</span>
+											<span class="ashna-choice-check"><?php echo $svg_check; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										</div>
+									</div>
+									<div class="ashna-choice-body">
+										<strong>اول پیام‌رسان‌های ایرانی، بعد پیامک</strong>
+										<small>ایتا، روبیکا، بله، گپ و آی‌گپ از طریق راه‌پیام؛ اگر نرسید، پیامک می‌شود</small>
+									</div>
+								</label>
+
+								<!-- 7. Iranian messengers only (Rahpayam) -->
+								<label class="ashna-choice-card <?php echo 'messenger' === $settings['mobile_delivery_channel'] ? 'selected' : ''; ?>">
+									<input type="radio" name="ashna[mobile_delivery_channel]" value="messenger" <?php checked( $settings['mobile_delivery_channel'], 'messenger' ); ?> />
+									<div class="ashna-choice-card-top">
+										<div class="ashna-flow-icons" title="فقط پیام‌رسان‌های ایرانی">
+											<span class="ashna-flow-node is-messenger"><?php echo $svg_messenger; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										</div>
+										<div class="ashna-choice-top-left">
+											<span class="ashna-choice-check"><?php echo $svg_check; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										</div>
+									</div>
+									<div class="ashna-choice-body">
+										<strong>فقط پیام‌رسان‌های ایرانی</strong>
+										<small>ارسال از طریق راه‌پیام در پیام‌رسان‌هایی که در پنل آن فعال کرده‌اید</small>
 									</div>
 								</label>
 							</div>

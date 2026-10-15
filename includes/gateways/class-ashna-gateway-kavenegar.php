@@ -30,6 +30,15 @@ class Ashna_Gateway_Kavenegar extends Ashna_Abstract_Gateway {
 	}
 
 	/**
+	 * Host checked by the background health probe.
+	 *
+	 * @return string
+	 */
+	public function get_probe_url() {
+		return 'https://api.kavenegar.com/';
+	}
+
+	/**
 	 * Send OTP via Kavenegar Verify Lookup API
 	 *
 	 * @param string $recipient Normalized phone number.

@@ -349,7 +349,7 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 
 					<button type="button" class="ashna-nav-item" data-tab="bale_email">
 						<svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
-						<span class="ashna-nav-label">بله و ایمیل</span>
+						<span class="ashna-nav-label">پیام‌رسان‌ها و ایمیل</span>
 					</button>
 
 					<div class="ashna-sidebar-group-title">ظاهر و اتصال به قالب</div>

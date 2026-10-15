@@ -84,12 +84,15 @@ if ('active' === $expected) {
 		$count = count($wp_filter['admin_menu']->callbacks[10]);
 		ashna_otp()->on_plugins_loaded();
 		check(count($wp_filter['admin_menu']->callbacks[10]) === $count, 'Services registered twice');
-		check(count(Ashna_Gateway_Manager::get_sms_gateways()) === 6, 'Gateways failed to load');
+		check(count(Ashna_Gateway_Manager::get_sms_gateways()) === 7, 'Gateways failed to load');
 	}
 	check(is_array(get_option('ashna_otp_settings')), 'Default settings missing');
 	check(wp_next_scheduled('ashna_otp_daily_cleanup') !== false, 'Cron missing');
+	check(wp_next_scheduled('ashna_otp_gateway_probe') !== false, 'Gateway probe cron missing');
+	check(has_filter('cron_schedules') !== false, 'Probe schedule not registered');
 	do_action('deactivate_' . ASHNA_OTP_BASENAME);
 	check(wp_next_scheduled('ashna_otp_daily_cleanup') === false, 'Cron not cleaned on deactivation');
+	check(wp_next_scheduled('ashna_otp_gateway_probe') === false, 'Gateway probe cron not cleaned on deactivation');
 } else {
 	check(!function_exists('ashna_otp'), 'License failure booted the kernel');
 	check(!class_exists('Ashna_Auth', false), 'License failure loaded auth service');

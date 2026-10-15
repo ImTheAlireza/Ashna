@@ -143,10 +143,11 @@ class Ashna_Auth {
 		}
 
 		$channel_labels = array(
-			'sms'      => 'پیامک',
-			'bale'     => 'پیام‌رسان بله',
-			'sms+bale' => 'پیامک و پیام‌رسان بله',
-			'email'    => 'ایمیل',
+			'sms'       => 'پیامک',
+			'bale'      => 'پیام‌رسان بله',
+			'sms+bale'  => 'پیامک و پیام‌رسان بله',
+			'email'     => 'ایمیل',
+			'messenger' => Ashna_Gateway_Msgway_Messenger::route_label(),
 		);
 		$channel_label  = isset( $channel_labels[ $dispatch['channel'] ] ) ? $channel_labels[ $dispatch['channel'] ] : 'پیامک';
 

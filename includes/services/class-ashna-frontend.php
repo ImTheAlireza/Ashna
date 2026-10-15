@@ -147,7 +147,7 @@ class Ashna_Frontend {
 				'captchaSiteKey' => $site_key,
 				// Fast-failover UX: progressive status while the code is on its way.
 				'slowHintMs'     => 2500,
-				'failoverHintMs' => (int) ( Ashna_Failover::gateway_timeout() * 1000 ) + 300,
+				'failoverHintMs' => (int) ( Ashna_Failover::slot_for( Ashna_Gateway_Manager::first_mobile_gateway()->get_id() ) * 1000 ) + 300,
 				'sendTimeoutMs'  => (int) ( ( Ashna_Failover::total_budget() + 10 ) * 1000 ),
 				'hasFallback'    => Ashna_Gateway_Manager::has_fallback(),
 				'i18n'           => array(

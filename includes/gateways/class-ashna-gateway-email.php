@@ -30,6 +30,15 @@ class Ashna_Gateway_Email extends Ashna_Abstract_Gateway {
 	}
 
 	/**
+	 * Delivery channel.
+	 *
+	 * @return string
+	 */
+	public function get_channel() {
+		return 'email';
+	}
+
+	/**
 	 * Send OTP via Email
 	 *
 	 * @param string $recipient Email address.

@@ -10,6 +10,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 wp_clear_scheduled_hook( 'ashna_otp_daily_cleanup' );
+wp_clear_scheduled_hook( 'ashna_otp_gateway_probe' );
 
 $settings = get_option( 'ashna_otp_settings', array() );
 

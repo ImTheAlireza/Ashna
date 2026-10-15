@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						'melipayamak' => '<span class="ashna-gw-logo is-melipayamak"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>',
 						'farazsms'    => '<span class="ashna-gw-logo is-farazsms"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>',
 						'ippanel'     => '<span class="ashna-gw-logo is-ippanel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>',
+						'msgway'      => '<span class="ashna-gw-logo is-msgway"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg></span>',
 					);
 					$b1_selected = ! empty( $settings['backup_sms_gateway_1'] ) && 'none' !== $settings['backup_sms_gateway_1']
 						? $settings['backup_sms_gateway_1']
@@ -203,57 +204,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 						</div>
 
-						<!-- 4. Melipayamak Box -->
+						<!-- 4. Melipayamak Box (console API; legacy REST kept for old settings) -->
 						<div class="ashna-gateway-box" data-gateway="melipayamak">
 							<div class="ashna-gw-box-head">
 								<h3>تنظیمات درگاه ملی‌پیامک (Melipayamak)</h3>
-								<span class="ashna-pill is-info">وب‌سرویس خط خدماتی ( پترن )</span>
+								<span class="ashna-pill is-info">وب‌سرویس کنسول (پترن)</span>
 							</div>
-							<div class="ashna-fields-grid ashna-cols-3">
+							<div class="ashna-fields-grid ashna-cols-2">
 								<div class="ashna-field">
-									<label for="melipayamak_username">نام کاربری پنل</label>
-									<input type="text" name="ashna[melipayamak_username]" id="melipayamak_username" value="<?php echo esc_attr( $settings['melipayamak_username'] ); ?>" dir="ltr" />
+									<label for="melipayamak_api_key">کلید API کنسول ملی‌پیامک</label>
+									<input type="text" name="ashna[melipayamak_api_key]" id="melipayamak_api_key" value="<?php echo esc_attr( $settings['melipayamak_api_key'] ); ?>" dir="ltr" placeholder="console.melipayamak.com" />
+									<small>از منوی «وب‌سرویس» در کنسول ملی‌پیامک؛ رمز عبور پنل دیگر ارسال نمی‌شود.</small>
 								</div>
 								<div class="ashna-field">
-									<label for="melipayamak_password">رمز عبور یا API Key</label>
-									<input type="password" name="ashna[melipayamak_password]" id="melipayamak_password" value="<?php echo esc_attr( $settings['melipayamak_password'] ); ?>" dir="ltr" />
-								</div>
-								<div class="ashna-field">
-									<label for="melipayamak_body_id">کد متن خدماتی (bodyId)</label>
+									<label for="melipayamak_body_id">کد پترن (bodyId)</label>
 									<input type="text" name="ashna[melipayamak_body_id]" id="melipayamak_body_id" value="<?php echo esc_attr( $settings['melipayamak_body_id'] ); ?>" dir="ltr" placeholder="12345" />
-									<small>متن الگو در ملی‌پیامک باید شامل <code>{0}</code> باشد.</small>
+									<small>متن پترن در ملی‌پیامک باید شامل <code>{0}</code> باشد.</small>
 								</div>
 							</div>
+							<details class="ashna-legacy-details">
+								<summary>روش قدیمی: نام کاربری و رمز عبور (فقط اگر کلید API ندارید)</summary>
+								<div class="ashna-fields-grid ashna-cols-2">
+									<div class="ashna-field">
+										<label for="melipayamak_username">نام کاربری پنل</label>
+										<input type="text" name="ashna[melipayamak_username]" id="melipayamak_username" value="<?php echo esc_attr( $settings['melipayamak_username'] ); ?>" dir="ltr" />
+									</div>
+									<div class="ashna-field">
+										<label for="melipayamak_password">رمز عبور پنل</label>
+										<input type="password" name="ashna[melipayamak_password]" id="melipayamak_password" value="<?php echo esc_attr( $settings['melipayamak_password'] ); ?>" dir="ltr" />
+									</div>
+								</div>
+							</details>
 						</div>
 
-						<!-- 5. FarazSMS Box (Progressive Disclosure for Auth Type) -->
+						<!-- 5. FarazSMS Box (api.iranpayamak.com) -->
 						<div class="ashna-gateway-box" data-gateway="farazsms">
 							<div class="ashna-gw-box-head">
 								<h3>تنظیمات درگاه فراز اس‌ام‌اس (FarazSMS)</h3>
-								<span class="ashna-pill is-info">ارسال سریع پترن</span>
+								<span class="ashna-pill is-info">وب‌سرویس جدید (Api-Key)</span>
 							</div>
-							<div class="ashna-fields-grid ashna-cols-3">
+							<div class="ashna-fields-grid ashna-cols-2">
 								<div class="ashna-field">
-									<label for="farazsms_auth_type">روش اتصال به پنل</label>
-									<select name="ashna[farazsms_auth_type]" id="farazsms_auth_type">
-										<option value="apikey" <?php selected( $settings['farazsms_auth_type'], 'apikey' ); ?>>کلید دسترسی (API Key — پیشنهادی)</option>
-										<option value="userpass" <?php selected( $settings['farazsms_auth_type'], 'userpass' ); ?>>نام کاربری و رمز عبور</option>
-									</select>
-								</div>
-								<div class="ashna-field" id="farazsms-apikey-wrap" style="<?php echo 'userpass' === $settings['farazsms_auth_type'] ? 'display:none;' : ''; ?>">
-									<label for="farazsms_api_key">کلید دسترسی (API Key)</label>
+									<label for="farazsms_api_key">کلید دسترسی (Api-Key)</label>
 									<input type="text" name="ashna[farazsms_api_key]" id="farazsms_api_key" value="<?php echo esc_attr( $settings['farazsms_api_key'] ); ?>" dir="ltr" />
-								</div>
-								<div class="ashna-field" id="farazsms-userpass-wrap" style="<?php echo 'userpass' === $settings['farazsms_auth_type'] ? '' : 'display:none;'; ?>">
-									<label for="farazsms_username">نام کاربری و رمز پنل</label>
-									<div style="display:flex;gap:6px;">
-										<input type="text" name="ashna[farazsms_username]" id="farazsms_username" value="<?php echo esc_attr( $settings['farazsms_username'] ); ?>" dir="ltr" placeholder="Username" />
-										<input type="password" name="ashna[farazsms_password]" id="farazsms_password" value="<?php echo esc_attr( $settings['farazsms_password'] ); ?>" dir="ltr" placeholder="Password" />
-									</div>
-								</div>
-								<div class="ashna-field">
-									<label for="farazsms_from_number">شماره خط فرستنده</label>
-									<input type="text" name="ashna[farazsms_from_number]" id="farazsms_from_number" value="<?php echo esc_attr( $settings['farazsms_from_number'] ); ?>" dir="ltr" placeholder="+983000505" />
+									<small>از پنل فراز اس‌ام‌اس، بخش «وب‌سرویس / کلید API».</small>
 								</div>
 								<div class="ashna-field">
 									<label for="farazsms_pattern_code">کد پترن (Pattern Code)</label>
@@ -261,36 +255,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</div>
 								<div class="ashna-field">
 									<label for="farazsms_param_name">نام متغیر کد در پترن</label>
-									<input type="text" name="ashna[farazsms_param_name]" id="farazsms_param_name" value="<?php echo esc_attr( $settings['farazsms_param_name'] ); ?>" dir="ltr" placeholder="verification-code" />
+									<input type="text" name="ashna[farazsms_param_name]" id="farazsms_param_name" value="<?php echo esc_attr( $settings['farazsms_param_name'] ); ?>" dir="ltr" placeholder="code" />
+								</div>
+								<div class="ashna-field">
+									<label for="farazsms_from_number">شماره خط فرستنده (اختیاری)</label>
+									<input type="text" name="ashna[farazsms_from_number]" id="farazsms_from_number" value="<?php echo esc_attr( $settings['farazsms_from_number'] ); ?>" dir="ltr" placeholder="خالی = خط خدماتی پیش‌فرض" />
 								</div>
 							</div>
 						</div>
 
-						<!-- 6. IPPanel Box (Progressive Disclosure for Auth Type) -->
+						<!-- 6. IPPanel Box (Edge API) -->
 						<div class="ashna-gateway-box" data-gateway="ippanel">
 							<div class="ashna-gw-box-head">
 								<h3>تنظیمات درگاه آی‌پی‌پنل (IPPanel)</h3>
-								<span class="ashna-pill is-info">پشتیبانی از Edge و REST</span>
+								<span class="ashna-pill is-info">وب‌سرویس Edge</span>
 							</div>
-							<div class="ashna-fields-grid ashna-cols-3">
+							<div class="ashna-fields-grid ashna-cols-2">
 								<div class="ashna-field">
-									<label for="ippanel_auth_type">نسخه وب‌سرویس</label>
-									<select name="ashna[ippanel_auth_type]" id="ippanel_auth_type">
-										<option value="edge" <?php selected( $settings['ippanel_auth_type'], 'edge' ); ?>>وب‌سرویس جدید Edge (پیشنهادی)</option>
-										<option value="apikey" <?php selected( $settings['ippanel_auth_type'], 'apikey' ); ?>>وب‌سرویس REST با کلید API</option>
-										<option value="userpass" <?php selected( $settings['ippanel_auth_type'], 'userpass' ); ?>>نام کاربری و رمز عبور</option>
-									</select>
-								</div>
-								<div class="ashna-field" id="ippanel-apikey-wrap" style="<?php echo 'userpass' === $settings['ippanel_auth_type'] ? 'display:none;' : ''; ?>">
-									<label for="ippanel_api_key">کلید API / توکن</label>
+									<label for="ippanel_api_key">توکن دسترسی Edge</label>
 									<input type="text" name="ashna[ippanel_api_key]" id="ippanel_api_key" value="<?php echo esc_attr( $settings['ippanel_api_key'] ); ?>" dir="ltr" />
-								</div>
-								<div class="ashna-field" id="ippanel-userpass-wrap" style="<?php echo 'userpass' === $settings['ippanel_auth_type'] ? '' : 'display:none;'; ?>">
-									<label>نام کاربری و رمز پنل</label>
-									<div style="display:flex;gap:6px;">
-										<input type="text" name="ashna[ippanel_username]" value="<?php echo esc_attr( $settings['ippanel_username'] ); ?>" dir="ltr" placeholder="Username" />
-										<input type="password" name="ashna[ippanel_password]" value="<?php echo esc_attr( $settings['ippanel_password'] ); ?>" dir="ltr" placeholder="Password" />
-									</div>
 								</div>
 								<div class="ashna-field">
 									<label for="ippanel_from_number">شماره خط فرستنده</label>
@@ -305,6 +288,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<input type="text" name="ashna[ippanel_param_name]" id="ippanel_param_name" value="<?php echo esc_attr( $settings['ippanel_param_name'] ); ?>" dir="ltr" placeholder="code" />
 								</div>
 							</div>
+						</div>
+
+						<!-- 7. Rahpayam (MsgWay) Box: settings live with the messenger options -->
+						<div class="ashna-gateway-box" data-gateway="msgway">
+							<div class="ashna-gw-box-head">
+								<h3>تنظیمات درگاه راه‌پیام (MsgWay)</h3>
+								<span class="ashna-pill is-info">پیامک + پیام‌رسان‌های ایرانی</span>
+							</div>
+							<p class="description">کلید API، شناسه الگوی پیامک و خط ارسال راه‌پیام یک جا تنظیم می‌شوند: تب «پیام‌رسان‌ها و ایمیل»، کارت «پیام‌رسان‌های ایرانی با راه‌پیام». همان کلید برای پیامک و پیام‌رسان‌ها کار می‌کند.</p>
+							<button type="button" class="ashna-btn-secondary" style="margin-top:10px;" onclick="var t=document.querySelector('.ashna-nav-item[data-tab=&quot;bale_email&quot;]');if(t){t.click();var c=document.getElementById('ashna-msgway-card');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});}}return false;">رفتن به تنظیمات راه‌پیام</button>
 						</div>
 
 						<!-- 4. Inline Quick SMS Test Bar (Relocated right inside SMS Gateways Tab for instant testing!) -->
@@ -348,6 +341,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'role' => 'پیام‌رسان بله',
 						);
 					}
+					if ( in_array( $settings['mobile_delivery_channel'], array( 'messenger', 'messenger_fallback_sms' ), true ) ) {
+						array_unshift(
+							$ashna_health_rows,
+							array(
+								'gw'   => new Ashna_Gateway_Msgway_Messenger(),
+								'role' => 'پیام‌رسان‌های ایرانی',
+							)
+						);
+					}
+					if ( 'messenger' === $settings['mobile_delivery_channel'] || 'bale' === $settings['mobile_delivery_channel'] ) {
+						// SMS gateways are not on the delivery path in messenger-only modes.
+						$ashna_health_rows = array_values(
+							array_filter(
+								$ashna_health_rows,
+								function ( $row ) {
+									return 'sms' !== Ashna_Gateway_Manager::channel_of( $row['gw'] );
+								}
+							)
+						);
+					}
 					?>
 					<div class="ashna-card ashna-failover-card" id="ashna-failover-card">
 						<div class="ashna-card-head">
@@ -376,6 +389,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 						</div>
 
+						<div class="ashna-switch-row" style="margin-top:16px;">
+							<div class="ashna-switch-text">
+								<strong>یادگیری زمان پاسخ هر درگاه</strong>
+								<p>درگاهی که معمولاً در کسری از ثانیه جواب می‌دهد، برای سوییچ به پشتیبان ۵ ثانیه منتظر نمی‌ماند؛ مهلتش ۴ برابر زمان پاسخ معمولش می‌شود (حداقل ۲ ثانیه).</p>
+							</div>
+							<label class="ashna-switch">
+								<input type="checkbox" name="ashna[gateway_adaptive]" value="1" <?php checked( ! empty( $settings['gateway_adaptive'] ), true ); ?> />
+								<span class="ashna-slider"></span>
+							</label>
+						</div>
+						<div class="ashna-switch-row" style="margin-top:10px;">
+							<div class="ashna-switch-text">
+								<strong>بررسی خودکار سلامت درگاه‌ها (هر ۵ دقیقه)</strong>
+								<p>درگاه‌های مسیر ارسال در پس‌زمینه بررسی می‌شوند و اگر یکی قطع باشد، قبل از رسیدن اولین کاربر کنار گذاشته می‌شود. پیامکی ارسال و اعتباری مصرف نمی‌شود.</p>
+							</div>
+							<label class="ashna-switch">
+								<input type="checkbox" name="ashna[gateway_probe]" value="1" <?php checked( ! empty( $settings['gateway_probe'] ), true ); ?> />
+								<span class="ashna-slider"></span>
+							</label>
+						</div>
+
 						<p class="ashna-failover-note">
 							سقف کل زمان ارسال یک کد با همه پشتیبان‌ها: <strong><?php echo esc_html( (string) round( Ashna_Failover::total_budget() ) ); ?> ثانیه</strong>
 							· برقراری اتصال با هر درگاه: حداکثر <strong><?php echo esc_html( (string) round( min( Ashna_Failover::CONNECT_TIMEOUT, Ashna_Failover::gateway_timeout() ) ) ); ?> ثانیه</strong>
@@ -394,6 +428,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<th>وضعیت</th>
 										<th>آخرین زمان پاسخ</th>
 										<th>میانگین موفق</th>
+										<th>مهلت سوییچ</th>
 										<th>آخرین خطا</th>
 									</tr>
 								</thead>
@@ -421,9 +456,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<tr data-gw="<?php echo esc_attr( $ashna_gw_id ); ?>">
 											<td><strong><?php echo esc_html( $ashna_row['gw']->get_title() ); ?></strong></td>
 											<td><?php echo esc_html( $ashna_row['role'] ); ?></td>
-											<td class="ashna-gw-health-state"><span class="ashna-pill <?php echo esc_attr( $ashna_pill[0] ); ?>"><?php echo esc_html( $ashna_pill[1] ); ?></span></td>
+											<td class="ashna-gw-health-state">
+												<span class="ashna-pill <?php echo esc_attr( $ashna_pill[0] ); ?>"><?php echo esc_html( $ashna_pill[1] ); ?></span>
+												<?php if ( ! empty( $ashna_health['last_probe'] ) ) : ?>
+													<small class="ashna-gw-probe"><?php echo esc_html( ( $ashna_health['probe_ok'] ? 'بررسی خودکار: در دسترس، ' : 'بررسی خودکار: بی‌پاسخ، ' ) . Ashna_Failover::ago( (int) $ashna_health['last_probe'] ) ); ?></small>
+												<?php endif; ?>
+											</td>
 											<td class="ashna-gw-health-num"><?php echo $ashna_health['last_ms'] > 0 ? esc_html( number_format( $ashna_health['last_ms'] / 1000, 1 ) . ' ثانیه' ) : '—'; ?></td>
 											<td class="ashna-gw-health-num"><?php echo $ashna_health['avg_ms'] > 0 ? esc_html( number_format( $ashna_health['avg_ms'] / 1000, 1 ) . ' ثانیه' ) : '—'; ?></td>
+											<td class="ashna-gw-health-slot"><?php echo 'sandbox' === $ashna_gw_id ? '—' : esc_html( number_format( Ashna_Failover::slot_for( $ashna_gw_id ), 1 ) . ' ثانیه' ); ?></td>
 											<td class="ashna-gw-health-error">
 												<?php if ( ! empty( $ashna_health['last_fail'] ) && '' !== $ashna_health['last_error'] ) : ?>
 													<span title="<?php echo esc_attr( $ashna_health['last_error'] ); ?>"><?php echo esc_html( Ashna_Failover::type_label( $ashna_health['last_type'] ) ); ?></span>
