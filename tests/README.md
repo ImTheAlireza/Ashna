@@ -129,3 +129,89 @@ getdokan/dokan v5.3.0 (`tests/fixtures/dokan-lite-excerpt.php`). Ultimate Member
 (`tests/fixtures/ultimate-member-excerpt.php`), Paid Memberships Pro and MemberPress
 are stand-ins with the upstream function names, statuses and shortcodes. A final
 check on a site with the real plugins installed is still required.
+
+## Scenario suite, version matrix and browser QA
+
+`tests/scenarios.php` (190 checks) covers what the QC-specific suites do not:
+- identifier parsing;
+- the settings sanitizer (40 rounds of garbage), import/export/reset;
+- the admin pages rendered in many states and the logs page with the CSV export;
+- 331 login-form variants in 8 contexts, checked for valid HTML and duplicate IDs;
+- every OTP flow and gateway driver, including broken JSON, HTML error pages and timeouts;
+- special characters through every input path: quotes, backslashes, ZWNJ, emoji;
+- password lockouts, including identifier rotation and per-IP limits;
+- time zones, including PHP's default timezone changed by another plugin and clock changes;
+- MySQL column limits;
+- WooCommerce classic and block checkout, plus HPOS declarations;
+- Elementor widgets, lifecycle/uninstall, and the `wp-login.php` takeover with its recovery constant.
+
+The harness behaves like a real request:
+- `ajax()` slashes `$_POST` the way `wp_magic_quotes()` does;
+- `ashna_t_finish()` fails the suite if WordPress raised a `_doing_it_wrong` or deprecation notice while Ashna code was on the call stack.
+
+### Building test sites
+
+`tests/make-site.sh <wp-version> <dir> <official|old> <php> [theme] [permalinks]` builds a disposable site and activates Ashna. It expects these in `.cache/`:
+
+```sh
+# WordPress cores (github.com mirror; any tag)
+curl -sSL https://codeload.github.com/WordPress/WordPress/tar.gz/refs/tags/7.1.3 | tar -xz -C .cache/wpcore  # rename to .cache/wpcore/7.1.3
+# Official SQLite driver (WP 6.1+): plugin package with the driver copied into wp-includes/database
+git clone --depth 1 --branch v3.0.2 https://github.com/WordPress/sqlite-database-integration .cache/wpcore/sqlite
+cp -R .cache/wpcore/sqlite/packages/plugin-sqlite-database-integration .cache/wpcore/sqlite-plugin
+rm -rf .cache/wpcore/sqlite-plugin/wp-includes/database
+cp -R .cache/wpcore/sqlite/packages/mysql-on-sqlite/src .cache/wpcore/sqlite-plugin/wp-includes/database
+# WordPress 5.8 needs the older single-file driver ("old")
+curl -sSL https://codeload.github.com/aaemnnosttv/wp-sqlite-db/tar.gz/refs/heads/master | tar -xz -C .cache/wpcore  # -> .cache/wpcore/wp-sqlite-db
+# PHP 7.4–8.5 in WebAssembly
+(cd .cache/phpwasm && npm install @php-wasm/cli)
+```
+
+Then point `ASHNA_TEST_WP_SITE` at the site:
+
+```sh
+ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli \
+  python tests/run-full-wp.py session security integrations scenarios
+```
+
+Matrix of the QA pass (389 checks per combination):
+
+| WordPress | PHP | Result |
+|---|---|---|
+| 6.8.3 | 7.4, 8.0, 8.1, 8.2, 8.3, 8.4, 8.5 | all pass |
+| 7.1.3 | 7.4, 8.3, 8.5 | all pass |
+| 6.4.13 | 8.1 | all pass |
+| 5.8.18 | 7.4 | 386/389: the three failures come from the old test driver (below) |
+
+Known limits of the test tools (not of Ashna):
+- php-wasm's PHP 7.4 build crashes inside libxml error handling. The HTML validity checks are therefore skipped on 7.4; the markup is identical on PHP 8.
+- The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. The three checks that depend on those SQL features fail there only: used captcha markers purge, the CSV round trip of a quote+backslash message, and the uninstall table drop. MySQL and the official SQLite driver handle them; both are verified on 6.4–7.1.
+
+### Browser QA
+
+`tests/browser/qa-browser.mjs` drives a real Chromium against WordPress Playground. Each phase gets its own browser, because this single-process Chromium does not isolate contexts, and every phase starts from a reset site state.
+
+- **Crawl (desktop and mobile):** no PHP error in any page, no sideways scrolling on mobile, the bundled Vazirmatn is used.
+- **Mobile journey:** bottom sheet, Persian digits, wrong code, cleared boxes, resend cooldown, exactly one verification request for the corrected code, session cookie.
+- **Desktop journeys:** e-mail sign-up through a test inbox, change address, password sign-in, keyboard only, standalone page, the `wp-login.php` takeover with staff-only password sign-in.
+- **Admin:** every tab, AJAX save and reload, logs, CSV download, the users column.
+- **Accessibility:** axe-core (WCAG 2.1 AA) on the form, the code step, the password step and the mobile modal.
+
+Result of the QA pass: 84/84. The only console messages are Gravatar requests (no internet in the sandbox) and the intentional 404 page.
+
+```sh
+tests/make-site.sh 6.8.3 $PWD/.cache/wp-site official 8.3
+# Playground mounts the site at /wordpress: make the SQLite drop-in path relative and the URL localhost
+mv .cache/wp-site/wp-content/plugins/plugin-sqlite-database-integration .cache/wp-site/wp-content/plugins/sqlite-database-integration
+sed -i -e "s#^\$sqlite_plugin_implementation_folder_path = '.*';#\$sqlite_plugin_implementation_folder_path = __DIR__ . '/plugins/sqlite-database-integration';#" \
+       -e "s#plugin-sqlite-database-integration/load.php#sqlite-database-integration/load.php#g" .cache/wp-site/wp-content/db.php
+#   (set siteurl/home to http://localhost:9400 and remove the WP_DEBUG* line from wp-config.php)
+mkdir -p .cache/wp-site/wp-content/mu-plugins && cp tests/browser/ashna-browser-qa.php .cache/wp-site/wp-content/mu-plugins/
+(cd .cache/playground && npm install @wp-playground/cli)
+(cd .cache/browser && npm install playwright-core @sparticuz/chromium axe-core)
+.cache/playground/node_modules/.bin/wp-playground-cli server --mount=$PWD/.cache/wp-site:/wordpress \
+  --wordpress-install-mode=do-not-attempt-installing --blueprint=tests/browser/blueprint.json --port=9400 --site-url=http://localhost:9400 &
+node tests/browser/qa-browser.mjs
+```
+
+`tests/browser/ashna-browser-qa.php` adds an auto-login and a settings switch for the test. It answers loopback requests only, and must never be installed on a real site.
