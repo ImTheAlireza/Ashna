@@ -55,6 +55,7 @@ class Ashna_Auth {
 			ob_clean();
 		}
 		wp_send_json_error( $data );
+		return; // wp_send_json() ends the request: never continue past a response.
 	}
 
 	/**
@@ -77,7 +78,9 @@ class Ashna_Auth {
 	 * limits per number, IP and network, daily credit guard) and only then the gateway call.
 	 */
 	public function ajax_request_otp() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
 		$parsed         = Ashna_Helper::parse_identifier( $raw_identifier );
@@ -108,6 +111,7 @@ class Ashna_Auth {
 
 		if ( empty( $raw_identifier ) ) {
 			$this->send_error( array( 'message' => 'لطفاً شماره موبایل یا ایمیل خود را وارد کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Captcha: the configured one, or the math captcha while attack mode is on. A resend
@@ -126,6 +130,7 @@ class Ashna_Auth {
 						'new_captcha' => self::next_math_captcha(),
 					)
 				);
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 		}
 
@@ -140,14 +145,17 @@ class Ashna_Auth {
 				$message = 'لطفاً یک شماره موبایل معتبر (مثل 09123456789) یا آدرس ایمیل صحیح وارد کنید.';
 			}
 			$this->send_error( array( 'message' => $message, 'new_captcha' => self::next_math_captcha() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		if ( 'phone_only' === $login_mode && 'phone' !== $type ) {
 			$this->send_error( array( 'message' => 'ورود فقط با شماره موبایل امکان‌پذیر است.', 'new_captcha' => self::next_math_captcha() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		if ( 'email_only' === $login_mode && 'email' !== $type ) {
 			$this->send_error( array( 'message' => 'ورود فقط با آدرس ایمیل امکان‌پذیر است.', 'new_captcha' => self::next_math_captcha() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$account = self::resolve_account( $identifier, $type );
@@ -159,12 +167,14 @@ class Ashna_Auth {
 					'new_captcha' => self::next_math_captcha(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$existing_user = $account['user'];
 		$auto_register = (bool) Ashna_Helper::get_option( 'auto_register', 1 );
 
 		if ( ! $existing_user && ! $auto_register ) {
 			$this->send_error( array( 'message' => 'حساب کاربری با این مشخصات یافت نشد.', 'new_captcha' => self::next_math_captcha() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$reservation = Ashna_Rate_Limiter::reserve( $identifier, $ip );
@@ -178,6 +188,7 @@ class Ashna_Auth {
 					'new_captcha' => self::next_math_captcha(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$dispatch = Ashna_Gateway_Manager::dispatch_otp( $identifier, $type, '', '', $reservation );
@@ -196,6 +207,7 @@ class Ashna_Auth {
 					'new_captcha' => self::next_math_captcha(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$channel_labels = array(
@@ -249,14 +261,16 @@ class Ashna_Auth {
 	 * Handle AJAX Verify OTP & Unified Login / Auto-Register
 	 */
 	public function ajax_verify_otp() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
 		$raw_code       = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
-		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
+		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_POST['redirect_to'] ) ) ) : '';
 		$full_name      = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
-		$extra_email    = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
-		$form_context   = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
+		$extra_email    = isset( $_POST['user_email'] ) ? sanitize_email( Ashna_Helper::as_string( wp_unslash( $_POST['user_email'] ) ) ) : '';
+		$form_context   = isset( $_POST['context'] ) ? sanitize_key( Ashna_Helper::as_string( wp_unslash( $_POST['context'] ) ) ) : '';
 
 		$parsed     = Ashna_Helper::parse_identifier( $raw_identifier );
 		$type       = $parsed['type'];
@@ -264,6 +278,7 @@ class Ashna_Auth {
 
 		if ( 'invalid' === $type ) {
 			$this->send_error( array( 'message' => 'شناسه کاربری نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$account = self::resolve_account( $identifier, $type );
@@ -274,6 +289,7 @@ class Ashna_Auth {
 					'code'    => $account['error']->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$user        = $account['user'];
 		$is_new_user = false;
@@ -292,6 +308,7 @@ class Ashna_Auth {
 		if ( ! $user ) {
 			if ( ! Ashna_Helper::get_option( 'auto_register', 1 ) ) {
 				$this->send_error( array( 'message' => 'ثبت‌نام خودکار غیرفعال است.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 
 			$name_mode  = Ashna_Helper::get_option( 'require_name_on_register', 'optional' );
@@ -299,10 +316,12 @@ class Ashna_Auth {
 
 			if ( 'required' === $name_mode && empty( $registration['full_name'] ) ) {
 				$this->send_error( array( 'message' => 'لطفاً نام و نام خانوادگی خود را وارد کنید.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 
 			if ( 'phone' === $type && 'required' === $email_mode && ( empty( $extra_email ) || ! is_email( $extra_email ) ) ) {
 				$this->send_error( array( 'message' => 'لطفاً یک آدرس ایمیل معتبر وارد کنید.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 		}
 
@@ -324,6 +343,7 @@ class Ashna_Auth {
 						'field'   => (string) $registration_error->get_error_data(),
 					)
 				);
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 		}
 
@@ -335,12 +355,14 @@ class Ashna_Auth {
 					'code'    => $verified->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		if ( ! $user ) {
 			$user = self::register_user( $identifier, $type, $registration );
 			if ( is_wp_error( $user ) ) {
 				$this->send_error( array( 'message' => $user->get_error_message() ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 			$is_new_user = true;
 		} else {
@@ -365,6 +387,7 @@ class Ashna_Auth {
 					'code'    => $logged_in->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		do_action( 'ashna_otp_user_authenticated', $user, $identifier, $type, $is_new_user );
 
@@ -424,9 +447,11 @@ class Ashna_Auth {
 	 * Handle AJAX Password Login Fallback (with Brute-Force Protection)
 	 */
 	public function ajax_password_login() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
-		$form_context = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '';
+		$form_context = isset( $_POST['context'] ) ? sanitize_key( Ashna_Helper::as_string( wp_unslash( $_POST['context'] ) ) ) : '';
 		// With password sign-in switched off, the wp-login.php takeover still lets staff accounts use
 		// their password (they cannot use an unverified phone, and the classic form is gone), so an
 		// administrator is never locked out. Customers stay code-only.
@@ -434,6 +459,7 @@ class Ashna_Auth {
 		$staff_only       = ! $password_enabled && 'wp-login' === $form_context && self::login_takeover_active();
 		if ( ! $password_enabled && ! $staff_only ) {
 			$this->send_error( array( 'message' => 'ورود با رمز عبور غیرفعال است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$raw_identifier = isset( $_POST['identifier'] ) ? sanitize_text_field( wp_unslash( $_POST['identifier'] ) ) : '';
@@ -441,10 +467,11 @@ class Ashna_Auth {
 		// in wp-login.php, profile edits, password resets and WooCommerce, so "p'ss" is stored as the
 		// hash of "p\'ss". Unslashing here would lock out everyone with ' " or \ in their password.
 		$password = isset( $_POST['password'] ) && is_string( $_POST['password'] ) ? $_POST['password'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
+		$redirect_to    = isset( $_POST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_POST['redirect_to'] ) ) ) : '';
 
 		if ( empty( $raw_identifier ) || empty( $password ) ) {
 			$this->send_error( array( 'message' => 'لطفاً شناسه کاربری و رمز عبور را وارد کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$parsed     = Ashna_Helper::parse_identifier( $raw_identifier );
@@ -453,6 +480,7 @@ class Ashna_Auth {
 		$lockout = Ashna_Security::check_lockout( $identifier );
 		if ( is_wp_error( $lockout ) ) {
 			$this->send_error( array( 'message' => $lockout->get_error_message() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Locate the account, then let WordPress authenticate it through the full `authenticate`
@@ -476,6 +504,7 @@ class Ashna_Auth {
 		}
 		if ( empty( $candidates ) && $locked_error ) {
 			$this->send_error( array( 'message' => $locked_error->get_error_message() ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$user = null;
@@ -493,6 +522,7 @@ class Ashna_Auth {
 			Ashna_Security::record_failed_password_attempt( $identifier, $account_keys );
 			do_action( 'wp_login_failed', $raw_identifier, new WP_Error( 'incorrect_password', $generic ) );
 			$this->send_error( array( 'message' => $generic ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$authenticated = wp_authenticate( $user->user_login, $password );
@@ -501,6 +531,7 @@ class Ashna_Auth {
 			if ( in_array( $authenticated->get_error_code(), $credential_errors, true ) ) {
 				Ashna_Security::record_failed_password_attempt( $identifier, array( Ashna_Security::account_lock_key( $user ) ) );
 				$this->send_error( array( 'message' => $generic ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 			$readable = Ashna_Session::readable_error( $authenticated );
 			$this->send_error(
@@ -509,6 +540,7 @@ class Ashna_Auth {
 					'code'    => $readable->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		Ashna_Security::clear_password_attempts( $identifier, array( Ashna_Security::account_lock_key( $authenticated ) ) );
@@ -529,6 +561,7 @@ class Ashna_Auth {
 					'code'    => $logged_in->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$this->send_success( self::login_response( $authenticated, $redirect_to, 'ورود با موفقیت انجام شد! در حال انتقال...', array(), array( 'form' => $form_context ) ) );

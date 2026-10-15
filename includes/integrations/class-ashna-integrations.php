@@ -121,7 +121,7 @@ class Ashna_Integrations {
 			return $output;
 		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only routing of a public page.
-		if ( isset( $_GET['action'] ) && in_array( sanitize_key( wp_unslash( $_GET['action'] ) ), array( 'lostpassword', 'reset_pass', 'resetpass', 'rp', 'forgot_password', 'reset' ), true ) ) {
+		if ( isset( $_GET['action'] ) && in_array( sanitize_key( Ashna_Helper::as_string( wp_unslash( $_GET['action'] ) ) ), array( 'lostpassword', 'reset_pass', 'resetpass', 'rp', 'forgot_password', 'reset' ), true ) ) {
 			return $output;
 		}
 		if ( 'ultimatemember' === $tag ) {
@@ -130,7 +130,7 @@ class Ashna_Integrations {
 				return $output;
 			}
 		}
-		$redirect = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$redirect = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_REQUEST['redirect_to'] ) ) ) : '';
 		if ( '' === $redirect && is_array( $attr ) && ! empty( $attr['redirect'] ) ) {
 			$redirect = esc_url_raw( $attr['redirect'] );
 		}

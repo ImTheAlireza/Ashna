@@ -75,7 +75,10 @@ add_filter( 'wp_doing_ajax', '__return_true' );
 add_filter(
 	'wp_die_ajax_handler',
 	function () {
-		return function ( $message = '' ) {
+		return function ( $message = '', $title = '', $args = array() ) {
+			// Faithful to _ajax_wp_die_handler(): WordPress prints the message (usually the bare
+			// "-1" of check_ajax_referer) and then dies. We throw instead so the caller can assert.
+			echo is_scalar( $message ) ? (string) $message : '';
 			throw new Ashna_Test_Halt( is_scalar( $message ) ? (string) $message : '' );
 		};
 	}
@@ -189,13 +192,20 @@ function ajax( $action, array $post = array(), array $server = array() ) {
 	}
 	Ashna_T::$status = 200;
 	$hook = ( is_user_logged_in() ? 'wp_ajax_' : 'wp_ajax_nopriv_' ) . $action;
+	$level = ob_get_level();
 	ob_start();
 	try {
 		do_action( $hook );
 	} catch ( Ashna_Test_Halt $e ) {
 		unset( $e );
 	} finally {
-		$out     = ob_get_clean();
+		// A handler may leave a buffer of its own open (in a real request PHP flushes every buffer
+		// when wp_die() ends the request). Harvest them in creation order, then the caller's.
+		$nested = '';
+		while ( ob_get_level() > $level + 1 ) {
+			$nested .= (string) ob_get_clean();
+		}
+		$out     = (string) ob_get_clean() . $nested;
 		$_SERVER = $saved;
 	}
 	return array(

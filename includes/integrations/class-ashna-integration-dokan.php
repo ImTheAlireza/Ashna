@@ -110,7 +110,7 @@ class Ashna_Integration_Dokan {
 	 * @return string
 	 */
 	public static function shop_slug( $raw ) {
-		$slug = strtolower( remove_accents( sanitize_text_field( (string) $raw ) ) );
+		$slug = strtolower( remove_accents( sanitize_text_field( Ashna_Helper::as_string( $raw ) ) ) );
 		$slug = preg_replace( '/[^a-z0-9]+/', '-', $slug );
 		return substr( trim( (string) $slug, '-' ), 0, 50 );
 	}
@@ -301,7 +301,9 @@ class Ashna_Integration_Dokan {
 	 * AJAX: is a shop URL free?
 	 */
 	public static function ajax_check_shopurl() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 		$slug = self::shop_slug( isset( $_POST['shopurl'] ) ? wp_unslash( $_POST['shopurl'] ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- shop_slug() sanitizes.
 		Ashna_Session::send_json(
 			true,
@@ -311,6 +313,7 @@ class Ashna_Integration_Dokan {
 				'url'       => self::store_url_base() . $slug,
 			)
 		);
+		return; // wp_send_json() ends the request: never continue past a response.
 	}
 }
 // phpcs:enable WordPress.Security.NonceVerification.Missing

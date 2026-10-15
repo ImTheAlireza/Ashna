@@ -163,7 +163,7 @@ class Ashna_Frontend {
 			exit;
 		}
 
-		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_REQUEST['redirect_to'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$this->render_standalone_canvas( $redirect_to, 'standalone-page' );
 	}
 
@@ -172,7 +172,7 @@ class Ashna_Frontend {
 	 */
 	public function intercept_wp_login_page() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : 'login';
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( Ashna_Helper::as_string( wp_unslash( $_REQUEST['action'] ) ) ) : 'login';
 
 		$passthrough_actions = array( 'logout', 'lostpassword', 'retrievepassword', 'resetpass', 'rp', 'postpass', 'confirmaction', 'confirm_admin_email' );
 		if ( in_array( $action, $passthrough_actions, true ) || isset( $_REQUEST['interim-login'] ) ) {
@@ -180,12 +180,12 @@ class Ashna_Frontend {
 		}
 
 		if ( is_user_logged_in() ) {
-			$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : admin_url();
+			$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_REQUEST['redirect_to'] ) ) ) : admin_url();
 			wp_safe_redirect( $redirect_to );
 			exit;
 		}
 
-		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_REQUEST['redirect_to'] ) ) ) : '';
 		// phpcs:enable
 
 		$this->render_standalone_canvas( $redirect_to, 'wp-login' );

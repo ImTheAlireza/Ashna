@@ -99,10 +99,18 @@ class Ashna_Admin {
 	 * AJAX Handler: end attack mode now.
 	 */
 	public function ajax_end_attack_mode() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		Ashna_Rate_Limiter::end_attack_mode();
 		$this->clean_output_buffers();
@@ -113,15 +121,24 @@ class Ashna_Admin {
 	 * AJAX Handler: add a proxy/CDN address to the trusted list.
 	 */
 	public function ajax_trust_proxy() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$ip = isset( $_POST['ip'] ) ? Ashna_IP::valid( sanitize_text_field( wp_unslash( $_POST['ip'] ) ) ) : '';
 		if ( '' === $ip ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'آی‌پی نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$settings = Ashna_Helper::get_settings();
 		$list     = array_filter( array_map( 'trim', preg_split( '/[\s,]+/', (string) $settings['trusted_proxies'] ) ) );
@@ -143,10 +160,18 @@ class Ashna_Admin {
 	 * AJAX Handler: download ArvanCloud's published edge ranges (admin action only).
 	 */
 	public function ajax_fetch_arvan_ranges() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$response = wp_remote_get( 'https://www.arvancloud.ir/fa/ips.txt', array( 'timeout' => 10 ) );
 		$ranges   = array();
@@ -161,6 +186,7 @@ class Ashna_Admin {
 		$this->clean_output_buffers();
 		if ( empty( $ranges ) ) {
 			wp_send_json_error( array( 'message' => 'دریافت فهرست ابرآروان ممکن نشد؛ رنج‌ها را از arvancloud.ir/fa/ips.txt دستی اضافه کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		wp_send_json_success(
 			array(
@@ -367,6 +393,10 @@ class Ashna_Admin {
 			'canvas_bg_image',
 		);
 
+		// Destinations a visitor is sent to after signing in must stay on this site: an imported
+		// file (or a typo) cannot turn the login form into an open redirect.
+		$redirect_url_keys = array( 'redirect_url', 'custom_redirect_url', 'admin_redirect_url' );
+
 		foreach ( $defaults as $key => $default_val ) {
 			if ( 'role_redirects' === $key ) {
 				// role => URL; unknown roles and empty URLs are dropped.
@@ -376,6 +406,7 @@ class Ashna_Admin {
 					foreach ( $raw[ $key ] as $role => $url ) {
 						$role = sanitize_key( (string) $role );
 						$url  = is_scalar( $url ) ? esc_url_raw( trim( (string) $url ) ) : '';
+						$url  = '' !== $url ? wp_validate_redirect( $url, '' ) : '';
 						if ( '' !== $url && isset( $roles[ $role ] ) ) {
 							$clean[ $key ][ $role ] = $url;
 						}
@@ -407,6 +438,12 @@ class Ashna_Admin {
 				$clean[ $key ] = isset( $raw[ $key ] ) ? esc_url_raw( trim( $raw[ $key ] ) ) : '';
 			} else {
 				$clean[ $key ] = isset( $raw[ $key ] ) ? sanitize_text_field( $raw[ $key ] ) : $default_val;
+			}
+		}
+
+		foreach ( $redirect_url_keys as $redirect_key ) {
+			if ( '' !== (string) $clean[ $redirect_key ] ) {
+				$clean[ $redirect_key ] = wp_validate_redirect( (string) $clean[ $redirect_key ], '' );
 			}
 		}
 
@@ -449,7 +486,12 @@ class Ashna_Admin {
 			while ( ob_get_level() > self::$ajax_buffer_level + 1 ) {
 				ob_end_clean();
 			}
+			if ( ob_get_level() === self::$ajax_buffer_level + 1 && ob_get_length() ) {
+				ob_clean();
+			}
+			return;
 		}
+		// No buffer of ours: drop stray output from this request only if there is any.
 		if ( ob_get_level() > 0 && ob_get_length() ) {
 			ob_clean();
 		}
@@ -566,6 +608,7 @@ class Ashna_Admin {
 		if ( ! current_user_can( 'manage_options' ) || ! $this->verify_settings_nonce() ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'نشست امنیتی منقضی شده است؛ لطفاً صفحه را رفرش کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$raw   = isset( $_POST['ashna'] ) && is_array( $_POST['ashna'] ) ? wp_unslash( $_POST['ashna'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -588,11 +631,19 @@ class Ashna_Admin {
 	 * AJAX Handler: Test Gateway from Admin Panel
 	 */
 	public function ajax_test_gateway() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$recipient  = isset( $_POST['recipient'] ) ? sanitize_text_field( wp_unslash( $_POST['recipient'] ) ) : '';
@@ -602,12 +653,14 @@ class Ashna_Admin {
 		if ( empty( $recipient ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'لطفاً شماره موبایل یا ایمیل تست را وارد کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$parsed = Ashna_Helper::parse_identifier( $recipient );
 		if ( 'invalid' === $parsed['type'] ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'شماره موبایل یا آدرس ایمیل وارد شده معتبر نیست.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$result = Ashna_Gateway_Manager::dispatch_otp( $parsed['normalized'], $parsed['type'], $channel, $gateway_id );
@@ -618,6 +671,7 @@ class Ashna_Admin {
 					'message' => 'خطا در ارسال تست: ' . $result->get_error_message(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		wp_send_json_success(
@@ -637,11 +691,19 @@ class Ashna_Admin {
 	 * AJAX Handler: Clear gateway health data and bring sidelined gateways back
 	 */
 	public function ajax_reset_gateway_health() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		Ashna_Failover::reset_all();
@@ -654,17 +716,26 @@ class Ashna_Admin {
 	 * AJAX Handler: Unlock a locked-out phone or IP immediately
 	 */
 	public function ajax_unlock_target() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$target = isset( $_POST['target'] ) ? sanitize_text_field( wp_unslash( $_POST['target'] ) ) : '';
 		if ( empty( $target ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'شناسه نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		Ashna_Security::unlock_target( $target );
@@ -676,19 +747,28 @@ class Ashna_Admin {
 	 * AJAX Handler: Import JSON Settings
 	 */
 	public function ajax_import_settings() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
-		$json_raw = isset( $_POST['json_data'] ) ? wp_unslash( $_POST['json_data'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$json_raw = isset( $_POST['json_data'] ) ? Ashna_Helper::as_string( wp_unslash( $_POST['json_data'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$decoded  = json_decode( $json_raw, true );
 
 		if ( ! is_array( $decoded ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'فرمت فایل یا متن JSON معتبر نیست.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// A file from an older version (or a partial one) lacks newer keys. On/off settings that
@@ -705,11 +785,19 @@ class Ashna_Admin {
 	 * AJAX Handler: Reset Settings to Factory Defaults
 	 */
 	public function ajax_reset_settings() {
-		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			// Same refusal WordPress itself sends, and fail closed: wp_die() ends the request, so
+			// the return below is only reached if something replaced the wp_die handler.
+			wp_die( -1, 403 );
+			return;
+		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$this->clean_output_buffers();
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		Ashna_Helper::save_settings( Ashna_Helper::default_settings() );

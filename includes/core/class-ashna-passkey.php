@@ -205,10 +205,13 @@ class Ashna_Passkey {
 	 * AJAX: Generate WebAuthn Registration Options for logged-in user
 	 */
 	public function ajax_register_options() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'برای ثبت کلید بیومتریک ابتدا وارد حساب کاربری خود شوید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$user      = wp_get_current_user();
@@ -265,10 +268,13 @@ class Ashna_Passkey {
 	 * AJAX: Verify WebAuthn Registration & Save User's Public Key
 	 */
 	public function ajax_register_verify() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'نشست کاربری شما منقضی شده است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$user              = wp_get_current_user();
@@ -277,6 +283,7 @@ class Ashna_Passkey {
 
 		if ( empty( $expected_challenge ) ) {
 			wp_send_json_error( array( 'message' => 'فرصت ثبت کلید بیومتریک به پایان رسید. لطفاً دوباره تلاش کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$cred_id         = isset( $_POST['credential_id'] ) ? sanitize_text_field( wp_unslash( $_POST['credential_id'] ) ) : '';
@@ -287,6 +294,7 @@ class Ashna_Passkey {
 
 		if ( empty( $cred_id ) || empty( $client_data_b64 ) || empty( $spki_b64 ) ) {
 			wp_send_json_error( array( 'message' => 'اطلاعات کلید بیومتریک از مرورگر دریافت نشد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$client_data_raw = self::base64url_decode( $client_data_b64 );
@@ -294,26 +302,31 @@ class Ashna_Passkey {
 
 		if ( ! is_array( $client_data ) || empty( $client_data['type'] ) || 'webauthn.create' !== $client_data['type'] ) {
 			wp_send_json_error( array( 'message' => 'پاسخ WebAuthn نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		if ( empty( $client_data['challenge'] ) || ! hash_equals( (string) $expected_challenge, (string) $client_data['challenge'] ) ) {
 			wp_send_json_error( array( 'message' => 'چالش امنیتی ثبت Passkey تطابق ندارد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$origin_host = isset( $client_data['origin'] ) ? strtolower( (string) wp_parse_url( $client_data['origin'], PHP_URL_HOST ) ) : '';
 		$rp_id       = self::get_rp_id();
 		if ( $origin_host !== $rp_id ) {
 			wp_send_json_error( array( 'message' => 'دامنه مبدا درخواست با دامنه سایت همخوانی ندارد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		if ( ! empty( $auth_data_b64 ) ) {
 			$auth_data_bin = self::base64url_decode( $auth_data_b64 );
 			if ( strlen( $auth_data_bin ) < 37 ) {
 				wp_send_json_error( array( 'message' => 'ساختار داده احراز هویت معتبر نیست.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 			$rp_id_hash = substr( $auth_data_bin, 0, 32 );
 			if ( ! hash_equals( hash( 'sha256', $rp_id, true ), $rp_id_hash ) ) {
 				wp_send_json_error( array( 'message' => 'شناسه دامنه کلید امنیتی معتبر نیست.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 		}
 
@@ -325,6 +338,7 @@ class Ashna_Passkey {
 			$pkey_res = @openssl_pkey_get_public( $pem_key ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- an invalid key returns false and is handled.
 			if ( false === $pkey_res ) {
 				wp_send_json_error( array( 'message' => 'کلید عمومی تولیدشده توسط دستگاه قابل تایید نیست.' ) );
+				return; // wp_send_json() ends the request: never continue past a response.
 			}
 		}
 
@@ -351,15 +365,19 @@ class Ashna_Passkey {
 	 * AJAX: Delete a Passkey for the current user
 	 */
 	public function ajax_delete_passkey() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$cred_id = isset( $_POST['credential_id'] ) ? sanitize_text_field( wp_unslash( $_POST['credential_id'] ) ) : '';
 		if ( empty( $cred_id ) || ! self::delete_user_passkey( get_current_user_id(), $cred_id ) ) {
 			wp_send_json_error( array( 'message' => 'کلید مورد نظر یافت نشد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		wp_send_json_success( array( 'message' => 'دستگاه بیومتریک حذف شد.' ) );
@@ -369,10 +387,13 @@ class Ashna_Passkey {
 	 * AJAX: Generate WebAuthn Login Challenge (Assertion Options)
 	 */
 	public function ajax_login_options() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		if ( ! Ashna_Helper::get_option( 'enable_passkey', 1 ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک در حال حاضر غیرفعال است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$challenge = self::base64url_encode( random_bytes( 32 ) );
@@ -414,20 +435,24 @@ class Ashna_Passkey {
 	 * AJAX: Verify WebAuthn Cryptographic Assertion & Log User In
 	 */
 	public function ajax_login_verify() {
-		Ashna_Session::verify_request();
+		if ( true !== Ashna_Session::verify_request() ) {
+			return;
+		}
 
 		if ( ! Ashna_Helper::get_option( 'enable_passkey', 1 ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک غیرفعال است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$cred_id         = isset( $_POST['credential_id'] ) ? sanitize_text_field( wp_unslash( $_POST['credential_id'] ) ) : '';
 		$client_data_b64 = isset( $_POST['client_data_json'] ) ? sanitize_text_field( wp_unslash( $_POST['client_data_json'] ) ) : '';
 		$auth_data_b64   = isset( $_POST['authenticator_data'] ) ? sanitize_text_field( wp_unslash( $_POST['authenticator_data'] ) ) : '';
 		$signature_b64   = isset( $_POST['signature'] ) ? sanitize_text_field( wp_unslash( $_POST['signature'] ) ) : '';
-		$redirect_to     = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : '';
+		$redirect_to     = isset( $_POST['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_POST['redirect_to'] ) ) ) : '';
 
 		if ( empty( $cred_id ) || empty( $client_data_b64 ) || empty( $auth_data_b64 ) || empty( $signature_b64 ) ) {
 			wp_send_json_error( array( 'message' => 'اطلاعات تایید بیومتریک ناقص است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$client_data_raw = self::base64url_decode( $client_data_b64 );
@@ -435,6 +460,7 @@ class Ashna_Passkey {
 
 		if ( ! is_array( $client_data ) || empty( $client_data['type'] ) || 'webauthn.get' !== $client_data['type'] ) {
 			wp_send_json_error( array( 'message' => 'نوع پاسخ WebAuthn معتبر نیست.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$challenge = isset( $client_data['challenge'] ) ? sanitize_text_field( $client_data['challenge'] ) : '';
@@ -444,39 +470,46 @@ class Ashna_Passkey {
 
 		if ( empty( $saved_ch ) || ! hash_equals( (string) $saved_ch, (string) $challenge ) ) {
 			wp_send_json_error( array( 'message' => 'چالش امنیتی منقضی شده است. لطفاً دوباره دکمه ورود بیومتریک را بزنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$origin_host = isset( $client_data['origin'] ) ? strtolower( (string) wp_parse_url( $client_data['origin'], PHP_URL_HOST ) ) : '';
 		$rp_id       = self::get_rp_id();
 		if ( $origin_host !== $rp_id ) {
 			wp_send_json_error( array( 'message' => 'دامنه درخواست نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$auth_data_bin = self::base64url_decode( $auth_data_b64 );
 		if ( strlen( $auth_data_bin ) < 37 ) {
 			wp_send_json_error( array( 'message' => 'داده احراز هویت نامعتبر است.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$rp_id_hash = substr( $auth_data_bin, 0, 32 );
 		if ( ! hash_equals( hash( 'sha256', $rp_id, true ), $rp_id_hash ) ) {
 			wp_send_json_error( array( 'message' => 'شناسه دامنه کلید امنیتی مطابقت ندارد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Check User Present (UP) flag (bit 0)
 		$flags = ord( $auth_data_bin[32] );
 		if ( 0 === ( $flags & 0x01 ) ) {
 			wp_send_json_error( array( 'message' => 'حضور کاربر توسط سنسور بیومتریک تایید نشد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Locate user owning this Credential ID
 		$user = self::find_user_by_credential_id( $cred_id );
 		if ( ! $user ) {
 			wp_send_json_error( array( 'message' => 'هیچ حساب کاربری با این کلید بیومتریک در سایت یافت نشد. لطفاً یک‌بار با کد تایید وارد شوید و Passkey را ثبت کنید.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$passkeys = self::get_user_passkeys( $user->ID );
 		if ( empty( $passkeys[ $cred_id ]['public_key_pem'] ) ) {
 			wp_send_json_error( array( 'message' => 'کلید عمومی این دستگاه در حساب شما یافت نشد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		$pem_key       = $passkeys[ $cred_id ]['public_key_pem'];
@@ -486,10 +519,12 @@ class Ashna_Passkey {
 		// Fail closed: without OpenSSL the signature cannot be checked, so nobody is signed in.
 		if ( ! function_exists( 'openssl_verify' ) ) {
 			wp_send_json_error( array( 'message' => 'ورود بیومتریک روی این سرور در دسترس نیست (افزونه OpenSSL در PHP فعال نیست).' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 		$verified = @openssl_verify( $signed_data, $signature_bin, $pem_key, OPENSSL_ALGO_SHA256 ); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- a malformed signature returns -1/false and is refused below.
 		if ( 1 !== $verified ) {
 			wp_send_json_error( array( 'message' => 'امضای دیجیتال بیومتریک تایید نشد.' ) );
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Update last_used timestamp
@@ -514,6 +549,7 @@ class Ashna_Passkey {
 					'code'    => $logged_in->get_error_code(),
 				)
 			);
+			return; // wp_send_json() ends the request: never continue past a response.
 		}
 
 		// Log successful Passkey login in Ashna Logs
@@ -534,7 +570,7 @@ class Ashna_Passkey {
 				$redirect_to,
 				sprintf( 'خوش آمدید %s! ورود بیومتریک انجام شد...', $user->display_name ),
 				array(),
-				array( 'form' => isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : '' ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified at the top.
+				array( 'form' => isset( $_POST['context'] ) ? sanitize_key( Ashna_Helper::as_string( wp_unslash( $_POST['context'] ) ) ) : '' ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified at the top.
 			)
 		);
 	}

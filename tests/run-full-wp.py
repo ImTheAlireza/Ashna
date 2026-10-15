@@ -1,9 +1,11 @@
-"""Run an Ashna test file inside a disposable full WordPress (php-wasm + SQLite works).
+"""Run Ashna test files inside a disposable full WordPress (php-wasm + SQLite works).
 
-Usage:  PHP_BINARY=... python tests/run-full-wp.py session [security integrations ...]
+Usage:  PHP_BINARY=... python tests/run-full-wp.py [attacks] [session] [security]
+                                                   [integrations] [scenarios]
 
-ASHNA_TEST_WP_SITE points at a throw-away WordPress install with Ashna active
-(default: .cache/wp-cli-site). The current source tree is copied into its
+No arguments runs every shipped suite (attacks, session, security, integrations,
+scenarios). ASHNA_TEST_WP_SITE points at a throw-away WordPress install with Ashna
+active (default: .cache/wp-cli-site). The current source tree is copied into its
 wp-content/plugins/ashna-otp first, laid out like the no-license build.
 Each tests/<name>.php must end by printing "... in <name> scenarios".
 """
@@ -61,7 +63,8 @@ def run(name):
 
 
 sync_plugin()
-names = sys.argv[1:] or ['session']
+ALL_SUITES = ['attacks', 'session', 'security', 'integrations', 'scenarios']
+names = sys.argv[1:] or ALL_SUITES
 failed = [n for n in names if not run(n)]
 if failed:
     raise SystemExit('FAIL ' + ', '.join(failed))

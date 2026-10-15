@@ -300,6 +300,21 @@ class Ashna_Helper {
 	}
 
 	/**
+	 * Coerce a request value to a string.
+	 *
+	 * PHP string functions (strlen, ltrim, strtolower, ...) throw a TypeError on PHP 8 when they
+	 * receive an array, so a request such as `redirect_to[]=x` used to end in a blank HTTP 500.
+	 * Every value taken straight out of $_POST/$_GET/$_REQUEST goes through here first.
+	 *
+	 * @param mixed  $value    Raw request value.
+	 * @param string $fallback Returned when the request sent a list or an object.
+	 * @return string
+	 */
+	public static function as_string( $value, $fallback = '' ) {
+		return is_scalar( $value ) ? (string) $value : $fallback;
+	}
+
+	/**
 	 * Convert Persian and Arabic numerals to English numerals
 	 *
 	 * @param string $input Input string.

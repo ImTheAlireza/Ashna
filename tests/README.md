@@ -94,12 +94,14 @@ The same file also runs inside a disposable full WordPress install: require its
 
 ## Full WordPress tests (QC 1 session, QC 2 security, QC 4 integrations)
 
-`tests/run-full-wp.py <name>` copies the current source (no-license layout) into a
-disposable WordPress install and runs `tests/<name>.php` there with real auth
-cookies, `WP_Session_Tokens`, nonces, users and roles:
+`tests/run-full-wp.py [names...]` copies the current source (no-license layout) into
+a disposable WordPress install and runs `tests/<name>.php` there with real auth
+cookies, `WP_Session_Tokens`, nonces, users and roles. With no arguments it runs
+every suite (`attacks session security integrations scenarios`):
 
 ```sh
 PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py session
+PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py   # all five suites
 ```
 
 `ASHNA_TEST_WP_SITE` selects the site (default `.cache/wp-cli-site`, WordPress 6.8.3
@@ -129,6 +131,112 @@ getdokan/dokan v5.3.0 (`tests/fixtures/dokan-lite-excerpt.php`). Ultimate Member
 (`tests/fixtures/ultimate-member-excerpt.php`), Paid Memberships Pro and MemberPress
 are stand-ins with the upstream function names, statuses and shortcodes. A final
 check on a site with the real plugins installed is still required.
+
+## Adversarial suite (hardcore security campaign)
+
+`tests/attacks.php` (199 checks, 18 scenarios) attacks the running plugin: it is
+written as an attacker, not as a feature test. Run it like any other suite:
+
+```sh
+PHP=8.3 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py attacks session security integrations scenarios
+```
+
+- nonce gate on all six public endpoints, nonce swapping/replay, and the two
+  endpoints that are deliberately nonce-free (`ashna_refresh_session` only returns a
+  fresh nonce; the passkey endpoints carry their own challenge);
+- 25 hostile payloads (arrays, objects, `null`, 100 KB strings, format strings,
+  null bytes, SQL comments, invalid UTF-8, emoji, ZWNJ, prototype-pollution keys)
+  posted to 7 public and 9 admin endpoints, plus a `$_GET` render fuzz and a
+  database-integrity check after every round — 1,788 requests in total, because
+  every endpoint is also crossed with the high-risk parameter names (`nonce`,
+  `identifier`, `redirect_to`, `code`, `shopurl`, `credential_id`, `target`,
+  `ip`, `json_data`) that *other* endpoints consume, in the session state each
+  endpoint really exists in (guest, member, administrator);
+- user enumeration: identical answers for real and ghost accounts, masked
+  identifiers, no code/hash in any response, password oracle parity;
+- OTP guessing, replay of a used code, expiry, wrong recipient, Persian digits;
+- lockout escape: 9 identifier rewrites (`+98`, `0098`, ZWNJ, uppercase, e-mail
+  case) and 5 spoofed proxy headers (`X-Forwarded-For`, `X-Real-IP`, …) must all end
+  in the same lockout;
+- privilege escalation: 9 admin endpoints × 6 roles × 3 nonce states, a passkey
+  IDOR, and `subscriber`→`administrator` role escalation attempts;
+- WebAuthn forgery: bit-flipped signatures, foreign origin, wrong `rpId`, cleared
+  user-presence flag, replayed assertion;
+- session forgery, including a hand-made `wordpress_logged_in` cookie;
+- open redirect: 16 payloads (`//evil`, `javascript:`, encoded, backslash,
+  protocol-relative) through every redirect option;
+- rate-limit escape: parallel bursts, forged and stale captcha tickets, 60-guess
+  brute force, and the visitor captcha gate after attack mode starts;
+- stored XSS: 9 payloads × 6 render paths (form, modal, `wp-login`, account pages,
+  admin pages, logs);
+- import abuse (huge/foreign/typed payloads), a static audit of the shipped tree
+  and SQL injection traps through the logs page;
+- two scenarios for the case where `wp_die()` comes back instead of ending the
+  request (another plugin replaced the `wp_die_ajax_handler`, which the harness can
+  emulate): a refusal must not be swallowed, and must not fall through into the
+  action it was guarding (5 public endpoints × 25 payloads with and without a
+  nonce, plus 9 admin endpoints with a bad nonce) — no code sent, no session, no
+  new user, no setting changed, no lockout cleared.
+
+The suite found and closed three real defects in shipped code: two PHP 8
+`TypeError` 500s (`strlen()`/`ltrim()` on an array from a request) and an off-site
+`redirect_url`/`role_redirects` value that survived the settings sanitizer, plus
+the hardening it forced on every refusal path (see the live runner below). It runs
+against the no-license build like the other suites and removes the roles it creates
+before finishing (otherwise session tests see them).
+
+### Live HTTP + browser attacks
+
+`tests/browser/qa-attack.mjs` (84 checks) attacks a real WordPress over the wire
+and then drives a real Chromium against it:
+
+```sh
+node tests/browser/qa-attack.mjs http://localhost:9400
+```
+
+- reconnaissance: front page, PHP error text in output, `admin-ajax.php` without an
+  action, a nonce-less `request_otp`;
+- 12 hostile URLs (array parameters, invalid UTF-8, `javascript:`/off-site
+  `redirect_to`, forged query actions) must never produce a 500;
+- enumeration, CSRF (9 state-changing actions posted cross-site with `Origin`/
+  `Referer` of an attacker page and no nonce), brute force and a parallel flood with
+  spoofed proxy headers;
+- forged `Host`, cache headers, reflected XSS through four URL payloads;
+- direct hits on plugin files (`index.php`, `ashna.php`, `uninstall.php`, class and
+  template files), the plugin directory listing, `admin-post.php` twins of the AJAX
+  handlers, a valid visitor nonce against an admin handler, XML-RPC and REST;
+- browser phase: dialog watch on a hostile URL, a real sign-in through the form,
+  cookie flags (`HttpOnly`, path, `SameSite`), fresh-context isolation, and a scan of
+  the rendered page for leaked gateway keys;
+- finally the server's `WP_DEBUG` log is read from the byte offset captured before
+  the campaign: no line may mention the plugin, and no fatal may appear at all.
+
+The runner calls `?qa_reset=1` (the loopback-only reset in
+`tests/browser/ashna-browser-qa.php`) at the start and between phases, because the
+flood and brute-force phases leave real lockouts and rate-limit windows behind.
+
+### What the campaign changed in the plugin
+
+Every response ends with `wp_send_json_*()`, which calls `wp_die()`. WordPress
+guarantees that `wp_die()` ends the request — but only as long as nothing replaces
+the `wp_die_ajax_handler` filter. The campaign emulated a site where something
+does, and found that a refusal could then fall through into the action it was
+guarding (the settings save was the clearest case). The shipped code is now
+fail-closed:
+
+- `Ashna_Session::verify_request()` returns `false` instead of "continue anyway",
+  and all nine public handlers stop on anything other than a strict `true`;
+- the eight administrator handlers that use core's `check_ajax_referer()` first
+  check the *shape* of `$_REQUEST['nonce']` (core casts its argument, and an array
+  casts with a PHP warning on PHP 8), then refuse with `wp_die( -1, 403 )` and
+  return if it comes back;
+- every `wp_send_json_*()` response — 73 call sites across the admin, auth, passkey,
+  session and Dokan code — is followed by `return;`, so a refusal can never continue
+  into the handler body;
+- the test harness now emulates `_ajax_wp_die_handler()` faithfully (echo the
+  message, then stop), so WordPress's own `-1` refusals are visible to assertions.
+
+None of this changes behaviour on a normal site: `wp_die()` never returns there.
 
 ## Scenario suite, version matrix and browser QA
 
@@ -174,18 +282,25 @@ ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/nod
   python tests/run-full-wp.py session security integrations scenarios
 ```
 
-Matrix of the QA pass (389 checks per combination):
+Matrix of the campaign (per combination: attacks 199, session 66, security 72,
+integrations 62, scenarios 190):
 
 | WordPress | PHP | Result |
 |---|---|---|
 | 6.8.3 | 7.4, 8.0, 8.1, 8.2, 8.3, 8.4, 8.5 | all pass |
-| 7.1.3 | 7.4, 8.3, 8.5 | all pass |
+| 7.1.3 | 8.5 (7.4, 8.3 in the QA pass) | all pass |
 | 6.4.13 | 8.1 | all pass |
-| 5.8.18 | 7.4 | 386/389: the three failures come from the old test driver (below) |
+| 5.8.18 | 7.4 | 590/593: the three failures come from the old test driver (below) |
+
+```sh
+ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli \
+  python tests/run-full-wp.py            # no names: every suite
+```
 
 Known limits of the test tools (not of Ashna):
-- php-wasm's PHP 7.4 build crashes inside libxml error handling. The HTML validity checks are therefore skipped on 7.4; the markup is identical on PHP 8.
-- The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. The three checks that depend on those SQL features fail there only: used captcha markers purge, the CSV round trip of a quote+backslash message, and the uninstall table drop. MySQL and the official SQLite driver handle them; both are verified on 6.4–7.1.
+- php-wasm's PHP 7.4 build aborts the process inside `libxml_clear_errors()`. On 7.4 the DOM pass of the XSS scanner is therefore skipped (the literal-needle pass still runs; the markup is identical on PHP 8, where the parsed scan runs).
+- The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. Only checks that depend on those SQL features fail there: the used-captcha-marker purge (security), the CSV round trip of a quote+backslash message and the uninstall table drop (scenarios). The attacks suite detects the driver and skips its two wildcard-search checks with a printed note instead of failing. MySQL and the official SQLite driver handle all of them; both are verified on 6.4–7.1.
+- A suite that crashes midway leaves its fixture roles (`customer`, `seller`) in the site database, which makes the session suite's "no WooCommerce → subscriber" check fail. Remove them (or rebuild the site) before the next run.
 
 ### Browser QA
 

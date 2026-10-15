@@ -42,7 +42,7 @@ class Ashna_Session {
 	 * nonce for the *current* session so the form can retry once on its own.
 	 *
 	 * @param string $field Request field holding the nonce.
-	 * @return true Sends a JSON error and exits when the nonce is not valid.
+	 * @return bool true when the nonce is valid (a refusal ends the request instead).
 	 */
 	public static function verify_request( $field = 'nonce' ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- this is the nonce check.
@@ -61,7 +61,11 @@ class Ashna_Session {
 			),
 			403
 		);
-		return true; // Not reached outside tests.
+
+		// wp_send_json() ends the request, so this is only reachable in a test harness or if
+		// something replaced the wp_die handler. Fail closed: every caller stops on anything
+		// other than a strict true.
+		return false;
 	}
 
 	/**
@@ -230,6 +234,7 @@ class Ashna_Session {
 			$data['captcha']  = $data['captchas'][0];
 		}
 		self::send_json( true, $data );
+		return; // wp_send_json() ends the request: never continue past a response.
 	}
 
 	/**
@@ -440,5 +445,6 @@ class Ashna_Session {
 			wp_send_json_success( $data, $status );
 		}
 		wp_send_json_error( $data, $status );
+		return; // wp_send_json() ends the request: never continue past a response.
 	}
 }

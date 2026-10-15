@@ -110,6 +110,14 @@ add_action(
 			$like1 = $wpdb->esc_like( '_transient_ashna_' ) . '%';
 			$like2 = $wpdb->esc_like( '_transient_timeout_ashna_' ) . '%';
 			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $like1, $like2 ) );
+			// The rate limiter counts its windows out of the log table, so a flood from a previous
+			// run would still be held against this IP. Test sandbox only: start from an empty log.
+			$notified = $wpdb->esc_like( 'ashna_otp_notified_' ) . '%';
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $notified ) );
+			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name IN ( 'ashna_otp_attack_mode', 'ashna_otp_block_stats' )" );
+			if ( class_exists( 'Ashna_Logger' ) ) {
+				$wpdb->query( 'DELETE FROM ' . Ashna_Logger::table_name() );
+			}
 			wp_cache_flush();
 			Ashna_Rate_Limiter::end_attack_mode();
 			header( 'Content-Type: text/plain' );

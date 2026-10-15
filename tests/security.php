@@ -432,6 +432,12 @@ scenario(
 			list( $r ) = ask( random_phone(), '203.0.113.66', array( 'captcha_answer' => '0', 'captcha_token' => $c['token'] ) );
 			$codes[]   = code_of( $r );
 		}
+		// The counter is per IP, so first prove every answer really was refused as a captcha error
+		// (a silently different answer here would make the lockout check below meaningless).
+		$refused = array_values( array_filter( $codes, static function ( $code ) {
+			return 0 === strpos( (string) $code, 'ashna_captcha_' );
+		} ) );
+		check( 'all 10 wrong answers are refused as captcha errors', 10 === count( $refused ), $codes );
 		list( $r ) = ask( random_phone(), '203.0.113.66', array( 'captcha_answer' => '0', 'captcha_token' => 'x.y' ) );
 		$c         = Ashna_Security::generate_math_captcha();
 		list( $r ) = ask( random_phone(), '203.0.113.66', array( 'captcha_answer' => solve( $c ), 'captcha_token' => $c['token'] ) );
