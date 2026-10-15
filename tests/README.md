@@ -302,6 +302,37 @@ Known limits of the test tools (not of Ashna):
 - The old `wp-sqlite-db` driver used for WordPress 5.8 cannot store a string containing both a backslash and a quote, ignores `\_` in `LIKE` patterns, reports success for `DROP TABLE` but keeps the table, and leaks ~47 KB per write query. `make-site.sh` raises its memory limit. Only checks that depend on those SQL features fail there: the used-captcha-marker purge (security), the CSV round trip of a quote+backslash message and the uninstall table drop (scenarios). The attacks suite detects the driver and skips its two wildcard-search checks with a printed note instead of failing, which is why it reports 197 of 199 there. MySQL and the official SQLite driver handle all of them; both are verified on 6.4–7.1.
 - A suite that crashes midway leaves its fixture roles (`customer`, `seller`) in the site database, which makes the session suite's "no WooCommerce → subscriber" check fail. Remove them (or rebuild the site) before the next run.
 
+### Load tests (thousands of sign-ins at once)
+
+`tests/load/` runs complete OTP sign-in flows — request a code, read it, verify it, then prove with
+`?qa_whoami=1` that the session belongs to the expected account — from many independent PHP
+processes at once. WordPress Playground serves one PHP request at a time, so it cannot stand in for
+simultaneous visitors; this driver can, because every worker is its own process writing to the same
+database (sessions, transients, counters, OTP log).
+
+```sh
+export PHP_BINARY="$PWD/.cache/phpwasm/node_modules/.bin/php-wasm-cli" PHP=8.3
+# the whole 8-phase campaign (baseline, crowd, burst, hostile mix, session storm, attack mode, soak)
+bash tests/load/run-campaign.sh                                        # JSON per phase in .cache/load/
+# one custom phase
+python tests/load/load-multiproc.py --workers=150 --concurrency=8 --flows=4 --seed=1200 \
+  --settings="attack_mode_threshold=0,resend_cooldown=0,captcha_type=none,active_sms_gateway=sandbox,show_debug_code_in_toast=1" \
+  --reset --label=crowd --out=.cache/load/crowd.json
+# same account over and over (session storm); helpers: --purge, --seed-only, --reset [--keep-logs], --mode=same-user, --hostile=N
+python tests/load/load-multiproc.py --workers=40 --concurrency=10 --flows=4 --mode=same-user --reset …
+# end-to-end HTTP path (real cookies + nonces, one request at a time, shared guest nonce)
+node tests/load/load-login.mjs --users=20 --concurrency=5 --repeat=1
+```
+
+Notes:
+- `max_requests_per_hour`/`max_requests_per_day` are clamped to at least 1 and count a rolling 24 h,
+  so a phase that reuses one phone number needs high limits (`max_requests_per_day=100000`) or unique
+  numbers per flow. A refusal with `ashna_rate_limit_recipient_day` is the plugin working, not a fault.
+- The fixtures (`tests/load/ashna-load-fixtures.php`) answer loopback requests only and require the
+  seeder; install them in the sandbox site only.
+- Results of the campaign: `docs/load-report-FA.md`. Numbers are correctness-under-concurrency
+  evidence; the sandbox (SQLite, one web worker) is not a capacity benchmark.
+
 ### Browser QA
 
 `tests/browser/qa-browser.mjs` drives a real Chromium against WordPress Playground. Each phase gets its own browser, because this single-process Chromium does not isolate contexts, and every phase starts from a reset site state.
