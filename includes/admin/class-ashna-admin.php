@@ -55,6 +55,7 @@ class Ashna_Admin {
 		add_action( 'wp_ajax_ashna_admin_unlock_target', array( $this, 'ajax_unlock_target' ) );
 		add_action( 'wp_ajax_ashna_admin_import_settings', array( $this, 'ajax_import_settings' ) );
 		add_action( 'wp_ajax_ashna_admin_reset_settings', array( $this, 'ajax_reset_settings' ) );
+		add_action( 'wp_ajax_ashna_admin_reset_gateway_health', array( $this, 'ajax_reset_gateway_health' ) );
 	}
 
 	/**
@@ -215,6 +216,8 @@ class Ashna_Admin {
 			'max_verify_attempts',
 			'lockout_duration',
 			'log_retention_days',
+			'gateway_timeout',
+			'gateway_cooldown',
 		);
 
 		$textarea_keys = array(
@@ -269,8 +272,10 @@ class Ashna_Admin {
 			$clean['custom_redirect_url'] = $clean['redirect_url'];
 		}
 
-		$clean['otp_length']     = max( 4, min( 8, $clean['otp_length'] ) );
-		$clean['form_max_width'] = max( 320, min( 640, $clean['form_max_width'] ) );
+		$clean['otp_length']       = max( 4, min( 8, $clean['otp_length'] ) );
+		$clean['form_max_width']   = max( 320, min( 640, $clean['form_max_width'] ) );
+		$clean['gateway_timeout']  = max( 2, min( 15, $clean['gateway_timeout'] ) );
+		$clean['gateway_cooldown'] = max( 1, min( 60, $clean['gateway_cooldown'] ) );
 
 		return $clean;
 	}
@@ -314,6 +319,7 @@ class Ashna_Admin {
 
 			Ashna_Helper::save_settings( $clean );
 			delete_transient( 'ashna_bale_safir_token' );
+			Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 			$this->settings_saved_in_request = true;
 
 			if ( ! headers_sent() ) {
@@ -380,6 +386,7 @@ class Ashna_Admin {
 
 		Ashna_Helper::save_settings( $clean );
 		delete_transient( 'ashna_bale_safir_token' );
+		Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 
 		$this->clean_output_buffers();
 
@@ -430,13 +437,31 @@ class Ashna_Admin {
 		wp_send_json_success(
 			array(
 				'message' => sprintf(
-					'ارسال تست موفق! کد تولیدشده: %s | درگاه: %s | پاسخ: %s',
+					'ارسال تست موفق! کد تولیدشده: %s | درگاه: %s | زمان: %s ثانیه | پاسخ: %s',
 					$result['code'],
 					$result['gateway'],
+					number_format( $result['elapsed_ms'] / 1000, 1 ),
 					$result['response']
 				),
 			)
 		);
+	}
+
+	/**
+	 * AJAX Handler: Clear gateway health data and bring sidelined gateways back
+	 */
+	public function ajax_reset_gateway_health() {
+		check_ajax_referer( 'ashna_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+		}
+
+		Ashna_Failover::reset_all();
+
+		$this->clean_output_buffers();
+		wp_send_json_success( array( 'message' => 'وضعیت درگاه‌ها بازنشانی شد؛ همه درگاه‌ها دوباره در مسیر ارسال قرار گرفتند.' ) );
 	}
 
 	/**
@@ -482,6 +507,8 @@ class Ashna_Admin {
 
 		$clean = $this->sanitize_settings_payload( $decoded );
 		Ashna_Helper::save_settings( $clean );
+		delete_transient( 'ashna_bale_safir_token' );
+		Ashna_Failover::reset_circuits();
 
 		$this->clean_output_buffers();
 		wp_send_json_success( array( 'message' => 'تنظیمات با موفقیت درون‌ریزی شد! در حال بارگذاری مجدد...' ) );
@@ -500,6 +527,7 @@ class Ashna_Admin {
 
 		Ashna_Helper::save_settings( Ashna_Helper::default_settings() );
 		delete_transient( 'ashna_bale_safir_token' );
+		Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 
 		$this->clean_output_buffers();
 		wp_send_json_success( array( 'message' => 'تمام تنظیمات به حالت پیش‌فرض بازنشانی شد!' ) );
@@ -515,6 +543,7 @@ class Ashna_Admin {
 
 			Ashna_Helper::save_settings( $clean );
 			delete_transient( 'ashna_bale_safir_token' );
+			Ashna_Failover::reset_circuits(); // Retry sidelined gateways right after a settings change.
 			$this->settings_saved_in_request = true;
 			$_GET['settings-updated']        = 'true';
 		}

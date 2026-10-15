@@ -30,6 +30,7 @@ class Ashna_Autoloader {
 		'Ashna_Gateway_Interface'   => 'includes/gateways/interface-ashna-gateway.php',
 		'Ashna_Abstract_Gateway'    => 'includes/gateways/abstract-ashna-gateway.php',
 		'Ashna_Gateway_Manager'     => 'includes/gateways/class-ashna-gateway-manager.php',
+		'Ashna_Failover'            => 'includes/gateways/class-ashna-failover.php',
 		'Ashna_Gateway_Sandbox'     => 'includes/gateways/class-ashna-gateway-sandbox.php',
 		'Ashna_Gateway_Smsir'       => 'includes/gateways/class-ashna-gateway-smsir.php',
 		'Ashna_Gateway_Kavenegar'   => 'includes/gateways/class-ashna-gateway-kavenegar.php',

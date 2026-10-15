@@ -145,10 +145,18 @@ class Ashna_Frontend {
 				'otpLength'      => absint( Ashna_Helper::get_option( 'otp_length', 5 ) ),
 				'captchaType'    => $captcha_type,
 				'captchaSiteKey' => $site_key,
+				// Fast-failover UX: progressive status while the code is on its way.
+				'slowHintMs'     => 2500,
+				'failoverHintMs' => (int) ( Ashna_Failover::gateway_timeout() * 1000 ) + 300,
+				'sendTimeoutMs'  => (int) ( ( Ashna_Failover::total_budget() + 10 ) * 1000 ),
+				'hasFallback'    => Ashna_Gateway_Manager::has_fallback(),
 				'i18n'           => array(
-					'networkError' => 'خطا در برقراری ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید.',
-					'sending'      => 'در حال ارسال...',
-					'verifying'    => 'در حال بررسی...',
+					'networkError'    => 'خطا در برقراری ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید.',
+					'sending'         => 'در حال ارسال...',
+					'verifying'       => 'در حال بررسی...',
+					'slowSending'     => 'در حال ارسال کد… چند لحظه صبر کنید.',
+					'failoverSending' => 'مسیر اصلی دیر پاسخ داد؛ در حال ارسال از مسیر پشتیبان…',
+					'sendTimeout'     => 'ارسال کد بیش از حد معمول طول کشید. لطفاً چند لحظه بعد دوباره تلاش کنید.',
 				),
 			)
 		);

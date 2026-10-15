@@ -69,10 +69,9 @@ class Ashna_Gateway_Ippanel extends Ashna_Abstract_Gateway {
 				),
 			);
 
-			$response = wp_remote_post(
+			$response = $this->remote_post(
 				'https://edge.ippanel.com/v1/api/send',
 				array(
-					'timeout' => 15,
 					'headers' => array(
 						'Content-Type'  => 'application/json',
 						'Authorization' => $api_key,
@@ -111,10 +110,9 @@ class Ashna_Gateway_Ippanel extends Ashna_Abstract_Gateway {
 				),
 			);
 
-			$response = wp_remote_post(
+			$response = $this->remote_post(
 				'https://api2.ippanel.com/api/v1/sms/pattern/normal/send',
 				array(
-					'timeout' => 15,
 					'headers' => array(
 						'Content-Type' => 'application/json',
 						'apikey'       => $api_key,
@@ -159,7 +157,7 @@ class Ashna_Gateway_Ippanel extends Ashna_Abstract_Gateway {
 			'https://ippanel.com/patterns/pattern'
 		);
 
-		$response = wp_remote_post( $url, array( 'timeout' => 15 ) );
+		$response = $this->remote_post( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error( 'ippanel_http_error', 'خطای ارتباط با آی‌پی‌پنل: ' . $response->get_error_message() );

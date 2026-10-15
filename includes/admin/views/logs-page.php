@@ -240,4 +240,6 @@ $export_csv_url = wp_nonce_url(
 			</div>
 		<?php endif; ?>
 	</div>
+
+	<p class="ashna-credit ashna-page-credit">آشنا v<?php echo esc_html( ASHNA_OTP_VERSION ); ?> · محصولی از <a href="https://parsena.ir" target="_blank" rel="noopener">پارسنا<span class="screen-reader-text"> (در زبانه‌ی جدید باز می‌شود)</span></a></p>
 </div>

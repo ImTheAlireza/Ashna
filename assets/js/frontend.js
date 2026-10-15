@@ -303,11 +303,27 @@
 		}
 
 		function dispatchOtpRequest(payload, $submitBtn) {
+			// Progressive status: the visitor sees what is happening instead of a frozen
+			// button, including when the server is switching to a backup gateway.
+			var i18n = ashnaOtpParams.i18n || {};
+			var hintTimers = [];
+			if (i18n.slowSending) {
+				hintTimers.push(setTimeout(function () {
+					showAlert(i18n.slowSending, 'info');
+				}, parseInt(ashnaOtpParams.slowHintMs, 10) || 2500));
+			}
+			if (ashnaOtpParams.hasFallback && i18n.failoverSending) {
+				hintTimers.push(setTimeout(function () {
+					showAlert(i18n.failoverSending, 'info');
+				}, parseInt(ashnaOtpParams.failoverHintMs, 10) || 5500));
+			}
+
 			$.ajax({
 				url: ashnaOtpParams.ajaxUrl,
 				type: 'POST',
 				dataType: 'json',
-				data: payload
+				data: payload,
+				timeout: parseInt(ashnaOtpParams.sendTimeoutMs, 10) || 30000
 			})
 				.done(function (res) {
 					if (res && res.success) {
@@ -378,10 +394,13 @@
 						showAlert(errMsg, 'error');
 					}
 				})
-				.fail(function () {
-					showAlert(ashnaOtpParams.i18n.networkError, 'error');
+				.fail(function (xhr, textStatus) {
+					showAlert(textStatus === 'timeout' && i18n.sendTimeout ? i18n.sendTimeout : i18n.networkError, 'error');
 				})
 				.always(function () {
+					for (var t = 0; t < hintTimers.length; t++) {
+						clearTimeout(hintTimers[t]);
+					}
 					setLoading($submitBtn, false);
 				});
 		}

@@ -3149,3 +3149,98 @@
 		grid-column: span 1;
 	}
 }
+
+/* ==========================================
+   FAST FAILOVER CARD & GATEWAY HEALTH
+   ========================================== */
+#ashna-app-shell .ashna-failover-card {
+	margin-top: 20px;
+}
+
+#ashna-app-shell .ashna-failover-note {
+	margin: 16px 0 0;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	line-height: 1.9;
+}
+
+#ashna-app-shell .ashna-failover-note strong {
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-failover-health-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 22px 0 10px;
+}
+
+#ashna-app-shell .ashna-failover-health-head .ashna-section-label {
+	margin: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-scroll {
+	overflow-x: auto;
+	border: 1px solid var(--s-border-input);
+	border-radius: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-table td {
+	vertical-align: middle;
+}
+
+#ashna-app-shell .ashna-gw-health-table tr:last-child td {
+	border-bottom: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-num {
+	white-space: nowrap;
+}
+
+#ashna-app-shell .ashna-gw-health-error small {
+	display: block;
+	margin-top: 2px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-failover-foot {
+	display: block;
+	margin-top: 10px;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}
+
+/* Primary gateway sidelined by the circuit breaker */
+.ashna-status-dot.is-offline {
+	background: #ef4444;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.22);
+}
+
+/* ==========================================
+   PARSENA CREDIT
+   ========================================== */
+#ashna-app-shell .ashna-credit a {
+	color: inherit;
+	font-weight: 700;
+	text-decoration: none;
+	border-bottom: 1px dashed currentColor;
+}
+
+#ashna-app-shell .ashna-credit a:hover,
+#ashna-app-shell .ashna-credit a:focus {
+	color: var(--s-primary);
+}
+
+#ashna-app-shell .ashna-page-credit {
+	margin: 20px 0 4px;
+	text-align: center;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}

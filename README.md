@@ -26,6 +26,12 @@
   - **کاوه‌نگار (Kavenegar)** (وب‌سرویس اعتبارسنجی `verify/lookup.json`)
   - **آی‌پی‌پنل (IPPanel)** (پشتیبانی از وب‌سرویس جدید `Edge API`، `API Key` و کلاسیک)
   - **زنجیره ۳ درگاه پشتیبان خودکار (Failover Chain):** تعریف تا ۳ درگاه پشتیبان به ترتیب اولویت برای ارسال خودکار در صورت قطعی یا اتمام شارژ درگاه اصلی
+  - **ضدقطعی سریع (بدون معطلی کاربر):**
+    - هر درگاه حداکثر چند ثانیه فرصت پاسخ دارد (پیش‌فرض ۵ ثانیه، قابل تنظیم بین ۲ تا ۱۵) و برقراری اتصال حداکثر ۳ ثانیه؛ قبلاً هر درخواست تا ۱۵ ثانیه منتظر می‌ماند.
+    - سقف زمانی کل برای همه پشتیبان‌ها (پیش‌فرض ۱۵ ثانیه)؛ بله هم با تمدید توکن و تلاش مجدد، در همان سهم زمانی می‌ماند.
+    - **Circuit Breaker:** درگاهی که قطع، کند، خطای 5xx، کلید نامعتبر یا اعتبار ناکافی دارد، چند دقیقه کنار گذاشته می‌شود و کاربران بعدی بدون تأخیر از پشتیبان کد می‌گیرند. بعد از این مدت، یک امتحان کوتاه (حداکثر ۳ ثانیه) انجام می‌شود و با خطای دوباره، مدت کنار گذاشتن دوبرابر می‌شود (حداکثر ۳۰ دقیقه).
+    - خطاهای مربوط به یک گیرنده (مثل «کاربر اکانت بله ندارد») هیچ‌وقت درگاه را برای بقیه از کار نمی‌اندازند؛ شماره‌ی ردشده هم بین درگاه‌های پیامکی دست‌به‌دست نمی‌شود.
+    - جدول وضعیت لحظه‌ای درگاه‌ها در پنل، مسیر کامل هر ارسال در لاگ‌ها، و پیام مرحله‌ای در فرم («در حال ارسال کد…» و «در حال ارسال از مسیر پشتیبان…»).
 - **پیام‌رسان بله (Bale Messenger):**
   - پشتیبانی از **وب‌سرویس رسمی سفیر بله (Safir OTP API)** و **ربات بله (Bale Bot API)**
   - قابلیت **ارسال هوشمند ترکیبی (Fallback)**: اول ارسال در بله و در صورت عدم عضویت کاربر، ارسال خودکار از طریق پیامک
@@ -68,6 +74,7 @@ ashna-otp/
 │   │   ├── interface-ashna-gateway.php            # قرارداد استاندارد درگاه‌ها (Interface)
 │   │   ├── abstract-ashna-gateway.php             # کلاس پایه انتزاعی درگاه‌ها (Abstract Base Class)
 │   │   ├── class-ashna-gateway-manager.php        # مدیر درگاه‌ها و زنجیره ۳ مرحله‌ای Failover
+│   │   ├── class-ashna-failover.php               # ضدقطعی سریع: timeout، سقف زمانی، Circuit Breaker و سلامت درگاه‌ها
 │   │   ├── class-ashna-gateway-sandbox.php        # درایور آزمایشی (Sandbox)
 │   │   ├── class-ashna-gateway-smsir.php          # درایور SMS.ir
 │   │   ├── class-ashna-gateway-kavenegar.php      # درایور کاوه‌نگار
@@ -112,11 +119,29 @@ add_action( 'init', function() {
             public function get_id()    { return 'my_gateway'; }
             public function get_title() { return 'درگاه اختصاصی من'; }
             public function send( $recipient, $code ) {
-                // ارسال درخواست وب‌سرویس با $this->http_request(...)
-                return true;
+                // post_json() / remote_post() خودکار محدودیت زمانی ضدقطعی را اعمال می‌کنند.
+                $res = $this->post_json( 'https://api.example.com/send', array( 'to' => $recipient, 'code' => $code ) );
+                if ( is_wp_error( $res ) ) {
+                    return $res;
+                }
+                if ( 422 === $res['code'] ) {
+                    // شماره‌ی نامعتبر: درگاه پیامکی بعدی امتحان نمی‌شود و درگاه کنار گذاشته نمی‌شود.
+                    return new WP_Error( 'my_gateway_invalid', 'شماره نامعتبر است.', array( 'ashna_error_type' => 'input' ) );
+                }
+                return 200 === $res['code'] ? true : new WP_Error( 'my_gateway_error', 'خطای درگاه' );
             }
         }
         Ashna_Gateway_Manager::register_gateway( new My_Custom_SMS_Gateway() );
     }
 } );
 ```
+
+### نوع خطا و هوک‌های ضدقطعی
+
+- درگاه می‌تواند نوع خطا را صریح اعلام کند: `array( 'ashna_error_type' => $type )` در داده‌ی `WP_Error`.
+  - `timeout`، `connect`، `network`، `server`، `auth` و `account`: قطعی؛ درگاه موقتاً کنار گذاشته می‌شود.
+  - `api` و `config`: فقط همین درخواست به درگاه بعدی می‌رود.
+  - `input`: شماره رد شده؛ بقیه‌ی درگاه‌های همان کانال امتحان نمی‌شوند (کانال دیگر، مثلاً بله، همچنان امتحان می‌شود).
+- بدون اعلام صریح، نوع خطا از وضعیت شبکه و کد HTTP تشخیص داده می‌شود.
+- فیلتر `ashna_otp_failover_budget`: سقف زمان کل ارسال یک کد (ثانیه).
+- اکشن `ashna_otp_gateway_failure`: بعد از هر تلاش ناموفق، با آرگومان‌های `$gateway_id, $type, $wp_error, $ms, $sidelined`.

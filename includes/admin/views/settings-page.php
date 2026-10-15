@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $active_gw_obj    = isset( $sms_gateways[ $settings['active_sms_gateway'] ] ) ? $sms_gateways[ $settings['active_sms_gateway'] ] : reset( $sms_gateways );
 $active_gw_title  = $active_gw_obj ? $active_gw_obj->get_title() : 'نامشخص';
+$primary_down     = $active_gw_obj && 'sandbox' !== $active_gw_obj->get_id() && 'open' === Ashna_Failover::state( $active_gw_obj->get_id() );
 $wc_active        = class_exists( 'WooCommerce' );
 $elementor_active = did_action( 'elementor/loaded' ) || class_exists( '\Elementor\Plugin' );
 $curl_active      = function_exists( 'curl_version' );
@@ -297,9 +298,9 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 			</div>
 
 			<div class="ashna-topbar-actions">
-				<div class="ashna-gateway-status-pill" title="درگاه پیامک فعال فعلی">
+				<div class="ashna-gateway-status-pill" title="<?php echo esc_attr( $primary_down ? 'درگاه اصلی موقتاً کنار گذاشته شده؛ کدها از پشتیبان ارسال می‌شوند' : 'درگاه پیامک فعال فعلی' ); ?>">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;display:block;opacity:0.8;"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-					<span class="ashna-status-dot <?php echo 'sandbox' === $settings['active_sms_gateway'] ? 'is-warning' : 'is-online'; ?>"></span>
+					<span class="ashna-status-dot <?php echo esc_attr( 'sandbox' === $settings['active_sms_gateway'] ? 'is-warning' : ( $primary_down ? 'is-offline' : 'is-online' ) ); ?>"></span>
 					<span>درگاه فعال: <strong id="ashna-topbar-gw-name"><?php echo esc_html( $active_gw_title ); ?></strong></span>
 				</div>
 
@@ -379,7 +380,7 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 
 				<div class="ashna-sidebar-footer">
 					<p>آشنا v<?php echo esc_html( ASHNA_OTP_VERSION ); ?></p>
-					<small>سازگار با دیجیتز و ووکامرس</small>
+					<small class="ashna-credit">محصولی از <a href="https://parsena.ir" target="_blank" rel="noopener">پارسنا<span class="screen-reader-text"> (در زبانه‌ی جدید باز می‌شود)</span></a></small>
 				</div>
 			</aside>
 

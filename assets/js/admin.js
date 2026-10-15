@@ -796,6 +796,43 @@
 			});
 		});
 
+		// Fast failover: bring sidelined gateways back and clear health stats (no page reload,
+		// so unsaved form edits are kept).
+		$('#ashna-reset-gw-health').on('click', function () {
+			var $btn = $(this);
+			var label = $btn.text();
+			$btn.prop('disabled', true).text('در حال بازنشانی...');
+			$.ajax({
+				url: ashnaAdminParams.ajaxUrl,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'ashna_admin_reset_gateway_health',
+					nonce: ashnaAdminParams.nonce
+				}
+			})
+				.done(function (res) {
+					if (res && res.success) {
+						$('.ashna-gw-health-table tbody tr').each(function () {
+							var $row = $(this);
+							if ($row.attr('data-gw') !== 'sandbox') {
+								$row.find('.ashna-gw-health-state').html('<span class="ashna-pill is-muted">هنوز استفاده نشده</span>');
+							}
+							$row.find('.ashna-gw-health-num, .ashna-gw-health-error').text('—');
+						});
+						showToast('✅ ' + res.data.message);
+					} else {
+						showToast('❌ ' + ((res && res.data && res.data.message) || 'خطا در بازنشانی وضعیت درگاه‌ها.'), true);
+					}
+				})
+				.fail(function () {
+					showToast('❌ خطا در ارتباط با سرور.', true);
+				})
+				.always(function () {
+					$btn.prop('disabled', false).text(label);
+				});
+		});
+
 		// 10. Import JSON & Reset Settings
 		$('#ashna_import_settings_btn').on('click', function () {
 			var jsonText = ($('#ashna_import_json_box').val() || '').trim();

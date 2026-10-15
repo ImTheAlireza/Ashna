@@ -58,6 +58,8 @@ class Ashna_Helper {
 			'backup_sms_gateway_1'      => 'none',            // 1st priority failover
 			'backup_sms_gateway_2'      => 'none',            // 2nd priority failover
 			'backup_sms_gateway_3'      => 'none',            // 3rd priority failover
+			'gateway_timeout'           => 5,                 // seconds to wait for one gateway before failing over (2–15)
+			'gateway_cooldown'          => 5,                 // minutes a failing gateway is skipped before a quick re-check (1–60)
 
 			// SMS.ir Settings
 			'smsir_api_key'             => '',

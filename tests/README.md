@@ -67,3 +67,24 @@ isolated metadata/UI/dependency stubs. PHP 7.4, 8.0 and 8.1 must be rejected;
 8.2 and 8.3 pass the version check without loading Ashna or a license. This does
 not certify the vendor-encoded license on all newer PHP releases. Direct-source
 bootstrap tests on older PHP are not a declaration of licensed-package support.
+
+## Fast-failover engine (QC 3)
+
+`tests/failover.php` exercises 21 scenarios against simulated gateways through
+the real `pre_http_request` filter: short per-gateway timeouts, the total
+budget, circuit breaker (skip, trial after cooldown, backoff, recovery), error
+classification (timeout/connect/server/auth/account/api/config/input), Bale
+token refresh + retry, channel fallback, "both" strategy, admin tests that
+bypass the breaker and exceptions in custom gateways. A simulated "hang" really
+sleeps for the timeout WordPress was given, so the timing assertions are real
+(the run takes about 20 seconds).
+
+It needs `class-wp-error.php` next to the hook files:
+
+```sh
+gh api 'repos/WordPress/WordPress/contents/wp-includes/class-wp-error.php?ref=6.8.3' --jq .content | base64 -d > .cache/license-tests/wp/wp-includes/class-wp-error.php
+PHP_BINARY=/path/to/php python tests/run-failover.py
+```
+
+The same file also runs inside a disposable full WordPress install: require its
+`wp-load.php` (with Ashna active), then include `tests/failover.php`.

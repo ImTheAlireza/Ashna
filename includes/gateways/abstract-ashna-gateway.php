@@ -12,6 +12,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 
 	/**
+	 * Transport trace of the current send(): number of HTTP calls and the last call.
+	 *
+	 * @var array|null
+	 */
+	private static $trace = null;
+
+	/**
+	 * Whether the cURL connect-timeout hook is registered.
+	 *
+	 * @var bool
+	 */
+	private static $curl_hook_added = false;
+
+	/**
+	 * Start a fresh transport trace (called before each gateway attempt).
+	 */
+	public static function reset_trace() {
+		self::$trace = array(
+			'calls'     => 0,
+			'last'      => null,
+			'exhausted' => '',
+		);
+	}
+
+	/**
+	 * Transport trace of the last attempt.
+	 *
+	 * @return array|null
+	 */
+	public static function get_trace() {
+		return self::$trace;
+	}
+
+	/**
 	 * Helper to read a setting option
 	 *
 	 * @param string $key     Option key.
@@ -20,6 +54,68 @@ abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 	 */
 	protected function get_setting( $key, $default = '' ) {
 		return Ashna_Helper::get_option( $key, $default );
+	}
+
+	/**
+	 * POST through the WordPress HTTP API with fast-failover time limits.
+	 *
+	 * The timeout comes from Ashna_Failover (short per-gateway limit, capped by
+	 * the remaining dispatch budget), so a hung provider cannot stall the visitor.
+	 *
+	 * @param string $url  Endpoint URL.
+	 * @param array  $args wp_remote_post() arguments (any 'timeout' is replaced).
+	 * @return array|WP_Error
+	 */
+	protected function remote_post( $url, $args = array() ) {
+		if ( null === self::$trace ) {
+			self::reset_trace();
+		}
+
+		$limits = Ashna_Failover::http_limits();
+		if ( is_wp_error( $limits ) ) {
+			$data                     = $limits->get_error_data();
+			self::$trace['exhausted'] = isset( $data['ashna_error_type'] ) ? $data['ashna_error_type'] : 'timeout';
+			return $limits;
+		}
+
+		if ( ! self::$curl_hook_added ) {
+			add_action( 'http_api_curl', array( __CLASS__, 'apply_connect_timeout' ), 10, 3 );
+			self::$curl_hook_added = true;
+		}
+
+		$args                          = is_array( $args ) ? $args : array();
+		$args['timeout']               = $limits['timeout'];
+		$args['ashna_connect_timeout'] = $limits['connect'];
+
+		$started  = microtime( true );
+		$response = wp_remote_post( $url, $args );
+
+		++self::$trace['calls'];
+		self::$trace['last'] = array(
+			'host'  => (string) wp_parse_url( $url, PHP_URL_HOST ), // Host only: some URLs embed API keys.
+			'ms'    => (int) round( ( microtime( true ) - $started ) * 1000 ),
+			'code'  => is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response ),
+			'error' => is_wp_error( $response ) ? $response->get_error_message() : '',
+		);
+
+		return $response;
+	}
+
+	/**
+	 * Limit the connect phase (DNS + TCP + TLS) of Ashna's own requests, so an
+	 * unreachable provider fails within seconds. WordPress only passes the total
+	 * timeout to cURL; other requests on the site are not touched.
+	 *
+	 * @param resource|CurlHandle $handle cURL handle.
+	 * @param array               $args   Parsed wp_remote_*() arguments.
+	 * @param string              $url    Request URL.
+	 */
+	public static function apply_connect_timeout( $handle, $args, $url ) {
+		if ( empty( $args['ashna_connect_timeout'] ) || ! defined( 'CURLOPT_CONNECTTIMEOUT_MS' ) ) {
+			return;
+		}
+		$ms = max( 500, (int) round( (float) $args['ashna_connect_timeout'] * 1000 ) );
+		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT_MS, $ms ); // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- Only reachable from the http_api_curl hook.
 	}
 
 	/**
@@ -36,10 +132,9 @@ abstract class Ashna_Abstract_Gateway implements Ashna_Gateway_Interface {
 			'Accept'       => 'application/json',
 		);
 
-		$response = wp_remote_post(
+		$response = $this->remote_post(
 			$url,
 			array(
-				'timeout' => 15,
 				'headers' => array_merge( $default_headers, $headers ),
 				'body'    => wp_json_encode( $payload ),
 			)

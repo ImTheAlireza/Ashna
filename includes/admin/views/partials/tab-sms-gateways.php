@@ -326,4 +326,117 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</div>
 						</div>
 					</div>
+
+					<?php
+					// Fast failover: settings and live health of every gateway on the delivery path.
+					$ashna_health_rows = array(
+						array(
+							'gw'   => $active_gw_obj,
+							'role' => 'درگاه اصلی',
+						),
+					);
+					$ashna_backup_labels = array( 'پشتیبان اول', 'پشتیبان دوم', 'پشتیبان سوم' );
+					foreach ( Ashna_Gateway_Manager::get_backup_sms_gateways() as $ashna_idx => $ashna_backup_gw ) {
+						$ashna_health_rows[] = array(
+							'gw'   => $ashna_backup_gw,
+							'role' => isset( $ashna_backup_labels[ $ashna_idx ] ) ? $ashna_backup_labels[ $ashna_idx ] : 'پشتیبان',
+						);
+					}
+					if ( in_array( $settings['mobile_delivery_channel'], array( 'bale', 'bale_fallback_sms', 'sms_fallback_bale', 'both' ), true ) ) {
+						$ashna_health_rows[] = array(
+							'gw'   => new Ashna_Gateway_Bale(),
+							'role' => 'پیام‌رسان بله',
+						);
+					}
+					?>
+					<div class="ashna-card ashna-failover-card" id="ashna-failover-card">
+						<div class="ashna-card-head">
+							<div class="ashna-card-head-title">
+								<span class="ashna-card-icon is-blue">
+									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+								</span>
+								<div>
+									<h2>سرعت و ضدقطعی ارسال</h2>
+									<p>اگر درگاهی قطع یا کند شد، کاربر معطل نمی‌ماند و کد بلافاصله از پشتیبان بعدی ارسال می‌شود</p>
+								</div>
+							</div>
+							<span class="ashna-pill is-ok">سوییچ خودکار</span>
+						</div>
+
+						<div class="ashna-fields-grid ashna-cols-2">
+							<div class="ashna-field">
+								<label for="gateway_timeout">حداکثر انتظار برای هر درگاه (ثانیه)</label>
+								<input type="text" inputmode="numeric" name="ashna[gateway_timeout]" id="gateway_timeout" value="<?php echo esc_attr( (string) $settings['gateway_timeout'] ); ?>" dir="ltr" />
+								<small>اگر درگاه در این مدت جواب ندهد، کد از پشتیبان بعدی ارسال می‌شود. بین ۲ تا ۱۵ ثانیه (پیشنهادی: ۵)</small>
+							</div>
+							<div class="ashna-field">
+								<label for="gateway_cooldown">کنار گذاشتن درگاه قطع‌شده (دقیقه)</label>
+								<input type="text" inputmode="numeric" name="ashna[gateway_cooldown]" id="gateway_cooldown" value="<?php echo esc_attr( (string) $settings['gateway_cooldown'] ); ?>" dir="ltr" />
+								<small>در این مدت کاربران بعدی مستقیم از پشتیبان کد می‌گیرند؛ بعد درگاه یک بار کوتاه دوباره امتحان می‌شود. بین ۱ تا ۶۰ دقیقه</small>
+							</div>
+						</div>
+
+						<p class="ashna-failover-note">
+							سقف کل زمان ارسال یک کد با همه پشتیبان‌ها: <strong><?php echo esc_html( (string) round( Ashna_Failover::total_budget() ) ); ?> ثانیه</strong>
+							· برقراری اتصال با هر درگاه: حداکثر <strong><?php echo esc_html( (string) round( min( Ashna_Failover::CONNECT_TIMEOUT, Ashna_Failover::gateway_timeout() ) ) ); ?> ثانیه</strong>
+						</p>
+
+						<div class="ashna-failover-health-head">
+							<span class="ashna-section-label">وضعیت لحظه‌ای درگاه‌های مسیر ارسال</span>
+							<button type="button" class="ashna-btn-secondary" id="ashna-reset-gw-health">بازنشانی وضعیت درگاه‌ها</button>
+						</div>
+						<div class="ashna-gw-health-scroll">
+							<table class="ashna-modern-table ashna-gw-health-table">
+								<thead>
+									<tr>
+										<th>درگاه</th>
+										<th>نقش</th>
+										<th>وضعیت</th>
+										<th>آخرین زمان پاسخ</th>
+										<th>میانگین موفق</th>
+										<th>آخرین خطا</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $ashna_health_rows as $ashna_row ) : ?>
+										<?php
+										$ashna_gw_id  = $ashna_row['gw']->get_id();
+										$ashna_health = Ashna_Failover::get( $ashna_gw_id );
+										$ashna_state  = Ashna_Failover::state( $ashna_gw_id );
+
+										if ( 'sandbox' === $ashna_gw_id ) {
+											$ashna_pill = array( 'is-muted', 'حالت آزمایشی' );
+										} elseif ( 'open' === $ashna_state ) {
+											$ashna_pill = array( 'is-err', 'کنار گذاشته شده تا ' . wp_date( 'H:i', (int) $ashna_health['open_until'] ) );
+										} elseif ( 'trial' === $ashna_state ) {
+											$ashna_pill = array( 'is-warn', 'در انتظار امتحان دوباره' );
+										} elseif ( 0 === (int) $ashna_health['ok'] && 0 === (int) $ashna_health['fail'] ) {
+											$ashna_pill = array( 'is-muted', 'هنوز استفاده نشده' );
+										} elseif ( (int) $ashna_health['last_fail'] > (int) $ashna_health['last_ok'] ) {
+											$ashna_pill = array( 'is-warn', 'آخرین تلاش ناموفق' );
+										} else {
+											$ashna_pill = array( 'is-ok', 'سالم' );
+										}
+										?>
+										<tr data-gw="<?php echo esc_attr( $ashna_gw_id ); ?>">
+											<td><strong><?php echo esc_html( $ashna_row['gw']->get_title() ); ?></strong></td>
+											<td><?php echo esc_html( $ashna_row['role'] ); ?></td>
+											<td class="ashna-gw-health-state"><span class="ashna-pill <?php echo esc_attr( $ashna_pill[0] ); ?>"><?php echo esc_html( $ashna_pill[1] ); ?></span></td>
+											<td class="ashna-gw-health-num"><?php echo $ashna_health['last_ms'] > 0 ? esc_html( number_format( $ashna_health['last_ms'] / 1000, 1 ) . ' ثانیه' ) : '—'; ?></td>
+											<td class="ashna-gw-health-num"><?php echo $ashna_health['avg_ms'] > 0 ? esc_html( number_format( $ashna_health['avg_ms'] / 1000, 1 ) . ' ثانیه' ) : '—'; ?></td>
+											<td class="ashna-gw-health-error">
+												<?php if ( ! empty( $ashna_health['last_fail'] ) && '' !== $ashna_health['last_error'] ) : ?>
+													<span title="<?php echo esc_attr( $ashna_health['last_error'] ); ?>"><?php echo esc_html( Ashna_Failover::type_label( $ashna_health['last_type'] ) ); ?></span>
+													<small><?php echo esc_html( Ashna_Failover::ago( (int) $ashna_health['last_fail'] ) ); ?></small>
+												<?php else : ?>
+													—
+												<?php endif; ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+						<small class="ashna-failover-foot">با ذخیره تنظیمات، درگاه‌های کنار گذاشته‌شده هم دوباره در مسیر ارسال قرار می‌گیرند.</small>
+					</div>
 				</section>

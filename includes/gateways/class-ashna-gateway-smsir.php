@@ -60,10 +60,9 @@ class Ashna_Gateway_Smsir extends Ashna_Abstract_Gateway {
 			),
 		);
 
-		$response = wp_remote_post(
+		$response = $this->remote_post(
 			'https://api.sms.ir/v1/send/verify',
 			array(
-				'timeout' => 15,
 				'headers' => array(
 					'Content-Type' => 'application/json',
 					'Accept'       => 'application/json',

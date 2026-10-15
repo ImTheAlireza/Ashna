@@ -53,10 +53,9 @@ class Ashna_Gateway_Melipayamak extends Ashna_Abstract_Gateway {
 			'bodyId'   => $body_id,
 		);
 
-		$response = wp_remote_post(
+		$response = $this->remote_post(
 			'https://rest.payamak-panel.com/api/SendSMS/BaseServiceNumber',
 			array(
-				'timeout' => 15,
 				'headers' => array(
 					'Content-Type' => 'application/json',
 				),

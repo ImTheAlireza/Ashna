@@ -66,10 +66,76 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 			'otp'   => (int) $code,
 		);
 
-		$response = wp_remote_post(
+		$response = $this->safir_send_request( $token, $payload );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		// Expired token (401): refresh once and retry. Both calls share the
+		// gateway's failover time slot, so this can no longer stall the visitor.
+		if ( 401 === (int) wp_remote_retrieve_response_code( $response ) ) {
+			delete_transient( 'ashna_bale_safir_token' );
+			$token = $this->get_safir_access_token();
+			if ( is_wp_error( $token ) ) {
+				return $token;
+			}
+			$response = $this->safir_send_request( $token, $payload );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+		}
+
+		$http_code = (int) wp_remote_retrieve_response_code( $response );
+		$body      = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( 200 === $http_code ) {
+			return true;
+		}
+
+		$error_msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['error'] ) ? $body['error'] : 'خطا در ارسال کد از طریق سفیر بله (کد HTTP: ' . $http_code . ')' );
+		$type      = '';
+		if ( isset( $body['error_data'][0]['code'] ) ) {
+			$type = self::safir_error_type( (int) $body['error_data'][0]['code'] );
+			if ( ! empty( $body['error_data'][0]['description'] ) ) {
+				$error_msg = (string) $body['error_data'][0]['description'];
+			}
+		}
+
+		return new WP_Error( 'bale_safir_api_error', $error_msg, $type ? array( 'ashna_error_type' => $type ) : null );
+	}
+
+	/**
+	 * Failover type for documented Safir error codes (docs.bale.ai/safir).
+	 *
+	 * "Not a Bale user" stays a plain provider error: it falls back to SMS
+	 * without sidelining Bale for everyone else.
+	 *
+	 * @param int $code ErrorInfo code.
+	 * @return string Empty when the generic HTTP classification should apply.
+	 */
+	private static function safir_error_type( $code ) {
+		$map = array(
+			2  => 'server',  // InternalServerError.
+			3  => 'server',  // RateLimitExceeded.
+			8  => 'input',   // InvalidPhone.
+			17 => 'api',     // NotBaleUser.
+			20 => 'account', // PaymentRequired.
+			21 => 'account', // MaximumContactLimitReached.
+		);
+		return isset( $map[ $code ] ) ? $map[ $code ] : '';
+	}
+
+	/**
+	 * POST one OTP to the Safir send endpoint.
+	 *
+	 * @param string $token   Access token.
+	 * @param array  $payload Request payload.
+	 * @return array|WP_Error HTTP response, or WP_Error on transport failure.
+	 */
+	private function safir_send_request( $token, $payload ) {
+		$response = $this->remote_post(
 			'https://safir.bale.ai/api/v2/send_otp',
 			array(
-				'timeout' => 15,
 				'headers' => array(
 					'Content-Type'  => 'application/json',
 					'Authorization' => 'Bearer ' . $token,
@@ -82,36 +148,7 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 			return new WP_Error( 'bale_safir_http_error', 'خطای ارتباط با وب‌سرویس سفیر بله: ' . $response->get_error_message() );
 		}
 
-		$http_code = wp_remote_retrieve_response_code( $response );
-		$body      = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		// If token expired (401), clear transient and retry once
-		if ( 401 === $http_code ) {
-			delete_transient( 'ashna_bale_safir_token' );
-			$token = $this->get_safir_access_token();
-			if ( ! is_wp_error( $token ) ) {
-				$response  = wp_remote_post(
-					'https://safir.bale.ai/api/v2/send_otp',
-					array(
-						'timeout' => 15,
-						'headers' => array(
-							'Content-Type'  => 'application/json',
-							'Authorization' => 'Bearer ' . $token,
-						),
-						'body'    => wp_json_encode( $payload ),
-					)
-				);
-				$http_code = wp_remote_retrieve_response_code( $response );
-				$body      = json_decode( wp_remote_retrieve_body( $response ), true );
-			}
-		}
-
-		if ( 200 === $http_code ) {
-			return true;
-		}
-
-		$error_msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['error'] ) ? $body['error'] : 'خطا در ارسال کد از طریق سفیر بله (کد HTTP: ' . $http_code . ')' );
-		return new WP_Error( 'bale_safir_api_error', $error_msg );
+		return $response;
 	}
 
 	/**
@@ -132,10 +169,9 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 			return new WP_Error( 'bale_safir_config', 'شناسه کاربری (Client ID) و رمز عبور (Client Secret) سفیر بله تنظیم نشده است.' );
 		}
 
-		$response = wp_remote_post(
+		$response = $this->remote_post(
 			'https://safir.bale.ai/api/v2/auth/token',
 			array(
-				'timeout' => 15,
 				'headers' => array(
 					'Content-Type' => 'application/x-www-form-urlencoded',
 				),
@@ -195,10 +231,9 @@ class Ashna_Gateway_Bale extends Ashna_Abstract_Gateway {
 
 		$url = sprintf( 'https://tapi.bale.ai/bot%s/sendMessage', rawurlencode( $bot_token ) );
 
-		$response = wp_remote_post(
+		$response = $this->remote_post(
 			$url,
 			array(
-				'timeout' => 15,
 				'headers' => array(
 					'Content-Type' => 'application/json',
 				),
