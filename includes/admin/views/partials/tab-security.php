@@ -53,22 +53,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<div class="ashna-field">
 									<label for="max_requests_per_hour">سقف کد برای هر شماره (در ساعت)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_requests_per_hour]" id="max_requests_per_hour" value="<?php echo esc_attr( (string) $settings['max_requests_per_hour'] ); ?>" dir="ltr" />
-									<small>فاصله‌ی ارسال مجدد (پیش‌فرض ۶۰ ثانیه) هم یعنی حداکثر ۱ کد در دقیقه؛ در تب «روش و مسیر ورود».</small>
+									<small>فاصله‌ی ارسال مجدد (پیش‌فرض ۶۰ ثانیه) هم یعنی حداکثر ۱ کد در دقیقه؛ در تب «روش و مسیر ورود». <b>۰ = بدون محدودیت.</b></small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_requests_per_day">سقف کد برای هر شماره (در ۲۴ ساعت)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_requests_per_day]" id="max_requests_per_day" value="<?php echo esc_attr( (string) $settings['max_requests_per_day'] ); ?>" dir="ltr" />
-									<small>جلوی مزاحمت طولانی برای یک شماره را می‌گیرد.</small>
+									<small>جلوی مزاحمت طولانی برای یک شماره را می‌گیرد. <b>۰ = بدون محدودیت.</b></small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_ip_requests_per_minute">سقف درخواست هر آی‌پی (در دقیقه)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_ip_requests_per_minute]" id="max_ip_requests_per_minute" value="<?php echo esc_attr( (string) $settings['max_ip_requests_per_minute'] ); ?>" dir="ltr" />
-									<small>ارسال رگباری به شماره‌های مختلف از یک دستگاه</small>
+									<small>ارسال رگباری به شماره‌های مختلف از یک دستگاه. <b>۰ = بدون محدودیت.</b></small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_ip_requests_per_hour">سقف درخواست هر آی‌پی (در ساعت)</label>
 									<input type="text" inputmode="numeric" name="ashna[max_ip_requests_per_hour]" id="max_ip_requests_per_hour" value="<?php echo esc_attr( (string) $settings['max_ip_requests_per_hour'] ); ?>" dir="ltr" />
-									<small>جلوگیری از تست شماره‌های متعدد توسط یک دستگاه</small>
+									<small>جلوگیری از تست شماره‌های متعدد توسط یک دستگاه. <b>۰ = بدون محدودیت.</b></small>
 								</div>
 								<div class="ashna-field">
 									<label for="max_subnet_requests_per_minute">سقف هر شبکه‌ی آی‌پی (در دقیقه)</label>

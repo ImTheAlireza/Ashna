@@ -31,6 +31,7 @@ if ( ! empty( $settings['delete_data_on_uninstall'] ) ) {
 	delete_option( 'ashna_otp_attack_mode' );
 	delete_option( 'ashna_otp_block_stats' );
 	delete_option( 'ashna_otp_proxy_hint' );
+	delete_option( 'ashna_otp_digits_meta' ); // Ashna_Auth::DIGITS_META_OPTION.
 	delete_transient( 'ashna_otp_notified_attack' );
 	delete_transient( 'ashna_otp_notified_daily_cap' );
 	// Single-use captcha markers.

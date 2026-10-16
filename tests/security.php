@@ -441,7 +441,24 @@ scenario(
 		list( $r ) = ask( random_phone(), '203.0.113.66', array( 'captcha_answer' => '0', 'captcha_token' => 'x.y' ) );
 		$c         = Ashna_Security::generate_math_captcha();
 		list( $r ) = ask( random_phone(), '203.0.113.66', array( 'captcha_answer' => solve( $c ), 'captcha_token' => $c['token'] ) );
-		check( '10 wrong answers lock the IP (brute force)', 'ashna_locked_out' === code_of( $r ), $r['raw'] );
+		// Forensics for this check only: it has failed rarely (0.2% of runs) on slow WASM builds when
+		// the whole suite is run in a row, so the failure message carries the option-layer state of the
+		// lock. The lock lives in a transient; the dump distinguishes "not written" from "not seen".
+		$dbg_ip    = '203.0.113.66';
+		$dbg_ipkey = 'ashna_lock_ip_' . md5( $dbg_ip );
+		$dbg_rows  = $GLOBALS['wpdb']->get_results( "SELECT option_name, option_value FROM {$GLOBALS['wpdb']->options} WHERE option_name LIKE '%ashna_lock%' OR option_name LIKE '%ashna_capfail%' ORDER BY option_name" ); // phpcs:ignore
+		check(
+			'10 wrong answers lock the IP (brute force)',
+			'ashna_locked_out' === code_of( $r ),
+			array(
+				'code'       => code_of( $r ),
+				'client_ip'  => Ashna_IP::client(),
+				'attack'     => Ashna_Rate_Limiter::attack_mode_active(),
+				'cache_lock' => wp_cache_get( '_transient_' . $dbg_ipkey, 'options' ),
+				'rows'       => $dbg_rows,
+				'raw'        => $r['raw'],
+			)
+		);
 
 		$tokens = array();
 		for ( $i = 0; $i < 60; $i++ ) {

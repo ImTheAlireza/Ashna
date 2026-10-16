@@ -8,6 +8,9 @@ export PHP=8.3
 OUT=.cache/load
 mkdir -p "$OUT"
 
+# Make sure the sandbox site carries the current plugin sources (it holds a copy, not a symlink).
+python tests/load/sync-site.py .cache/wp-cli-site
+
 LOAD_SETTINGS="attack_mode_threshold=0,resend_cooldown=0,max_requests_per_hour=500,max_requests_per_day=50,max_ip_requests_per_minute=200,max_ip_requests_per_hour=2000,max_subnet_requests_per_minute=0,daily_send_cap=0,captcha_type=none,active_sms_gateway=sandbox,show_debug_code_in_toast=1"
 
 echo "== s1 baseline: 27 sign-ins, one at a time"
@@ -35,10 +38,26 @@ python tests/load/load-multiproc.py --settings="$LOAD_SETTINGS" --keep-logs \
   --workers=40 --concurrency=10 --flows=4 --mode=same-user --label=s5-session-storm --out="$OUT/s5-storm.json" \
   > "$OUT/s5.log" 2>&1
 
+echo "== s5b session storm with the limits opened: 160 sign-ins of ONE account, 10 at a time"
+# s5 is limited by the per-number daily cap (correct behaviour, but it hides the session mechanics).
+# With the caps raised, the same storm runs to completion, so concurrent session creation for one
+# account is really exercised.
+STORM_SETTINGS="attack_mode_threshold=0,resend_cooldown=0,max_requests_per_hour=100000,max_requests_per_day=100000,max_ip_requests_per_minute=100000,max_ip_requests_per_hour=100000,max_subnet_requests_per_minute=0,daily_send_cap=0,captcha_type=none,active_sms_gateway=sandbox,show_debug_code_in_toast=1"
+python tests/load/load-multiproc.py --settings="$STORM_SETTINGS" --reset \
+  --workers=40 --concurrency=10 --flows=4 --mode=same-user --label=s5b-storm --out="$OUT/s5b-storm.json" \
+  > "$OUT/s5b.log" 2>&1
+
+ATTACK_SETTINGS="attack_mode_threshold=20,attack_mode_minutes=30,resend_cooldown=0,max_requests_per_hour=500,max_requests_per_day=50,max_ip_requests_per_minute=200,max_ip_requests_per_hour=2000,max_subnet_requests_per_minute=0,daily_send_cap=0,captcha_type=math,active_sms_gateway=sandbox,show_debug_code_in_toast=1"
+
 echo "== s6 under attack mode: the plugin's own flood protection is on"
-python tests/load/load-multiproc.py --settings="attack_mode_threshold=20,attack_mode_minutes=30,resend_cooldown=0,max_requests_per_hour=500,max_requests_per_day=50,max_ip_requests_per_minute=200,max_ip_requests_per_hour=2000,max_subnet_requests_per_minute=0,daily_send_cap=0,captcha_type=math,active_sms_gateway=sandbox,show_debug_code_in_toast=1" --keep-logs \
+python tests/load/load-multiproc.py --settings="$ATTACK_SETTINGS" --keep-logs \
   --workers=24 --concurrency=6 --flows=2 --label=s6-attack-mode --out="$OUT/s6-attack-mode.json" \
   > "$OUT/s6.log" 2>&1
+
+echo "== s6b attack proof: 30 sign-ins while the flood protection is on (expects all of them to pass)"
+python tests/load/load-multiproc.py --settings="$ATTACK_SETTINGS" --keep-logs \
+  --workers=10 --concurrency=3 --flows=3 --label=s6b-attack-proof --out="$OUT/s6b-attack-proof.json" \
+  > "$OUT/s6b.log" 2>&1
 
 echo "== s7 soak: 400 sign-ins at 6 at a time with the log table growing"
 python tests/load/load-multiproc.py --settings="$LOAD_SETTINGS" --keep-logs \

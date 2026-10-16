@@ -368,8 +368,18 @@ class Ashna_Admin {
 			'daily_send_cap',
 		);
 
-		// Integer settings where 0 means "off".
-		$zero_ok_keys = array( 'standalone_page_id', 'max_subnet_requests_per_minute', 'attack_mode_threshold', 'daily_send_cap' );
+		// Integer settings where 0 means "off" — including the four windows that switch a flood
+		// limit off completely (0 = unlimited), which used to be silently floored to 1.
+		$zero_ok_keys = array(
+			'standalone_page_id',
+			'max_subnet_requests_per_minute',
+			'attack_mode_threshold',
+			'daily_send_cap',
+			'max_requests_per_hour',
+			'max_requests_per_day',
+			'max_ip_requests_per_minute',
+			'max_ip_requests_per_hour',
+		);
 
 		$textarea_keys = array(
 			'bale_message_template',

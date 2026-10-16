@@ -13,6 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Ashna_Auth {
 
 	/**
+	 * Option holding whether Digits phone keys can exist in this database ('yes'/'no').
+	 *
+	 * Written once by Ashna_Activator::ensure_digits_meta_flag() (autoloaded, so reading it is
+	 * free) and never downgraded.
+	 */
+	const DIGITS_META_OPTION = 'ashna_otp_digits_meta';
+
+	/**
 	 * Singleton instance
 	 *
 	 * @var Ashna_Auth|null
@@ -593,8 +601,18 @@ class Ashna_Auth {
 		}
 		$ids = array_merge( $ids, self::unverified_phone_candidates( $identifier ) );
 
+		$ids = array_slice( array_values( array_unique( array_map( 'absint', $ids ) ) ), 0, 5 );
+		if ( ! empty( $ids ) ) {
+			if ( function_exists( 'cache_users' ) ) {
+				cache_users( $ids );
+			}
+			if ( function_exists( 'update_meta_cache' ) ) {
+				update_meta_cache( 'user', $ids );
+			}
+		}
+
 		$users = array();
-		foreach ( array_slice( array_values( array_unique( array_map( 'absint', $ids ) ) ), 0, 5 ) as $id ) {
+		foreach ( $ids as $id ) {
 			$user = get_user_by( 'id', $id );
 			if ( $user ) {
 				$users[] = $user;
@@ -667,6 +685,17 @@ class Ashna_Auth {
 		$ids = apply_filters( 'ashna_otp_phone_candidates', self::unverified_phone_candidates( $identifier ), $identifier );
 		$ids = array_values( array_unique( array_filter( array_map( 'absint', (array) $ids ) ) ) );
 
+		// One query for the user rows and one for all their meta, instead of a query per user
+		// and up to three per meta key further down (is_staff_account/has_other_verified_phone).
+		if ( ! empty( $ids ) ) {
+			if ( function_exists( 'cache_users' ) ) {
+				cache_users( $ids );
+			}
+			if ( function_exists( 'update_meta_cache' ) ) {
+				update_meta_cache( 'user', $ids );
+			}
+		}
+
 		$eligible  = array();
 		$staff_hit = false;
 		foreach ( $ids as $id ) {
@@ -736,31 +765,116 @@ class Ashna_Auth {
 	 * @return array[]
 	 */
 	private static function verified_phone_lookups( $identifier ) {
-		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true );
-		$intl_raw  = Ashna_Helper::to_international_phone( $identifier, false );
-		$no_zero   = ltrim( $identifier, '0' );
-
-		return array(
+		$lookups = array(
 			array(
 				array(
 					'key'   => 'ashna_phone',
 					'value' => $identifier,
 				),
 			),
+		);
+
+		// Digits keeps the phone under its own keys; on a site that never used Digits those rows
+		// cannot exist, so the meta query (and the whole new-phone lookup behind it) is skipped.
+		if ( ! self::digits_meta_reachable() ) {
+			return $lookups;
+		}
+
+		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true );
+		$intl_raw  = Ashna_Helper::to_international_phone( $identifier, false );
+		$no_zero   = ltrim( $identifier, '0' );
+
+		$lookups[] = array(
+			'relation' => 'OR',
 			array(
-				'relation' => 'OR',
-				array(
-					'key'     => 'digits_phone',
-					'value'   => array( $intl_plus, $intl_raw, $identifier, $no_zero ),
-					'compare' => 'IN',
-				),
-				array(
-					'key'     => 'digits_phone_no',
-					'value'   => array( $no_zero, $identifier ),
-					'compare' => 'IN',
-				),
+				'key'     => 'digits_phone',
+				'value'   => array( $intl_plus, $intl_raw, $identifier, $no_zero ),
+				'compare' => 'IN',
+			),
+			array(
+				'key'     => 'digits_phone_no',
+				'value'   => array( $no_zero, $identifier ),
+				'compare' => 'IN',
 			),
 		);
+
+		return $lookups;
+	}
+
+	/**
+	 * Whether the Digits phone keys may exist in this database.
+	 *
+	 * True while Digits is active, and afterwards true for any site where the one-time
+	 * activation check (Ashna_Activator::ensure_digits_meta_flag()) found Digits rows — so an
+	 * account whose phone only lives in Digits meta is never lost. While the flag is unknown
+	 * (an install that has not run the check yet) the keys are treated as present, which is
+	 * exactly the pre-change behaviour.
+	 *
+	 * @return bool
+	 */
+	private static function digits_meta_reachable() {
+		if ( class_exists( 'Digits' ) ) {
+			if ( 'yes' !== get_option( self::DIGITS_META_OPTION ) ) {
+				// Digits is here now: remember it, so the keys stay reachable if it is removed.
+				update_option( self::DIGITS_META_OPTION, 'yes', true );
+			}
+			return true;
+		}
+
+		$flag = get_option( self::DIGITS_META_OPTION, null );
+		return null === $flag || 'yes' === $flag;
+	}
+
+	/**
+	 * User IDs for several candidate logins in ONE query.
+	 *
+	 * Same matching as a get_user_by( 'login', … ) loop (the candidate is sanitized the same way
+	 * and the user object caches are filled the same way), but a new phone number costs one query
+	 * instead of one per candidate — and the result order follows the candidate order, as before.
+	 *
+	 * @param string[] $candidate_logins Candidate logins, most likely first.
+	 * @return int[]
+	 */
+	private static function user_ids_by_logins( array $candidate_logins ) {
+		global $wpdb;
+
+		$logins = array();
+		foreach ( array_unique( $candidate_logins ) as $candidate_login ) {
+			$sanitized = sanitize_user( (string) $candidate_login );
+			if ( '' !== $sanitized ) {
+				$logins[ $sanitized ] = true;
+			}
+		}
+		if ( empty( $logins ) ) {
+			return array();
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $logins ), '%s' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->users} WHERE user_login IN ( {$placeholders} )",
+				array_keys( $logins )
+			)
+		);
+
+		$by_login = array();
+		foreach ( (array) $rows as $row ) {
+			if ( function_exists( 'update_user_caches' ) ) {
+				update_user_caches( $row );
+			}
+			$by_login[ (string) $row->user_login ] = (int) $row->ID;
+		}
+
+		$ids = array();
+		foreach ( array_unique( $candidate_logins ) as $candidate_login ) {
+			$sanitized = sanitize_user( (string) $candidate_login );
+			if ( '' !== $sanitized && isset( $by_login[ $sanitized ] ) ) {
+				$ids[] = $by_login[ $sanitized ];
+			}
+		}
+
+		return $ids;
 	}
 
 	/**
@@ -796,12 +910,7 @@ class Ashna_Auth {
 		if ( ! empty( $custom_prefix ) ) {
 			$login_candidates[] = $custom_prefix . $identifier;
 		}
-		foreach ( array_unique( $login_candidates ) as $candidate_login ) {
-			$user_by_login = get_user_by( 'login', $candidate_login );
-			if ( $user_by_login ) {
-				$ids[] = (int) $user_by_login->ID;
-			}
-		}
+		$ids = array_merge( $ids, self::user_ids_by_logins( $login_candidates ) );
 
 		return array_values( array_unique( $ids ) );
 	}
@@ -861,9 +970,6 @@ class Ashna_Auth {
 	 * @param string $identifier Normalized phone (09XXXXXXXXX).
 	 */
 	public static function sync_user_phone_meta( $user_id, $identifier ) {
-		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true ); // +989123456789
-		$no_zero   = ltrim( $identifier, '0' );                                 // 9123456789
-
 		// 1. Ashna native meta
 		update_user_meta( $user_id, 'ashna_phone', $identifier );
 
@@ -872,7 +978,16 @@ class Ashna_Auth {
 			update_user_meta( $user_id, 'billing_phone', $identifier );
 		}
 
-		// 3. Digits native meta keys (for seamless cross-plugin compatibility)
+		// 3. Digits native meta keys (for seamless cross-plugin compatibility). Skipped on sites
+		// where those keys can never be read back (no Digits, none in the database) — that is six
+		// meta reads/writes less per registration, with no account finding phones any differently.
+		if ( ! self::digits_meta_reachable() ) {
+			return;
+		}
+
+		$intl_plus = Ashna_Helper::to_international_phone( $identifier, true ); // +989123456789
+		$no_zero   = ltrim( $identifier, '0' );                                 // 9123456789
+
 		if ( ! get_user_meta( $user_id, 'digits_phone', true ) ) {
 			update_user_meta( $user_id, 'digits_phone', $intl_plus );
 		}

@@ -114,6 +114,14 @@ class Ashna_Frontend {
 			true
 		);
 
+		// The failover hint is only read by the script when a backup path exists (frontend.js), so a
+		// site with one gateway never has to load the circuit-breaker state on a page view.
+		$has_fallback = Ashna_Gateway_Manager::has_fallback();
+		$hint_ms      = 0;
+		if ( $has_fallback ) {
+			$hint_ms = (int) ( Ashna_Failover::slot_for( Ashna_Gateway_Manager::first_mobile_gateway()->get_id() ) * 1000 ) + 300;
+		}
+
 		wp_localize_script(
 			'ashna-otp-frontend',
 			'ashnaOtpParams',
@@ -128,9 +136,9 @@ class Ashna_Frontend {
 				'captchaSiteKey' => $site_key,
 				// Fast-failover UX: progressive status while the code is on its way.
 				'slowHintMs'     => 2500,
-				'failoverHintMs' => (int) ( Ashna_Failover::slot_for( Ashna_Gateway_Manager::first_mobile_gateway()->get_id() ) * 1000 ) + 300,
+				'failoverHintMs' => $hint_ms,
 				'sendTimeoutMs'  => (int) ( ( Ashna_Failover::total_budget() + 10 ) * 1000 ),
-				'hasFallback'    => Ashna_Gateway_Manager::has_fallback(),
+				'hasFallback'    => $has_fallback,
 				'i18n'           => array(
 					'networkError'    => 'خطا در برقراری ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید.',
 					'sending'         => 'در حال ارسال...',

@@ -114,7 +114,8 @@ add_action(
 			// run would still be held against this IP. Test sandbox only: start from an empty log.
 			$notified = $wpdb->esc_like( 'ashna_otp_notified_' ) . '%';
 			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $notified ) );
-			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name IN ( 'ashna_otp_attack_mode', 'ashna_otp_block_stats' )" );
+			Ashna_Rate_Limiter::end_attack_mode(); // same as the admin button: the row stays, the state is off
+			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name = 'ashna_otp_block_stats'" );
 			if ( class_exists( 'Ashna_Logger' ) ) {
 				$wpdb->query( 'DELETE FROM ' . Ashna_Logger::table_name() );
 			}

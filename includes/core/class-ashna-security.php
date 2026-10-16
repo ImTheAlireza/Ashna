@@ -379,8 +379,12 @@ class Ashna_Security {
 			return true;
 		}
 
-		$recipient_lock = get_transient( 'ashna_lock_' . md5( $recipient ) );
-		$ip_lock        = get_transient( 'ashna_lock_ip_' . md5( $ip ) );
+		$recipient_key = 'ashna_lock_' . md5( $recipient );
+		$ip_key        = 'ashna_lock_ip_' . md5( $ip );
+		self::prime_transients( array( $recipient_key, $ip_key ) );
+
+		$recipient_lock = get_transient( $recipient_key );
+		$ip_lock        = get_transient( $ip_key );
 
 		if ( $recipient_lock || $ip_lock ) {
 			return new WP_Error(
@@ -390,6 +394,27 @@ class Ashna_Security {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Load several transients with one options query.
+	 *
+	 * WordPress 6.3+ can prime the option cache in a single round trip; on older versions (and with
+	 * an external object cache, where transients are not options at all) the loop below simply
+	 * does what get_transient() would have done on its own.
+	 *
+	 * @param string[] $keys Transient names (without the _transient_ prefix).
+	 */
+	private static function prime_transients( array $keys ) {
+		if ( ! function_exists( 'wp_prime_option_caches' ) || wp_using_ext_object_cache() ) {
+			return;
+		}
+		$options = array();
+		foreach ( $keys as $key ) {
+			$options[] = '_transient_' . $key;
+			$options[] = '_transient_timeout_' . $key;
+		}
+		wp_prime_option_caches( $options );
 	}
 
 	/**
@@ -415,6 +440,15 @@ class Ashna_Security {
 	public static function record_failed_password_attempt( $identifier, $account_keys = array() ) {
 		$max_attempts = max( 2, absint( Ashna_Helper::get_option( 'max_verify_attempts', 5 ) ) );
 		$targets      = array_unique( array_merge( array( (string) $identifier ), array_map( 'strval', (array) $account_keys ) ) );
+
+		// One query for every counter this attempt reads (they are written one by one below,
+		// because each value has to survive the request).
+		$keys = array();
+		foreach ( $targets as $target ) {
+			$keys[] = 'ashna_pw_try_' . md5( $target );
+		}
+		$keys[] = 'ashna_pw_try_ip_' . md5( Ashna_Helper::get_client_ip() );
+		self::prime_transients( $keys );
 
 		foreach ( $targets as $target ) {
 			$key      = 'ashna_pw_try_' . md5( $target );
@@ -452,6 +486,26 @@ class Ashna_Security {
 	}
 
 	/**
+	 * Write a lock transient, first clearing the one state where the write would be ignored.
+	 *
+	 * A `_transient_timeout_<key>` row can outlive its value row (any cleanup that deletes
+	 * `_transient_*` rows but leaves the paired timeout rows behind). set_transient() then takes
+	 * its "create" path, the freshly written lock keeps the old — already passed — timeout, and the
+	 * next get_transient() deletes the lock again: the block silently never happens, which for a
+	 * lockout is a hole. Reading the key first makes WordPress drop that stale pair itself
+	 * (get_transient() removes an expired timeout row together with its value), so the write below
+	 * always lands. Locks are written only when a visitor is actually locked out, so the extra read
+	 * never touches a normal request.
+	 *
+	 * @param string $key     Transient name.
+	 * @param int    $seconds Lock duration in seconds.
+	 */
+	private static function write_lock_transient( $key, $seconds ) {
+		get_transient( $key ); // Deliberate read: this is what repairs the orphaned-timeout state.
+		set_transient( $key, 1, $seconds );
+	}
+
+	/**
 	 * Lock out a recipient and IP temporarily and register in active lockouts list
 	 *
 	 * @param string $recipient Recipient.
@@ -460,8 +514,8 @@ class Ashna_Security {
 		$duration = max( 60, absint( Ashna_Helper::get_option( 'lockout_duration', 900 ) ) );
 		$ip       = Ashna_Helper::get_client_ip();
 
-		set_transient( 'ashna_lock_' . md5( $recipient ), 1, $duration );
-		set_transient( 'ashna_lock_ip_' . md5( $ip ), 1, $duration );
+		self::write_lock_transient( 'ashna_lock_' . md5( $recipient ), $duration );
+		self::write_lock_transient( 'ashna_lock_ip_' . md5( $ip ), $duration );
 
 		self::remember_lockout(
 			$recipient,
@@ -508,7 +562,7 @@ class Ashna_Security {
 	 */
 	public static function trigger_ip_lockout( $ip ) {
 		$duration = max( 60, absint( Ashna_Helper::get_option( 'lockout_duration', 900 ) ) );
-		set_transient( 'ashna_lock_ip_' . md5( $ip ), 1, $duration );
+		self::write_lock_transient( 'ashna_lock_ip_' . md5( $ip ), $duration );
 
 		self::remember_lockout(
 			$ip,

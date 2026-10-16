@@ -175,9 +175,19 @@ class Ashna_Logger {
 		$table = self::table_name();
 
 		if ( isset( $data['status'] ) && 'sent' === $data['status'] ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$recipient = $wpdb->get_var( $wpdb->prepare( "SELECT recipient FROM {$table} WHERE id = %d", $id ) );
-			if ( $recipient ) {
+			// The caller already knows the recipient (it is in $data), so the lookup only runs for
+			// a caller that did not pass one — same behaviour, one query less on every send.
+			$recipient = isset( $data['recipient'] ) ? (string) $data['recipient'] : '';
+			if ( '' !== $recipient ) {
+				// Whatever the reservation stored (fit_columns() truncates long values), the row
+				// is addressed with exactly the same string.
+				$fitted    = self::fit_columns( array( 'recipient' => $recipient ) );
+				$recipient = (string) $fitted['recipient'];
+			} else {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$recipient = (string) $wpdb->get_var( $wpdb->prepare( "SELECT recipient FROM {$table} WHERE id = %d", $id ) );
+			}
+			if ( '' !== $recipient ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET status = 'expired' WHERE recipient = %s AND status = 'sent' AND id <> %d", $recipient, $id ) );
 			}
@@ -259,10 +269,15 @@ class Ashna_Logger {
 		global $wpdb;
 		$table = self::table_name();
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix (%i needs WP 6.2).
+		// The caller needs the state of the code, never the gateway's message text: selecting the
+		// columns saves reading (and moving) the whole `response_message` TEXT column on every
+		// sign-in attempt. `id` and `otp_hash` are part of the result contract.
+		$columns = 'id, recipient, channel, gateway, otp_code, otp_hash, status, attempts, ip_address, ip_subnet, expires_at, verified_at, created_at';
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table/column list are fixed strings from $wpdb->prefix (%i needs WP 6.2).
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE recipient = %s AND status <> 'pending' AND channel <> 'passkey' ORDER BY id DESC LIMIT 1",
+				"SELECT {$columns} FROM {$table} WHERE recipient = %s AND status <> 'pending' AND channel <> 'passkey' ORDER BY id DESC LIMIT 1",
 				$recipient
 			)
 		);

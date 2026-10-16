@@ -29,15 +29,30 @@ class Ashna_Rate_Limiter {
 	public static function limits() {
 		return array(
 			'cooldown'       => absint( Ashna_Helper::get_option( 'resend_cooldown', 60 ) ),
-			'number_hour'    => max( 1, absint( Ashna_Helper::get_option( 'max_requests_per_hour', 5 ) ) ),
-			'number_day'     => max( 1, absint( Ashna_Helper::get_option( 'max_requests_per_day', 10 ) ) ),
-			'ip_minute'      => max( 1, absint( Ashna_Helper::get_option( 'max_ip_requests_per_minute', 5 ) ) ),
-			'ip_hour'        => max( 2, absint( Ashna_Helper::get_option( 'max_ip_requests_per_hour', 15 ) ) ),
+			// 0 switches a window off (unlimited); any other value keeps the historical floor,
+			// so an accidental "1" cannot open a window wider than the old minimum.
+			'number_hour'    => self::window_limit( 'max_requests_per_hour', 5, 1 ),
+			'number_day'     => self::window_limit( 'max_requests_per_day', 10, 1 ),
+			'ip_minute'      => self::window_limit( 'max_ip_requests_per_minute', 5, 1 ),
+			'ip_hour'        => self::window_limit( 'max_ip_requests_per_hour', 15, 2 ),
 			'subnet_minute'  => absint( Ashna_Helper::get_option( 'max_subnet_requests_per_minute', 20 ) ),
 			'daily_cap'      => absint( Ashna_Helper::get_option( 'daily_send_cap', 0 ) ),
 			'attack_trigger' => absint( Ashna_Helper::get_option( 'attack_mode_threshold', 20 ) ),
 			'attack_minutes' => max( 5, absint( Ashna_Helper::get_option( 'attack_mode_minutes', 30 ) ) ),
 		);
+	}
+
+	/**
+	 * One rate-limit window: 0 = off (unlimited), otherwise never below $floor.
+	 *
+	 * @param string $option Setting key.
+	 * @param int    $default Default when the setting is missing.
+	 * @param int    $floor   Smallest value that still enforces a limit.
+	 * @return int 0 when the window is switched off.
+	 */
+	private static function window_limit( $option, $default, $floor ) {
+		$value = absint( Ashna_Helper::get_option( $option, $default ) );
+		return $value > 0 ? max( $floor, $value ) : 0;
 	}
 
 	/**
@@ -143,20 +158,46 @@ class Ashna_Rate_Limiter {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
 
 		// Mobile number / e-mail: resend cooldown, per hour, per day (failed sends do not count).
-		$number = $wpdb->get_row(
+		// IP: per minute and per hour. Both windows travel in one UNION ALL round trip — the
+		// numbers are the same ones the two separate queries produced before.
+		$counts = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT COUNT(*) AS day_count,
+				"SELECT 'number' AS scope,
+				        COUNT(*) AS day_count,
 				        SUM(CASE WHEN created_at >= %s THEN 1 ELSE 0 END) AS hour_count,
-				        MAX(CASE WHEN created_at >= %s AND created_at <= %s{$before} THEN created_at ELSE NULL END) AS last_recent
+				        MAX(CASE WHEN created_at >= %s AND created_at <= %s{$before} THEN created_at ELSE NULL END) AS last_recent,
+				        0 AS minute_count
 				 FROM {$table}
-				 WHERE recipient = %s AND status <> 'failed' AND channel <> 'passkey' AND created_at >= %s{$upto}",
+				 WHERE recipient = %s AND status <> 'failed' AND channel <> 'passkey' AND created_at >= %s{$upto}
+				 UNION ALL
+				 SELECT 'ip' AS scope,
+				        NULL AS day_count,
+				        COUNT(*) AS hour_count,
+				        NULL AS last_recent,
+				        SUM(CASE WHEN created_at >= %s AND created_at <= %s THEN 1 ELSE 0 END) AS minute_count
+				 FROM {$table}
+				 WHERE ip_address = %s AND channel <> 'passkey' AND created_at >= %s{$upto}",
 				$at( HOUR_IN_SECONDS ),
 				$at( max( 1, $limits['cooldown'] ) ),
 				$soon,
 				$recipient,
-				$at( DAY_IN_SECONDS )
+				$at( DAY_IN_SECONDS ),
+				$at( MINUTE_IN_SECONDS ),
+				$soon,
+				$ip,
+				$at( HOUR_IN_SECONDS )
 			)
 		);
+
+		$number = null;
+		$by_ip  = null;
+		foreach ( (array) $counts as $row ) {
+			if ( 'ip' === $row->scope ) {
+				$by_ip = $row;
+			} else {
+				$number = $row;
+			}
+		}
 
 		if ( $limits['cooldown'] > 0 && $number && ! empty( $number->last_recent ) ) {
 			$remaining = min( $limits['cooldown'], max( 1, $limits['cooldown'] - ( $now - Ashna_Helper::local_ts( $number->last_recent ) ) ) );
@@ -166,29 +207,16 @@ class Ashna_Rate_Limiter {
 				array( 'remaining' => $remaining )
 			);
 		}
-		if ( $number && (int) $number->hour_count + $extra > $limits['number_hour'] ) {
+		if ( $limits['number_hour'] > 0 && $number && (int) $number->hour_count + $extra > $limits['number_hour'] ) {
 			return new WP_Error( 'ashna_rate_limit_recipient', 'تعداد درخواست‌های کد برای این شماره/ایمیل در یک ساعت گذشته بیش از حد مجاز است. لطفاً کمی بعد تلاش کنید.' );
 		}
-		if ( $number && (int) $number->day_count + $extra > $limits['number_day'] ) {
+		if ( $limits['number_day'] > 0 && $number && (int) $number->day_count + $extra > $limits['number_day'] ) {
 			return new WP_Error( 'ashna_rate_limit_recipient_day', 'سقف دریافت کد برای این شماره/ایمیل در ۲۴ ساعت گذشته پر شده است. لطفاً فردا دوباره تلاش کنید.' );
 		}
-
-		// IP: per minute and per hour.
-		$by_ip = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT COUNT(*) AS hour_count, SUM(CASE WHEN created_at >= %s AND created_at <= %s THEN 1 ELSE 0 END) AS minute_count
-				 FROM {$table}
-				 WHERE ip_address = %s AND channel <> 'passkey' AND created_at >= %s{$upto}",
-				$at( MINUTE_IN_SECONDS ),
-				$soon,
-				$ip,
-				$at( HOUR_IN_SECONDS )
-			)
-		);
-		if ( $by_ip && (int) $by_ip->minute_count + $extra > $limits['ip_minute'] ) {
+		if ( $limits['ip_minute'] > 0 && $by_ip && (int) $by_ip->minute_count + $extra > $limits['ip_minute'] ) {
 			return new WP_Error( 'ashna_rate_limit_ip_minute', 'درخواست‌های ارسالی از آی‌پی شما در یک دقیقه گذشته بیش از حد مجاز است. لطفاً یک دقیقه دیگر تلاش کنید.', array( 'remaining' => 60 ) );
 		}
-		if ( $by_ip && (int) $by_ip->hour_count + $extra > $limits['ip_hour'] ) {
+		if ( $limits['ip_hour'] > 0 && $by_ip && (int) $by_ip->hour_count + $extra > $limits['ip_hour'] ) {
 			return new WP_Error( 'ashna_rate_limit_ip', 'تعداد درخواست‌های ارسالی از آی‌پی شما بیش از حد مجاز است. لطفاً یک ساعت دیگر تلاش کنید.' );
 		}
 
@@ -247,6 +275,9 @@ class Ashna_Rate_Limiter {
 		}
 
 		$until = time() + $limits['attack_minutes'] * MINUTE_IN_SECONDS;
+		// Autoload stays on: with `false` the option would be downgraded to a non-autoloaded row
+		// (WordPress 6.6+) and every request during the attack would pay one extra options query
+		// just to read this state — the opposite of what the state exists for. Value is unchanged.
 		update_option(
 			self::ATTACK_OPTION,
 			array(
@@ -254,7 +285,7 @@ class Ashna_Rate_Limiter {
 				'until' => $until,
 				'peak'  => $count,
 			),
-			false
+			true
 		);
 		self::notify_admin_once(
 			'attack',
@@ -285,9 +316,20 @@ class Ashna_Rate_Limiter {
 
 	/**
 	 * End attack mode now.
+	 *
+	 * The option keeps its "not active" value instead of being deleted: it is read on every
+	 * request, and an existing autoloaded option costs no query while a missing one does.
 	 */
 	public static function end_attack_mode() {
-		delete_option( self::ATTACK_OPTION );
+		update_option(
+			self::ATTACK_OPTION,
+			array(
+				'since' => 0,
+				'until' => 0,
+				'peak'  => 0,
+			),
+			true
+		);
 	}
 
 	/**

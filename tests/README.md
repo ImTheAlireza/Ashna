@@ -333,6 +333,36 @@ Notes:
 - Results of the campaign: `docs/load-report-FA.md`. Numbers are correctness-under-concurrency
   evidence; the sandbox (SQLite, one web worker) is not a capacity benchmark.
 
+### Golden transcript (proof that a refactor changed nothing)
+
+`tests/load/golden.php` replays a fixed script of sign-in situations — first request for a new
+number, resend ticket, cooldown, wrong code until the attempts run out, successful sign-in, replay,
+blocklists, per-minute and daily limits, honeypot, captcha, e-mail and phone-only modes — and prints
+every AJAX answer with only the run-dependent values (code, tokens, nonce, user id, countdown
+numbers) replaced by placeholders. `tests/load/golden-compare.sh` runs it twice against the baseline
+build (`git archive <ref>`, default `HEAD`) and once against the working tree, then diffs all three:
+
+```sh
+bash tests/load/golden-compare.sh .cache/matrix/wp64 8.1         # HEAD as the baseline
+bash tests/load/golden-compare.sh .cache/matrix/wp71 8.5 3.0.0    # any ref: a tag, a branch, a commit
+```
+
+The two baseline runs must be identical (the transcript is deterministic) and the working tree must
+match them byte for byte — both are asserted, and the script fails loudly if the transcript is short
+instead of "passing" empty. 29 answers are compared on each environment.
+
+### The lockout transient that could silently not engage
+
+Found by a rare, order-dependent failure of `tests/security.php` (the "10 wrong answers lock the
+IP" check): a `_transient_timeout_<key>` row can outlive its value row when something deletes
+`_transient_*` rows but leaves the paired timeout rows behind. `set_transient()` then takes its
+"create" path, writes the lock **with the old, already passed timeout**, and the next
+`get_transient()` deletes the lock again — so the block never happens. `Ashna_Security::write_lock_transient()`
+now reads the key before writing, which makes WordPress drop that stale pair itself; the IP lock is
+written rarely, so the extra read only happens on the path that already blocks somebody.
+`tests/load/reset-state.php` deletes both halves of every transient for the same reason (that is how
+the sandbox kept recreating the state).
+
 ### Browser QA
 
 `tests/browser/qa-browser.mjs` drives a real Chromium against WordPress Playground. Each phase gets its own browser, because this single-process Chromium does not isolate contexts, and every phase starts from a reset site state.
