@@ -6,10 +6,12 @@
 # tree, then diffs the three transcripts. The first two runs must be identical (the transcript is
 # deterministic); the third must be identical to them.
 #
-# The baseline is whatever `git archive <ref>` gives, so run this *before* committing the change
-# (or pass the previous release as the third argument: any ref — a tag, a branch, a commit).
+# The baseline is whatever `git archive <ref>` gives. Run it before committing the change (HEAD is
+# then still the baseline), or name the baseline yourself as the third argument — any ref works
+# (a tag, a branch, a commit), e.g. the commit this one is built on.
 #
 # usage: bash tests/load/golden-compare.sh [<site-dir>] [<php-version>] [<baseline-ref>]
+# exit code 0 = the working tree answers exactly like the baseline build.
 set -u
 
 SITE="${1:-.cache/matrix/wp64}"
