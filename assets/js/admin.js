@@ -932,5 +932,269 @@
 				}
 			});
 		});
+
+		/* --------------------------------------------------------------
+		 * Social sign-in: guided setup helpers
+		 * -------------------------------------------------------------- */
+		var $ssoTab = $('#ashna-tab-social');
+
+		function ssoFallbackCopy(text) {
+			return new Promise(function (resolve, reject) {
+				var area = document.createElement('textarea');
+				area.value = text;
+				area.setAttribute('readonly', 'readonly');
+				area.style.position = 'fixed';
+				area.style.top = '-1000px';
+				document.body.appendChild(area);
+				area.select();
+				var ok = false;
+				try {
+					ok = document.execCommand('copy');
+				} catch (e) {
+					ok = false;
+				}
+				document.body.removeChild(area);
+				if (ok) {
+					resolve();
+				} else {
+					reject(new Error('copy failed'));
+				}
+			});
+		}
+
+		function ssoCopyText(text) {
+			if (navigator.clipboard && window.isSecureContext) {
+				// Some browsers expose the API but still refuse it (permissions, focus);
+				// fall back to the selection trick instead of failing the click.
+				return navigator.clipboard.writeText(text).catch(function () {
+					return ssoFallbackCopy(text);
+				});
+			}
+			return ssoFallbackCopy(text);
+		}
+
+		$ssoTab.on('click', '.ashna-sso-copy', function () {
+			var $btn = $(this);
+			var text = $btn.attr('data-copy') || '';
+			if (!text) {
+				return;
+			}
+			ssoCopyText(text).then(function () {
+				$btn.addClass('is-copied');
+				showToast('آدرس بازگشتی کپی شد؛ همین را در کنسول ثبت کنید.');
+				window.setTimeout(function () {
+					$btn.removeClass('is-copied');
+				}, 2200);
+			}).catch(function () {
+				showToast('کپی خودکار ممکن نشد؛ آدرس را دستی انتخاب و کپی کنید.', true);
+			});
+		});
+
+		$ssoTab.on('click', '.ashna-sso-eye', function () {
+			var $btn = $(this);
+			var $input = $btn.siblings('input');
+			var show = $input.attr('type') === 'password';
+			$input.attr('type', show ? 'text' : 'password');
+			$btn.toggleClass('is-visible', show).attr('aria-pressed', show ? 'true' : 'false');
+		});
+
+		function ssoHint($card, field, message, tone) {
+			var $hint = $card.find('[data-sso-hint="' + field + '"]');
+			if (!$hint.length) {
+				return;
+			}
+			$hint.removeClass('is-warn is-ok');
+			if (message) {
+				$hint.text(message);
+				if (tone) {
+					$hint.addClass(tone);
+				}
+			}
+		}
+
+		function ssoValidateField($card, $input) {
+			var provider = $card.attr('data-sso-provider');
+			var field = $input.attr('data-sso-field');
+			var value = String($input.val() || '').trim();
+			var $hint = $card.find('[data-sso-hint="' + field + '"]');
+			var problem = '';
+			var good = '';
+
+			if (field === 'client_id') {
+				if (!value) {
+					problem = 'Client ID را از پنل ارائه‌دهنده کپی کنید.';
+				} else if (provider === 'google' && value.toLowerCase().indexOf('.apps.googleusercontent.com') === -1) {
+					problem = 'Client ID گوگل باید به ‎.apps.googleusercontent.com‎ ختم شود و با یک عدد شروع شود.';
+				} else if (provider === 'telegram' && !/^[0-9]{5,20}$/.test(value)) {
+					problem = 'Client ID تلگرام فقط عدد است (شناسهٔ بات).';
+				} else {
+					good = 'قالب شناسه درست است.';
+				}
+			} else {
+				var hasSaved = $card.attr('data-sso-has-secret') === '1';
+				if (!value) {
+					if (hasSaved) {
+						good = 'Secret ذخیره شده است؛ برای تغییر مقدار جدید را وارد کنید.';
+					} else {
+						problem = 'Client Secret را وارد کنید.';
+					}
+				} else if (provider === 'telegram' && /^[0-9]{5,20}:[A-Za-z0-9_-]{20,}$/.test(value)) {
+					problem = 'این توکن بات است، نه Client Secret؛ Secret را از Bot Settings → Web Login بردارید.';
+				} else if (value.length < 8) {
+					problem = 'این مقدار کوتاه‌تر از یک Client Secret معمولی است.';
+				} else {
+					good = 'قالب Secret درست به نظر می‌رسد.';
+				}
+			}
+
+			$input.removeClass('is-invalid is-valid');
+			if (problem) {
+				$input.addClass('is-invalid');
+				ssoHint($card, field, problem, 'is-warn');
+			} else {
+				$input.addClass('is-valid');
+				ssoHint($card, field, good, 'is-ok');
+			}
+		}
+
+		$ssoTab.on('input change', 'input[data-sso-field]', function () {
+			ssoValidateField($(this).closest('.ashna-sso-card'), $(this));
+		});
+
+		$ssoTab.on('change', 'input[data-sso-toggle]', function () {
+			var provider = $(this).attr('data-sso-toggle');
+			$('[data-sso-pill="' + provider + '"]').each(function () {
+				var $pill = $(this);
+				$pill.removeClass('is-ok is-warn is-muted is-err is-info').addClass('is-warn');
+				$pill.find('[data-sso-pill-text]').text('در انتظار ذخیره');
+			});
+		});
+
+		var ssoStateLabels = {
+			ready: 'آماده',
+			check: 'نیاز به بررسی',
+			incomplete: 'ناقص',
+			off: 'خاموش'
+		};
+		var ssoStateClasses = {
+			ready: 'is-ok',
+			check: 'is-warn',
+			incomplete: 'is-warn',
+			off: 'is-muted'
+		};
+		var ssoIcons = {
+			ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+			warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+			error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+			info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+		};
+
+		function ssoShapeOk(provider, value) {
+			if (!value) {
+				return false;
+			}
+			if (provider === 'google') {
+				return value.toLowerCase().indexOf('.apps.googleusercontent.com') !== -1;
+			}
+			return /^[0-9]{5,20}$/.test(value);
+		}
+
+		function ssoSetPill(provider, state) {
+			$('[data-sso-pill="' + provider + '"]').each(function () {
+				var $pill = $(this);
+				$pill.removeClass('is-ok is-warn is-muted is-err is-info').addClass(ssoStateClasses[state] || 'is-info');
+				$pill.find('[data-sso-pill-text]').text(ssoStateLabels[state] || '');
+			});
+		}
+
+		// Called by the inline save handler once the server has accepted the form.
+		window.ashnaSsoAfterSave = function () {
+			$ssoTab.find('.ashna-sso-card').each(function () {
+				var $card = $(this);
+				var provider = $card.attr('data-sso-provider');
+				var on = $card.find('[data-sso-toggle]').prop('checked');
+				var $id = $card.find('[data-sso-field="client_id"]');
+				var $secret = $card.find('[data-sso-field="client_secret"]');
+				var typed = $.trim(String($secret.val() || ''));
+
+				if (typed) {
+					$card.attr('data-sso-has-secret', '1');
+					$secret.val('').attr('placeholder', 'ذخیره شده — برای تغییر، مقدار جدید را وارد کنید').removeClass('is-valid is-invalid');
+					$card.find('[data-sso-hint="client_secret"]').removeClass('is-warn').addClass('is-ok').text('ذخیره شد و دیگر نمایش داده نمی‌شود.');
+				}
+
+				var idOk = ssoShapeOk(provider, $.trim(String($id.val() || '')));
+				var hasSecret = $card.attr('data-sso-has-secret') === '1';
+				var state;
+				if (!on) {
+					state = 'off';
+				} else if (idOk && hasSecret) {
+					state = 'ready';
+				} else {
+					state = 'incomplete';
+				}
+				ssoSetPill(provider, state);
+			});
+		};
+
+		$ssoTab.on('click', '.ashna-sso-check', function () {
+			var $btn = $(this);
+			var provider = $btn.attr('data-provider');
+			var $card = $btn.closest('.ashna-sso-card');
+			var $result = $card.find('[data-sso-result="' + provider + '"]');
+			if ($btn.hasClass('is-loading')) {
+				return;
+			}
+			$btn.addClass('is-loading').prop('disabled', true);
+			$result.attr('hidden', 'hidden').empty();
+
+			$.ajax({
+				url: ashnaAdminParams.ajaxUrl,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'ashna_admin_sso_check',
+					nonce: ashnaAdminParams.nonce,
+					provider: provider
+				}
+			}).done(function (res) {
+				if (!res || !res.success || !res.data) {
+					var msg = res && res.data && res.data.message ? res.data.message : 'بررسی انجام نشد.';
+					$result.removeClass('is-warn is-ok').addClass('is-error')
+						.html('<p class="ashna-sso-result-title">بررسی انجام نشد</p><div class="ashna-sso-check-row is-error">' + ssoIcons.error + '<span>' + $('<div>').text(msg).html() + '</span></div>')
+						.removeAttr('hidden');
+					return;
+				}
+
+				var data = res.data;
+				var titles = {
+					ready: 'همه‌چیز آماده است',
+					check: 'کار می‌کند، اما یک هشدار دارد',
+					incomplete: 'هنوز آماده نیست'
+				};
+				var html = '<p class="ashna-sso-result-title">' + (titles[data.state] || 'نتیجهٔ بررسی') + '</p>';
+				(data.checks || []).forEach(function (check) {
+					var tone = check.status === 'ok' ? 'is-ok' : (check.status === 'warn' ? 'is-warn' : (check.status === 'error' ? 'is-error' : 'is-info'));
+					var icon = ssoIcons[check.status] || ssoIcons.info;
+					html += '<div class="ashna-sso-check-row ' + tone + '">' + icon + '<span><strong>' + $('<div>').text(check.label || '').html() + ':</strong> ' + $('<div>').text(check.text || '').html() + '</span></div>';
+				});
+				$result.removeClass('is-warn is-ok is-error')
+					.addClass(data.state === 'ready' ? 'is-ok' : (data.state === 'incomplete' ? 'is-error' : 'is-warn'))
+					.html(html)
+					.removeAttr('hidden');
+
+				$ssoTab.find('[data-sso-pill="' + provider + '"]').each(function () {
+					var $pill = $(this);
+					$pill.removeClass('is-ok is-warn is-muted is-err is-info').addClass(ssoStateClasses[data.state] || 'is-info');
+					$pill.find('[data-sso-pill-text]').text(ssoStateLabels[data.state] || '');
+				});
+			}).fail(function () {
+				$result.removeClass('is-warn is-ok').addClass('is-error')
+					.html('<p class="ashna-sso-result-title">ارتباط با سرور برقرار نشد</p><div class="ashna-sso-check-row is-error">' + ssoIcons.error + '<span>درخواست بررسی به سایت نرسید؛ صفحه را رفرش کنید و دوباره امتحان کنید.</span></div>')
+					.removeAttr('hidden');
+			}).always(function () {
+				$btn.removeClass('is-loading').prop('disabled', false);
+			});
+		});
 	});
 })(jQuery);

@@ -3676,3 +3676,761 @@
 		padding: 20px;
 	}
 }
+
+/* ==========================================
+   SOCIAL SIGN-IN (Google / Telegram) — guided setup
+   ========================================== */
+
+.ashna-sso-hero {
+	padding: 22px 24px 18px;
+	margin-bottom: 16px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, var(--s-primary-soft) 0%, transparent 55%),
+		var(--s-bg-surface);
+}
+
+.ashna-sso-hero-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	flex-wrap: wrap;
+}
+
+.ashna-sso-hero-pills {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.ashna-sso-hero-note {
+	margin: 14px 0 0;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: rgba(245, 158, 11, 0.12);
+	border: 1px solid rgba(245, 158, 11, 0.28);
+	color: #92400e;
+	font-size: 12.5px;
+	line-height: 1.9;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hero-note {
+	color: #fcd34d;
+}
+
+/* 1 → 2 → 3 roadmap with a slowly travelling highlight. */
+.ashna-sso-roadmap {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0;
+	margin: 20px 0 0;
+	padding: 0;
+	list-style: none;
+	font-size: 12px;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-roadmap::before {
+	content: '';
+	position: absolute;
+	top: 13px;
+	right: 14%;
+	left: 14%;
+	height: 2px;
+	border-radius: 99px;
+	background: linear-gradient(90deg, transparent, var(--s-primary), transparent) 0 0 / 200% 100%;
+	opacity: 0.45;
+	animation: ashnaSsoFlow 3.6s linear infinite;
+	pointer-events: none;
+}
+
+.ashna-sso-roadmap li {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 7px;
+	text-align: center;
+}
+
+.ashna-sso-roadmap-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 27px;
+	height: 27px;
+	border-radius: 50%;
+	background: var(--s-bg-surface);
+	border: 2px solid var(--s-primary);
+	color: var(--s-primary);
+	font-size: 12px;
+	font-weight: 800;
+	box-shadow: 0 0 0 4px var(--s-bg-surface);
+}
+
+.ashna-sso-card {
+	margin-bottom: 16px;
+}
+
+.ashna-panel.active .ashna-sso-card {
+	animation: ashnaSsoRise 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ashna-panel.active .ashna-sso-card:nth-of-type(2) {
+	animation-delay: 0.07s;
+}
+
+.ashna-sso-head {
+	border-bottom: 1px dashed var(--s-border);
+	padding-bottom: 16px;
+	margin-bottom: 18px;
+}
+
+.ashna-sso-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sso-columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+	gap: 22px;
+	align-items: stretch;
+}
+
+.ashna-sso-guide {
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border);
+	border-radius: 14px;
+	padding: 18px 18px 16px;
+}
+
+.ashna-sso-col-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 14px;
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-col-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 23px;
+	height: 23px;
+	border-radius: 7px;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	font-size: 12px;
+	font-weight: 800;
+	flex-shrink: 0;
+}
+
+.ashna-sso-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ashna-sso-step {
+	position: relative;
+	display: grid;
+	grid-template-columns: 26px minmax(0, 1fr);
+	gap: 11px;
+	padding-bottom: 16px;
+}
+
+.ashna-sso-step:last-child {
+	padding-bottom: 0;
+}
+
+.ashna-sso-step:not(:last-child)::after {
+	content: '';
+	position: absolute;
+	top: 28px;
+	bottom: 2px;
+	right: 12.5px;
+	width: 1.5px;
+	background: linear-gradient(180deg, var(--s-primary-soft), var(--s-border));
+}
+
+.ashna-sso-step-num {
+	position: relative;
+	z-index: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: var(--s-bg-surface);
+	border: 1.5px solid var(--s-border-input);
+	color: var(--s-text-secondary);
+	font-size: 11.5px;
+	font-weight: 800;
+}
+
+.ashna-sso-step-body strong {
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--s-text);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-step-body p {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-step-body code,
+.ashna-sso-urlbox code,
+.ashna-sso-help code,
+.ashna-sso-hint code {
+	direction: ltr;
+	unicode-bidi: embed;
+	display: inline-block;
+	padding: 1px 5px;
+	border-radius: 5px;
+	background: var(--s-bg-hover);
+	color: var(--s-text-secondary);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 11px;
+	line-height: 1.7;
+	vertical-align: middle;
+}
+
+.ashna-sso-console-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	margin-top: 15px;
+	text-decoration: none;
+}
+
+.ashna-sso-config {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	min-width: 0;
+}
+
+.ashna-sso-urlbox {
+	border: 1.5px dashed var(--s-primary);
+	border-radius: 12px;
+	background: var(--s-primary-soft);
+	padding: 13px 14px;
+}
+
+.ashna-sso-urlbox-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 9px;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-sso-required {
+	font-size: 10.5px;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 99px;
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-required {
+	color: #fca5a5;
+}
+
+.ashna-sso-url-row {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+}
+
+.ashna-sso-url-row code {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 9px 11px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-input);
+	color: var(--s-text);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	overflow-x: auto;
+	white-space: nowrap;
+	direction: ltr;
+	text-align: left;
+	user-select: all;
+}
+
+.ashna-sso-copy {
+	position: relative;
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	min-height: 38px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text-secondary);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ashna-sso-copy:hover {
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+.ashna-sso-copy:active {
+	transform: scale(0.94);
+}
+
+.ashna-sso-copy-ok,
+.ashna-sso-copy.is-copied .ashna-sso-copy-icon {
+	display: none;
+}
+
+.ashna-sso-copy.is-copied {
+	border-color: #10b981;
+	background: rgba(16, 185, 129, 0.14);
+	color: #059669;
+	animation: ashnaSsoPop 0.32s ease;
+}
+
+.ashna-sso-copy.is-copied .ashna-sso-copy-ok {
+	display: block;
+}
+
+.ashna-sso-urlbox > p {
+	margin: 9px 0 0;
+	font-size: 11.5px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint {
+	margin: 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint.is-warn {
+	color: #b45309;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-warn {
+	color: #fbbf24;
+}
+
+.ashna-sso-hint.is-ok {
+	color: #047857;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-ok {
+	color: #34d399;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-invalid {
+	border-color: #ef4444 !important;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-valid {
+	border-color: rgba(16, 185, 129, 0.65) !important;
+}
+
+.ashna-sso-secret {
+	position: relative;
+}
+
+#ashna-app-shell .ashna-sso-secret input {
+	padding-left: 44px !important;
+}
+
+.ashna-sso-eye {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--s-text-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ashna-sso-eye:hover {
+	background: var(--s-bg-hover);
+	color: var(--s-primary);
+}
+
+.ashna-sso-eye-hide {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-show {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-hide {
+	display: block;
+}
+
+.ashna-sso-tools {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-top: 2px;
+}
+
+.ashna-sso-check {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ashna-sso-spinner {
+	display: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid var(--s-border-input);
+	border-top-color: var(--s-primary);
+	border-radius: 50%;
+	animation: ashnaSsoSpin 0.7s linear infinite;
+}
+
+.ashna-sso-check.is-loading .ashna-sso-spinner {
+	display: inline-block;
+}
+
+.ashna-sso-check-hint {
+	font-size: 11px;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-result {
+	margin-top: 4px;
+	padding: 12px 14px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+	animation: ashnaSsoResultIn 0.3s ease both;
+}
+
+.ashna-sso-result[hidden] {
+	display: none;
+}
+
+.ashna-sso-result-title {
+	margin: 0 0 9px;
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-check-row {
+	display: grid;
+	grid-template-columns: 17px minmax(0, 1fr);
+	gap: 8px;
+	align-items: start;
+	padding: 5px 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-check-row svg {
+	width: 15px;
+	height: 15px;
+	margin-top: 3px;
+}
+
+.ashna-sso-check-row.is-ok svg {
+	color: #10b981;
+}
+
+.ashna-sso-check-row.is-warn svg {
+	color: #f59e0b;
+}
+
+.ashna-sso-check-row.is-error svg {
+	color: #ef4444;
+}
+
+.ashna-sso-check-row strong {
+	color: var(--s-text);
+	font-weight: 700;
+}
+
+.ashna-sso-result.is-ok {
+	border-color: rgba(16, 185, 129, 0.4);
+	background: rgba(16, 185, 129, 0.08);
+}
+
+.ashna-sso-result.is-warn {
+	border-color: rgba(245, 158, 11, 0.4);
+	background: rgba(245, 158, 11, 0.08);
+}
+
+.ashna-sso-result.is-error {
+	border-color: rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.07);
+}
+
+.ashna-sso-scope {
+	margin-top: 2px;
+	padding: 12px 14px;
+	border-radius: 11px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+}
+
+.ashna-sso-scope-title {
+	display: block;
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--s-text);
+	margin-bottom: 7px;
+}
+
+.ashna-sso-scope ul {
+	margin: 0;
+	padding: 0 15px 0 0;
+}
+
+.ashna-sso-scope li {
+	font-size: 11.5px;
+	line-height: 1.9;
+	color: var(--s-text-muted);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-scope li::marker {
+	color: var(--s-primary);
+}
+
+/* bullet colour alone reads as a stray dash in RTL lists */
+.ashna-sso-scope ul {
+	list-style: none;
+}
+
+.ashna-sso-scope li {
+	position: relative;
+	padding-right: 15px;
+}
+
+.ashna-sso-scope li::before {
+	content: '';
+	position: absolute;
+	top: 8px;
+	right: 2px;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--s-primary);
+	opacity: 0.75;
+}
+
+.ashna-sso-scope p {
+	margin: 8px 0 0;
+	padding-top: 8px;
+	border-top: 1px dashed var(--s-border);
+	font-size: 11px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+/* Pinned to the bottom of the column so a shorter settings column does not
+   leave a hole beside the (taller) step-by-step guide. */
+.ashna-sso-help {
+	margin-top: auto;
+	border-top: 1px solid var(--s-border);
+	padding-top: 10px;
+}
+
+.ashna-sso-help summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	cursor: pointer;
+	list-style: none;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	padding: 4px 0;
+}
+
+.ashna-sso-help summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sso-chevron {
+	transition: transform 0.22s ease;
+	flex-shrink: 0;
+}
+
+.ashna-sso-help[open] .ashna-sso-chevron {
+	transform: rotate(180deg);
+}
+
+.ashna-sso-help ul {
+	margin: 8px 0 2px;
+	padding: 0 16px 0 0;
+}
+
+.ashna-sso-help li {
+	font-size: 11.5px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+	margin-bottom: 6px;
+}
+
+.ashna-sso-switches {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+@keyframes ashnaSsoFlow {
+	from {
+		background-position: 0 0;
+	}
+	to {
+		background-position: 200% 0;
+	}
+}
+
+@keyframes ashnaSsoRise {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes ashnaSsoPop {
+	50% {
+		transform: scale(1.09);
+	}
+}
+
+@keyframes ashnaSsoSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes ashnaSsoResultIn {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.ashna-sso-hero-pills .ashna-pill,
+.ashna-sso-card .ashna-pill {
+	transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.ashna-sso-card .ashna-pill.is-updated,
+.ashna-sso-hero-pills .ashna-pill.is-updated {
+	animation: ashnaSsoPillPop 0.55s ease;
+}
+
+.ashna-sso-help[open] ul {
+	animation: ashnaSsoResultIn 0.22s ease both;
+}
+
+@keyframes ashnaSsoPillPop {
+	0%, 100% { transform: scale(1); }
+	40% { transform: scale(1.07); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ashna-sso-roadmap::before,
+	.ashna-panel.active .ashna-sso-card,
+	.ashna-sso-copy.is-copied,
+	.ashna-sso-result,
+	.ashna-sso-card .ashna-pill.is-updated,
+	.ashna-sso-hero-pills .ashna-pill.is-updated,
+	.ashna-sso-help[open] ul {
+		animation: none !important;
+	}
+}
+
+@media (max-width: 1280px) {
+	.ashna-sso-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 782px) {
+	.ashna-sso-hero {
+		padding: 18px;
+	}
+
+	.ashna-sso-head-actions {
+		gap: 10px;
+	}
+
+	.ashna-sso-roadmap {
+		font-size: 10.5px;
+	}
+
+	.ashna-sso-roadmap-num {
+		width: 24px;
+		height: 24px;
+		font-size: 11px;
+	}
+
+	.ashna-sso-url-row {
+		flex-direction: column;
+	}
+
+	.ashna-sso-copy {
+		width: 100%;
+	}
+
+	.ashna-sso-guide {
+		padding: 15px;
+	}
+}

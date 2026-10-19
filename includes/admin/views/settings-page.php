@@ -541,6 +541,9 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 							setButtonsState(false, true);
 							var msg = (parsed.data && parsed.data.message) ? parsed.data.message : 'تنظیمات با موفقیت ذخیره شد!';
 							showFeedback(msg, false);
+							if (typeof window.ashnaSsoAfterSave === 'function') {
+								window.ashnaSsoAfterSave();
+							}
 							var expBox = document.getElementById('ashna_export_json_box');
 							if (expBox && parsed.data && parsed.data.settings) {
 								expBox.value = JSON.stringify(parsed.data.settings);

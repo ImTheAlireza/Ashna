@@ -68,6 +68,7 @@ class Ashna_Admin {
 		add_action( 'wp_ajax_ashna_admin_end_attack_mode', array( $this, 'ajax_end_attack_mode' ) );
 		add_action( 'wp_ajax_ashna_admin_trust_proxy', array( $this, 'ajax_trust_proxy' ) );
 		add_action( 'wp_ajax_ashna_admin_fetch_arvan_ranges', array( $this, 'ajax_fetch_arvan_ranges' ) );
+		add_action( 'wp_ajax_ashna_admin_sso_check', array( $this, 'ajax_sso_check' ) );
 		add_action( 'admin_notices', array( $this, 'proxy_hint_notice' ) );
 	}
 
@@ -159,6 +160,33 @@ class Ashna_Admin {
 	/**
 	 * AJAX Handler: download ArvanCloud's published edge ranges (admin action only).
 	 */
+	/**
+	 * AJAX: live-check one SSO provider (format + discovery). Reads the saved settings only,
+	 * and never sends the client secret anywhere.
+	 */
+	public function ajax_sso_check() {
+		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
+		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.
+		if ( ! isset( $_REQUEST['nonce'] ) || ! is_scalar( $_REQUEST['nonce'] ) || false === check_ajax_referer( 'ashna_admin_nonce', 'nonce', false ) ) {
+			wp_die( -1, 403 );
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$this->clean_output_buffers();
+			wp_send_json_error( array( 'message' => 'دسترسی غیرمجاز.' ) );
+			return;
+		}
+
+		$provider = isset( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : '';
+		$result   = Ashna_SSO::check_connection( $provider );
+		$this->clean_output_buffers();
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+			return;
+		}
+		wp_send_json_success( $result );
+	}
+
 	public function ajax_fetch_arvan_ranges() {
 		// Shape first: core's wp_verify_nonce() casts its argument, and an array casts with a PHP
 		// warning on PHP 8. Short-circuit evaluation keeps that from ever reaching core.

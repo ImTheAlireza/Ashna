@@ -47,7 +47,7 @@
 
 ## فاز ۱ — تغییر نام در کد (Signa ← Ashna) [QC 10] ✅
 
-- [x] سربرگ افزونه: نام «آشنا | ورود و ثبت‌نام با کد یکبارمصرف»، نسخه‌ی `3.1.1` (نسخه پس از کار بهینه‌سازی/رفع باگ بالا رفت)، نویسنده «پارسنا» (Author URI: `https://parsena.ir`)، صفحه‌ی محصول (Plugin URI: `https://parsena.ir/ashna`)، Text Domain `ashna-otp`
+- [x] سربرگ افزونه: نام «آشنا | ورود و ثبت‌نام با کد یکبارمصرف»، نسخه‌ی `3.1.2` (نسخه پس از کار بهینه‌سازی/رفع باگ بالا رفت)، نویسنده «پارسنا» (Author URI: `https://parsena.ir`)، صفحه‌ی محصول (Plugin URI: `https://parsena.ir/ashna`)، Text Domain `ashna-otp`
 - [x] نام پوشه و زیپ نصب: `ashna-otp`
   - `deliverables/ashna-otp.zip`: نسخه‌ی لایسنس‌دار (فایل لایسنس راست‌چین باید کنار `ashna.php` قرار بگیره)
   - `deliverables/ashna-otp-no-license.zip`: فقط برای تست روی سایت آزمایشی

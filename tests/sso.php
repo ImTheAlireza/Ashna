@@ -301,9 +301,10 @@ scenario(
 		check( 'redirect_uri is this site, not a caller-supplied URL', isset( $args['redirect_uri'] ) && 0 === strpos( $args['redirect_uri'], home_url() ), $args['redirect_uri'] ?? '' );
 
 		// Google refuses a redirect URI with a query string; Telegram wants the exact value registered.
-		$clean_uri = home_url( '/ashna-sso/callback/' );
+		$clean_uri = home_url( '/ashna-sso/callback/google/' );
 		check( 'redirect_uri is a clean path without a query string', isset( $args['redirect_uri'] ) && false === strpos( $args['redirect_uri'], '?' ) && $clean_uri === $args['redirect_uri'], $args['redirect_uri'] ?? '' );
-		check( 'both providers return to the very same address', $clean_uri === Ashna_SSO::redirect_uri( 'telegram' ) && $clean_uri === Ashna_SSO::redirect_uri( 'google' ) );
+		check( 'each provider has its own callback address', home_url( '/ashna-sso/callback/google/' ) === Ashna_SSO::redirect_uri( 'google' ) && home_url( '/ashna-sso/callback/telegram/' ) === Ashna_SSO::redirect_uri( 'telegram' ) );
+		check( 'the old shared address is still produced when no provider is named', home_url( '/ashna-sso/callback/' ) === Ashna_SSO::redirect_uri() );
 		check( 'the state names its provider without being consumed', isset( $begun['state'] ) && 'google' === Ashna_SSO::provider_for_state( $begun['state'] ) );
 		check( 'an unknown state names no provider', '' === Ashna_SSO::provider_for_state( 'deadbeef' ) );
 
@@ -361,6 +362,15 @@ scenario(
 		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/extra';
 		check( 'a longer path is not the callback', ! $method->invoke( null ) );
 
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/google/?code=abc&state=' . str_repeat( 'a', 64 );
+		check( 'the provider-specific callback path matches', $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/telegram/';
+		check( 'the other provider path matches too', $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/google/extra';
+		check( 'a longer provider path is not a callback', ! $method->invoke( null ) );
+
 		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/start/?provider=google';
 		check( 'the start link is not mistaken for a callback', ! $method->invoke( null ) );
 
@@ -375,6 +385,29 @@ scenario(
 		} else {
 			$_SERVER['REQUEST_URI'] = $saved;
 		}
+	}
+);
+
+// ---------------------------------------------------------------------------
+// 2c. Credential shape warnings shown in the settings screen.
+// ---------------------------------------------------------------------------
+scenario(
+	'The settings screen can name a wrong-looking credential pair',
+	function () {
+		$google = Ashna_SSO::credential_warnings( 'google', '8819388185', 'GOCSPX-something-long' );
+		check( 'a numeric id is not a Google client id', isset( $google['client_id'] ) && false !== strpos( $google['client_id'], 'googleusercontent' ), $google['client_id'] ?? '' );
+
+		$google_ok = Ashna_SSO::credential_warnings( 'google', '8819388185-abcdefgh.apps.googleusercontent.com', 'GOCSPX-something-long' );
+		check( 'a real-looking Google pair has no warning', array() === $google_ok, wp_json_encode( $google_ok ) );
+
+		$telegram = Ashna_SSO::credential_warnings( 'telegram', '8819388185', '8819388185:AAH4fakeBotTokenValue1234567890abcd' );
+		check( 'a bot token is not a Telegram client secret', isset( $telegram['client_secret'] ) && false !== strpos( $telegram['client_secret'], 'توکن' ), $telegram['client_secret'] ?? '' );
+
+		$telegram_ok = Ashna_SSO::credential_warnings( 'telegram', '8819388185', 'a-valid-looking-oidc-secret' );
+		check( 'a numeric id plus an OIDC secret has no warning', array() === $telegram_ok, wp_json_encode( $telegram_ok ) );
+
+		$empty = Ashna_SSO::credential_warnings( 'google', '', '' );
+		check( 'empty fields are named', isset( $empty['client_id'], $empty['client_secret'] ) );
 	}
 );
 

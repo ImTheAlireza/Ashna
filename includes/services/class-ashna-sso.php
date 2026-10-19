@@ -34,9 +34,13 @@ class Ashna_SSO {
 	const STATE_TTL = 600;
 
 	/**
-	 * Path (relative to the site root) the provider returns to. It carries no query string on
-	 * purpose: Google rejects a redirect URI that has one, and Telegram requires the exact value
-	 * to be registered. The provider is read back from the server-side state instead.
+	 * Path (relative to the site root) the providers return to.
+	 *
+	 * It carries no query string on purpose: Google rejects a redirect URI that has one, and
+	 * Telegram requires the exact value to be registered. Each provider gets its own leaf
+	 * (`/google/`, `/telegram/`) so the settings screen can show one unmistakable address per
+	 * console, and so a callback sent to the wrong provider is refused instead of silently
+	 * resolved from the state. The bare path stays valid for sites that registered it before.
 	 */
 	const CALLBACK_PATH = 'ashna-sso/callback';
 
@@ -133,6 +137,165 @@ class Ashna_SSO {
 	}
 
 	/**
+	 * Shape problems that would make a saved credential pair fail at the provider.
+	 *
+	 * Empty means "nothing obviously wrong"; the provider stays the authority on the pair.
+	 * Messages are shown under the matching field, so they name the field and the fix.
+	 *
+	 * @param string      $provider Provider id.
+	 * @param string|null $client_id Client id to check (defaults to the saved one).
+	 * @param string|null $client_secret Secret to check (defaults to the saved one).
+	 * @return array<string, string> Field => message.
+	 */
+	public static function credential_warnings( $provider, $client_id = null, $client_secret = null ) {
+		$providers = self::providers();
+		$warnings  = array();
+		if ( ! isset( $providers[ $provider ] ) ) {
+			return array( 'client_id' => 'ارائه‌دهنده ناشناخته است.' );
+		}
+
+		if ( null === $client_id ) {
+			$client_id = (string) self::setting( $provider, 'client_id' );
+		}
+		if ( null === $client_secret ) {
+			$client_secret = (string) self::setting( $provider, 'client_secret' );
+		}
+		$client_id     = trim( (string) $client_id );
+		$client_secret = trim( (string) $client_secret );
+
+		if ( '' === $client_id ) {
+			$warnings['client_id'] = 'Client ID را از پنل ارائه‌دهنده کپی کنید.';
+		} elseif ( 'google' === $provider ) {
+			if ( false === stripos( $client_id, '.apps.googleusercontent.com' ) ) {
+				$warnings['client_id'] = 'Client ID گوگل با یک عدد و سپس «-…apps.googleusercontent.com» تمام می‌شود؛ این مقدار شبیه شناسهٔ گوگل نیست.';
+			}
+		} elseif ( ! preg_match( '/^[0-9]{5,20}$/', $client_id ) ) {
+			$warnings['client_id'] = 'Client ID تلگرام همان شناسهٔ عددی بات است (مثلاً 8819388185)؛ حرف یا علامت ندارد.';
+		}
+
+		if ( '' === $client_secret ) {
+			$warnings['client_secret'] = 'Client Secret را وارد کنید؛ بدون آن تبادل کد انجام نمی‌شود.';
+		} elseif ( 'telegram' === $provider && preg_match( '/^[0-9]{5,20}:[A-Za-z0-9_-]{20,}$/', $client_secret ) ) {
+			$warnings['client_secret'] = 'این مقدار توکن بات است، نه Client Secret. توکن بات در BotFather → API Token است و فقط برای ارسال پیام به کار می‌رود؛ Secret را از Bot Settings → Web Login بردارید.';
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * Coarse state used by the settings screen.
+	 *
+	 * @param string $provider Provider id.
+	 * @return string off|incomplete|check|ready
+	 */
+	public static function provider_state( $provider ) {
+		if ( ! Ashna_Helper::get_option( self::setting_key( $provider, 'enabled' ), 0 ) ) {
+			return 'off';
+		}
+		if ( ! self::is_ready( $provider ) ) {
+			return 'incomplete';
+		}
+		return self::credential_warnings( $provider ) ? 'check' : 'ready';
+	}
+
+	/**
+	 * Live configuration check for the settings screen (no secret ever leaves the site).
+	 *
+	 * @param string $provider Provider id.
+	 * @return array|WP_Error {provider, state, checks: array<{key,label,status,text}>, redirect_uri}
+	 */
+	public static function check_connection( $provider ) {
+		$providers = self::providers();
+		if ( ! isset( $providers[ $provider ] ) ) {
+			return new WP_Error( 'ashna_sso_unknown', 'ارائه‌دهنده ناشناخته است.' );
+		}
+
+		$client_id     = trim( (string) self::setting( $provider, 'client_id' ) );
+		$client_secret = (string) self::setting( $provider, 'client_secret' );
+		$warnings      = self::credential_warnings( $provider, $client_id, $client_secret );
+		$checks        = array();
+
+		$checks[] = array(
+			'key'    => 'client_id',
+			'label'  => 'قالب Client ID',
+			'status' => isset( $warnings['client_id'] ) ? 'error' : 'ok',
+			'text'   => isset( $warnings['client_id'] ) ? $warnings['client_id'] : 'قالب شناسه درست است.',
+		);
+		$checks[] = array(
+			'key'    => 'client_secret',
+			'label'  => 'Client Secret',
+			'status' => isset( $warnings['client_secret'] ) ? 'error' : 'ok',
+			'text'   => isset( $warnings['client_secret'] ) ? $warnings['client_secret'] : 'Secret ذخیره شده است.',
+		);
+
+		$document = self::http_get( $providers[ $provider ]['discovery'], 12 );
+		if ( is_wp_error( $document ) || ! is_array( $document ) ) {
+			$checks[] = array(
+				'key'    => 'discovery',
+				'label'  => 'ارتباط با سرور ' . $providers[ $provider ]['label'],
+				'status' => 'error',
+				'text'   => 'پاسخ نداد. اتصال خروجی هاست را بررسی کنید (firewall یا DNS).',
+			);
+		} else {
+			$missing = array();
+			foreach ( array( 'issuer', 'authorization_endpoint', 'token_endpoint', 'jwks_uri' ) as $field ) {
+				if ( empty( $document[ $field ] ) ) {
+					$missing[] = $field;
+				}
+			}
+			if ( $missing ) {
+				$checks[] = array(
+					'key'    => 'discovery',
+					'label'  => 'نسخهٔ OIDC ارائه‌دهنده',
+					'status' => 'error',
+					'text'   => 'سند کشف ناقص است: ' . implode( '، ', $missing ),
+				);
+			} else {
+				$issuer_ok = untrailingslashit( (string) $document['issuer'] ) === untrailingslashit( $providers[ $provider ]['issuer'] );
+				$checks[]  = array(
+					'key'    => 'discovery',
+					'label'  => 'ارتباط با سرور ' . $providers[ $provider ]['label'],
+					'status' => $issuer_ok ? 'ok' : 'warn',
+					'text'   => $issuer_ok
+						? 'پاسخ گرفت و نشانی‌ها خوانده شد.'
+						: 'پاسخ آمد، اما Issuer با مقدار مورد انتظار یکی نیست: ' . (string) $document['issuer'],
+				);
+			}
+		}
+
+		if ( ! is_ssl() && 0 !== strpos( (string) home_url(), 'https://' ) ) {
+			$host     = (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+			$is_local = in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true ) || substr( $host, -6 ) === '.local';
+			if ( ! $is_local ) {
+				$checks[] = array(
+					'key'    => 'https',
+					'label'  => 'HTTPS',
+					'status' => 'warn',
+					'text'   => 'دامنهٔ سایت HTTPS نیست؛ گوگل و تلگرام برای دامنهٔ واقعی آدرس https می‌خواهند.',
+				);
+			}
+		}
+
+		$state = 'ready';
+		foreach ( $checks as $check ) {
+			if ( 'error' === $check['status'] ) {
+				$state = 'incomplete';
+				break;
+			}
+			if ( 'warn' === $check['status'] ) {
+				$state = 'check';
+			}
+		}
+
+		return array(
+			'provider'    => $provider,
+			'state'       => $state,
+			'checks'      => $checks,
+			'redirect_uri' => self::redirect_uri( $provider ),
+		);
+	}
+
+	/**
 	 * Providers a visitor can actually use right now.
 	 *
 	 * @return array<string, array<string, mixed>>
@@ -150,26 +313,27 @@ class Ashna_SSO {
 	/**
 	 * The callback URL to register at the provider (also shown in the settings screen).
 	 *
-	 * @param string $provider Provider id.
+	 * @param string $provider Provider id. Empty keeps the legacy shared address.
 	 * @return string
 	 */
 	public static function redirect_uri( $provider = '' ) {
-		unset( $provider ); // One address for both providers: less to register, less to mistype.
-		return home_url( '/' . self::CALLBACK_PATH . '/' );
+		$providers = self::providers();
+		$leaf      = isset( $providers[ $provider ] ) ? '/' . $provider : '';
+		return home_url( '/' . self::CALLBACK_PATH . $leaf . '/' );
 	}
 
 	/**
-	 * Is this request the provider returning to the callback path?
+	 * Which provider a callback request belongs to.
 	 *
 	 * Checked before WordPress resolves the query, so the flow works with any permalink
 	 * structure and never reaches the 404 template.
 	 *
-	 * @return bool
+	 * @return string|null Provider id, '' for the legacy shared path, null when not a callback.
 	 */
-	private static function is_callback_request() {
+	private static function callback_provider() {
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 		if ( '' === $uri || false === strpos( $uri, 'ashna-sso' ) ) {
-			return false;
+			return null;
 		}
 
 		$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
@@ -179,12 +343,32 @@ class Ashna_SSO {
 
 		if ( '/' !== $home ) {
 			if ( 0 !== strpos( $path, $home ) ) {
-				return false;
+				return null;
 			}
 			$path = substr( $path, strlen( $home ) );
 		}
 
-		return '/' . trim( $path, '/' ) === '/' . self::CALLBACK_PATH;
+		$path = '/' . trim( $path, '/' );
+		$base = '/' . self::CALLBACK_PATH;
+		if ( $path === $base ) {
+			return '';
+		}
+		if ( 0 !== strpos( $path, $base . '/' ) ) {
+			return null;
+		}
+
+		$leaf      = trim( substr( $path, strlen( $base ) ), '/' );
+		$providers = self::providers();
+		return isset( $providers[ $leaf ] ) ? $leaf : null;
+	}
+
+	/**
+	 * Is this request the provider returning to the callback path?
+	 *
+	 * @return bool
+	 */
+	private static function is_callback_request() {
+		return null !== self::callback_provider();
 	}
 
 	/**
@@ -234,6 +418,8 @@ class Ashna_SSO {
 			'ashna_sso_state'       => 'زمان ورود به پایان رسید یا نشست مرورگر عوض شد. لطفاً دوباره تلاش کنید.',
 			'ashna_sso_browser'     => 'این ورود از مرورگر دیگری آغاز شده بود. لطفاً از همان مرورگر ادامه دهید.',
 			'ashna_sso_denied'      => 'ورود در صفحهٔ سرویس لغو شد.',
+			'ashna_sso_redirect'    => 'آدرس بازگشتی ثبت‌شده در پنل ارائه‌دهنده با آدرس سایت یکی نیست. آدرس دقیق را از تنظیمات «ورود با گوگل و تلگرام» کپی و در همان پنل جایگزین کنید.',
+			'ashna_sso_client'      => 'شناسه یا کلید محرمانهٔ این سرویس پذیرفته نشد. Client ID و Client Secret را دوباره از پنل بردارید و ذخیره کنید.',
 			'ashna_sso_network'     => 'ارتباط با سرویس ورود برقرار نشد. چند لحظه بعد دوباره تلاش کنید.',
 			'ashna_sso_token'       => 'پاسخ سرویس ورود معتبر نبود. لطفاً دوباره تلاش کنید.',
 			'ashna_sso_email'       => 'سرویس ورود ایمیلی برنگرداند که قابل استفاده باشد.',
@@ -269,9 +455,10 @@ class Ashna_SSO {
 	public static function handle_route() {
 		// A provider redirect must never be served from a page cache, and neither must the
 		// request that creates the single-use state.
-		if ( self::is_callback_request() ) {
+		$callback_provider = self::callback_provider();
+		if ( null !== $callback_provider ) {
 			self::disable_cache();
-			self::callback( '' );
+			self::callback( $callback_provider );
 			return;
 		}
 
@@ -413,7 +600,13 @@ class Ashna_SSO {
 		}
 
 		if ( '' !== $error ) {
-			self::fail( 'ashna_sso_denied', '' );
+			// A misconfigured console is the most common failure; naming it saves a support ticket.
+			$map = array(
+				'redirect_uri_mismatch' => 'ashna_sso_redirect',
+				'invalid_client'       => 'ashna_sso_client',
+				'access_denied'        => 'ashna_sso_denied',
+			);
+			self::fail( isset( $map[ $error ] ) ? $map[ $error ] : 'ashna_sso_denied', '' );
 		}
 
 		$result = self::complete( $provider, $state, $code, $bind );
