@@ -3682,93 +3682,82 @@
    ========================================== */
 
 .ashna-sso-hero {
-	padding: 22px 24px 18px;
-	margin-bottom: 16px;
-	background:
-		radial-gradient(120% 140% at 100% 0%, var(--s-primary-soft) 0%, transparent 55%),
-		var(--s-bg-surface);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px 16px;
+	padding: 11px 16px;
+	margin-bottom: 14px;
+	border: 1px solid var(--s-border);
+	border-radius: 13px;
+	background: var(--s-bg-surface);
 }
 
-.ashna-sso-hero-top {
+.ashna-sso-hero-brand {
 	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 18px;
-	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.ashna-sso-hero-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 9px;
+	flex-shrink: 0;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+}
+
+.ashna-sso-hero-copy {
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sso-hero-copy h2 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.5;
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-sso-hero-copy p {
+	margin: 1px 0 0;
+	font-size: 11.5px;
+	line-height: 1.6;
+	color: var(--s-text-muted);
 }
 
 .ashna-sso-hero-pills {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	flex-wrap: wrap;
 }
 
+.ashna-sso-hero-pills .ashna-pill {
+	font-size: 11px;
+	padding: 3px 9px;
+}
+
 .ashna-sso-hero-note {
-	margin: 14px 0 0;
-	padding: 10px 12px;
-	border-radius: 10px;
+	flex: 1 0 100%;
+	margin: 2px 0 0;
+	padding: 8px 10px;
+	border-radius: 9px;
 	background: rgba(245, 158, 11, 0.12);
 	border: 1px solid rgba(245, 158, 11, 0.28);
 	color: #92400e;
-	font-size: 12.5px;
-	line-height: 1.9;
+	font-size: 12px;
+	line-height: 1.8;
 }
 
 #ashna-app-shell.is-dark .ashna-sso-hero-note {
 	color: #fcd34d;
-}
-
-/* 1 → 2 → 3 roadmap with a slowly travelling highlight. */
-.ashna-sso-roadmap {
-	position: relative;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 0;
-	margin: 20px 0 0;
-	padding: 0;
-	list-style: none;
-	font-size: 12px;
-	color: var(--s-text-muted);
-}
-
-.ashna-sso-roadmap::before {
-	content: '';
-	position: absolute;
-	top: 13px;
-	right: 14%;
-	left: 14%;
-	height: 2px;
-	border-radius: 99px;
-	background: linear-gradient(90deg, transparent, var(--s-primary), transparent) 0 0 / 200% 100%;
-	opacity: 0.45;
-	animation: ashnaSsoFlow 3.6s linear infinite;
-	pointer-events: none;
-}
-
-.ashna-sso-roadmap li {
-	position: relative;
-	z-index: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 7px;
-	text-align: center;
-}
-
-.ashna-sso-roadmap-num {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 27px;
-	height: 27px;
-	border-radius: 50%;
-	background: var(--s-bg-surface);
-	border: 2px solid var(--s-primary);
-	color: var(--s-primary);
-	font-size: 12px;
-	font-weight: 800;
-	box-shadow: 0 0 0 4px var(--s-bg-surface);
 }
 
 .ashna-sso-card {
@@ -4323,15 +4312,6 @@
 	gap: 4px;
 }
 
-@keyframes ashnaSsoFlow {
-	from {
-		background-position: 0 0;
-	}
-	to {
-		background-position: 200% 0;
-	}
-}
-
 @keyframes ashnaSsoRise {
 	from {
 		opacity: 0;
@@ -4386,7 +4366,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.ashna-sso-roadmap::before,
 	.ashna-panel.active .ashna-sso-card,
 	.ashna-sso-copy.is-copied,
 	.ashna-sso-result,
@@ -4405,21 +4384,15 @@
 
 @media (max-width: 782px) {
 	.ashna-sso-hero {
-		padding: 18px;
+		padding: 10px 12px;
+	}
+
+	.ashna-sso-hero-pills {
+		width: 100%;
 	}
 
 	.ashna-sso-head-actions {
 		gap: 10px;
-	}
-
-	.ashna-sso-roadmap {
-		font-size: 10.5px;
-	}
-
-	.ashna-sso-roadmap-num {
-		width: 24px;
-		height: 24px;
-		font-size: 11px;
 	}
 
 	.ashna-sso-url-row {

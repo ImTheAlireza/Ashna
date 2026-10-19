@@ -34,33 +34,25 @@ $ashna_sso_state_classes = array(
 ?>
 				<section class="ashna-panel" id="ashna-tab-social">
 
-					<div class="ashna-card ashna-sso-hero">
-						<div class="ashna-sso-hero-top">
-							<div class="ashna-card-head-title">
-								<span class="ashna-card-icon is-blue">
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-								</span>
-								<div>
-									<h2>ورود با گوگل و تلگرام</h2>
-									<p>کاربر با یک کلیک وارد می‌شود؛ حساب آشنا، نشست ووکامرس و دسترسی‌ها دقیقاً مثل ورود پیامکی ساخته می‌شوند.</p>
-								</div>
-							</div>
-							<div class="ashna-sso-hero-pills">
-								<?php foreach ( $ashna_sso_providers as $ashna_sso_id => $ashna_sso_provider ) : ?>
-									<?php $ashna_sso_state = Ashna_SSO::provider_state( $ashna_sso_id ); ?>
-									<span class="ashna-pill <?php echo esc_attr( $ashna_sso_state_classes[ $ashna_sso_state ] ); ?>" data-sso-pill="<?php echo esc_attr( $ashna_sso_id ); ?>">
-										<?php echo esc_html( $ashna_sso_provider['label'] ); ?>:
-										<span data-sso-pill-text><?php echo esc_html( $ashna_sso_state_labels[ $ashna_sso_state ] ); ?></span>
-									</span>
-								<?php endforeach; ?>
+					<div class="ashna-sso-hero">
+						<div class="ashna-sso-hero-brand">
+							<span class="ashna-sso-hero-icon">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+							</span>
+							<div class="ashna-sso-hero-copy">
+								<h2>ورود با گوگل و تلگرام</h2>
+								<p>حساب و نشست، مثل ورود پیامکی.</p>
 							</div>
 						</div>
-
-						<ol class="ashna-sso-roadmap" aria-hidden="true">
-							<li><span class="ashna-sso-roadmap-num">۱</span><span>ساخت اپ در کنسول</span></li>
-							<li><span class="ashna-sso-roadmap-num">۲</span><span>ثبت آدرس بازگشتی</span></li>
-							<li><span class="ashna-sso-roadmap-num">۳</span><span>وارد کردن کلیدها</span></li>
-						</ol>
+						<div class="ashna-sso-hero-pills">
+							<?php foreach ( $ashna_sso_providers as $ashna_sso_id => $ashna_sso_provider ) : ?>
+								<?php $ashna_sso_state = Ashna_SSO::provider_state( $ashna_sso_id ); ?>
+								<span class="ashna-pill <?php echo esc_attr( $ashna_sso_state_classes[ $ashna_sso_state ] ); ?>" data-sso-pill="<?php echo esc_attr( $ashna_sso_id ); ?>">
+									<?php echo esc_html( $ashna_sso_provider['label'] ); ?>:
+									<span data-sso-pill-text><?php echo esc_html( $ashna_sso_state_labels[ $ashna_sso_state ] ); ?></span>
+								</span>
+							<?php endforeach; ?>
+						</div>
 
 						<?php if ( ! $ashna_sso_home_ssl && ! $ashna_sso_is_local ) : ?>
 							<p class="ashna-sso-hero-note">
