@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       آشنا | ورود و ثبت‌نام با کد یکبارمصرف
  * Plugin URI:        https://parsena.ir/ashna
- * Description:       پلاگین جامع ورود و ثبت‌نام یکپارچه با کد یکبارمصرف (OTP) و ورود بیومتریک بدون رمز (Passkey / WebAuthn) از طریق پیامک، پیام‌رسان بله و ایمیل همراه با یکپارچگی کامل ووکامرس و ویجت اختصاصی المنتور.
- * Version:           3.0.1
+ * Description:       پلاگین جامع ورود و ثبت‌نام یکپارچه با کد یکبارمصرف (OTP)، ورود با گوگل و تلگرام و ورود بیومتریک بدون رمز (Passkey / WebAuthn) از طریق پیامک، پیام‌رسان بله و ایمیل همراه با یکپارچگی کامل ووکامرس و ویجت اختصاصی المنتور.
+ * Version:           3.1.0
  * Requires at least: 5.8
  * Requires PHP:      8.2
  * Author:            پارسنا
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ASHNA_OTP_VERSION' ) ) {
-	define( 'ASHNA_OTP_VERSION', '3.0.1' );
+	define( 'ASHNA_OTP_VERSION', '3.1.0' );
 }
 if ( ! defined( 'ASHNA_OTP_FILE' ) ) {
 	define( 'ASHNA_OTP_FILE', __FILE__ );

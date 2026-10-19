@@ -199,7 +199,7 @@ function ashna_sso_cleanup() {
 		wp_delete_user( $user->ID );
 	}
 	require_once ABSPATH . 'wp-admin/includes/user.php';
-	foreach ( array( 'tg_user*', 'sso_existing*', 'sso_other*', 'sso_admin*', 'sso_no_phone*', 'sso_owner*', 'sso_phone_user*', 'same.person*', 'brand.new*', 'state-test*', 'link-ok*', 'no-auto*' ) as $pattern ) {
+	foreach ( array( 'tg_user*', 'sso_existing*', 'sso_other*', 'sso_admin*', 'sso_no_phone*', 'sso_owner*', 'sso_phone_user*', 'same.person*', 'brand.new*', 'state-test*', 'link-ok*', 'no-auto*', 'card.user*' ) as $pattern ) {
 		foreach ( get_users( array( 'search' => $pattern, 'search_columns' => array( 'user_login' ) ) ) as $user ) {
 			wp_delete_user( $user->ID );
 		}
@@ -300,6 +300,13 @@ scenario(
 		check( 'PKCE method is S256', isset( $args['code_challenge_method'] ) && 'S256' === $args['code_challenge_method'] );
 		check( 'redirect_uri is this site, not a caller-supplied URL', isset( $args['redirect_uri'] ) && 0 === strpos( $args['redirect_uri'], home_url() ), $args['redirect_uri'] ?? '' );
 
+		// Google refuses a redirect URI with a query string; Telegram wants the exact value registered.
+		$clean_uri = home_url( '/ashna-sso/callback/' );
+		check( 'redirect_uri is a clean path without a query string', isset( $args['redirect_uri'] ) && false === strpos( $args['redirect_uri'], '?' ) && $clean_uri === $args['redirect_uri'], $args['redirect_uri'] ?? '' );
+		check( 'both providers return to the very same address', $clean_uri === Ashna_SSO::redirect_uri( 'telegram' ) && $clean_uri === Ashna_SSO::redirect_uri( 'google' ) );
+		check( 'the state names its provider without being consumed', isset( $begun['state'] ) && 'google' === Ashna_SSO::provider_for_state( $begun['state'] ) );
+		check( 'an unknown state names no provider', '' === Ashna_SSO::provider_for_state( 'deadbeef' ) );
+
 		$stored = get_transient( Ashna_SSO::state_key( $begun['state'] ) );
 		check( 'state is stored server-side', is_array( $stored ) && $begun['state'] === $args['state'] );
 
@@ -330,6 +337,44 @@ scenario(
 		check( 'a provider without a secret cannot start a flow', is_wp_error( $res ) && 'ashna_sso_not_ready' === $res->get_error_code() );
 
 		ashna_sso_ready();
+	}
+);
+
+// ---------------------------------------------------------------------------
+// 2b. The clean callback path is recognised before WordPress resolves the query.
+// ---------------------------------------------------------------------------
+scenario(
+	'The callback path is matched without a query string',
+	function () {
+		$method = new ReflectionMethod( 'Ashna_SSO', 'is_callback_request' );
+		$method->setAccessible( true );
+
+		$saved = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : null;
+		$base  = rtrim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/?code=abc&state=' . str_repeat( 'a', 64 );
+		check( 'the clean callback path matches', $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback';
+		check( 'a missing trailing slash still matches', $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/callback/extra';
+		check( 'a longer path is not the callback', ! $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/ashna-sso/start/?provider=google';
+		check( 'the start link is not mistaken for a callback', ! $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/some-page/';
+		check( 'an ordinary page is not the callback', ! $method->invoke( null ) );
+
+		$_SERVER['REQUEST_URI'] = $base . '/?ashna_sso=callback&provider=google';
+		check( 'the query route still exists for debugging', ! $method->invoke( null ) );
+
+		if ( null === $saved ) {
+			unset( $_SERVER['REQUEST_URI'] );
+		} else {
+			$_SERVER['REQUEST_URI'] = $saved;
+		}
 	}
 );
 
@@ -507,6 +552,48 @@ scenario(
 		);
 		$res3  = Ashna_SSO::complete( 'google', $begun['state'], 'code', $begun['bind'] );
 		check( 'a subject never migrates to another account', is_array( $res3 ) && (int) $res3['user']->ID === (int) $res2['user']->ID );
+
+		// Declining the phone scope must still leave a usable account, and a unique username.
+		$begun  = Ashna_SSO::begin( 'telegram', '' );
+		$stored = get_transient( Ashna_SSO::state_key( $begun['state'] ) );
+		Ashna_SSO_Mock::$id_token = ashna_sso_token(
+			$ashna_sso_keys['private'],
+			array(
+				'iss'   => 'https://oauth.telegram.org',
+				'aud'   => '1234567890',
+				'sub'   => 'tg-subject-phone-declined',
+				'iat'   => time(),
+				'exp'   => time() + 600,
+				'nonce' => $stored['nonce'],
+				'name'  => 'کاربر بدون شماره',
+			)
+		);
+		$res = Ashna_SSO::complete( 'telegram', $begun['state'], 'code', $begun['bind'] );
+		track_user_id( is_array( $res ) ? $res['user']->ID : 0 );
+		check( 'Telegram without a phone still creates a working account', is_array( $res ) && ! empty( $res['is_new'] ), is_wp_error( $res ) ? $res->get_error_code() : '' );
+		check( 'the profile-only account has no made-up email', is_array( $res ) && '' === (string) $res['user']->user_email );
+		check( 'the profile-only account has no phone yet', is_array( $res ) && '' === (string) get_user_meta( $res['user']->ID, 'ashna_phone', true ) );
+		check( 'the profile-only account keeps the provider name', is_array( $res ) && 'کاربر بدون شماره' === $res['user']->display_name );
+		check( 'the profile-only account is asked for a phone', is_array( $res ) && '1' === (string) get_user_meta( $res['user']->ID, 'ashna_sso_needs_phone', true ) );
+		check( 'its username is unique and readable', is_array( $res ) && (bool) get_user_by( 'login', $res['user']->user_login ) && false !== strpos( $res['user']->user_login, 'telegram_' ) );
+
+		// The same subject signs back into the same profile-only account.
+		$again  = Ashna_SSO::begin( 'telegram', '' );
+		$stored = get_transient( Ashna_SSO::state_key( $again['state'] ) );
+		Ashna_SSO_Mock::$id_token = ashna_sso_token(
+			$ashna_sso_keys['private'],
+			array(
+				'iss'   => 'https://oauth.telegram.org',
+				'aud'   => '1234567890',
+				'sub'   => 'tg-subject-phone-declined',
+				'iat'   => time(),
+				'exp'   => time() + 600,
+				'nonce' => $stored['nonce'],
+				'name'  => 'کاربر بدون شماره',
+			)
+		);
+		$back = Ashna_SSO::complete( 'telegram', $again['state'], 'code', $again['bind'] );
+		check( 'the same subject reuses the profile-only account', is_array( $back ) && (int) $back['user']->ID === (int) $res['user']->ID );
 	}
 );
 
@@ -516,7 +603,7 @@ scenario(
 		ashna_sso_ready();
 		delete_transient( 'ashna_sso_cb_' . md5( Ashna_Helper::get_client_ip() ) );
 		$codes = array();
-		for ( $i = 0; $i < 42; $i++ ) {
+		for ( $i = 0; $i < 102; $i++ ) {
 			$res     = Ashna_SSO::complete( 'google', 'deadbeef', 'c', 'b' );
 			$codes[] = is_wp_error( $res ) ? $res->get_error_code() : 'ok';
 		}
@@ -629,7 +716,7 @@ scenario(
 // ---------------------------------------------------------------------------
 scenario(
 	'The "add your phone" card is narrow and self-cleaning',
-	function () {
+	function () use ( $ashna_sso_keys ) {
 		ashna_sso_ready();
 		ashna_sso_cleanup();
 
@@ -701,6 +788,47 @@ scenario(
 		$json = json_decode( ob_get_clean(), true );
 		check( 'a valid dismiss succeeds', is_array( $json ) && ! empty( $json['success'] ) );
 		check( 'the flag is cleared after dismissal', '' === (string) get_user_meta( $user->ID, 'ashna_sso_needs_phone', true ) );
+
+		// A social account that dismisses the card must not be asked again on its next sign-in.
+		$begun = ashna_sso_begin_with_token(
+			'google',
+			$ashna_sso_keys['private'],
+			array( 'sub' => 'card-sub', 'email' => 'card.user@example.com', 'email_verified' => true )
+		);
+		$res       = Ashna_SSO::complete( 'google', $begun['state'], 'code', $begun['bind'] );
+		$card_user = is_array( $res ) ? $res['user'] : null;
+		track_user_id( $card_user ? $card_user->ID : 0 );
+		check( 'a new social account is asked for a phone', $card_user && '1' === (string) get_user_meta( $card_user->ID, 'ashna_sso_needs_phone', true ), is_wp_error( $res ) ? $res->get_error_code() : '' );
+
+		ashna_sso_as_user( $card_user->ID );
+		$_POST = wp_slash( array( 'action' => 'ashna_sso_phone_dismiss', 'nonce' => wp_create_nonce( 'ashna_sso_phone' ) ) );
+		ob_start();
+		try {
+			do_action( 'wp_ajax_ashna_sso_phone_dismiss' );
+		} catch ( Throwable $e ) {
+			unset( $e );
+		}
+		$json = json_decode( ob_get_clean(), true );
+		check( 'the card can be dismissed', is_array( $json ) && ! empty( $json['success'] ) );
+		check( 'dismissal leaves a dated tombstone', (int) get_user_meta( $card_user->ID, 'ashna_sso_phone_dismissed', true ) > 0 );
+
+		$begun = ashna_sso_begin_with_token(
+			'google',
+			$ashna_sso_keys['private'],
+			array( 'sub' => 'card-sub', 'email' => 'card.user@example.com', 'email_verified' => true )
+		);
+		Ashna_SSO::complete( 'google', $begun['state'], 'code', $begun['bind'] );
+		check( 'a dismissed card stays hidden on the next sign-in', '' === (string) get_user_meta( $card_user->ID, 'ashna_sso_needs_phone', true ) );
+
+		// "Later" is not "never": after a month the account may be asked again.
+		update_user_meta( $card_user->ID, 'ashna_sso_phone_dismissed', time() - ( 31 * DAY_IN_SECONDS ) );
+		$begun = ashna_sso_begin_with_token(
+			'google',
+			$ashna_sso_keys['private'],
+			array( 'sub' => 'card-sub', 'email' => 'card.user@example.com', 'email_verified' => true )
+		);
+		Ashna_SSO::complete( 'google', $begun['state'], 'code', $begun['bind'] );
+		check( 'the card may return after a month', '1' === (string) get_user_meta( $card_user->ID, 'ashna_sso_needs_phone', true ) );
 
 		wp_set_current_user( 0 );
 	}

@@ -66,6 +66,24 @@
 		window.setTimeout(function () { card.remove(); }, 200);
 	}
 
+	// Enter submits the step the visitor is typing in, like every other login form.
+	card.addEventListener('keydown', function (event) {
+		if (event.key !== 'Enter') {
+			return;
+		}
+		var input = event.target;
+		if (!input || !input.classList) {
+			return;
+		}
+		if (input.classList.contains('ashna-sso-phone-input')) {
+			event.preventDefault();
+			card.querySelector('[data-ashna-sso="send"]').click();
+		} else if (input.classList.contains('ashna-sso-code-input')) {
+			event.preventDefault();
+			card.querySelector('[data-ashna-sso="verify"]').click();
+		}
+	});
+
 	card.addEventListener('click', function (event) {
 		var trigger = event.target.closest('[data-ashna-sso]');
 		var action = trigger ? trigger.getAttribute('data-ashna-sso') : '';
@@ -91,6 +109,8 @@
 		if (action === 'send') {
 			var phone = (phoneInput.value || '').replace(/[۰-۹]/g, function (d) {
 				return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+			}).replace(/[٠-٩]/g, function (d) {
+				return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 			}).replace(/\D/g, '');
 
 			if (!phone) {
@@ -123,6 +143,8 @@
 		if (action === 'verify') {
 			var code = (codeInput.value || '').replace(/[۰-۹]/g, function (d) {
 				return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+			}).replace(/[٠-٩]/g, function (d) {
+				return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 			}).replace(/\D/g, '');
 
 			if (!code) {
@@ -140,6 +162,8 @@
 					return;
 				}
 				say((json.data && json.data.message) || cfg.i18n.added);
+				// Keep it disabled while the card fades out, so a second click cannot re-submit.
+				busy(trigger, true);
 				window.setTimeout(hide, 1600);
 			}).catch(function () {
 				busy(trigger, false);

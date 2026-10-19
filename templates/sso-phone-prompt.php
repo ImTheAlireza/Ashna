@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="ashna-sso-phone" id="ashna-sso-phone" role="dialog" aria-labelledby="ashna-sso-phone-title" aria-live="polite">
+<div class="ashna-sso-phone" id="ashna-sso-phone" role="region" aria-labelledby="ashna-sso-phone-title">
 	<button type="button" class="ashna-sso-phone-close" aria-label="بستن">&times;</button>
 
 	<div class="ashna-sso-phone-body" data-step="intro">

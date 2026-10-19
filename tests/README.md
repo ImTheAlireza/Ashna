@@ -124,7 +124,7 @@ the per-number cooldown, the per-IP minute limit and the site-wide daily cap. A 
 multi-process burst was tried first and dropped: the SQLite test site serialized
 the PHP processes, so it could not demonstrate concurrency either way.
 
-`tests/sso.php` (92 checks, 8 scenarios) covers Google/Telegram sign-in end to end
+`tests/sso.php` (114 checks, 12 scenarios) covers Google/Telegram sign-in end to end
 without a network: a mock on `ashna_sso_http_response` serves discovery, JWKS and the
 token endpoint, and an OpenSSL keypair signs real RS256 ID tokens. It attacks the
 verifier (tampered payload, `alg=none`, HS256 confusion, wrong `aud`/`iss`, expired,

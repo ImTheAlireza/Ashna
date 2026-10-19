@@ -1334,7 +1334,7 @@
 .ashna-sso { margin-top: 14px; }
 .ashna-sso-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; color: var(--ashna-muted, #6b7280); font-size: 12.5px; }
 .ashna-sso-divider::before, .ashna-sso-divider::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .18; }
-.ashna-sso-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ashna-sso-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .ashna-sso-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid rgba(17, 24, 39, .14); border-radius: var(--ashna-radius, 12px); background: #fff; color: #111827; font-size: 14px; font-weight: 600; text-decoration: none; transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
 .ashna-sso-btn:hover, .ashna-sso-btn:focus-visible { border-color: rgba(17, 24, 39, .3); box-shadow: 0 4px 14px rgba(17, 24, 39, .08); transform: translateY(-1px); color: #111827; }
 .ashna-sso-btn:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }

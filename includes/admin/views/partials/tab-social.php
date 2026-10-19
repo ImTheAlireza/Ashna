@@ -30,11 +30,12 @@ $ashna_sso_home_ssl  = is_ssl() || 0 === strpos( (string) home_url(), 'https://'
 						</div>
 
 						<div class="ashna-alert" style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);font-size:13px;line-height:1.9;">
-							<strong>قبل از فعال‌سازی، دو آدرس زیر را در پنل ارائه‌دهنده ثبت کنید:</strong>
-							<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-								<code style="direction:ltr;user-select:all;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.06);"><?php echo esc_html( Ashna_SSO::redirect_uri( 'google' ) ); ?></code>
-								<code style="direction:ltr;user-select:all;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.06);"><?php echo esc_html( Ashna_SSO::redirect_uri( 'telegram' ) ); ?></code>
+							<strong>قبل از فعال‌سازی، این آدرس را عیناً در پنل ارائه‌دهنده ثبت کنید:</strong>
+							<div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
+								<code id="ashna-sso-redirect" style="direction:ltr;user-select:all;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.06);"><?php echo esc_html( Ashna_SSO::redirect_uri() ); ?></code>
+								<button type="button" class="ashna-btn ashna-btn-sm ashna-copy-btn" data-copy="<?php echo esc_attr( Ashna_SSO::redirect_uri() ); ?>">کپی</button>
 							</div>
+							<p style="margin:8px 0 0;color:var(--s-text-muted);">هر دو سرویس به همین یک آدرس برمی‌گردند؛ اسلش آخر را حذف نکنید. در گوگل این آدرس در <strong>Authorized redirect URIs</strong> و در تلگرام در <strong>BotFather → Bot Settings → Web Login</strong> ثبت می‌شود.</p>
 							<?php if ( ! $ashna_sso_home_ssl ) : ?>
 								<p style="margin:8px 0 0;color:#b45309;"><strong>توجه:</strong> آدرس سایت HTTPS نیست. گوگل و تلگرام برای دامنهٔ واقعی، آدرس بازگشتی HTTPS می‌خواهند.</p>
 							<?php endif; ?>

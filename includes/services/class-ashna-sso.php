@@ -34,6 +34,13 @@ class Ashna_SSO {
 	const STATE_TTL = 600;
 
 	/**
+	 * Path (relative to the site root) the provider returns to. It carries no query string on
+	 * purpose: Google rejects a redirect URI that has one, and Telegram requires the exact value
+	 * to be registered. The provider is read back from the server-side state instead.
+	 */
+	const CALLBACK_PATH = 'ashna-sso/callback';
+
+	/**
 	 * Wire the routes and the admin-ajax endpoints.
 	 */
 	public static function init() {
@@ -147,11 +154,52 @@ class Ashna_SSO {
 	 * @return string
 	 */
 	public static function redirect_uri( $provider = '' ) {
-		$args = array( self::ROUTE => 'callback' );
-		if ( '' !== $provider ) {
-			$args['provider'] = $provider;
+		unset( $provider ); // One address for both providers: less to register, less to mistype.
+		return home_url( '/' . self::CALLBACK_PATH . '/' );
+	}
+
+	/**
+	 * Is this request the provider returning to the callback path?
+	 *
+	 * Checked before WordPress resolves the query, so the flow works with any permalink
+	 * structure and never reaches the 404 template.
+	 *
+	 * @return bool
+	 */
+	private static function is_callback_request() {
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		if ( '' === $uri || false === strpos( $uri, 'ashna-sso' ) ) {
+			return false;
 		}
-		return add_query_arg( $args, home_url( '/' ) );
+
+		$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
+		$home = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+		$path = '/' . trim( $path, '/' );
+		$home = '/' . trim( $home, '/' );
+
+		if ( '/' !== $home ) {
+			if ( 0 !== strpos( $path, $home ) ) {
+				return false;
+			}
+			$path = substr( $path, strlen( $home ) );
+		}
+
+		return '/' . trim( $path, '/' ) === '/' . self::CALLBACK_PATH;
+	}
+
+	/**
+	 * Which provider a state belongs to, without consuming the state.
+	 *
+	 * @param string $state State from the query string.
+	 * @return string Provider id, or '' when the state is unknown.
+	 */
+	public static function provider_for_state( $state ) {
+		$state = preg_replace( '/[^a-f0-9]/', '', (string) $state );
+		if ( '' === $state || 64 !== strlen( $state ) ) {
+			return '';
+		}
+		$stored = get_transient( self::state_key( $state ) );
+		return ( is_array( $stored ) && ! empty( $stored['provider'] ) ) ? (string) $stored['provider'] : '';
 	}
 
 	/**
@@ -190,7 +238,7 @@ class Ashna_SSO {
 			'ashna_sso_token'       => 'پاسخ سرویس ورود معتبر نبود. لطفاً دوباره تلاش کنید.',
 			'ashna_sso_email'       => 'سرویس ورود ایمیلی برنگرداند که قابل استفاده باشد.',
 			'ashna_sso_unverified'  => 'ایمیل حساب شما در سرویس ورود تأیید نشده است؛ برای امنیت، ورود انجام نشد.',
-			'ashna_sso_phone_taken' => 'این شماره روی حساب دیگری ثبت شده است. اول با همان حساب وارد شوید و از پروفایل، این سرویس را وصل کنید.',
+			'ashna_sso_phone_taken' => 'این شماره روی حساب دیگری ثبت شده است. اول با همان شماره و کد پیامکی وارد شوید؛ از دفعهٔ بعد، ورود با تلگرام به همان حساب وصل می‌شود.',
 			'ashna_sso_staff'       => 'حساب‌های مدیریتی فقط با رمز عبور وارد می‌شوند.',
 			'ashna_sso_blocked'     => 'ورود این حساب در حال حاضر مجاز نیست.',
 			'ashna_sso_rate'        => 'تلاش‌های ورود بیش از حد بود. چند دقیقه بعد دوباره امتحان کنید.',
@@ -219,6 +267,16 @@ class Ashna_SSO {
 	 * Route `?ashna_sso=start|callback`.
 	 */
 	public static function handle_route() {
+		// A provider redirect must never be served from a page cache.
+		if ( self::is_callback_request() ) {
+			nocache_headers();
+			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+				define( 'DONOTCACHEPAGE', true );
+			}
+			self::callback( '' );
+			return;
+		}
+
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- the OAuth state parameter is the nonce of this route.
 		if ( ! isset( $_GET[ self::ROUTE ] ) ) {
 			return;
@@ -335,6 +393,14 @@ class Ashna_SSO {
 		$error = isset( $_GET['error'] ) ? sanitize_key( wp_unslash( $_GET['error'] ) ) : '';
 		// phpcs:enable
 		$bind = isset( $_COOKIE[ self::BIND_COOKIE ] ) ? (string) $_COOKIE[ self::BIND_COOKIE ] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- compared with hash_equals().
+
+		if ( '' === $provider ) {
+			$provider = self::provider_for_state( $state );
+			if ( '' === $provider ) {
+				// Unknown or expired state: that is an expired sign-in, not a configuration problem.
+				self::fail( 'ashna_sso_state', '' );
+			}
+		}
 
 		if ( '' !== $error ) {
 			self::fail( 'ashna_sso_denied', '' );
@@ -471,7 +537,9 @@ class Ashna_SSO {
 		$ip  = Ashna_Helper::get_client_ip();
 		$key = 'ashna_sso_cb_' . md5( $ip );
 		$hit = (int) get_transient( $key );
-		if ( $hit >= 40 ) {
+		// Generous on purpose: many real visitors can share one CGNAT address, and a single
+		// callback costs a transient read, not an SMS. It only has to stop a flood.
+		if ( $hit >= 100 ) {
 			return false;
 		}
 		set_transient( $key, $hit + 1, 10 * MINUTE_IN_SECONDS );
@@ -719,7 +787,16 @@ class Ashna_SSO {
 			Ashna_Auth::sync_user_phone_meta( (int) $user->ID, $phone );
 		}
 
-		self::link_identity( $provider, $subject, (int) $user->ID, $email, $phone );
+		$linked = self::link_identity( $provider, $subject, (int) $user->ID, $email, $phone );
+		if ( is_wp_error( $linked ) ) {
+			// The brand-new account exists only to carry this identity. If the identity could not
+			// be stored (a parallel request won the race), deleting it is the only outcome that
+			// leaves neither an orphan account nor a second account on the next sign-in.
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+			wp_delete_user( (int) $user->ID );
+			return $linked;
+		}
+
 		self::remember_profile( $user, $provider, $claims );
 
 		return array( 'user' => $user, 'is_new' => true );
@@ -812,7 +889,12 @@ class Ashna_SSO {
 			update_user_meta( $user->ID, 'ashna_sso_username', sanitize_text_field( (string) $claims['preferred_username'] ) );
 		}
 
-		if ( ! get_user_meta( $user->ID, 'ashna_phone', true ) && Ashna_Helper::get_option( 'sso_ask_phone', 1 ) ) {
+		// Ask once. "Later" is honoured for a month, then the card may come back if the account
+		// still has no phone to recover it with.
+		$dismissed = (int) get_user_meta( $user->ID, 'ashna_sso_phone_dismissed', true );
+		$muted     = $dismissed > 0 && ( time() - $dismissed ) < 30 * DAY_IN_SECONDS;
+
+		if ( ! get_user_meta( $user->ID, 'ashna_phone', true ) && Ashna_Helper::get_option( 'sso_ask_phone', 1 ) && ! $muted ) {
 			update_user_meta( $user->ID, 'ashna_sso_needs_phone', '1' );
 		} else {
 			delete_user_meta( $user->ID, 'ashna_sso_needs_phone' );
@@ -1053,6 +1135,7 @@ class Ashna_SSO {
 		Ashna_Auth::sync_user_phone_meta( $user_id, $phone );
 		update_user_meta( $user_id, 'ashna_phone_verified', time() );
 		delete_user_meta( $user_id, 'ashna_sso_needs_phone' );
+		delete_user_meta( $user_id, 'ashna_sso_phone_dismissed' );
 
 		do_action( 'ashna_sso_phone_linked', $user_id, $phone );
 
@@ -1070,7 +1153,9 @@ class Ashna_SSO {
 		if ( ! self::verify_request() ) {
 			return;
 		}
-		delete_user_meta( get_current_user_id(), 'ashna_sso_needs_phone' );
+		$user_id = get_current_user_id();
+		delete_user_meta( $user_id, 'ashna_sso_needs_phone' );
+		update_user_meta( $user_id, 'ashna_sso_phone_dismissed', time() );
 		wp_send_json_success( array( 'message' => 'باشه، بعداً.' ) );
 	}
 
