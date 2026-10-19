@@ -280,13 +280,16 @@ class Ashna_Admin {
 
 		wp_register_script( 'ashna-otp-admin-core', false, array( 'jquery' ), ASHNA_OTP_VERSION, true );
 		wp_enqueue_script( 'ashna-otp-admin-core' );
+		// Only what the script actually reads: endpoint + nonce. The settings array used to be
+		// printed here as well, which put every gateway API key and both SSO client secrets into
+		// the page source (readable by any browser extension and every "view source" on an admin
+		// screen). The script never used it; the export box gets its JSON from AJAX instead.
 		wp_localize_script(
 			'ashna-otp-admin-core',
 			'ashnaAdminParams',
 			array(
-				'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'ashna_admin_nonce' ),
-				'settings' => Ashna_Helper::get_settings(),
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'ashna_admin_nonce' ),
 			)
 		);
 		if ( file_exists( $js_file ) ) {

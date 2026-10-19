@@ -877,6 +877,14 @@ scenario(
 		check( 'the buttons point at the start route with the provider', false !== strpos( $form, 'ashna_sso=start&#038;provider=google' ) || false !== strpos( $form, 'ashna_sso=start&provider=google' ) );
 		check( 'no client secret leaks into the HTML', false === strpos( $form, 'google-client-secret' ) && false === strpos( $form, 'telegram-client-secret' ) );
 
+		// The admin screen localizes its script data too; the secrets must not ride along.
+		wp_set_current_user( 1 );
+		Ashna_Admin::instance()->enqueue_admin_assets( 'toplevel_page_ashna-otp' );
+		$admin_data = (string) wp_scripts()->get_data( 'ashna-otp-admin-core', 'data' );
+		check( 'the admin script data carries no secret', false === strpos( $admin_data, 'google-client-secret' ) && false === strpos( $admin_data, 'telegram-client-secret' ) && false === strpos( $admin_data, 'client_secret' ), substr( $admin_data, 0, 120 ) );
+		check( 'the admin script still gets its nonce and endpoint', false !== strpos( $admin_data, 'ashnaAdminParams' ) && false !== strpos( $admin_data, 'admin-ajax.php' ) );
+		wp_set_current_user( 0 );
+
 		ashna_t_settings( array( 'sso_show_on_forms' => 0 ) );
 		$hidden = Ashna_Frontend::get_login_form_html( array( 'context' => 'test' ) );
 		check( 'turning the buttons off removes them', false === strpos( $hidden, 'ashna-sso-google' ) );
