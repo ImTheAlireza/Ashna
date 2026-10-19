@@ -97,11 +97,11 @@ The same file also runs inside a disposable full WordPress install: require its
 `tests/run-full-wp.py [names...]` copies the current source (no-license layout) into
 a disposable WordPress install and runs `tests/<name>.php` there with real auth
 cookies, `WP_Session_Tokens`, nonces, users and roles. With no arguments it runs
-every suite (`attacks session security integrations scenarios`):
+every suite (`attacks session security sso integrations scenarios`):
 
 ```sh
 PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py session
-PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py   # all five suites
+PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py   # all six suites
 ```
 
 `ASHNA_TEST_WP_SITE` selects the site (default `.cache/wp-cli-site`, WordPress 6.8.3
@@ -123,6 +123,17 @@ limiter's three steps (`precheck()` → `Ashna_Logger::reserve()` → `recount()
 the per-number cooldown, the per-IP minute limit and the site-wide daily cap. A real
 multi-process burst was tried first and dropped: the SQLite test site serialized
 the PHP processes, so it could not demonstrate concurrency either way.
+
+`tests/sso.php` (92 checks, 8 scenarios) covers Google/Telegram sign-in end to end
+without a network: a mock on `ashna_sso_http_response` serves discovery, JWKS and the
+token endpoint, and an OpenSSL keypair signs real RS256 ID tokens. It attacks the
+verifier (tampered payload, `alg=none`, HS256 confusion, wrong `aud`/`iss`, expired,
+replayed nonce, unknown `kid`), then walks account outcomes (create, reuse by `sub`,
+link only on a verified email or a provider-verified phone, staff refusal, no
+auto-merge, `auto_register` off), single-use browser-bound `state`, the per-IP
+callback ceiling, the phone-link AJAX endpoints (nonce, cooldown, ownership) and the
+"add your phone" card. The last scenario reads the live schema to prove
+`DB_VERSION` moved with the table.
 
 `tests/integrations.php` (QC 4) runs Dokan's real sign-up code: the `Registration`
 class, `dokan_after_login_redirect()`, the vendor setup wizard's
@@ -283,7 +294,8 @@ ASHNA_TEST_WP_SITE=$PWD/.cache/matrix/wp71 PHP=8.5 PHP_BINARY=.cache/phpwasm/nod
 ```
 
 Matrix of the campaign (per combination: attacks 199, session 66, security 72,
-integrations 62, scenarios 190):
+integrations 62, scenarios 190; `sso` was added after the campaign and runs on
+6.8.3 only):
 
 | WordPress | PHP | Result |
 |---|---|---|

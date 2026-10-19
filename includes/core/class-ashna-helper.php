@@ -56,6 +56,17 @@ class Ashna_Helper {
 			'welcome_message_text'      => 'به {site_name} خوش آمدید! حساب کاربری شما با موفقیت ایجاد شد.',
 			'show_debug_code_in_toast'  => 0,
 
+			// Social sign-in (OpenID Connect). Secrets are stored here and never sent back to the
+			// browser: an empty field in the settings form means "keep the saved value".
+			'sso_google_enabled'        => 0,
+			'sso_google_client_id'      => '',
+			'sso_google_client_secret'  => '',
+			'sso_telegram_enabled'      => 0,
+			'sso_telegram_client_id'    => '',
+			'sso_telegram_client_secret' => '',
+			'sso_show_on_forms'         => 1,
+			'sso_ask_phone'             => 1,
+
 			// 2. Active & 3 Backup SMS Gateways (Failover Chain)
 			'active_sms_gateway'        => 'sandbox',         // sandbox | smsir | kavenegar | melipayamak | farazsms | ippanel
 			'backup_sms_gateway'        => 'none',            // legacy alias

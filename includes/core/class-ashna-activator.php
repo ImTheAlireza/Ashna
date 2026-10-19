@@ -14,7 +14,7 @@ class Ashna_Activator {
 	/**
 	 * Database schema version
 	 */
-	const DB_VERSION = '2.5.0';
+	const DB_VERSION = '2.6.0';
 
 	/**
 	 * Run on plugin activation
@@ -148,6 +148,38 @@ class Ashna_Activator {
 			KEY recipient_time_idx (recipient,created_at,status,channel),
 			KEY ip_time_idx (ip_address,created_at,channel),
 			KEY created_at_status_channel_idx (created_at,status,channel)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+
+		self::create_sso_table();
+	}
+
+	/**
+	 * Identity table for the social sign-in providers (Google, Telegram).
+	 *
+	 * One row per (provider, subject). The unique key is what makes a concurrent double callback
+	 * harmless: the second insert loses the race and is simply rejected.
+	 */
+	public static function create_sso_table() {
+		global $wpdb;
+
+		$table_name      = $wpdb->prefix . 'ashna_sso_identities';
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$table_name} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			provider varchar(20) NOT NULL,
+			subject varchar(191) NOT NULL,
+			user_id bigint(20) unsigned NOT NULL,
+			email varchar(191) NOT NULL DEFAULT '',
+			phone varchar(32) NOT NULL DEFAULT '',
+			created_at datetime NOT NULL,
+			last_login datetime NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY provider_subject (provider,subject),
+			KEY user_idx (user_id)
 		) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

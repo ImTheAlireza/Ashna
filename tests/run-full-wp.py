@@ -3,7 +3,7 @@
 Usage:  PHP_BINARY=... python tests/run-full-wp.py [attacks] [session] [security]
                                                    [integrations] [scenarios]
 
-No arguments runs every shipped suite (attacks, session, security, integrations,
+No arguments runs every shipped suite (attacks, session, security, sso, integrations,
 scenarios). ASHNA_TEST_WP_SITE points at a throw-away WordPress install with Ashna
 active (default: .cache/wp-cli-site). The current source tree is copied into its
 wp-content/plugins/ashna-otp first, laid out like the no-license build.
@@ -63,7 +63,7 @@ def run(name):
 
 
 sync_plugin()
-ALL_SUITES = ['attacks', 'session', 'security', 'integrations', 'scenarios']
+ALL_SUITES = ['attacks', 'session', 'security', 'sso', 'integrations', 'scenarios']
 names = sys.argv[1:] or ALL_SUITES
 failed = [n for n in names if not run(n)]
 if failed:

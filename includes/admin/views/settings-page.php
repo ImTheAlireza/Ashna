@@ -358,6 +358,11 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 						<span class="ashna-nav-label">طراحی ظاهر فرم</span>
 					</button>
 
+					<button type="button" class="ashna-nav-item" data-tab="social">
+						<svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+						<span class="ashna-nav-label">ورود با گوگل و تلگرام</span>
+					</button>
+
 					<button type="button" class="ashna-nav-item" data-tab="woocommerce">
 						<svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
 						<span class="ashna-nav-label">ووکامرس و یکپارچگی‌ها</span>
@@ -393,6 +398,7 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 				require $partials_dir . 'tab-sms-gateways.php';
 				require $partials_dir . 'tab-bale-email.php';
 				require $partials_dir . 'tab-appearance.php';
+				require $partials_dir . 'tab-social.php';
 				require $partials_dir . 'tab-woocommerce.php';
 				require $partials_dir . 'tab-security.php';
 				require $partials_dir . 'tab-tools.php';

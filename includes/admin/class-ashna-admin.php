@@ -303,6 +303,10 @@ class Ashna_Admin {
 	private function sanitize_settings_payload( $raw ) {
 		$defaults = Ashna_Helper::default_settings();
 		$clean    = array();
+		$existing = Ashna_Helper::get_settings();
+
+		// A secret field is never rendered with its value, so an empty submit means "unchanged".
+		$secret_keys = array( 'sso_google_client_secret', 'sso_telegram_client_secret' );
 
 		$checkbox_keys = array(
 			'auto_register',
@@ -332,6 +336,10 @@ class Ashna_Admin {
 			'login_url_to_ashna',
 			'replace_member_forms',
 			'dokan_vendor_signup',
+			'sso_google_enabled',
+			'sso_telegram_enabled',
+			'sso_show_on_forms',
+			'sso_ask_phone',
 		);
 
 		$int_keys = array(
@@ -448,6 +456,12 @@ class Ashna_Admin {
 				$clean[ $key ] = isset( $raw[ $key ] ) ? esc_url_raw( trim( $raw[ $key ] ) ) : '';
 			} else {
 				$clean[ $key ] = isset( $raw[ $key ] ) ? sanitize_text_field( $raw[ $key ] ) : $default_val;
+			}
+		}
+
+		foreach ( $secret_keys as $secret_key ) {
+			if ( '' === trim( (string) $clean[ $secret_key ] ) ) {
+				$clean[ $secret_key ] = isset( $existing[ $secret_key ] ) ? (string) $existing[ $secret_key ] : '';
 			}
 		}
 

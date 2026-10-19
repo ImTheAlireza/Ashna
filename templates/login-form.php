@@ -85,6 +85,11 @@ $context       = ! empty( $args['context'] ) ? $args['context'] : 'shortcode';
 // On the wp-login.php takeover, staff accounts can always use their password (see Ashna_Auth::ajax_password_login()).
 $staff_password_only = ! $allow_password && 'wp-login' === $context && Ashna_Auth::login_takeover_active();
 $show_password       = $allow_password || $staff_password_only;
+
+$sso_providers = ( Ashna_Helper::get_option( 'sso_show_on_forms', 1 ) && ! is_user_logged_in() )
+	? Ashna_SSO::enabled_providers()
+	: array();
+$sso_error     = Ashna_SSO::current_error();
 $form_layout   = ! empty( $args['form_layout'] ) ? $args['form_layout'] : Ashna_Helper::get_option( 'form_layout', 'card' );
 $card_position = ! empty( $args['card_position'] ) ? $args['card_position'] : Ashna_Helper::get_option( 'card_position', 'center' );
 $modal_style   = Ashna_Helper::get_option( 'modal_style', 'center' );
@@ -289,6 +294,28 @@ $wrapper_classes = sprintf(
 				<span class="ashna-btn-text"><?php echo esc_html( $btn_text ); ?></span>
 				<span class="ashna-spinner" style="display:none;"></span>
 			</button>
+
+			<?php if ( '' !== $sso_error ) : ?>
+				<div class="ashna-form-notice ashna-form-notice-error" role="alert"><?php echo esc_html( $sso_error ); ?></div>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $sso_providers ) ) : ?>
+				<div class="ashna-sso">
+					<div class="ashna-sso-divider"><span>یا ادامه با</span></div>
+					<div class="ashna-sso-buttons">
+						<?php foreach ( $sso_providers as $sso_id => $sso_provider ) : ?>
+							<a class="ashna-sso-btn ashna-sso-<?php echo esc_attr( $sso_id ); ?>" href="<?php echo esc_url( Ashna_SSO::start_url( $sso_id, $redirect_to ) ); ?>" rel="nofollow">
+								<?php if ( 'google' === $sso_id ) : ?>
+									<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg>
+								<?php else : ?>
+									<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#229ED9" d="M23.91 3.79 20.3 20.84c-.25 1.21-.98 1.5-1.99.94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56l.39-5.6L19.4 6.6c.44-.39-.1-.61-.69-.22L6.1 13.63l-5.44-1.7c-1.18-.37-1.2-1.2.25-1.77l21.27-8.2c.99-.36 1.85.24 1.73 1.83z"/></svg>
+								<?php endif; ?>
+								<span>ورود با <?php echo esc_html( $sso_provider['label'] ); ?></span>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
 
 			<?php if ( $enable_passkey ) : ?>
 				<div class="ashna-passkey-login-wrap" style="display:none;">

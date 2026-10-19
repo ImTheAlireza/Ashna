@@ -21,6 +21,11 @@ if ( ! empty( $settings['delete_data_on_uninstall'] ) ) {
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the plugin's own table.
 	$wpdb->query( "DROP TABLE IF EXISTS {$logs_table}" );
 
+	// Social sign-in identities (Google / Telegram). The user accounts themselves are never touched.
+	$sso_table = $wpdb->prefix . 'ashna_sso_identities';
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the plugin's own table.
+	$wpdb->query( "DROP TABLE IF EXISTS {$sso_table}" );
+
 	delete_option( 'ashna_otp_settings' );
 	delete_option( 'ashna_otp_db_version' );
 	delete_option( 'ashna_active_lockouts' );
@@ -34,6 +39,9 @@ if ( ! empty( $settings['delete_data_on_uninstall'] ) ) {
 	delete_option( 'ashna_otp_digits_meta' ); // Ashna_Auth::DIGITS_META_OPTION.
 	delete_transient( 'ashna_otp_notified_attack' );
 	delete_transient( 'ashna_otp_notified_daily_cap' );
+	// Cached OIDC discovery documents and signing keys.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( '_transient_ashna_sso_' ) . '%', $wpdb->esc_like( '_transient_timeout_ashna_sso_' ) . '%' ) );
 	// Single-use captcha markers.
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'ashna_otp_cap_' ) . '%' ) );

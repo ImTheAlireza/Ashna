@@ -78,6 +78,7 @@ final class Ashna_Plugin {
 
 		Ashna_Session::init();
 		Ashna_Auth::instance();
+		Ashna_SSO::init();
 		new Ashna_Passkey();
 		Ashna_Frontend::instance();
 		Ashna_WooCommerce::instance();
