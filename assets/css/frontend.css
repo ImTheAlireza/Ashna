@@ -1352,7 +1352,10 @@
 /* -------------------------------------------------------------------------
  * "Add your phone" card (post-SSO), deliberately small and dismissible.
  * ---------------------------------------------------------------------- */
-.ashna-sso-phone { position: fixed; inset-inline-start: 18px; inset-block-end: 18px; z-index: 9998; width: min(360px, calc(100vw - 36px)); padding: 16px; border-radius: 16px; background: #fff; color: #111827; box-shadow: 0 18px 48px rgba(15, 23, 42, .22); border: 1px solid rgba(15, 23, 42, .08); font-size: 14px; opacity: 1; transform: translateY(0); transition: opacity .2s ease, transform .2s ease; }
+.ashna-sso-phone { position: fixed; inset-inline-start: 18px; inset-block-end: 18px; z-index: 9998; width: min(360px, calc(100vw - 36px)); padding: 16px; border-radius: 16px; background: #fff; color: #111827; box-shadow: 0 18px 48px rgba(15, 23, 42, .22); border: 1px solid rgba(15, 23, 42, .08); font-size: 14px; opacity: 1; transform: translateY(0); transition: opacity .2s ease, transform .2s ease; --ashna-font: 'Vazirmatn', Tahoma, sans-serif; --ashna-primary: #2563eb; --ashna-radius: 14px; --ashna-input-h: 42px; --ashna-btn-size: 14px; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+/* The card lives in wp_footer, outside the login form: its buttons must not stretch like form buttons. */
+.ashna-sso-phone .ashna-btn { width: auto; }
+.ashna-sso-phone .ashna-btn-link { color: #2563eb; }
 .ashna-sso-phone.is-dismissed { opacity: 0; transform: translateY(10px); }
 .ashna-sso-phone-body { display: flex; gap: 12px; }
 .ashna-sso-phone-body[hidden] { display: none; }
