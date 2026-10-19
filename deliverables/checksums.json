@@ -1,14 +1,14 @@
 [
   {
     "file": "ashna-otp.zip",
-    "bytes": 548716,
-    "sha256": "f8e891b9bd86f361565ad890067a0a4264da7b2e22d3f942ee25f66fb9afd92d",
+    "bytes": 550278,
+    "sha256": "1a25e33facaa8427473ffcd7de4e0100ca9bf0751e153eea18cedaad91f1bc9a",
     "files": 88
   },
   {
     "file": "ashna-otp-no-license.zip",
-    "bytes": 546409,
-    "sha256": "815da0eacf9dac5302e1830c2a7dca3d037107f545b5b142929accbb2f9e1295",
+    "bytes": 547970,
+    "sha256": "77e0a65281b02a19f1a2a01bd2907c4c0ba31b771d89a1143a990aafd89e324b",
     "files": 88
   },
   {
