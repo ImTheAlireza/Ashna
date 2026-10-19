@@ -267,12 +267,10 @@ class Ashna_SSO {
 	 * Route `?ashna_sso=start|callback`.
 	 */
 	public static function handle_route() {
-		// A provider redirect must never be served from a page cache.
+		// A provider redirect must never be served from a page cache, and neither must the
+		// request that creates the single-use state.
 		if ( self::is_callback_request() ) {
-			nocache_headers();
-			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-				define( 'DONOTCACHEPAGE', true );
-			}
+			self::disable_cache();
 			self::callback( '' );
 			return;
 		}
@@ -286,11 +284,23 @@ class Ashna_SSO {
 		// phpcs:enable
 
 		if ( 'start' === $step ) {
+			self::disable_cache();
 			self::start( $provider );
 			return;
 		}
 		if ( 'callback' === $step ) {
+			self::disable_cache();
 			self::callback( $provider );
+		}
+	}
+
+	/**
+	 * Ask WordPress, the browser and page caches not to store this response.
+	 */
+	private static function disable_cache() {
+		nocache_headers();
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
 		}
 	}
 

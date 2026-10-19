@@ -616,6 +616,9 @@ scenario(
 // 4. Phone link endpoints (the recovery path for social accounts).
 // ---------------------------------------------------------------------------
 function ashna_sso_as_user( $user_id ) {
+	if ( ! is_int( $user_id ) ) {
+		throw new InvalidArgumentException( 'ashna_sso_as_user() takes a user id, not ' . gettype( $user_id ) );
+	}
 	wp_set_current_user( $user_id );
 	$_POST    = array();
 	$_REQUEST = array();
@@ -643,7 +646,7 @@ scenario(
 		check( 'a guest cannot start a phone link', is_array( $json ) && empty( $json['success'] ) );
 
 		// Signed in, wrong nonce.
-		ashna_sso_as_user( $user );
+		ashna_sso_as_user( $user->ID );
 		$ajax_nonce = wp_create_nonce( 'ashna_sso_phone' );
 		$_POST = wp_slash( array( 'action' => 'ashna_sso_phone_start', 'phone' => '09990000002', 'nonce' => 'forged' ) );
 		ob_start();
