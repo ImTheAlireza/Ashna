@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $ashna_sso_providers = Ashna_SSO::providers();
 $ashna_sso_home_ssl  = is_ssl() || 0 === strpos( (string) home_url(), 'https://' );
 ?>
-				<section class="ashna-panel" id="ashna-tab-social" style="display:none;">
+				<section class="ashna-panel" id="ashna-tab-social">
 					<div class="ashna-card" style="margin-bottom:16px;">
 						<div class="ashna-card-head">
 							<div class="ashna-card-head-title">

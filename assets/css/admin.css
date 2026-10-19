@@ -3108,6 +3108,28 @@
 }
 
 @media (max-width: 1024px) {
+	/* Keep the shell inside the viewport: a 1fr grid track must be allowed to
+	   shrink below its content, otherwise the wide nav row forces the whole
+	   app (and every panel) to overflow and get clipped on tablets/phones. */
+	.ashna-app-body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-app-body > * {
+		min-width: 0;
+	}
+
+	#ashna-app-shell .ashna-sidebar {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	#ashna-app-shell .ashna-main {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
 	.ashna-checklist-row {
 		flex-direction: column;
 		align-items: flex-start;
@@ -3126,6 +3148,20 @@
 	.ashna-nav {
 		flex-direction: row;
 		overflow-x: auto;
+		max-width: 100%;
+		padding-bottom: 4px;
+		scrollbar-width: thin;
+	}
+
+	#ashna-app-shell .ashna-nav-item {
+		flex: 0 0 auto;
+		width: auto;
+		white-space: nowrap;
+	}
+
+	.ashna-sidebar-group-title,
+	.ashna-sidebar-footer {
+		display: none;
 	}
 	.ashna-studio-layout,
 	.ashna-bento-row {
@@ -3382,4 +3418,261 @@
 
 .ashna-col-12 {
 	grid-column: span 12;
+}
+
+/* ==========================================================
+   SECURITY TAB — shield hero + split bento (QC redesign)
+   ========================================================== */
+#ashna-app-shell .ashna-sec-hero {
+	padding: 26px 28px 24px;
+	border-radius: 18px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.10), transparent 58%),
+		var(--s-bg-surface);
+	border: 1px solid rgba(59, 130, 246, 0.22);
+}
+
+#ashna-app-shell.is-dark .ashna-sec-hero {
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.16), transparent 58%),
+		var(--s-bg-surface);
+	border-color: rgba(59, 130, 246, 0.3);
+}
+
+.ashna-sec-hero-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.ashna-sec-hero-title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sec-hero-title h2 {
+	margin: 0 0 4px;
+	font-size: 17px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-hero-title p {
+	margin: 0;
+	max-width: 640px;
+	font-size: 12.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-hero-icon {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 14px;
+	color: #3b82f6;
+	background: rgba(59, 130, 246, 0.14);
+	border: 1px solid rgba(59, 130, 246, 0.26);
+}
+
+.ashna-sec-hero-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* The four headline limits, as input tiles */
+.ashna-sec-limit-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.ashna-sec-limit {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 16px 15px;
+	border-radius: 13px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ashna-sec-limit:focus-within {
+	border-color: rgba(59, 130, 246, 0.55);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.ashna-sec-limit-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.ashna-sec-limit-head span {
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-limit-head em {
+	font-style: normal;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-limit-input {
+	width: 100%;
+	height: 40px;
+	padding: 0 12px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text);
+	font-size: 17px;
+	font-weight: 800;
+	text-align: center;
+	letter-spacing: 0.02em;
+}
+
+.ashna-sec-limit-input:focus {
+	outline: none;
+	border-color: #3b82f6;
+}
+
+.ashna-sec-limit small {
+	font-size: 11px;
+	line-height: 1.65;
+	color: var(--s-text-muted);
+}
+
+/* Advanced settings, folded away */
+.ashna-sec-more {
+	margin-top: 18px;
+	border-top: 1px dashed var(--s-border-input);
+	padding-top: 14px;
+}
+
+.ashna-sec-more > summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	cursor: pointer;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	list-style: none;
+	padding: 4px 2px;
+}
+
+.ashna-sec-more > summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sec-more > summary svg {
+	transition: transform 0.18s ease;
+}
+
+.ashna-sec-more[open] > summary svg {
+	transform: rotate(180deg);
+}
+
+.ashna-sec-more > summary:hover {
+	color: #3b82f6;
+}
+
+.ashna-sec-advanced-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px 18px;
+	margin-top: 16px;
+}
+
+.ashna-sec-unit {
+	font-weight: 500;
+	color: var(--s-text-muted);
+	font-size: 11.5px;
+}
+
+/* Split rows */
+.ashna-sec-split {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: 20px;
+	align-items: stretch;
+	margin-top: 20px;
+}
+
+/* The narrower column can be shorter than the stack beside it; let its card
+   fill the row instead of leaving a naked gap under the border. */
+.ashna-sec-split > .ashna-card {
+	height: 100%;
+}
+
+.ashna-sec-split-bottom {
+	grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+}
+
+.ashna-sec-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sec-ip-table {
+	margin-top: 16px;
+}
+
+.ashna-sec-reason-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+@media (max-width: 1280px) {
+	.ashna-sec-limit-row {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1100px) {
+	.ashna-sec-split,
+	.ashna-sec-split-bottom {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-sec-advanced-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 782px) {
+	#ashna-app-shell .ashna-topbar {
+		padding: 14px 16px;
+	}
+
+	.ashna-topbar-brand p {
+		display: none;
+	}
+
+	.ashna-sec-limit-row,
+	.ashna-sec-advanced-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	#ashna-app-shell .ashna-sec-hero {
+		padding: 20px;
+	}
 }
