@@ -304,7 +304,7 @@ template = """<!DOCTYPE html>
     <div class="meta">
       <span>۲۸ مهر ۱۴۰۵</span>
       <span>۶ نمونهٔ بررسی‌شده</span>
-      <span>۷ روز کاری تا اجرا</span>
+      <span>۷ تا ۹ روز کاری تا اجرا</span>
       <span>نسخهٔ محصول ۳.۱.۳</span>
     </div>
   </header>
