@@ -218,7 +218,7 @@ final class Ashna_Activation_Diagnostics {
 		if ( class_exists( 'Ashna_License_Bootstrap', false ) && is_callable( array( 'Ashna_License_Bootstrap', 'get_status' ) ) ) {
 			try {
 				$status = Ashna_License_Bootstrap::get_status();
-				$known = array( 'pending', 'checking', 'active', 'license_file_missing', 'license_hash_mismatch', 'license_class_conflict', 'license_class_missing', 'license_method_invalid', 'license_inactive', 'license_runtime_error' );
+				$known = array( 'pending', 'checking', 'active', 'license_file_missing', 'license_hash_mismatch', 'license_class_conflict', 'license_class_missing', 'license_method_invalid', 'license_inactive', 'license_runtime_error', 'license_loader_missing' );
 				self::$report['bootstrap_status'] = in_array( $status, $known, true ) ? $status : 'unknown_status';
 			} catch ( Throwable $ignored ) {
 				self::$report['bootstrap_status'] = 'status_unavailable';

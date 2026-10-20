@@ -43,6 +43,7 @@ fixtures = {
     'method_error': ('public function isActive() { ashna_missing_fixture_function(); }', 'license_runtime_error'),
     'require_error': ('', 'license_runtime_error'),
     'parse_error': ('', 'license_runtime_error'),
+    'encoded_no_loader': (active, 'license_loader_missing'),
     'conflict': (active, 'license_class_conflict'),
     'core_error': (active, 'propagate_core_error'),
     'no_license': ('', 'active'),
@@ -60,6 +61,7 @@ for scenario, (body, expected) in fixtures.items():
         if scenario == 'missing_class': fixture = '<?php // No class.'
         if scenario == 'require_error': fixture = '<?php throw new RuntimeException("fixture-secret");'
         if scenario == 'parse_error': fixture = '<?php class !!! INVALID !!!'
+        if scenario == 'encoded_no_loader': fixture = '<?php //ICB0 81:0 82:503b ?><?php class ' + license_name + ' { ' + body + ' }'
         license_file = plugin / (license_name + '.php')
         if 'missing' not in [scenario, scenario.removeprefix('activation_')]:
             license_file.write_text(fixture)

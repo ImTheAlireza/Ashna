@@ -23,6 +23,10 @@ Coverage includes normal early loading, late activation from function scope,
 strict true/false results, missing/bad files, runtime/parse/constructor errors,
 preloaded/conflicting classes, inaccessible methods, service initialization,
 activation/deactivation, idempotency, non-admin notices and the no-license build.
+One scenario feeds an ionCube-encoded stub without the Loader and expects
+`license_loader_missing`: the gate must refuse before `require`, because the
+encoded stub itself would print a raw error and `exit(199)` the request.
+Executing a real encoded license still requires a hosting PHP with ionCube.
 
 ## Temporary activation diagnostic tool
 

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ASHNA_OTP_VERSION' ) ) {
-	define( 'ASHNA_OTP_VERSION', '3.1.2' );
+	define( 'ASHNA_OTP_VERSION', '3.1.3' );
 }
 if ( ! defined( 'ASHNA_OTP_FILE' ) ) {
 	define( 'ASHNA_OTP_FILE', __DIR__ . DIRECTORY_SEPARATOR . 'index.php' );
@@ -62,6 +62,17 @@ final class Ashna_License_Bootstrap {
 			$rtlLicenseFileHash = @sha1_file( $rtlLicenseFilePath );
 			if ( '4f106eb02a251f2a6951ca3f530596590081002d' !== $rtlLicenseFileHash ) {
 				self::fail( 'license_hash_mismatch', 'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی متناظر با همین نسخه استفاده کنید.' );
+				return;
+			}
+
+			// An ionCube-encoded license cannot be parsed without the Loader: its
+			// plain-text stub prints a raw error and exit(199)s the whole request.
+			// Detect that here so a missing Loader is an explained, contained failure.
+			$rtlLicenseHead = @file_get_contents( $rtlLicenseFilePath, false, null, 0, 512 );
+			if ( is_string( $rtlLicenseHead )
+				&& preg_match( '/<\?php\s*\/\/(?:ICB0|[0-9A-F]{5})\b/i', $rtlLicenseHead )
+				&& ! extension_loaded( 'ionCube Loader' ) ) {
+				self::fail( 'license_loader_missing', 'فایل لایسنس ionCube است و ionCube Loader روی این نسخه از PHP وب فعال نیست. لودر را روی همان PHP وب فعال کنید و صفحه را دوباره بارگذاری کنید.' );
 				return;
 			}
 
