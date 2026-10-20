@@ -414,7 +414,7 @@
 - [ ] 👤 قراردادن فایل لایسنس راست‌چین (`RTL_License_*.php`) کنار فایل اصلی افزونه
 - [ ] نبود فایل‌های اضافه در زیپ افزونه: tests، scripts، deliverables، node_modules و .git
 - [ ] تست نصب زیپ نهایی روی وردپرس تمیز
-- [ ] بازنویسی `scripts/package-rightchin.py`: هنوز به بسته و راهنمای قدیمی سیگنا اشاره می‌کنه.
+- [x] اسکریپت `scripts/package-rightchin.py` (بستهٔ برند قبلی) حذف شد؛ ساختن بسته با `scripts/package-deliverables.py` و ساختن زیپ لندینگ با `scripts/package-landing.py` انجام می‌شود.
 - [ ] 👤 ارسال از داشبورد راست‌چین
 
 ## فاز ۱۱ — پاکسازی مخزن (اختیاری)
