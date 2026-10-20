@@ -135,164 +135,214 @@
     counters.forEach(function (el) { cio.observe(el); });
   }
 
-  /* ---------------- Hero login simulator ---------------- */
-  var phone = $("#demo-phone");
-  var codeToast = $("#code-toast");
-  var codeToastValue = $("#code-toast-value");
-  var otpWrap = $("#otp-inputs");
-  var otpInputs = otpWrap ? $$("input", otpWrap) : [];
-  var otpTimer = $("#otp-timer");
-  var DEMO_CODE = "4829";
-  var timerId = null;
-  var countdownId = null;
-  var otpError = $("#otp-error");
+  /* ---------------- Hero demo (ورود با کد یک‌بارمصرف) ---------------- */
+  var demoRoot = $("#demo-auth-live");
+  if (demoRoot) {
+    var demoCard = $("[data-demo-card='otp']", demoRoot);
+    var demoSuccess = $("[data-demo-card='success']", demoRoot);
+    var demoPhone = $("#demo-phone");
+    var stepRequest = $(".demo-step-request", demoRoot);
+    var stepVerify = $(".demo-step-verify", demoRoot);
+    var identifierInput = $("#demo-identifier", demoRoot);
+    var recipientEl = $(".demo-recipient-display", demoRoot);
+    var successNumber = $(".demo-success-number", demoRoot);
+    var digitInputs = $$(".demo-digit-box", demoRoot);
+    var alertBox = $(".demo-otp-alert", demoRoot);
+    var countdownEl = $(".demo-timer-countdown", demoRoot);
+    var progressFill = $(".demo-timer-progress-fill", demoRoot);
+    var timerHead = $(".demo-timer-head", demoRoot);
+    var resendBtn = $(".demo-resend-btn", demoRoot);
+    var codeChips = $(".demo-notif-code");
+    var restartBtn = $(".demo-restart", demoRoot);
+    var DEMO_SECONDS = 60;
+    var demoCode = "";
+    var secondsLeft = DEMO_SECONDS;
+    var demoTimerId = null;
+    var verifyId = null;
+    var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  function setStep(step) {
-    if (!phone) return;
-    $$(".auth-step", phone).forEach(function (el) {
-      el.classList.toggle("is-active", el.getAttribute("data-step") === String(step));
-    });
-    if (step !== 2) hideCodeToast();
-  }
-  function showCodeToast() {
-    if (!codeToast) return;
-    codeToast.classList.add("is-visible");
-  }
-  function hideCodeToast() {
-    if (codeToast) codeToast.classList.remove("is-visible");
-  }
-  function startCountdown() {
-    if (!otpTimer) return;
-    var left = 30;
-    window.clearInterval(countdownId);
-    otpTimer.textContent = "ارسال دوباره در ۰۰:" + (left < 10 ? "۰" : "") + faNum(left).replace("۰", "۰");
-    countdownId = window.setInterval(function () {
-      left -= 1;
-      if (left <= 0) {
-        window.clearInterval(countdownId);
-        otpTimer.textContent = "می‌توانی دوباره بفرستی";
-        return;
-      }
-      otpTimer.textContent = "ارسال دوباره در ۰۰:" + (left < 10 ? "۰" : "") + faNum(left);
-    }, 1000);
-  }
-  function clearOtp() {
-    otpInputs.forEach(function (input) {
-      input.value = "";
-      input.classList.remove("is-filled");
-    });
-    if (otpError) { otpError.hidden = true; otpError.textContent = ""; }
-    if (otpWrap) otpWrap.classList.remove("is-error");
-  }
-  function otpValue() {
-    return otpInputs.map(function (i) { return i.value; }).join("");
-  }
-  function verifyCode(silent) {
-    if (otpValue() !== DEMO_CODE) {
-      if (!silent) {
-        if (otpWrap) {
-          otpWrap.classList.remove("is-error");
-          void otpWrap.offsetWidth;
-          otpWrap.classList.add("is-error");
-        }
-        if (otpError) {
-          otpError.hidden = false;
-          otpError.textContent = "کد درست نیست. کد نمایش‌داده‌شده در حالت آزمایشی «۴۸۲۹» است.";
-        }
-        var firstEmpty = otpInputs.filter(function (i) { return !i.value; })[0];
-        if (firstEmpty) firstEmpty.focus();
-      }
-      return;
+    function randomCode() {
+      var out = "";
+      for (var i = 0; i < 5; i++) out += String(Math.floor(Math.random() * 10));
+      return out;
     }
-    window.clearInterval(countdownId);
-    hideCodeToast();
-    setStep(3);
-  }
-  function resetDemo() {
-    window.clearTimeout(timerId);
-    window.clearInterval(countdownId);
-    setStep(1);
-    clearOtp();
-    hideCodeToast();
-  }
-
-  if (phone) {
-    $$("[data-demo-action]", phone).forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var action = btn.getAttribute("data-demo-action");
-        if (action === "send-code") {
-          clearOtp();
-          setStep(2);
-          window.setTimeout(function () {
-            showCodeToast();
-            startCountdown();
-            if (otpInputs[0]) otpInputs[0].focus();
-          }, 380);
+    function faDigits(value) {
+      return String(value).replace(/[0-9]/g, function (d) { return "۰۱۲۳۴۵۶۷۸۹"[Number(d)]; });
+    }
+    function maskContact(value) {
+      var raw = (value || "").trim();
+      if (!raw) return "0912***6789";
+      if (raw.indexOf("@") > -1) return raw.charAt(0) + "***" + raw.slice(raw.indexOf("@"));
+      var digits = raw.replace(/\D/g, "");
+      if (digits.length < 8) return raw;
+      return digits.slice(0, 4) + "***" + digits.slice(-4);
+    }
+    function setAlert(show) { if (alertBox) alertBox.hidden = !show; }
+    function clearDigits() {
+      digitInputs.forEach(function (input) {
+        input.value = "";
+        input.classList.remove("is-filled");
+      });
+    }
+    function paintCode() {
+      if (!codeChips) return;
+      codeChips.textContent = "";
+      faDigits(demoCode).split("").forEach(function (digit) {
+        var chip = document.createElement("span");
+        chip.textContent = digit;
+        codeChips.appendChild(chip);
+      });
+    }
+    function stopDemoTimer() {
+      if (demoTimerId) window.clearInterval(demoTimerId);
+      demoTimerId = null;
+    }
+    function paintTimer() {
+      var minutes = Math.floor(secondsLeft / 60);
+      var seconds = secondsLeft % 60;
+      if (countdownEl) countdownEl.textContent = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+      if (progressFill) progressFill.style.width = (secondsLeft / DEMO_SECONDS * 100) + "%";
+    }
+    function runDemoTimer() {
+      stopDemoTimer();
+      secondsLeft = DEMO_SECONDS;
+      if (timerHead) timerHead.hidden = false;
+      if (resendBtn) resendBtn.hidden = true;
+      paintTimer();
+      demoTimerId = window.setInterval(function () {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          stopDemoTimer();
+          secondsLeft = 0;
+          paintTimer();
+          if (timerHead) timerHead.hidden = true;
+          if (resendBtn) resendBtn.hidden = false;
+          return;
         }
-        if (action === "back") { resetDemo(); }
-        if (action === "reset") { resetDemo(); }
-        if (action === "fill-code") {
-          DEMO_CODE.split("").forEach(function (digit, i) {
-            if (otpInputs[i]) {
-              otpInputs[i].value = digit;
-              otpInputs[i].classList.add("is-filled");
-            }
-          });
-          if (otpError) otpError.hidden = true;
-          verifyCode(false);
+        paintTimer();
+      }, 1000);
+    }
+    function requestCode() {
+      demoCode = randomCode();
+      paintCode();
+      var masked = maskContact(identifierInput ? identifierInput.value : "");
+      if (recipientEl) recipientEl.textContent = masked;
+      if (successNumber) successNumber.textContent = masked;
+      clearDigits();
+      setAlert(false);
+      if (stepRequest) stepRequest.hidden = true;
+      if (stepVerify) stepVerify.hidden = false;
+      if (demoPhone) {
+        demoPhone.hidden = false;
+        demoPhone.classList.remove("is-in");
+        if (!reduceMotion) {
+          void demoPhone.offsetWidth;
+          demoPhone.classList.add("is-in");
         }
-        if (action === "verify") { verifyCode(false); }
-        if (action === "alt") {
-          var method = btn.getAttribute("data-method") || "این روش";
-          toast("در این شبیه‌ساز فقط ورود با کد فعال است؛ «" + method + "» در دموی واقعی وردپرس قابل امتحان است.", 4200);
-        }
-      });
-    });
-
-    otpInputs.forEach(function (input, index) {
-      input.addEventListener("input", function () {
-        input.value = input.value.replace(/\D/g, "").slice(0, 1);
-        input.classList.toggle("is-filled", !!input.value);
-        if (input.value && otpInputs[index + 1]) otpInputs[index + 1].focus();
-        if (otpValue().length === 4) {
-          window.clearTimeout(timerId);
-          timerId = window.setTimeout(function () { verifyCode(true); }, 220);
-        }
-        if (otpError) otpError.hidden = true;
-      });
-      input.addEventListener("keydown", function (e) {
-        if (e.key === "Backspace" && !input.value && otpInputs[index - 1]) otpInputs[index - 1].focus();
-      });
-      input.addEventListener("paste", function (e) {
-        var text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, 4);
-        if (!text) return;
-        e.preventDefault();
-        text.split("").forEach(function (digit, i) {
-          if (otpInputs[i]) { otpInputs[i].value = digit; otpInputs[i].classList.add("is-filled"); }
-        });
-        if (text.length === 4) verifyCode(false);
-      });
-    });
-    if (codeToastValue) codeToastValue.textContent = "۴۸۲۹";
-  }
-
-  /* ---------------- Login display modes (page / modal / drawer) ---------------- */
-  var modeChips = $$(".mode-chip[data-mode]");
-  modeChips.forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      var mode = chip.getAttribute("data-mode");
-      if (!phone) return;
-      phone.setAttribute("data-mode", mode);
-      modeChips.forEach(function (c) {
-        var active = c === chip;
-        c.classList.toggle("is-active", active);
-        c.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-      if (mode !== "page" && codeToast && phone.querySelector('.auth-step[data-step="2"].is-active')) {
-        showCodeToast();
       }
+      runDemoTimer();
+      window.setTimeout(function () { if (digitInputs[0]) digitInputs[0].focus(); }, reduceMotion ? 0 : 280);
+    }
+    function resetDemo() {
+      stopDemoTimer();
+      window.clearTimeout(verifyId);
+      setAlert(false);
+      clearDigits();
+      demoCode = "";
+      if (demoPhone) { demoPhone.hidden = true; demoPhone.classList.remove("is-in"); }
+      if (stepVerify) stepVerify.hidden = true;
+      if (stepRequest) stepRequest.hidden = false;
+      if (demoSuccess) demoSuccess.hidden = true;
+      if (demoCard) demoCard.hidden = false;
+    }
+    function showSuccess() {
+      stopDemoTimer();
+      if (demoPhone) demoPhone.hidden = true;
+      if (demoCard) demoCard.hidden = true;
+      if (demoSuccess) demoSuccess.hidden = false;
+    }
+    function verifyCode() {
+      var value = digitInputs.map(function (input) { return input.value; }).join("");
+      if (value.length !== 5) return;
+      if (value === demoCode) { setAlert(false); showSuccess(); return; }
+      setAlert(true);
+    }
+
+    if (stepRequest) {
+      stepRequest.addEventListener("submit", function (event) { event.preventDefault(); requestCode(); });
+    }
+    if (stepVerify) {
+      stepVerify.addEventListener("submit", function (event) { event.preventDefault(); verifyCode(); });
+    }
+    $$(".demo-change-identifier", demoRoot).forEach(function (btn) {
+      btn.addEventListener("click", resetDemo);
     });
-  });
+    if (resendBtn) {
+      resendBtn.addEventListener("click", function () {
+        demoCode = randomCode();
+        paintCode();
+        clearDigits();
+        setAlert(false);
+        runDemoTimer();
+        if (digitInputs[0]) digitInputs[0].focus();
+      });
+    }
+    if (restartBtn) restartBtn.addEventListener("click", resetDemo);
+
+    digitInputs.forEach(function (input, index) {
+      input.addEventListener("input", function () {
+        var value = input.value
+          .replace(/[۰-۹]/g, function (d) { return String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)); })
+          .replace(/[٠-٩]/g, function (d) { return String("٠١٢٣٤٥٦٧٨٩".indexOf(d)); })
+          .replace(/\D/g, "")
+          .slice(0, 1);
+        input.value = value;
+        input.classList.toggle("is-filled", !!value);
+        setAlert(false);
+        if (value && digitInputs[index + 1]) digitInputs[index + 1].focus();
+        if (digitInputs.every(function (box) { return !!box.value; })) {
+          window.clearTimeout(verifyId);
+          verifyId = window.setTimeout(verifyCode, 240);
+        }
+      });
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Backspace" && !input.value && digitInputs[index - 1]) {
+          var prev = digitInputs[index - 1];
+          prev.value = "";
+          prev.classList.remove("is-filled");
+          prev.focus();
+          event.preventDefault();
+        }
+        if (event.key === "ArrowLeft" && digitInputs[index + 1]) digitInputs[index + 1].focus();
+        if (event.key === "ArrowRight" && digitInputs[index - 1]) digitInputs[index - 1].focus();
+      });
+      input.addEventListener("paste", function (event) {
+        var text = ((event.clipboardData || window.clipboardData).getData("text") || "")
+          .replace(/[۰-۹]/g, function (d) { return String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)); })
+          .replace(/\D/g, "")
+          .slice(0, 5);
+        if (!text) return;
+        event.preventDefault();
+        text.split("").forEach(function (digit, i) {
+          if (digitInputs[i]) {
+            digitInputs[i].value = digit;
+            digitInputs[i].classList.add("is-filled");
+          }
+        });
+        if (text.length === 5) verifyCode();
+        else if (digitInputs[text.length]) digitInputs[text.length].focus();
+      });
+    });
+
+    $$("[data-demo-alt]", demoRoot).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var passkey = btn.getAttribute("data-demo-alt") === "passkey";
+        toast(passkey
+          ? "این نمایش جریان ورود با کد را شبیه‌سازی می‌کند؛ Passkey در نسخهٔ واقعی افزونه با اثر انگشت یا چهره کار می‌کند."
+          : "این نمایش جریان ورود با کد را شبیه‌سازی می‌کند؛ ورود با رمز عبور در نسخهٔ واقعی افزونه فعال است.");
+      });
+    });
+  }
 
   /* ---------------- Lab tabs ---------------- */
   var labTabs = $$("[data-lab-tab]");
