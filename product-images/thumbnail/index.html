@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>آیکون آشنا — ۳۲۰×۳۲۰</title>
+<style>
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#0b1220}
+  body{display:flex;justify-content:center;align-items:flex-start;-webkit-font-smoothing:antialiased}
+
+  .icon{
+    position:relative;width:320px;height:320px;overflow:hidden;direction:rtl;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:14px;
+    font-family:'Estedad',sans-serif;
+    background:
+      radial-gradient(230px 200px at 50% 34%, rgba(37,99,235,.55) 0%, rgba(37,99,235,0) 70%),
+      radial-gradient(180px 150px at 12% 8%, rgba(56,189,248,.30) 0%, rgba(56,189,248,0) 72%),
+      linear-gradient(160deg,#051633 0%,#061C42 52%,#04102A 100%);
+  }
+
+  /* faint dot grid, fades out at the edges */
+  .dots{position:absolute;inset:0;
+    background-image:radial-gradient(rgba(150,190,245,.30) 1px, transparent 1.1px);
+    background-size:16px 16px;
+    -webkit-mask-image:radial-gradient(150px 150px at 50% 40%, #000 10%, rgba(0,0,0,.25) 62%, transparent 82%);
+    mask-image:radial-gradient(150px 150px at 50% 40%, #000 10%, rgba(0,0,0,.25) 62%, transparent 82%)}
+
+  /* corner light */
+  .sheen{position:absolute;left:-60px;top:-90px;width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(96,165,250,.35),rgba(96,165,250,0) 76%);filter:blur(10px)}
+
+  /* ---------------- mark ---------------- */
+  .mark{position:relative;width:150px;height:150px;margin-top:-14px;isolation:isolate}
+
+  .mark span{position:absolute;inset:0;
+    -webkit-mask:url('../infographic/img/ashna-icon.svg') center/contain no-repeat;
+    mask:url('../infographic/img/ashna-icon.svg') center/contain no-repeat}
+
+  .glow{background:#3B82F6;filter:blur(22px);transform:scale(1.12);opacity:.55;z-index:-1}
+  .cast{background:#01091C;filter:blur(13px);transform:translate(0,9px) scale(1.03);opacity:.7}
+  .body{background:linear-gradient(168deg,#7EB6FF 0%,#3D8BFA 38%,#1D5AD6 74%,#1746AD 100%)}
+  .gloss{background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.16) 34%,rgba(255,255,255,0) 52%);
+    mix-blend-mode:screen;opacity:.95}
+  .rim{background:linear-gradient(200deg,rgba(190,225,255,.95),rgba(120,180,250,0) 55%);
+    transform:translate(-1px,-1px);opacity:.55;mix-blend-mode:screen}
+
+  /* ---------------- name ---------------- */
+  .name{position:relative;margin-top:16px;font-weight:900;font-size:50px;line-height:1;color:#F4F9FF;
+    letter-spacing:-1.5px;
+    text-shadow:0 3px 0 rgba(2,10,28,.55), 0 12px 24px rgba(2,10,28,.6)}
+  .name::after{content:"";position:absolute;left:12%;right:12%;bottom:-10px;height:3px;border-radius:3px;
+    background:linear-gradient(90deg,rgba(56,189,248,0),#38BDF8 30%,#2563EB 68%,rgba(37,99,235,0));
+    box-shadow:0 0 12px rgba(56,189,248,.55)}
+
+  /* thin inner frame keeps the icon from bleeding into a white listing background */
+  .frame{position:absolute;inset:0;border:1px solid rgba(140,185,250,.16);pointer-events:none}
+</style>
+</head>
+<body>
+<div class="icon" id="icon">
+  <div class="dots"></div>
+  <div class="sheen"></div>
+
+  <div class="mark" role="img" aria-label="نشان آشنا">
+    <span class="glow"></span>
+    <span class="cast"></span>
+    <span class="body"></span>
+    <span class="gloss"></span>
+    <span class="rim"></span>
+  </div>
+
+  <div class="name">آشنا</div>
+  <div class="frame"></div>
+</div>
+</body>
+</html>
