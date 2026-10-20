@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ASHNA_OTP_VERSION' ) ) {
-	define( 'ASHNA_OTP_VERSION', '3.1.3' );
+	define( 'ASHNA_OTP_VERSION', '3.1.4' );
 }
 if ( ! defined( 'ASHNA_OTP_FILE' ) ) {
 	define( 'ASHNA_OTP_FILE', __DIR__ . DIRECTORY_SEPARATOR . 'index.php' );

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ASHNA_OTP_VERSION' ) ) {
-	define( 'ASHNA_OTP_VERSION', '3.1.3' );
+	define( 'ASHNA_OTP_VERSION', '3.1.4' );
 }
 if ( ! defined( 'ASHNA_OTP_FILE' ) ) {
 	define( 'ASHNA_OTP_FILE', __DIR__ . DIRECTORY_SEPARATOR . 'index.php' );
@@ -60,7 +60,7 @@ final class Ashna_License_Bootstrap {
 
 		try {
 			$rtlLicenseFileHash = @sha1_file( $rtlLicenseFilePath );
-			if ( '4f106eb02a251f2a6951ca3f530596590081002d' !== $rtlLicenseFileHash ) {
+			if ( '321791ab0231890e4569d17c52e64ed93d2eb42d' !== $rtlLicenseFileHash ) {
 				self::fail( 'license_hash_mismatch', 'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی متناظر با همین نسخه استفاده کنید.' );
 				return;
 			}
