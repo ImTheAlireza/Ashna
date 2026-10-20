@@ -6,17 +6,19 @@
 <title>اینفوگرافیک آشنا — ورود و ثبت‌نام پیامکی وردپرس</title>
 <!--
   ══════════════════════════════════════════════════════════════════════════════
-  اینفوگرافیک آشنا | تم بنفش تیره | عرض ثابت ۱۰۰۰ پیکسل | ارتفاع آزاد
+  اینفوگرافیک آشنا | تم آبی برند (#2563EB) | عرض ثابت ۱۰۰۰ پیکسل | ارتفاع آزاد
   ──────────────────────────────────────────────────────────────────────────────
   راهنمای ویرایش
-   • متن‌ها همین‌جا داخل تگ‌ها هستند.
-   • رنگ‌ها در :root — --violet / --coral / --amber / --mint / --sky.
-   • عکس‌های واقعی پنل در پوشهٔ img با همین نام‌ها:
-        auth.webp · sso.webp · gateways.webp · messengers.webp
-        security.webp · shop.webp · appearance.webp · dashboard-dark.webp
-       00-card.webp = کارت ورود واقعی، داخل هدر
-   • آیکون‌ها همه SVG دست‌سازند؛ هیچ تصویر استوک یا هوش مصنوعی در طرح نیست.
-   • خروجی: از عنصر #poster در عرض ۱۰۰۰ اسکرین‌شات بگیر، سپس JPEG کیفیت ۸۵.
+   • همهٔ متن‌ها داخل همین فایل و در تگ‌های خودشان هستند.
+   • رنگ‌ها در :root — --blue / --navy / --sky / --mint / --amber.
+   • تصاویر واقعی پنل و فرم در پوشهٔ img (captured at 2× از پنل واقعی):
+       login-card.webp · methods.webp · sso.webp · gateways.webp
+       failover.webp · security.webp · appearance.webp · shop.webp
+       messengers.webp · dashboard.webp
+   • هر بخش ساختار خودش را دارد: هدر تیره، نوار سه‌قدمی، دو ستون، باند تیره،
+     نوار راه‌دور، دیاگرام سپر، پنل روشن، باند تیرهٔ ظاهر و فهرست سه‌ستونه.
+   • آیکون‌ها SVG دست‌سازند؛ هیچ تصویر استوک یا هوش مصنوعی در طرح نیست.
+   • خروجی: node export.mjs  →  python3 stitch.py
   ══════════════════════════════════════════════════════════════════════════════
 -->
 <style>
@@ -26,636 +28,552 @@
   @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
 
   :root{
-    --bg:#08040F;
-    --violet:#7C3AED; --violet-d:#4C1D95; --violet-l:#C4B5FD; --lilac:#DDD6FE;
-    --coral:#FF6B4A; --amber:#FFC24B; --mint:#34D399; --sky:#5EEAD4; --pink:#F472B6;
-    --txt:#F7F4FF; --dim:#B7ACD8; --dim2:#8D81B2;
-    --stroke:rgba(196,181,253,.18);
-    --stroke-w:rgba(255,255,255,.085);
-    --card:linear-gradient(180deg,rgba(196,181,253,.13),rgba(88,60,160,.05));
-    --sh:0 30px 70px -28px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.07);
+    --navy:#061633; --navy-2:#0a2350; --navy-3:#0d2c62;
+    --blue:#2563EB; --blue-d:#1D4ED8; --blue-l:#60A5FA; --blue-pale:#DBEAFE;
+    --sky:#38BDF8; --mint:#10B981; --amber:#F59E0B; --rose:#F43F5E;
+    --ink:#0A1B33; --dim:#5A7191; --dim2:#8AA0BC;
+    --soft:#F1F7FF; --soft-2:#E7F1FF; --line:#D6E4F7;
+    --card:#FFFFFF;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#06030B}
-  body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-  #poster{
-    width:1000px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg);
-    background-image:
-      radial-gradient(880px 520px at 108% -6%, rgba(124,58,237,.42), transparent 62%),
-      radial-gradient(700px 420px at -10% 6%, rgba(76,29,149,.5), transparent 62%),
-      radial-gradient(900px 640px at 50% 100%, rgba(88,28,135,.35), transparent 66%);
-  }
-  #poster::after{
-    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.35;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.4'/></svg>");
-    mix-blend-mode:overlay;
-  }
-  .wrap{position:relative;z-index:2}
+  html,body{margin:0;padding:0;background:#DDE7F4}
+  body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"ss01"}
+  #poster{width:1000px;margin:0 auto;position:relative;overflow:hidden;background:#fff}
+  img{display:block}
+  h1,h2,h3,h4{margin:0;font-family:'Estedad',Vazirmatn,sans-serif;font-weight:900;letter-spacing:-.3px}
+  p{margin:0}
 
-  /* ══════════ top bar ══════════ */
-  .topbar{
-    position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;
-    padding:16px 54px 0;font-size:10.5px;color:var(--dim2);
-  }
-  .topbar .r{display:flex;align-items:center;gap:8px;font-weight:600;color:#CBBFF3}
-  .topbar .r img{width:16px;height:16px;opacity:.85}
-  .topbar .l{display:flex;align-items:center;gap:10px;letter-spacing:.2px}
-  .topbar .sep{width:3px;height:3px;border-radius:50%;background:#6D5C99}
+  /* ───────── shared ───────── */
+  .sec{position:relative;padding:62px 56px}
+  .cols,.hero-in,.foot .in{min-width:0}
+  .cols>*,.hero-in>*,.foot .in>*{min-width:0}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.2px}
+  .eyebrow .num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;border-radius:7px;background:var(--blue);color:#fff;font-size:11.5px;font-weight:800}
+  .h2{font-size:31px;line-height:1.32;margin:12px 0 0}
+  .lead{font-size:14.6px;line-height:2.02;color:var(--dim);margin-top:12px;max-width:640px}
+  .rule{width:54px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--sky));margin-top:16px}
+  .shot{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:9px;box-shadow:0 26px 50px -34px rgba(7,22,51,.5),0 2px 6px rgba(7,22,51,.05)}
+  .shot img{width:100%;border-radius:11px;-webkit-mask-image:linear-gradient(to bottom,#000 94%,rgba(0,0,0,.15) 100%);mask-image:linear-gradient(to bottom,#000 94%,rgba(0,0,0,.15) 100%)}
+  .shot .cap{position:absolute;bottom:-13px;right:18px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:10.5px;font-weight:700;color:var(--dim);box-shadow:0 6px 14px -8px rgba(7,22,51,.4)}
+  .chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 12px;font-size:11.5px;font-weight:700;background:#EFF5FF;border:1px solid #D7E6FD;color:#1E4C8F}
+  .chip svg{width:13px;height:13px;flex:none}
 
-  /* ══════════ hero ══════════ */
-  .hero{padding:14px 54px 0;position:relative;z-index:2}
-  .hero-card{
-    position:relative;border-radius:36px;padding:38px 40px 34px;overflow:hidden;
-    background:
-      radial-gradient(90% 120% at 88% -16%, rgba(233,213,255,.42), transparent 55%),
-      radial-gradient(70% 100% at 6% 110%, rgba(255,107,74,.18), transparent 60%),
-      linear-gradient(155deg,#7C3AED 0%,#5B21B6 45%,#2E1065 100%);
-    border:1px solid rgba(221,214,254,.28);
-    box-shadow:0 46px 90px -34px rgba(76,29,149,.95), inset 0 1px 0 rgba(255,255,255,.24);
-  }
-  .hero-card::before{
-    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23m)' opacity='.5'/></svg>");
-    mix-blend-mode:soft-light;
-  }
-  .hero-card .spin{
-    position:absolute;border-radius:50%;border:1px solid rgba(221,214,254,.22);pointer-events:none;
-  }
-  .spin.a{width:520px;height:520px;left:-190px;top:-210px}
-  .spin.b{width:760px;height:760px;left:-310px;top:-330px;border-color:rgba(221,214,254,.13)}
+  /* ───────── hero ───────── */
+  .hero{position:relative;background:
+      radial-gradient(760px 420px at 118% -10%, rgba(56,189,248,.34), transparent 62%),
+      radial-gradient(680px 460px at -14% 18%, rgba(37,99,235,.42), transparent 64%),
+      linear-gradient(160deg,#061633 0%,#08204A 46%,#0A2A5E 100%);
+    color:#fff;padding:0 0 26px;overflow:hidden}
+  .hero .glowline{position:absolute;inset:auto 0 0 0;height:1px;background:linear-gradient(90deg,transparent,rgba(96,165,250,.7),transparent)}
+  .hero .arc{position:absolute;border-radius:50%;border:1px solid rgba(96,165,250,.16);pointer-events:none}
+  .hero .a1{width:760px;height:760px;top:-330px;left:-190px}
+  .hero .a2{width:1080px;height:1080px;top:-470px;left:-300px;border-color:rgba(96,165,250,.1)}
+  .hero .grid{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(148,197,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(148,197,255,.16) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 72%)}
+  .topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:26px 56px 0}
+  .topbar .brandlogo{height:30px;width:auto;filter:drop-shadow(0 6px 16px rgba(0,0,0,.35))}
+  .topbar .meta{display:flex;align-items:center;gap:8px;font-size:11px;color:#9FC2EE;font-weight:600}
+  .vpill{background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.34);color:#CFE4FF;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:700}
+  .hero-in{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 432px;gap:28px;align-items:center;padding:34px 56px 0}
+  .hero h1{font-size:44px;line-height:1.26;letter-spacing:-.6px}
+  .hero h1 em{font-style:normal;color:#7EC2FF;position:relative}
+  .hero h1 em{position:relative;z-index:1}.hero h1 em::after{content:"";position:absolute;right:-2px;left:-2px;bottom:1px;height:11px;border-radius:5px;background:linear-gradient(90deg,rgba(56,189,248,.5),rgba(37,99,235,.1));z-index:-1}
+  .hero .sub{margin-top:16px;font-size:14.6px;line-height:2.05;color:#BFD5F2;max-width:430px}
+  .hero .kicker{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(150,197,255,.26);border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:700;color:#D8E9FF}
+  .hero .kicker i{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+  .hero-shot{position:relative}
+  .hero-shot .halo{position:absolute;inset:-26px -18px -30px -18px;background:radial-gradient(closest-side,rgba(56,189,248,.34),transparent 72%);filter:blur(6px)}
+  .hero-shot .frame{position:relative;background:rgba(255,255,255,.96);border-radius:20px;padding:8px;box-shadow:0 40px 70px -34px rgba(0,0,0,.75),0 0 0 1px rgba(190,220,255,.4)}
+  .hero-shot .frame img{width:100%;height:auto;border-radius:14px}
+  .float{position:absolute;background:#fff;border-radius:14px;box-shadow:0 18px 34px -18px rgba(0,0,0,.6);padding:9px 12px;display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:800;color:#12305C}
+  .float small{display:block;font-size:9.5px;font-weight:600;color:#7C93AF;margin-top:2px}
+  .float .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .float.f1{left:-26px;top:34px}
+  .float.f1 .ic{background:#E6F7F0;color:#0E9F6E}
+  .float.f2{left:-30px;bottom:28px}
+  .float.f2 .ic{background:#E8F0FF;color:var(--blue)}
+  .hero-stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);margin:38px 56px 0;border-top:1px solid rgba(150,197,255,.2);padding:20px 0 42px}
+  .hs{padding:0 16px;border-left:1px solid rgba(150,197,255,.14)}
+  .hs:first-child{border-left:0;padding-right:0}
+  .hs b{display:block;font-family:'Estedad',sans-serif;font-size:22px;font-weight:900;color:#fff}
+  .hs span{display:block;margin-top:3px;font-size:11px;color:#9FBDE2;font-weight:600}
 
-  .hero-grid{position:relative;display:grid;grid-template-columns:1fr 372px;gap:8px;align-items:center}
+  /* ───────── steps ───────── */
+  .steps{position:relative;background:#fff;padding:0 56px 44px;margin-top:-2px}
+  .steps .card{position:relative;margin-top:-30px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 60px -40px rgba(7,22,51,.6);padding:24px 26px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .steps .card::before{content:"";position:absolute;top:44px;right:12%;left:12%;height:2px;background:repeating-linear-gradient(90deg,#C7DBF5 0 8px,transparent 8px 16px)}
+  .st{position:relative;display:flex;align-items:flex-start;gap:12px;padding:4px 6px;background:#fff;z-index:1}
+  .st .n{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:linear-gradient(160deg,#2F6EF0,#1D4ED8);color:#fff;box-shadow:0 10px 18px -12px rgba(29,78,216,.9)}
+  .st .n svg{width:19px;height:19px}
+  .st b{display:block;font-size:13.5px;font-weight:800;color:#0B2344}
+  .st span{display:block;margin-top:4px;font-size:11.5px;line-height:1.8;color:var(--dim)}
 
-  .ver{
-    display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;color:#F3E8FF;
-    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.32);
-    padding:5px 11px;border-radius:999px;backdrop-filter:blur(6px);
-  }
-  .ver i{width:5px;height:5px;border-radius:50%;background:#4ADE80;box-shadow:0 0 9px #4ADE80}
-  .kicker{margin:14px 0 6px;font-size:12px;font-weight:700;color:#E9D5FF;letter-spacing:.1px}
-  .kicker b{color:#FFD9A0}
-  h1{
-    font-family:'Estedad';font-weight:900;font-size:82px;line-height:1;margin:0;
-    color:#fff;letter-spacing:-2px;text-shadow:0 20px 40px rgba(32,8,70,.55);
-    display:flex;align-items:flex-end;gap:10px;
-  }
-  .dot-mark{width:13px;height:13px;border-radius:4px;background:var(--amber);margin-bottom:13px;box-shadow:0 6px 16px rgba(255,194,75,.55)}
-  .hero-tag{margin:10px 0 0;font-size:19px;font-weight:800;color:#FFF7ED;line-height:1.7}
-  .hero-tag u{text-decoration:none;color:#FFD166}
-  .hero-line{margin:8px 0 0;font-size:12.5px;color:rgba(243,232,255,.76);line-height:1.9;max-width:330px}
-  .hero-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
-  .hp{
-    display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:#F3E8FF;
-    padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.11);
-    border:1px solid rgba(255,255,255,.2);
-  }
-  .hp svg{width:11px;height:11px;color:#A7F3D0}
+  /* ───────── section 01 ───────── */
+  .s1{background:linear-gradient(180deg,#FFFFFF 0%,#FBFDFF 100%);overflow:hidden}
+  .s1 .ghost{position:absolute;top:34px;left:22px;font-family:'Estedad',sans-serif;font-size:170px;font-weight:900;color:#F1F7FF;letter-spacing:-6px;line-height:1;opacity:.9}
+  .s1 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 404px;gap:34px;align-items:center}
+  .s1 .shot{transform:rotate(-1.2deg);order:2}
+  .s1 .bullets{display:grid;gap:10px;margin-top:20px}
+  .b{display:flex;gap:10px;align-items:flex-start}
+  .b .tick{width:20px;height:20px;flex:none;border-radius:7px;background:#E8F2FF;display:grid;place-items:center;margin-top:2px}
+  .b .tick svg{width:12px;height:12px;color:var(--blue)}
+  .b b{font-size:13.2px;font-weight:800;color:#132C4E;line-height:1.7}
+  .b p{font-size:11.5px;color:var(--dim);line-height:1.8;margin-top:1px}
 
-  /* real login card, floating */
-  .device{position:relative;display:grid;place-items:center;justify-self:start;padding:6px 0 12px}
-  .device .halo{
-    position:absolute;width:360px;height:360px;border-radius:50%;
-    background:radial-gradient(circle,rgba(255,255,255,.34) 0%,rgba(221,214,254,.16) 42%,transparent 70%);
-    filter:blur(6px);
-  }
-  .device .ring{position:absolute;width:352px;height:352px;border-radius:50%;border:1px dashed rgba(255,255,255,.26)}
-  .login{
-    position:relative;width:296px;height:auto;border-radius:26px;display:block;
-    box-shadow:0 40px 60px -22px rgba(18,3,40,.95), 0 0 0 1px rgba(255,255,255,.65);filter:saturate(1.04);
-    transform:rotate(-3.2deg);
-  }
-  .float{
-    position:absolute;z-index:3;border-radius:16px;font-weight:800;color:#fff;
-    display:flex;align-items:center;gap:8px;white-space:nowrap;
-    box-shadow:0 18px 34px -12px rgba(10,2,25,.85), inset 0 1px 0 rgba(255,255,255,.35);
-  }
-  .float .k{font-family:'Estedad';font-weight:900;letter-spacing:3px;font-size:18px}
-  .float small{font-size:9px;font-weight:600;opacity:.85;display:block;letter-spacing:0;font-family:'Vazirmatn'}
-  .f1{left:-12px;top:58px;padding:9px 14px;background:linear-gradient(140deg,#8B5CF6,#5B21B6);transform:rotate(-4deg)}
-  .f2{right:-8px;top:-14px;padding:7px 12px;background:linear-gradient(140deg,#34D399,#0F9D6B);transform:rotate(3deg);font-size:11px}
-  .f2 svg{width:13px;height:13px}
-  .f3{right:8px;top:6px;padding:7px 12px;background:rgba(20,8,40,.72);border:1px solid rgba(221,214,254,.35);font-size:10px;font-weight:600;transform:rotate(2deg);backdrop-filter:blur(6px)}
-  .f3 i{width:5px;height:5px;border-radius:50%;background:#4ADE80;box-shadow:0 0 8px #4ADE80}
+  /* ───────── section 02 (dark) ───────── */
+  .s2{background:
+      radial-gradient(560px 340px at 8% 6%, rgba(56,189,248,.22), transparent 60%),
+      radial-gradient(620px 380px at 96% 92%, rgba(37,99,235,.34), transparent 64%),
+      linear-gradient(150deg,#071A3B,#0A2450 60%,#081C3E);
+    color:#fff}
+  .s2 .eyebrow{color:#8CC4FF}
+  .s2 .eyebrow .num{background:#1D4ED8}
+  .s2 .lead{color:#B6CDEB}
+  .s2 .rule{background:linear-gradient(90deg,#60A5FA,#38BDF8)}
+  .s2 .cols{display:grid;grid-template-columns:392px minmax(0,1fr);gap:30px;align-items:center;margin-top:26px}
+  .provider{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.055);border:1px solid rgba(150,197,255,.22);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+  .provider .logo{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;background:#fff}
+  .provider .logo svg{width:24px;height:24px}
+  .provider b{display:block;font-size:13.5px;font-weight:800}
+  .provider span{display:block;font-size:11px;color:#A8C4E6;margin-top:3px;line-height:1.7}
+  .provider .tag{margin-right:auto;font-size:10px;font-weight:800;color:#0E9F6E;background:#DCFCE7;border-radius:999px;padding:4px 9px}
+  .s2 .shot{transform:rotate(1deg);background:#fff}
+  .s2 .note{display:flex;gap:9px;align-items:center;margin-top:16px;font-size:11.5px;color:#A9C5E8;line-height:1.9}
+  .s2 .note svg{width:15px;height:15px;color:#60A5FA;flex:none}
 
-  .ribbon{
-    position:absolute;top:20px;left:26px;transform:rotate(-3deg);z-index:4;
-    background:linear-gradient(135deg,#FF7A5A,#FF2E63);color:#fff;font-weight:800;font-size:11.5px;
-    padding:7px 20px 7px 24px;border-radius:8px;
-    box-shadow:0 14px 28px -10px rgba(255,46,99,.85), inset 0 1px 0 rgba(255,255,255,.4);
-  }
+  /* ───────── section 03 (rail) ───────── */
+  .s3{background:#fff;position:relative;overflow:hidden}
+  .s3::before{content:"";position:absolute;inset:0;background-image:radial-gradient(#D8E7FA 1.1px,transparent 1.1px);background-size:22px 22px;opacity:.75;mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 84%,transparent)}
+  .s3 > *{position:relative}
+  .rail{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px}
+  .node{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px 13px;box-shadow:0 16px 30px -26px rgba(7,22,51,.7)}
+  .node .k{font-size:10px;font-weight:800;color:var(--dim2)}
+  .node .v{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13.5px;font-weight:800;color:#0D2A52}
+  .node .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .node.primary{border-color:#BBD3F7;background:linear-gradient(180deg,#F6FAFF,#fff);box-shadow:0 22px 36px -26px rgba(29,78,216,.55)}
+  .node.primary .k{color:var(--blue)}
+  .node::after{content:"";position:absolute;top:50%;left:-16px;width:16px;height:2px;background:repeating-linear-gradient(90deg,#BCD3F2 0 4px,transparent 4px 8px)}
+  .node:last-child::after{display:none}
+  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:11.5px;color:var(--dim)}
+  .rail-foot .pill{display:inline-flex;align-items:center;gap:6px;background:#FFF7E8;border:1px solid #FBE3B4;color:#9A6108;border-radius:999px;padding:5px 10px;font-weight:700;font-size:11px}
+  .gwlog{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .gwlog span{font-size:11px;font-weight:700;color:#27496F;background:#F3F8FF;border:1px solid #DEEAFB;border-radius:8px;padding:6px 10px}
+  .s3 .strip{margin-top:24px}
 
-  .wave{display:block;width:1000px;height:86px;margin-top:-2px}
-  .chev{display:flex;justify-content:center;margin:-44px 0 4px;position:relative;z-index:3}
-  .chev span{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(196,181,253,.12);border:1px solid rgba(196,181,253,.3);color:#DDD6FE;backdrop-filter:blur(4px)}
+  /* ───────── section 04 (security) ───────── */
+  .s4{background:linear-gradient(170deg,#F3F8FF 0%,#EAF3FF 58%,#F6FAFF 100%);overflow:hidden}
+  .s4 .rings{position:absolute;top:40px;right:-120px;width:400px;height:400px;border-radius:50%;border:1px solid #CFE2FA;box-shadow:0 0 0 40px rgba(207,226,250,.28),0 0 0 82px rgba(207,226,250,.18)}
+  .s4 .cols{position:relative;display:grid;grid-template-columns:236px 1fr;gap:30px;align-items:center}
+  .shield{position:relative;display:grid;place-items:center;padding:12px 12px 34px}
+  .shield .halo{position:absolute;width:210px;height:210px;border-radius:50%;background:radial-gradient(closest-side,rgba(37,99,235,.16),transparent 72%)}
+  .shield svg{position:relative;width:168px;height:auto}
+  .shield .badge{position:absolute;left:-6px;bottom:2px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 10px;box-shadow:0 14px 26px -18px rgba(7,22,51,.6);font-size:10.5px;font-weight:800;color:#12406F;text-align:center;line-height:1.5}
+  .shield .badge b{display:block;font-size:15px;color:var(--blue)}
+  .deflist{display:grid;grid-template-rows:repeat(4,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:9px 20px;margin-top:16px}
+  .d{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.75;color:#254769;font-weight:600}
+  .d .n{width:18px;height:18px;flex:none;border-radius:6px;background:#fff;border:1px solid #CFE2FA;color:var(--blue);display:grid;place-items:center;font-size:10px;font-weight:800;margin-top:1px}
+  .s4 .strip{margin-top:26px}
 
-  /* ══════════ steps ══════════ */
-  .steps{padding:26px 54px 10px;position:relative;z-index:2}
-  .steps-row{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:center;gap:0}
-  .step{
-    border-radius:20px;padding:16px 18px;display:flex;align-items:center;gap:12px;
-    background:var(--card);border:1px solid var(--stroke);box-shadow:var(--sh);
-  }
-  .step .n{
-    width:34px;height:34px;flex:none;border-radius:12px;display:grid;place-items:center;
-    font-family:'Estedad';font-weight:900;font-size:14px;color:#0A0612;
-    background:linear-gradient(150deg,#DDD6FE,#A78BFA);
-  }
-  .step.s2 .n{background:linear-gradient(150deg,#FDE68A,#FBBF24)}
-  .step.s3 .n{background:linear-gradient(150deg,#A7F3D0,#34D399)}
-  .step b{display:block;font-size:12.5px;font-weight:700;color:#F3EEFF}
-  .step span{display:block;font-size:9.8px;color:var(--dim2);margin-top:2px;line-height:1.6}
-  .arrow{display:grid;place-items:center;color:rgba(196,181,253,.45)}
-  .arrow svg{width:16px;height:16px}
+  /* ───────── section 05 (shop) ───────── */
+  .s5{background:#fff;position:relative;overflow:hidden}
+  .s5 .blob{position:absolute;left:-140px;bottom:-160px;width:420px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(56,189,248,.16),transparent 70%)}
+  .s5 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:34px;align-items:center}
+  .s5 .shot{transform:rotate(1.1deg);order:2}
+  .integ{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+  .ig{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:12px;padding:9px 11px;background:#FBFDFF}
+  .ig .sq{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;background:#EAF3FF;color:var(--blue);font-size:11px;font-weight:900}
+  .ig b{font-size:12px;font-weight:800;color:#14335A;display:block}
+  .ig span{font-size:10px;color:var(--dim);display:block;margin-top:2px}
 
-  /* ══════════ quote band ══════════ */
-  .quote-band{padding:30px 54px 12px;position:relative;z-index:2}
-  .quote{
-    position:relative;display:flex;align-items:center;gap:22px;border-radius:30px;padding:26px 32px;overflow:hidden;
-    background:linear-gradient(130deg,#FFFFFF 0%,#F3EEFF 62%,#E7DEFF 100%);
-    box-shadow:0 44px 70px -34px rgba(0,0,0,.92), 0 0 0 1px rgba(196,181,253,.35);
-  }
-  .quote::after{
-    content:"";position:absolute;left:-60px;bottom:-70px;width:220px;height:220px;border-radius:50%;
-    background:radial-gradient(circle,rgba(255,107,74,.18),transparent 68%);
-  }
-  .quote p{margin:0;flex:1;font-family:'Estedad';font-weight:900;font-size:26px;line-height:1.75;color:#1A0F33}
-  .quote p em{font-style:normal;color:#6D28D9}
-  .bubbles{position:relative;width:140px;height:104px;flex:none}
-  .bub{
-    position:absolute;border-radius:18px 18px 5px 18px;display:grid;place-items:center;color:#fff;font-weight:900;
-    box-shadow:0 18px 32px -14px rgba(46,16,101,.8), inset 0 1px 0 rgba(255,255,255,.4);
-  }
-  .bub.a{width:86px;height:64px;right:0;top:0;background:linear-gradient(145deg,#8B5CF6,#5B21B6);font-family:'Estedad';font-size:22px;letter-spacing:3px;transform:rotate(-5deg)}
-  .bub.b{width:62px;height:52px;left:4px;bottom:0;background:linear-gradient(145deg,#FF8A65,#FF2E63);transform:rotate(6deg)}
-  .bub.b svg{width:24px;height:24px}
+  /* ───────── section 06 (dark) ───────── */
+  .s6{background:
+      radial-gradient(520px 300px at 84% 4%, rgba(56,189,248,.2), transparent 62%),
+      linear-gradient(155deg,#071A3B,#0B2551 62%,#071932);color:#fff;overflow:hidden}
+  .s6 .eyebrow{color:#8CC4FF}
+  .s6 .eyebrow .num{background:#1D4ED8}
+  .s6 .lead{color:#B6CDEB}
+  .s6 .rule{background:linear-gradient(90deg,#60A5FA,#38BDF8)}
+  .s6 .cols{display:grid;grid-template-columns:minmax(0,1fr) 442px;gap:32px;align-items:center;margin-top:24px}
+  .s6 .shot{transform:rotate(-1deg);box-shadow:0 50px 90px -50px rgba(0,0,0,.9)}
+  .swatches{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+  .sw{background:rgba(255,255,255,.06);border:1px solid rgba(150,197,255,.2);border-radius:12px;padding:9px 10px;display:flex;align-items:center;gap:8px}
+  .sw i{width:16px;height:16px;border-radius:5px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+  .sw b{font-size:11px;font-weight:700;color:#DCEBFF}
 
-  /* ══════════ section shell ══════════ */
-  .sec{padding:40px 54px 10px;position:relative;z-index:2}
-  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:6px}
-  .num{
-    flex:none;width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
-    font-family:'Estedad';font-weight:900;font-size:13.5px;color:#F5F3FF;
-    background:linear-gradient(150deg,rgba(139,92,246,.95),rgba(76,29,149,.8));
-    border:1px solid rgba(221,214,254,.42);
-    box-shadow:0 12px 26px -12px rgba(124,58,237,.95), inset 0 1px 0 rgba(255,255,255,.25);
-  }
-  .sec-head h2{font-family:'Estedad';font-weight:900;font-size:28px;margin:0;color:#F8F5FF;letter-spacing:-.3px}
-  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(196,181,253,.4),rgba(196,181,253,0))}
-  .sec-head .tag{
-    flex:none;font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;
-    color:#FFE9B0;background:rgba(255,194,75,.1);border:1px solid rgba(255,194,75,.28);
-  }
-  .sec-sub{margin:8px 0 16px;font-size:12.5px;color:var(--dim);line-height:1.95;max-width:700px}
+  /* ───────── full list ───────── */
+  .fl{background:linear-gradient(180deg,#F7FAFF,#EFF6FF)}
+  .fl .head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+  .fl .h2{font-size:27px}
+  .fl .hint{font-size:11px;color:var(--dim2);font-weight:600}
+  .flgrid{columns:3;column-gap:26px;margin-top:24px}
+  .fg{break-inside:avoid;margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:0 14px 26px -26px rgba(7,22,51,.6)}
+  .fg h4{font-size:12px;font-weight:900;color:var(--blue);display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .fg h4 .k{width:20px;height:20px;border-radius:6px;background:#EAF3FF;display:grid;place-items:center;flex:none}
+  .fg h4 .k svg{width:12px;height:12px}
+  .fg ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+  .fg li{position:relative;padding-right:12px;font-size:10.8px;line-height:1.65;color:#31506F}
+  .fg li::before{content:"";position:absolute;right:0;top:7px;width:5px;height:5px;border-radius:2px;background:#BBD4F4}
 
-  .panel{
-    position:relative;border-radius:26px;padding:14px;
-    background:var(--card);border:1px solid var(--stroke);box-shadow:var(--sh);
-  }
-  .panel::before{
-    content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 22%);
-  }
-
-  /* browser-style frame around REAL screenshots */
-  .frame{position:relative;border-radius:16px;overflow:hidden;background:#0C0718;border:1px solid rgba(255,255,255,.14);
-    box-shadow:0 20px 44px -20px rgba(0,0,0,.95)}
-  .chrome{
-    height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;
-    background:linear-gradient(180deg,#1B1230,#150E27);border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  .chrome .d{width:7px;height:7px;border-radius:50%}
-  .chrome .d1{background:#FF6B6B}.chrome .d2{background:#FFC24B}.chrome .d3{background:#34D399}
-  .chrome .url{
-    flex:1;margin-right:10px;height:17px;border-radius:6px;background:rgba(255,255,255,.07);
-    display:flex;align-items:center;justify-content:center;gap:5px;
-    font-size:8.5px;color:#A99CC9;letter-spacing:.2px;font-family:'Vazirmatn';
-  }
-  .chrome .url b{color:#C4B5FD;font-weight:600}
-  .frame img{display:block;width:100%;height:auto;background:#fff}
-  .frame::after{content:"";position:absolute;left:0;right:0;bottom:0;height:54px;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,255,255,0),#FFFFFF 88%)}
-  .frame.dark-shot::after{background:linear-gradient(180deg,rgba(21,32,47,0),#15202F 88%)}
-  .real-chip{
-    position:absolute;top:38px;left:10px;z-index:3;display:flex;align-items:center;gap:5px;
-    font-size:9px;font-weight:700;color:#EDE9FE;background:rgba(18,9,35,.82);
-    border:1px solid rgba(196,181,253,.32);padding:3px 8px;border-radius:999px;backdrop-filter:blur(6px);
-  }
-  .real-chip i{width:4.5px;height:4.5px;border-radius:50%;background:#34D399;box-shadow:0 0 7px #34D399}
-  .cap{display:flex;align-items:center;gap:6px;padding:10px 2px 2px;font-size:10.2px;color:var(--dim)}
-  .cap b{color:#E4DAFF;font-weight:700}
-  .cap .ar{color:rgba(196,181,253,.45)}
-
-  /* feature chips */
-  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
-  .chips.c5{grid-template-columns:repeat(5,1fr)}
-  .chips.c3{grid-template-columns:repeat(3,1fr)}
-  .chips.c5 .chip{flex-direction:column;align-items:flex-start;gap:8px;min-height:0;padding:12px}
-  .chips.c5 .chip b{font-size:10.8px}
-  .chips.c5 .chip span{font-size:9px}
-  .chip{
-    display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:15px;min-height:54px;
-    background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.015));
-    border:1px solid var(--stroke-w);
-  }
-  .chip .ico{
-    width:30px;height:30px;flex:none;border-radius:10px;display:grid;place-items:center;color:#0A0612;
-    background:linear-gradient(150deg,#E9D5FF,#A78BFA);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-  }
-  .chip .ico svg{width:16px;height:16px}
-  .chip b{display:block;font-size:11.2px;font-weight:700;line-height:1.55;color:#F2ECFF}
-  .chip span{display:block;font-size:9.2px;color:var(--dim2);line-height:1.5;margin-top:1px}
-  .acc-sky .ico{background:linear-gradient(150deg,#CCFBF1,#5EEAD4)}
-  .acc-coral .ico{background:linear-gradient(150deg,#FFD9CE,#FF8A65)}
-  .acc-amber .ico{background:linear-gradient(150deg,#FFEFC2,#FBBF24)}
-  .acc-mint .ico{background:linear-gradient(150deg,#C7F9E4,#34D399)}
-  .acc-pink .ico{background:linear-gradient(150deg,#FBD5E7,#F472B6)}
-
-  /* feature card */
-  .feature{
-    position:relative;border-radius:28px;padding:24px 24px 18px;margin-top:12px;overflow:hidden;
-    background:
-      radial-gradient(90% 120% at 100% 0%, rgba(255,107,74,.16), transparent 58%),
-      linear-gradient(145deg,rgba(124,58,237,.42),rgba(41,14,86,.75));
-    border:1px solid rgba(196,181,253,.32);
-    box-shadow:0 34px 64px -26px rgba(88,28,135,.9), inset 0 1px 0 rgba(255,255,255,.12);
-  }
-  .feature .badge{
-    display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;color:#0A0612;
-    background:linear-gradient(135deg,#FFE7A3,#FFB020);padding:4px 10px;border-radius:999px;margin-bottom:9px;
-    box-shadow:0 8px 18px -8px rgba(255,176,32,.8);
-  }
-  .feature h3{font-family:'Estedad';font-weight:900;font-size:21px;margin:0 0 5px;color:#fff}
-  .feature p{margin:0 0 13px;font-size:11px;color:rgba(243,232,255,.7);line-height:1.85;max-width:640px}
-
-  /* gateway strip */
-  .strip{
-    margin-top:12px;border-radius:24px;padding:16px 18px;display:flex;align-items:center;gap:14px;
-    background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
-    border:1px solid var(--stroke-w);
-  }
-  .logos{display:flex;flex-wrap:wrap;align-items:center;gap:7px;flex:1}
-  .logo{
-    display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:12px;font-size:10.5px;font-weight:700;color:#EDE9FE;
-    background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.075);
-  }
-  .logo i{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:8px;font-weight:900;color:#0A0612;font-style:normal}
-  .logo.sms i{background:linear-gradient(145deg,#FDE68A,#F59E0B)}
-  .logo.kav i{background:linear-gradient(145deg,#F9A8D4,#DB2777)}
-  .logo.mel i{background:linear-gradient(145deg,#6EE7B7,#059669)}
-  .logo.far i{background:linear-gradient(145deg,#67E8F9,#0284C7);color:#fff}
-  .logo.ipp i{background:linear-gradient(145deg,#C4B5FD,#7C3AED);color:#fff}
-  .logo.rah i{background:linear-gradient(145deg,#FDBA74,#EA580C)}
-  .logo.bale i{background:linear-gradient(145deg,#93C5FD,#2563EB);color:#fff}
-  .plus{flex:none;text-align:center;padding-right:16px;border-right:1px solid rgba(196,181,253,.2)}
-  .plus b{display:block;font-family:'Estedad';font-weight:900;font-size:32px;line-height:1;
-    background:linear-gradient(180deg,#F5F3FF,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .plus span{display:block;font-size:9.5px;color:var(--dim);margin-top:4px}
-
-  /* tabs strip + stats */
-  .tabs{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
-  .tab{
-    font-size:10px;font-weight:600;color:#D9CFFF;padding:6px 11px;border-radius:999px;
-    background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.2);
-    display:flex;align-items:center;gap:5px;
-  }
-  .tab i{width:4px;height:4px;border-radius:50%;background:#A78BFA}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}
-  .stat{border-radius:18px;padding:14px 12px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.015));border:1px solid var(--stroke-w)}
-  .stat b{display:block;font-family:'Estedad';font-weight:900;font-size:27px;line-height:1.1;color:#F5F0FF}
-  .stat em{font-style:normal;color:#A78BFA}
-  .stat span{display:block;font-size:9.5px;color:var(--dim2);margin-top:5px}
-
-  /* footer */
-  .foot{padding:40px 54px 34px;position:relative;z-index:2}
-  .foot-card{
-    position:relative;border-radius:30px;padding:30px;text-align:center;overflow:hidden;
-    background:
-      radial-gradient(70% 130% at 50% -10%, rgba(221,214,254,.3), transparent 60%),
-      linear-gradient(150deg,rgba(124,58,237,.55),rgba(46,16,101,.75));
-    border:1px solid rgba(221,214,254,.3);
-    box-shadow:0 34px 66px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.14);
-  }
-  .foot-card .big{font-family:'Estedad';font-weight:900;font-size:24px;color:#fff;margin:0 0 7px}
-  .foot-card .small{font-size:11px;color:rgba(243,232,255,.72);margin:0}
-  .foot-card .cta{display:flex;justify-content:center;gap:7px;margin-top:15px;flex-wrap:wrap}
-  .foot-card .cta span{font-size:9.5px;font-weight:600;color:#F3E8FF;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 11px;border-radius:999px}
-  .foot-meta{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:10px;color:var(--dim2)}
-  .foot-meta .br{display:flex;align-items:center;gap:6px;color:#C4B5FD;font-weight:700}
-  .foot-meta .br img{width:16px;height:16px;opacity:.9}
-  .wave-bottom{display:block;width:1000px;height:120px;margin-top:-6px}
+  /* ───────── footer ───────── */
+  .foot{position:relative;background:linear-gradient(160deg,#061633,#0A2450 60%,#071A3B);color:#fff;padding:44px 56px 34px;overflow:hidden}
+  .foot .wave{position:absolute;top:-1px;left:0;right:0;height:56px;background:#EFF6FF;clip-path:ellipse(78% 100% at 50% 0%)}
+  .foot .in{position:relative;display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:center;margin-top:16px}
+  .foot h3{font-size:23px}
+  .foot .sub{font-size:12px;color:#A9C5E8;margin-top:8px;line-height:1.9}
+  .badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .badges span{font-size:10.5px;font-weight:700;color:#CFE4FF;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.3);border-radius:8px;padding:6px 10px}
+  .foot .brand{display:flex;align-items:center;gap:12px;justify-content:flex-end}
+  .foot .brand .txt{text-align:right}
+  .foot .brand b{display:block;font-size:12.5px}
+  .foot .brand span{display:block;font-size:10.5px;color:#9FBDE2;margin-top:2px}
+  .foot .brand svg{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);padding:6px}
+  .foot .fine{margin-top:22px;padding-top:14px;border-top:1px solid rgba(150,197,255,.16);display:flex;justify-content:space-between;font-size:10px;color:#89A8D0}
 </style>
 </head>
 <body>
 <div id="poster">
 
-  <!-- ══════════ TOP BAR ══════════ -->
-  <div class="topbar wrap">
-    <div class="r"><img src="img/ashna-icon.svg" alt=""> محصولی از پارسنا</div>
-    <div class="l">افزونهٔ وردپرس <span class="sep"></span> ووکامرس <span class="sep"></span> دکان <span class="sep"></span> المنتور</div>
+<!-- ═════════ HERO ═════════ -->
+<header class="hero">
+  <div class="grid"></div>
+  <div class="arc a1"></div><div class="arc a2"></div>
+  <div class="topbar">
+    <div class="meta">
+      <span class="vpill">نسخهٔ ۳.۱.۳</span>
+      <span>پارسنا</span>
+    </div>
+    <img class="brandlogo" src="img/ashna-logo-white.svg" alt="آشنا">
   </div>
 
-  <!-- ══════════ HERO ══════════ -->
-  <section class="hero wrap">
-    <div class="hero-card">
-      <div class="spin a"></div>
-      <div class="spin b"></div>
-      <div class="ribbon">نسخهٔ ۳.۱.۳</div>
+  <div class="hero-in">
+    <div>
+      <span class="kicker"><i></i> افزونهٔ ورود و ثبت‌نام وردپرس</span>
+      <h1 style="margin-top:16px">ورود بدون رمز،<br><em>با یک کد</em></h1>
+      <p class="sub">کاربر شماره را می‌زند، کد می‌گیرد و وارد می‌شود. حساب تازه همان لحظه ساخته می‌شود؛ بی‌رمزی هم لازم نیست.</p>
+    </div>
 
-      <div class="hero-grid">
-        <div>
-          <span class="ver"><i></i> آمادهٔ نصب</span>
-          <div class="kicker">ورود و ثبت‌نام <b>بدون رمز عبور</b> برای وردپرس</div>
-          <h1>آشنا</h1>
-          <p class="hero-tag">شماره را می‌زند، کد می‌آید، <u>وارد می‌شود.</u></p>
-          <p class="hero-line">یک افزونهٔ کامل برای ورود پیامکی، ثبت‌نام و عضویت؛ با پنل تنظیمات فارسی، ۹ تب و پیش‌نمایش زنده.</p>
-          <div class="hero-pills">
-            <span class="hp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg> وردپرس ۵.۸ تا ۷.۱</span>
-            <span class="hp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg> PHP ۸.۲+</span>
-            <span class="hp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg> بدون CDN</span>
-            <span class="hp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg> فونت داخلی</span>
-          </div>
-        </div>
+    <div class="hero-shot">
+      <div class="halo"></div>
+      <div class="frame"><img src="img/login-card.webp" alt="فرم ورود آشنا"></div>
+      <div class="float f1">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <div>کد تأیید شد<small>۴۸۲۹۱ · ۵ رقمی</small></div>
+      </div>
+      
+    </div>
+  </div>
 
-        <div class="device">
-          <div class="halo"></div>
-          <div class="ring"></div>
-          <img class="login" src="img/00-card.webp" alt="کارت ورود واقعی آشنا" width="840" height="980">
-          <div class="float f1"><span><span class="k">۱۲۳۴</span><small>کد پیامک</small></span></div>
-          <div class="float f2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg> ورود انجام شد</div>
-        </div>
+  <div class="hero-stats">
+    <div class="hs"><b>۶</b><span>درگاه پیامک ایرانی</span></div>
+    <div class="hs"><b>۳</b><span>درگاه پشتیبان با ترتیب دلخواه</span></div>
+    <div class="hs"><b>۴</b><span>قالب آمادهٔ فرم</span></div>
+    <div class="hs"><b>۲</b><span>ورود اجتماعی: گوگل و تلگرام</span></div>
+  </div>
+  <div class="glowline"></div>
+</header>
+
+<!-- ═════════ STEPS ═════════ -->
+<section class="steps">
+  <div class="card">
+    <div class="st">
+      <span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.4"/><path d="M11 18h2"/></svg></span>
+      <div><b>شماره یا ایمیل را وارد می‌کند</b><span>روش ورود را شما انتخاب می‌کنید؛ فقط شماره، فقط ایمیل، یا هر دو.</span></div>
+    </div>
+    <div class="st">
+      <span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h.01M12 9h.01M16 9h.01M8 13h.01M12 13h.01M16 13h.01"/></svg></span>
+      <div><b>کد ۵ رقمی می‌رسد</b><span>پیامک از یکی از شش درگاه، یا پیام بله، یا ایمیل.</span></div>
+    </div>
+    <div class="st">
+      <span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg></span>
+      <div><b>تأیید و ورود</b><span>کاربر تازه همان لحظه ساخته می‌شود؛ بعد از آن با Passkey هم می‌شود.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ ۰۱ ورود و ثبت‌نام ═════════ -->
+<section class="sec s1">
+  <div class="ghost" dir="ltr">۰۱</div>
+  <div class="cols">
+    <div class="shot">
+      <img src="img/methods.webp" alt="تنظیمات روش ورود">
+      <span class="cap">تنظیمات روش ورود — پنل آشنا</span>
+    </div>
+    <div>
+      <span class="eyebrow"><span class="num">۰۱</span> ورود و ثبت‌نام</span>
+      <h2 class="h2">یک فرم، هر سه راه</h2>
+      <div class="rule"></div>
+      <p class="lead">کاربر همان یک فرم را پر می‌کند و بقیه‌اش با آشنا. رمز عبور اگر بخواهید هست، اگر نخواهید کاملاً خاموش می‌شود.</p>
+      <div class="bullets">
+        <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>ثبت‌نام خودکار در اولین ورود</b><p>نقش کاربر و مسیر برگشت بعد از ورود را جداگانه تعیین می‌کنید.</p></div></div>
+        <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>شماره اضافه‌شدن به حساب‌های قبلی</b><p>کاربرانی که از قبل حساب دارند، شماره‌شان را وصل می‌کنند.</p></div></div>
+        <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>فرم شناور یا صفحهٔ کامل</b><p>با شورت‌کد روی هر صفحه‌ای، یا جایگزین صفحهٔ ورود وردپرس.</p></div></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <svg class="wave" viewBox="0 0 1000 86" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,48 C150,86 250,14 390,32 C520,50 600,90 730,70 C840,54 912,18 1000,38 L1000,86 L0,86 Z" fill="#08040F"/>
-    <path d="M0,48 C150,86 250,14 390,32 C520,50 600,90 730,70 C840,54 912,18 1000,38" fill="none" stroke="rgba(196,181,253,.26)" stroke-width="1.1"/>
-  </svg>
-  <div class="chev"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+<!-- ═════════ ۰۲ گوگل و تلگرام ═════════ -->
+<section class="sec s2">
+  <span class="eyebrow"><span class="num">۰۲</span> ورود اجتماعی</span>
+  <h2 class="h2">گوگل و تلگرام،<br>دو کلید کنار پیامک</h2>
+  <div class="rule"></div>
+  <p class="lead">هر سرویس کارت مستقل دارد: Client ID، Secret و آدرس بازگشتی مخصوص خودش. مراحل ساخت اپ در کنسول گوگل و BotFather هم داخل همان تب نوشته شده.</p>
 
-  <!-- ══════════ STEPS ══════════ -->
-  <section class="steps wrap">
-    <div class="steps-row">
-      <div class="step s1">
-        <div class="n">۱</div>
-        <div><b>شماره را وارد می‌کند</b><span>موبایل، ایمیل یا هر دو</span></div>
+  <div class="cols">
+    <div>
+      <div class="provider">
+        <span class="logo"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg></span>
+        <div><b>ورود با گوگل</b><span>ایمیل تأییدشده، نام و تصویر پروفایل</span></div>
+        <span class="tag">آماده</span>
       </div>
-      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14 6l-6 6 6 6"/></svg></div>
-      <div class="step s2">
-        <div class="n">۲</div>
-        <div><b>کد را می‌گیرد</b><span>پیامک یا پیام‌رسان</span></div>
+      <div class="provider" style="margin-bottom:0">
+        <span class="logo" style="background:#2AABEE"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L7.3 12.9 2.5 11.4c-1-.3-1-1 .2-1.5l18-6.9c.9-.3 1.6.2 1.2 1.3z"/></svg></span>
+        <div><b>ورود با تلگرام</b><span>شماره و پروفایل، بدون رمز و بدون کد</span></div>
+        <span class="tag">آماده</span>
       </div>
-      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14 6l-6 6 6 6"/></svg></div>
-      <div class="step s3">
-        <div class="n">۳</div>
-        <div><b>وارد حساب می‌شود</b><span>حساب ساخته یا شناسایی می‌شود</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════ QUOTE ══════════ -->
-  <section class="quote-band wrap">
-    <div class="quote">
-      <div class="bubbles">
-        <div class="bub a">۱۲۳۴</div>
-        <div class="bub b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg></div>
-      </div>
-      <p>از این به بعد <em>هر ورود</em> یک پیامک است؛ <em>هر پیامک</em> یک حساب کاربری واقعی.</p>
-    </div>
-  </section>
-
-  <!-- ══════════ ۰۱ ورود و ثبت‌نام ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۱</div>
-      <h2>ورود و ثبت‌نام</h2>
-      <div class="line"></div>
-      <div class="tag">از پنل واقعی</div>
-    </div>
-    <p class="sec-sub">انتخاب می‌کنید کاربر با چه چیزهایی وارد شود و کد از چه مسیری برسد؛ بقیه‌اش با آشنا.</p>
-
-    <div class="panel">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب روش و مسیر ورود</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/auth.webp" alt="تب روش و مسیر ورود در پنل آشنا" width="1776" height="1010">
-      </div>
-      <div class="cap"><b>روش و مسیر ورود</b><span class="ar">—</span> ورودی‌ها و مسیر رسیدن کد، در دو ستون</div>
-
-      <div class="chips c5 acc-sky">
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M10.5 18h3"/></svg></span><div><b>کد پیامکی</b><span>بدون رمز</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5L12 13l8.5-5.5"/></svg></span><div><b>ایمیل</b><span>کد یا رمز</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></span><div><b>رمز عبور</b><span>قابل خاموش‌کردن</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2.8a4.2 4.2 0 014.2 4.2c0 2-1 3-1 5.2v3.4H8.8v-3.4c0-2.2-1-3.2-1-5.2A4.2 4.2 0 0112 2.8z"/><path d="M9 18.5h6v2.2H9z"/></svg></span><div><b>Passkey</b><span>اثر انگشت</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="M8.4 12.2l2.4 2.4 4.6-4.7"/></svg></span><div><b>گوگل و تلگرام</b><span>OIDC</span></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════ ۰۲ گوگل و تلگرام ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۲</div>
-      <h2>ورود با گوگل و تلگرام</h2>
-      <div class="line"></div>
-      <div class="tag">بدون رمز</div>
-    </div>
-    <p class="sec-sub">برای هر سرویس، کارت جدا و آدرس بازگشتی اختصاصی؛ راهنمای کنسول هم داخل همان تب است.</p>
-
-    <div class="panel">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب ورود با گوگل و تلگرام</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/sso.webp" alt="تب ورود با گوگل و تلگرام" width="1776" height="1120">
-      </div>
-      <div class="cap"><b>ورود با گوگل و تلگرام</b><span class="ar">—</span> آدرس بازگشتی و گام‌های کنسول، کنار هم</div>
-
-      <div class="chips c3">
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13.5a4.5 4.5 0 006.4 0l2.6-2.6a4.5 4.5 0 00-6.4-6.4L11.4 5.7"/><path d="M14 10.5a4.5 4.5 0 00-6.4 0L5 13.1a4.5 4.5 0 006.4 6.4l1.2-1.2"/></svg></span><div><b>آدرس بازگشتی جدا</b><span>برای گوگل و تلگرام</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l7 3v5.4c0 4.2-2.9 7.5-7 9.4-4.1-1.9-7-5.2-7-9.4V6l7-3z"/><path d="M9.4 12.1l1.9 1.9 3.6-3.8"/></svg></span><div><b>PKCE + state</b><span>ضد ورود جعلی</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v4.8l3 1.8"/></svg></span><div><b>بررسی اتصال</b><span>بدون ارسال Secret</span></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════ ۰۳ درگاه‌ها ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۳</div>
-      <h2>پیامک و پیام‌رسان‌ها</h2>
-      <div class="line"></div>
-      <div class="tag">۶ درگاه + ۵ پیام‌رسان</div>
-    </div>
-    <p class="sec-sub">یک درگاه اصلی و تا سه پشتیبان؛ اگر یکی قطع شود، بعدی می‌فرستد و کاربر معطل نمی‌ماند.</p>
-
-    <div class="panel">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب درگاه پیامک</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/gateways.webp" alt="تب درگاه پیامک" width="1776" height="1400">
-      </div>
-      <div class="cap"><b>درگاه پیامک</b><span class="ar">—</span> سامانهٔ اصلی، کلید API و زنجیرهٔ سه‌مرحله‌ای پشتیبان</div>
-
-      <div class="chips c4 acc-mint">
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.5 7.5h10.8a3 3 0 010 6H8.4l-3.9 3.6V7.5z"/></svg></span><div><b>۶ درگاه ایرانی</b><span>با کلید خودتان</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h3.6l2.8-6.4 4 12.8 2.6-6.4H21"/></svg></span><div><b>۳ پشتیبان</b><span>با ترتیب دلخواه</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v4.8l3 1.8"/></svg></span><div><b>مهلت هوشمند</b><span>از سرعت خودش</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 7.5L9.5 18 4 12.5"/></svg></span><div><b>چک سلامت</b><span>هر ۵ دقیقه</span></div></div>
+      <div class="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+        حساب مدیر با SSO وارد نمی‌شود؛ فقط نقش‌های عادی.
       </div>
     </div>
 
-    <div class="panel" style="margin-top:12px">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب پیام‌رسان‌ها و ایمیل</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/messengers.webp" alt="تب پیام‌رسان‌ها و ایمیل" width="1776" height="1120">
-      </div>
-      <div class="cap"><b>پیام‌رسان‌ها و ایمیل</b><span class="ar">—</span> بله با سفیر نسخهٔ ۳، و ایمیل با قالب فارسی</div>
+    <div class="shot">
+      <img src="img/sso.webp" alt="تنظیمات گوگل و تلگرام">
+      <span class="cap">کارت گوگل: آدرس بازگشتی و کلیدها</span>
     </div>
+  </div>
+</section>
 
-    <div class="strip">
-      <div class="logos">
-        <span class="logo sms"><i>SMS</i> SMS.ir</span>
-        <span class="logo kav"><i>K</i> کاوه‌نگار</span>
-        <span class="logo mel"><i>M</i> ملی‌پیامک</span>
-        <span class="logo far"><i>F</i> فراز</span>
-        <span class="logo ipp"><i>IP</i> آی‌پی‌پنل</span>
-        <span class="logo rah"><i>R</i> راه‌پیام</span>
-        <span class="logo bale"><i>B</i> بله</span>
-      </div>
-      <div class="plus"><b>+۵</b><span>پیام‌رسان</span></div>
+<!-- ═════════ ۰۳ پیامک ═════════ -->
+<section class="sec s3">
+  <span class="eyebrow"><span class="num">۰۳</span> پیامک و پیام‌رسان‌ها</span>
+  <h2 class="h2">شش درگاه، سه پشتیبان</h2>
+  <div class="rule"></div>
+  <p class="lead">درگاه اصلی را انتخاب می‌کنید و تا سه پشتیبان می‌گذارید. اگر یکی قطع شود یا کند جواب بدهد، بعدی می‌فرستد؛ کاربر تفاوتی نمی‌بیند.</p>
+
+  <div class="rail">
+    <div class="node primary">
+      <div class="k">درگاه اصلی</div>
+      <div class="v"><span class="dot" style="background:#2563EB"></span> SMS.ir</div>
     </div>
-  </section>
-
-  <!-- ══════════ ۰۴ امنیت ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۴</div>
-      <h2>امنیت و ضد اسپم</h2>
-      <div class="line"></div>
-      <div class="tag">سه لایه سقف</div>
+    <div class="node">
+      <div class="k">پشتیبان ۱</div>
+      <div class="v"><span class="dot" style="background:#38BDF8"></span> کاوه‌نگار</div>
     </div>
-    <p class="sec-sub">سقف دقیقه، ساعت و روز؛ برای هر شماره، هر آی‌پی و هر شبکه. کد هم در دیتابیس هش می‌شود.</p>
-
-    <div class="feature">
-      <div class="badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg> ویژه</div>
-      <h3>ضد پیامک‌بمب، بدون کندی برای کاربر واقعی</h3>
-      <p>سهمیه پیش از تماس با درگاه رزرو می‌شود؛ ده‌ها درخواست هم‌زمان هم از سقف رد نمی‌شوند.</p>
-
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب امنیت و ضد اسپم</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/security.webp" alt="تب امنیت و ضد اسپم" width="1776" height="1120">
-      </div>
-      <div class="cap"><b>امنیت و ضد اسپم</b><span class="ar">—</span> سقف‌ها، کپچا، سیر ضد ربات و لیست سیاه</div>
+    <div class="node">
+      <div class="k">پشتیبان ۲</div>
+      <div class="v"><span class="dot" style="background:#10B981"></span> ملی‌پیامک</div>
     </div>
-
-    <div class="chips c4 acc-coral" style="margin-top:12px">
-      <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l7 3v5.4c0 4.2-2.9 7.5-7 9.4-4.1-1.9-7-5.2-7-9.4V6l7-3z"/><path d="M9.4 12.1l1.9 1.9 3.6-3.8"/></svg></span><div><b>سقف سه‌لایه</b><span>دقیقه، ساعت، روز</span></div></div>
-      <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>۴ کپچا</b><span>ریاضی، آرکپچا، Turnstile، v3</span></div></div>
-      <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.5 7h15M4.5 12h10M4.5 17h7"/></svg></span><div><b>هش کد</b><span>خود کد ذخیره نمی‌شود</span></div></div>
-      <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></span><div><b>قفل و لیست سیاه</b><span>رفع مسدودی آنی</span></div></div>
+    <div class="node">
+      <div class="k">پشتیبان ۳</div>
+      <div class="v"><span class="dot" style="background:#F59E0B"></span> آی‌پی‌پنل</div>
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════ ۰۵ فروشگاه ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۵</div>
-      <h2>فروشگاه و عضویت</h2>
-      <div class="line"></div>
-      <div class="tag">ووکامرس · دکان</div>
+  <div class="rail-foot">
+    <span class="pill">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8z"/></svg>
+      مهلت هر درگاه از سرعت خودش حساب می‌شود
+    </span>
+    <span>چک سلامت هر ۵ دقیقه، بدون سوزاندن اعتبار.</span>
+  </div>
+
+  <div class="gwlog">
+    <span>کاوه‌نگار</span><span>ملی‌پیامک</span><span>فراز اس‌ام‌اس</span><span>آی‌پی‌پنل</span><span>ره‌پیام</span><span>بله — سفیر ۳ و ربات</span><span>ایمیل با قالب فارسی</span><span>حالت آزمایشی</span>
+  </div>
+
+  <div class="strip shot">
+    <img src="img/gateways.webp" alt="انتخاب درگاه پیامک">
+    <span class="cap">انتخاب درگاه در پنل</span>
+  </div>
+</section>
+
+<!-- ═════════ ۰۴ امنیت ═════════ -->
+<section class="sec s4">
+  <div class="rings"></div>
+  <span class="eyebrow"><span class="num">۰۴</span> امنیت و ضد اسپم</span>
+  <h2 class="h2">سقف‌ها، پیش از ارسال</h2>
+  <div class="rule"></div>
+  <p class="lead">برای هر شماره، هر آی‌پی و هر شبکهٔ /24 و /64 سقف دقیقه، ساعت و روز تعریف می‌کنید. سهمیه پیش از تماس با درگاه رزرو می‌شود، پس درخواست‌های هم‌زمان از سقف رد نمی‌شوند.</p>
+
+  <div class="cols" style="margin-top:24px">
+    <div class="shield">
+      <div class="halo"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.2 5.8v6.1c0 4.9 3.3 8.4 7.8 9.6 4.5-1.2 7.8-4.7 7.8-9.6V5.8z" fill="#fff"/><path d="M12 5.4 6.4 7.8v4.1c0 3.6 2.4 6.2 5.6 7.2 3.2-1 5.6-3.6 5.6-7.2V7.8z" fill="#EAF2FF" stroke="none"/><path d="m9.4 11.6 1.9 1.9 3.5-3.6" stroke-width="1.6"/></svg>
+      <div class="badge"><b>۵</b>تلاش در دقیقه<br>برای هر شماره</div>
     </div>
-    <p class="sec-sub">تسویه‌حساب کلاسیک و بلوکی، HPOS، سبد خرید مهمان و ثبت‌نام فروشندهٔ دکان.</p>
-
-    <div class="panel">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب ووکامرس و یکپارچگی‌ها</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/shop.webp" alt="تب ووکامرس و یکپارچگی‌ها" width="1776" height="1120">
-      </div>
-      <div class="cap"><b>ووکامرس و یکپارچگی‌ها</b><span class="ar">—</span> جایگزینی فرم‌های پیش‌فرض حساب و تسویه‌حساب</div>
-
-      <div class="chips c4 acc-amber">
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h2l2 11h10l2-7H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg></span><div><b>ووکامرس</b><span>کلاسیک و بلوکی</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3.5v17M5.5 8.5L12 3.5l6.5 5"/></svg></span><div><b>HPOS</b><span>جدول سفارش تازه</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.5 9h15l-1.4 10H5.9L4.5 9z"/><path d="M8.5 9V7a3.5 3.5 0 017 0v2"/></svg></span><div><b>دکان</b><span>ثبت‌نام فروشنده</span></div></div>
-        <div class="chip"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="8" r="3.2"/><path d="M3.4 19c0-3.1 2.6-5.2 5.6-5.2s5.6 2.1 5.6 5.2"/><path d="M17.5 8.2h3.2M19.1 6.6v3.2"/></svg></span><div><b>عضویت</b><span>UM · PMPro · MemberPress</span></div></div>
+    <div>
+      <div class="deflist">
+        <div class="d"><span class="n">۱</span>سقف دقیقه، ساعت و روز برای شماره، IP و شبکه</div>
+        <div class="d"><span class="n">۲</span>کپچای ریاضی، آرکپچا، ترنستایل، reCAPTCHA v3</div>
+        <div class="d"><span class="n">۳</span>کد در دیتابیس هش می‌شود؛ خود کد ذخیره نمی‌شود</div>
+        <div class="d"><span class="n">۴</span>قفل موقت بعد از تلاش‌های اشتباه، با دکمهٔ رفع</div>
+        <div class="d"><span class="n">۵</span>حالت حمله: کپچا برای همه اجباری می‌شود</div>
+        <div class="d"><span class="n">۶</span>لیست سیاه و سفید با الگوی ستاره</div>
+        <div class="d"><span class="n">۷</span>IP واقعی از پشت CDN و پروکسی</div>
+        <div class="d"><span class="n">۸</span>فیلد تله برای ربات‌ها</div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════ ۰۶ پنل ══════════ -->
-  <section class="sec wrap">
-    <div class="sec-head">
-      <div class="num">۰۶</div>
-      <h2>پنل مدیریت و ظاهر فرم</h2>
-      <div class="line"></div>
-      <div class="tag">۹ تب تنظیمات</div>
+  <div class="strip shot">
+    <img src="img/security.webp" alt="سقف درخواست‌ها">
+    <span class="cap">سقف‌های پیش‌فرض — قابل تغییر</span>
+  </div>
+</section>
+
+<!-- ═════════ ۰۵ فروشگاه ═════════ -->
+<section class="sec s5">
+  <div class="blob"></div>
+  <div class="cols">
+    <div class="shot">
+      <img src="img/shop.webp" alt="تنظیمات ووکامرس">
+      <span class="cap">یکپارچگی ووکامرس</span>
     </div>
-    <p class="sec-sub">پیش‌نمایش زنده، چهار قالب آماده، انتخاب رنگ و CSS سفارشی؛ با تم تاریک و روشن.</p>
-
-    <div class="panel">
-      <div class="frame">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> تب طراحی ظاهر فرم</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/appearance.webp" alt="استودیو طراحی ظاهر فرم" width="1776" height="1212">
-      </div>
-      <div class="cap"><b>طراحی ظاهر فرم</b><span class="ar">—</span> چهار قالب آماده و پیش‌نمایش زنده در همان صفحه</div>
-    </div>
-
-    <div class="panel" style="margin-top:12px">
-      <div class="frame dark-shot">
-        <div class="chrome"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="url"><b>آشنا ›</b> پیشخوان</span></div>
-        <span class="real-chip"><i></i> پنل واقعی آشنا</span>
-        <img src="img/dashboard-dark.webp" alt="پیشخوان آشنا در تم تاریک" width="1776" height="1600">
-      </div>
-      <div class="cap"><b>پیشخوان در تم تاریک</b><span class="ar">—</span> وضعیت درگاه، آمار امروز و چک‌لیست راه‌اندازی</div>
-    </div>
-
-    <div class="tabs">
-      <span class="tab"><i></i> پیشخوان</span>
-      <span class="tab"><i></i> روش و مسیر ورود</span>
-      <span class="tab"><i></i> درگاه پیامک</span>
-      <span class="tab"><i></i> پیام‌رسان‌ها و ایمیل</span>
-      <span class="tab"><i></i> امنیت و ضد اسپم</span>
-      <span class="tab"><i></i> ووکامرس</span>
-      <span class="tab"><i></i> گوگل و تلگرام</span>
-      <span class="tab"><i></i> طراحی ظاهر</span>
-      <span class="tab"><i></i> ابزار و پشتیبان‌گیری</span>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><b>۹</b><span>تب تنظیمات</span></div>
-      <div class="stat"><b>۶</b><span>درگاه پیامک</span></div>
-      <div class="stat"><b>۴</b><span>کپچا آماده</span></div>
-      <div class="stat"><b>۲</b><span>ویجت المنتور</span></div>
-    </div>
-  </section>
-
-  <!-- ══════════ FOOTER ══════════ -->
-  <section class="foot wrap">
-    <div class="foot-card">
-      <p class="big">آمادهٔ نصب روی ووکامرس، دکان و المنتور</p>
-      <p class="small">وردپرس ۵.۸ تا ۷.۱ · PHP ۸.۲+ · وزیرمتن و استعداد داخل بسته</p>
-      <div class="cta">
-        <span>۹ تب فارسی</span>
-        <span>بدون CDN</span>
-        <span>سازگار با HPOS</span>
-        <span>پشتیبان‌گیری از تنظیمات</span>
+    <div>
+      <span class="eyebrow"><span class="num">۰۵</span> فروشگاه و عضویت</span>
+      <h2 class="h2">ووکامرس، دکان، المنتور</h2>
+      <div class="rule"></div>
+      <p class="lead">کد تأیید داخل تسویه‌حساب کلاسیک و بلوکی می‌آید، سبد خرید مهمان بعد از ورود به حساب منتقل می‌شود و ثبت‌نام فروشندهٔ دکان با شمارهٔ تأییدشده انجام می‌شود.</p>
+      <div class="integ">
+        <div class="ig"><span class="sq">W</span><div><b>ووکامرس</b><span>تسویه‌حساب و HPOS</span></div></div>
+        <div class="ig"><span class="sq">D</span><div><b>دکان</b><span>ثبت‌نام فروشنده</span></div></div>
+        <div class="ig"><span class="sq">E</span><div><b>المنتور</b><span>ویجت ورود و دکمه</span></div></div>
+        <div class="ig"><span class="sq">M</span><div><b>عضویت</b><span>UM، PMPro، MemberPress</span></div></div>
       </div>
     </div>
-    <div class="foot-meta">
-      <span class="br"><img src="img/ashna-icon.svg" alt=""> آشنا — محصولی از پارسنا</span>
-      <span>parsena.ir/ashna</span>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <svg class="wave-bottom" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,74 C170,18 300,112 470,84 C650,54 780,10 1000,64 L1000,120 L0,120 Z" fill="rgba(124,58,237,.30)"/>
-    <path d="M0,94 C190,52 320,124 500,100 C680,76 800,44 1000,88 L1000,120 L0,120 Z" fill="rgba(76,29,149,.55)"/>
-    <path d="M0,74 C170,18 300,112 470,84 C650,54 780,10 1000,64" fill="none" stroke="rgba(196,181,253,.28)" stroke-width="1.2"/>
-  </svg>
+<!-- ═════════ ۰۶ پنل ═════════ -->
+<section class="sec s6">
+  <div class="cols">
+    <div>
+      <span class="eyebrow"><span class="num">۰۶</span> پنل و ظاهر فرم</span>
+      <h2 class="h2">پنل فارسی،<br>فرم سفارشی</h2>
+      <div class="rule"></div>
+      <p class="lead">چهار قالب آماده، رنگ اصلی، شعاع گوشه و سبک کدها؛ با پیش‌نمایش زنده. پنل تم تاریک دارد و فرم روی موبایل به شیت پایین تبدیل می‌شود.</p>
+      <div class="swatches">
+        <div class="sw"><i style="background:#2563EB"></i><b>آبی مدرن</b></div>
+        <div class="sw"><i style="background:#EF4444"></i><b>قرمز دیجی‌استایل</b></div>
+        <div class="sw"><i style="background:#10B981"></i><b>سبز زمردی</b></div>
+        <div class="sw"><i style="background:#0F172A"></i><b>لوکس تاریک</b></div>
+      </div>
+      <div class="chiprow">
+        <span class="chip" style="background:rgba(255,255,255,.07);border-color:rgba(150,197,255,.26);color:#CFE4FF">CSS سفارشی</span>
+        <span class="chip" style="background:rgba(255,255,255,.07);border-color:rgba(150,197,255,.26);color:#CFE4FF">تم تاریک پنل</span>
+        <span class="chip" style="background:rgba(255,255,255,.07);border-color:rgba(150,197,255,.26);color:#CFE4FF">پیش‌نمایش زنده</span>
+      </div>
+    </div>
+    <div class="shot">
+      <img src="img/appearance.webp" alt="طراحی ظاهر فرم">
+      <span class="cap">طراح ظاهر — پنل آشنا</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ فهرست ═════════ -->
+<section class="sec fl">
+  <div class="head">
+    <div>
+      <span class="eyebrow"><span class="num">۰۰</span> فهرست</span>
+      <h2 class="h2">گزیده‌ای از قابلیت‌ها</h2>
+    </div>
+    <div class="hint">فهرست کامل، در توضیحات محصول</div>
+  </div>
+
+  <div class="flgrid">
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 2h10v20H7z"/></svg></span>ورود و ثبت‌نام</h4>
+      <ul>
+        <li>ثبت‌نام خودکار در اولین ورود</li>
+        <li>ورود با ایمیل</li>
+        <li>ورود با رمز عبور، قابل خاموش کردن</li>
+        <li>ورود بدون رمز با Passkey</li>
+        <li>فرم تمام‌صفحه با شورت‌کد</li>
+        <li>پنجرهٔ شناور روی هر صفحه</li>
+      </ul>
+    </div>
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 8"/></svg></span>پیامک و پیام‌رسان</h4>
+      <ul>
+        <li>شش درگاه پیامکی ایرانی</li>
+        <li>بله، سفیر ۳ و ربات</li>
+        <li>ایتا، روبیکا، گپ و آی‌گپ با راه‌پیام</li>
+        <li>ایمیل با قالب فارسی</li>
+        <li>سه پشتیبان با ترتیب دلخواه</li>
+        <li>حالت آزمایشی بدون پنل پیامک</li>
+      </ul>
+    </div>
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6z"/></svg></span>امنیت</h4>
+      <ul>
+        <li>سقف شماره، IP و شبکه</li>
+        <li>سقف روزانهٔ کل سایت</li>
+        <li>حالت حمله</li>
+        <li>چهار نوع کپچا</li>
+        <li>هش شدن کد در دیتابیس</li>
+        <li>قفل و لیست سیاه / سفید</li>
+      </ul>
+    </div>
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h9.2L19 8H6"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg></span>فروشگاه و عضویت</h4>
+      <ul>
+        <li>باکس ورود در تسویه‌حساب</li>
+        <li>سازگاری با HPOS</li>
+        <li>انتقال سبد خرید مهمان</li>
+        <li>ثبت‌نام فروشندهٔ دکان</li>
+        <li>ویجت‌های المنتور</li>
+        <li>Ultimate Member و PMPro</li>
+      </ul>
+    </div>
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15v-4M12 15V8M16 15v-6"/></svg></span>پنل مدیریت</h4>
+      <ul>
+        <li>نمودار هفت روز و نرخ تبدیل</li>
+        <li>پیش‌نمایش زندهٔ فرم</li>
+        <li>چهار قالب آماده</li>
+        <li>گزارش ارسال و خطا</li>
+        <li>خروجی و ورودی تنظیمات</li>
+        <li>بررسی سلامت سیستم</li>
+      </ul>
+    </div>
+    <div class="fg">
+      <h4><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg></span>برای توسعه‌دهنده</h4>
+      <ul>
+        <li>معماری ماژولار با Autoloader</li>
+        <li>درگاه پیامک سفارشی</li>
+        <li>فیلتر و اکشن در مراحل ورود</li>
+        <li>آمادهٔ ترجمه</li>
+        <li>وزیرمتن و استعداد در بسته</li>
+        <li>بدون CDN</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ FOOTER ═════════ -->
+<footer class="foot">
+  <div class="wave"></div>
+  <div class="in">
+    <div>
+      <h3>روی وردپرس ۵.۸ تا ۷.۱ تست شده</h3>
+      <p class="sub">PHP 8.2 به بالا و ionCube 12. نصب: افزونه را آپلود کنید، فعال کنید، لایسنس را در «ورود پیامکی (آشنا)» وارد کنید و اولین درگاه را وصل کنید.</p>
+      <div class="badges">
+        <span>وردپرس ۵.۸ تا ۷.۱</span><span>PHP 8.2+</span><span>ionCube 12</span><span>ووکامرس و HPOS</span><span>دکان و المنتور</span>
+      </div>
+    </div>
+    <div class="brand">
+      <div class="txt"><b>آشنا — پارسنا</b><span>parsena.ir/ashna</span></div>
+      <svg viewBox="280 280 464 464"><path fill="#fff" d="M491 310 C504 302 519 302 534 310 C578 332 627 350 674 363 C689 367 697 378 697 394 V436 C699 533 679 602 622 661 Q620 664 617 662 L603 654 Q598 652 598 645 V424 C598 412 591 404 579 404 H463 C450 404 443 412 443 424 V640 Q443 645 439 647 L408 663 Q406 664 404 662 C351 608 327 541 327 440 V394 C327 378 334 368 350 363 C403 348 451 330 491 310 Z"/><path fill="#fff" d="M575 423 Q581 421 581 428 V649 Q581 657 588 661 L603 672 Q608 675 603 679 C575 699 540 720 513 720 C487 720 453 701 423 679 Q419 676 423 674 L461 654 Q468 651 468 643 V469 Q468 457 480 453 L575 423 Z"/></svg>
+    </div>
+  </div>
+  <div class="fine">
+    <span>اینفوگرافیک آشنا — نسخهٔ ۳.۱.۳</span>
+    <span>تصاویر: پنل واقعی افزونه</span>
+  </div>
+</footer>
+
 </div>
 </body>
 </html>
