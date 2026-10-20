@@ -11,977 +11,1277 @@
   @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
 
   :root{
-    --navy:#071A38; --navy-2:#0B2450;
-    --blue:#2563EB; --blue-d:#1D4ED8; --blue-l:#60A5FA; --sky:#38BDF8;
+    --navy:#071A38; --blue:#2563EB; --blue-d:#1D4ED8; --sky:#38BDF8;
     --mint:#10B981; --amber:#F59E0B; --rose:#F43F5E;
-    --ink:#0A1B33; --dim:#5B7292; --dim2:#8AA0BC;
-    --soft:#F1F7FF; --soft2:#E8F1FF; --line:#D8E5F7;
-    --card:#FFFFFF;
+    --ink:#08192F; --dim:#566F8E; --line:rgba(206,224,246,.95);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:#DCE7F5}
+  html,body{background:#C9D8EA}
   body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--ink);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    display:flex;flex-direction:column;align-items:center;gap:24px;padding:24px 0}
-  h1,h2,h3,h4{font-family:'Estedad',Vazirmatn,sans-serif;font-weight:900;letter-spacing:-.4px}
+    display:flex;flex-direction:column;align-items:center;gap:26px;padding:26px 0}
 
-  .slide{
-    position:relative;width:800px;height:900px;overflow:hidden;direction:rtl;
+  /* ══════════════════ canvas ══════════════════ */
+  .slide{position:relative;width:800px;height:900px;overflow:hidden;direction:rtl;isolation:isolate;
+    padding:48px 54px 0;
     background:
-      radial-gradient(620px 420px at 92% -6%, #E4F0FF 0%, rgba(228,240,255,0) 62%),
-      radial-gradient(520px 380px at 4% 104%, #E9F3FF 0%, rgba(233,243,255,0) 60%),
-      linear-gradient(168deg,#FFFFFF 0%,#F7FBFF 46%,#EEF5FE 100%);
-    padding:52px 54px 0;
-  }
-  /* faint dotted field */
-  .slide::before{content:"";position:absolute;inset:0;pointer-events:none;
-    background-image:radial-gradient(rgba(37,99,235,.14) 1px, transparent 1.1px);
-    background-size:22px 22px;
-    -webkit-mask-image:radial-gradient(560px 520px at 50% 26%, #000 6%, rgba(0,0,0,.28) 58%, transparent 82%);
-    mask-image:radial-gradient(560px 520px at 50% 26%, #000 6%, rgba(0,0,0,.28) 58%, transparent 82%)}
+      radial-gradient(720px 520px at 88% -8%, rgba(96,165,250,.20) 0%, rgba(96,165,250,0) 62%),
+      radial-gradient(620px 460px at 2% 104%, rgba(56,189,248,.16) 0%, rgba(56,189,248,0) 60%),
+      linear-gradient(170deg,#FFFFFF 0%,#F7FBFF 44%,#E9F2FE 100%)}
+  .slide.dark{
+    background:
+      radial-gradient(760px 560px at 82% -10%, rgba(59,130,246,.34) 0%, rgba(59,130,246,0) 62%),
+      radial-gradient(640px 520px at 6% 108%, rgba(56,189,248,.20) 0%, rgba(56,189,248,0) 62%),
+      linear-gradient(166deg,#05122B 0%,#0A2350 46%,#040F1F 100%)}
 
-  /* brand mark, top-left, always the same place */
-  .brandmark{position:absolute;left:52px;top:42px;height:30px;width:auto;opacity:.95;
-    filter:drop-shadow(0 6px 12px rgba(7,26,56,.10))}
+  .grid,.dots,.noise{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .grid{background-image:
+      linear-gradient(rgba(37,99,235,.055) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(37,99,235,.055) 1px,transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(120% 92% at 72% 16%,#000 12%,rgba(0,0,0,.35) 52%,transparent 82%);
+    mask-image:radial-gradient(120% 92% at 72% 16%,#000 12%,rgba(0,0,0,.35) 52%,transparent 82%)}
+  .dots{background-image:radial-gradient(rgba(37,99,235,.22) 1px,transparent 1.1px);
+    background-size:17px 17px;
+    -webkit-mask-image:radial-gradient(70% 55% at 20% 82%,#000 0%,transparent 72%);
+    mask-image:radial-gradient(70% 55% at 20% 82%,#000 0%,transparent 72%)}
+  .slide.dark .grid{background-image:
+      linear-gradient(rgba(125,190,255,.10) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(125,190,255,.10) 1px,transparent 1px)}
+  .slide.dark .dots{background-image:radial-gradient(rgba(125,190,255,.22) 1px,transparent 1.1px)}
+  .noise{opacity:.42;mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.42'/></svg>")}
 
-  /* ───── header ───── */
-  .eyebrow{position:relative;display:inline-flex;align-items:center;gap:9px;
-    font-size:13px;font-weight:800;color:var(--blue);letter-spacing:.1px}
-  .eyebrow .n{display:inline-flex;align-items:center;justify-content:center;
-    min-width:34px;height:26px;padding:0 8px;border-radius:8px;
-    background:linear-gradient(160deg,#3B82F6,#1D4ED8);color:#fff;font-size:13px;font-weight:800;
-    box-shadow:0 8px 18px -10px rgba(37,99,235,.9)}
-  .eyebrow .sep{width:1px;height:13px;background:#C7D9F2}
+  /* ══════════════════ header ══════════════════ */
+  .brandmark{position:absolute;left:52px;top:44px;height:30px;width:auto;z-index:4;
+    filter:drop-shadow(0 8px 14px rgba(7,26,56,.16))}
+  .brandmark.w{height:23px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
 
-  .t{position:relative;margin-top:14px;font-size:50px;line-height:1.2;color:var(--navy)}
-  .t em{font-style:normal;color:var(--blue)}
-  .s{position:relative;margin-top:14px;font-size:17.5px;line-height:1.95;color:var(--dim);max-width:640px}
-  .s b{color:#1E3A8A;font-weight:800}
+  .eyebrow{position:relative;z-index:3;display:inline-flex;align-items:center;gap:9px;
+    font-size:12.5px;font-weight:800;color:var(--blue);letter-spacing:.1px}
+  .eyebrow .n{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 9px;
+    border-radius:9px;background:linear-gradient(160deg,#3B82F6,#1D4ED8);color:#fff;font-size:13px;font-weight:800;
+    box-shadow:0 10px 20px -10px rgba(37,99,235,.9)}
+  .eyebrow .sep{width:1px;height:12px;background:rgba(37,99,235,.28)}
+  .slide.dark .eyebrow{color:#8EC5FF}
+  .slide.dark .eyebrow .sep{background:rgba(142,197,255,.35)}
 
-  /* ───── stage ───── */
-  .stage{position:relative;margin-top:30px;height:470px}
-  .stage.short{margin-top:26px;height:430px}
+  .t{position:relative;z-index:3;margin-top:13px;font-family:'Estedad',sans-serif;font-weight:900;
+    font-size:53px;line-height:1.15;letter-spacing:-1px;color:var(--navy)}
+  .t em{font-style:normal;background:linear-gradient(102deg,#1D4ED8 6%,#38BDF8 94%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .slide.dark .t{color:#F5FAFF;text-shadow:0 18px 40px rgba(0,0,0,.35)}
+  .slide.dark .t em{background:linear-gradient(102deg,#7DD3FC 4%,#60A5FA 92%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
 
-  /* ───── shared bits ───── */
-  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;
-    box-shadow:0 26px 46px -34px rgba(7,26,56,.55), 0 2px 6px rgba(7,26,56,.04)}
-  .glass{background:rgba(255,255,255,.86);border:1px solid rgba(216,229,247,.9);
-    box-shadow:0 24px 44px -32px rgba(7,26,56,.5)}
-  .pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px;border-radius:999px;
-    font-size:12.5px;font-weight:800;background:var(--soft2);border:1px solid #D3E4FB;color:#1E4C8F}
-  .pill.ok{background:#E9FBF2;border-color:#BFEBD6;color:#0B8A5F}
-  .pill.warn{background:#FFF6E5;border-color:#FBE3B0;color:#9A6400}
-  .pill.bad{background:#FFF0F2;border-color:#FBD3DA;color:#B42342}
-  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:13px;
-    background:linear-gradient(180deg,#3B82F6,#1D4ED8);color:#fff;font-size:15.5px;font-weight:800;
-    box-shadow:0 16px 26px -14px rgba(29,78,216,.95)}
-  .btn.ghost{background:#fff;border:1.6px solid var(--line);color:#1E3A8A;box-shadow:none}
-  .ico{display:grid;place-items:center;border-radius:13px;flex:none}
-  .ico svg{width:22px;height:22px}
+  .s{position:relative;z-index:3;margin-top:12px;font-size:16.5px;line-height:1.88;color:var(--dim);max-width:622px}
+  .slide.dark .s{color:#9FB9D8}
 
-  /* ───── footer / signature ───── */
-  .foot{position:absolute;left:54px;right:54px;bottom:30px;display:flex;align-items:center;
-    justify-content:space-between;font-size:12.5px;color:#7994B4}
-  .foot .who{display:flex;align-items:center;gap:9px;font-weight:700;color:#5E7C9F}
-  .foot .who b{color:#1E3A8A;font-weight:900}
-  .foot .no{font-family:'Estedad';font-weight:900;font-size:13px;color:#8FA8C6;letter-spacing:.5px}
+  /* signature: a short gradient rule with a lit node */
+  .sig{position:relative;z-index:3;margin-top:16px;width:84px;height:3px;border-radius:3px;
+    background:linear-gradient(90deg,#1D4ED8,#38BDF8)}
+  .sig::after{content:"";position:absolute;right:-5px;top:-3.5px;width:10px;height:10px;border-radius:50%;
+    background:#fff;border:2px solid #2E74E8;
+    box-shadow:0 0 0 4px rgba(46,116,232,.12),0 0 16px 3px rgba(56,189,248,.6)}
+  .slide.dark .sig::after{background:#08203F;border-color:#7DD3FC;box-shadow:0 0 0 4px rgba(125,211,252,.14),0 0 18px 3px rgba(56,189,248,.7)}
 
-  /* browser window for the proof frames */
-  .window{background:#fff;border:1px solid #DCE8F6;border-radius:16px;overflow:hidden;
-    box-shadow:0 34px 60px -42px rgba(7,26,56,.7),0 2px 6px rgba(7,26,56,.04)}
-  .window .bar{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;
-    background:#F4F9FF;border-bottom:1px solid #E5EFFB;direction:ltr}
-  .window .bar i{width:7px;height:7px;border-radius:50%;background:#D3E1F3;flex:none}
-  .window .url{margin-left:10px;font-size:8.5px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
-    border-radius:6px;padding:3px 10px;letter-spacing:.1px}
+  /* ══════════════════ stage ══════════════════ */
+  .art{position:relative;z-index:2;margin-top:18px;height:516px}
 
-  /* signature: one short gradient rule under every subtitle, with a lit node at its end */
-  .sig{position:relative;margin-top:18px;width:96px;height:3px;border-radius:3px;
-    background:linear-gradient(90deg,#2563EB,#38BDF8)}
-  .sig::after{content:"";position:absolute;right:-4px;top:-3.5px;width:10px;height:10px;border-radius:50%;
-    background:#fff;border:2px solid #2E74E8;box-shadow:0 0 0 4px rgba(46,116,232,.10),0 0 14px 2px rgba(56,189,248,.55)}
+  /* ══════════════════ footer ══════════════════ */
+  .foot{position:absolute;left:54px;right:54px;bottom:26px;z-index:4;display:flex;align-items:center;
+    justify-content:space-between;font-size:12px;color:#8AA2BE}
+  .foot .who{display:flex;align-items:center;gap:9px;font-weight:700;color:#6B87A6}
+  .foot .who b{color:#12315E;font-weight:900}
+  .foot .no{font-family:'Estedad';font-weight:900;font-size:12.5px;color:#9FB4CD;letter-spacing:.6px}
+  .slide.dark .foot{color:#7E9ABD}
+  .slide.dark .foot .who{color:#8FA9C9}
+  .slide.dark .foot .who b{color:#DCEAFF}
+  .slide.dark .foot .no{color:#7E9ABD}
 
-  /* number chips for tiny stats */
-  .kpi{display:flex;flex-direction:column;gap:3px}
-  .kpi .v{font-family:'Estedad';font-weight:900;font-size:27px;line-height:1;color:var(--navy)}
-  .kpi .l{font-size:11.5px;color:#7189A8;font-weight:600}
+  /* ══════════════════ shared atoms ══════════════════ */
+  .card{background:#fff;border:1px solid var(--line);border-radius:20px;
+    box-shadow:0 30px 54px -38px rgba(7,26,56,.55),0 2px 6px rgba(7,26,56,.04)}
+  .glass{background:rgba(255,255,255,.74);border:1px solid rgba(255,255,255,.9);border-radius:20px;
+    box-shadow:0 34px 60px -40px rgba(7,26,56,.55),inset 0 1px 0 rgba(255,255,255,.9);
+    backdrop-filter:blur(14px) saturate(1.1)}
+  .slide.dark .card{background:rgba(255,255,255,.055);border-color:rgba(140,190,255,.16);
+    box-shadow:0 30px 60px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter:blur(10px)}
+  .pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;
+    font-size:11px;font-weight:800;background:rgba(232,241,255,.86);border:1px solid rgba(190,216,247,.8);color:#1E4C8F}
+  .pill.ok{background:rgba(232,251,242,.9);border-color:rgba(175,232,204,.9);color:#0B8A5F}
+  .pill.warn{background:rgba(255,246,229,.92);border-color:rgba(250,226,176,.95);color:#96620A}
+  .pill.bad{background:rgba(255,240,243,.92);border-color:rgba(249,204,213,.95);color:#B42342}
+  .slide.dark .pill{background:rgba(125,190,255,.10);border-color:rgba(125,190,255,.22);color:#BBDCFF}
+  .slide.dark .pill.ok{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.3);color:#6EE7B7}
+  .slide.dark .pill.bad{background:rgba(244,63,94,.14);border-color:rgba(244,63,94,.3);color:#FDA4AF}
+  .ico{display:grid;place-items:center;border-radius:12px;flex:none}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;
+    background:linear-gradient(180deg,#3B82F6,#1D4ED8);color:#fff;font-size:15px;font-weight:800;
+    box-shadow:0 18px 28px -16px rgba(29,78,216,.9)}
+  .lbl{font-size:10px;color:#8AA0BC;font-weight:600}
+  .slide.dark .lbl{color:#7E9ABD}
+  .sep-l{height:1px;background:rgba(226,237,250,.9)}
+  .slide.dark .sep-l{background:rgba(140,190,255,.14)}
+
+  /* ══════════════════ ۰۱ ══════════════════ */
+  .phone{position:absolute;left:12px;top:20px;width:276px;height:466px;border-radius:40px;padding:9px;
+    background:linear-gradient(158deg,#FFFFFF,#EDF4FF 62%,#DDE9FB);
+    border:1px solid rgba(196,216,240,.95);
+    box-shadow:0 50px 70px -46px rgba(7,26,56,.7),0 3px 10px rgba(7,26,56,.06),
+      inset 0 1px 0 rgba(255,255,255,.95);
+    transform:rotate(-4.5deg);transform-origin:60% 90%}
+  .phone .scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;
+    background:linear-gradient(178deg,#FFFFFF,#F4F9FF 60%,#EAF3FE);
+    box-shadow:inset 0 0 0 1px rgba(219,233,250,.9)}
+  .phone .notch{position:absolute;right:50%;transform:translateX(50%);top:9px;width:74px;height:16px;border-radius:99px;background:#0B1B36;opacity:.92}
+  .codes{display:flex;gap:7px;direction:ltr}
+  .codes .b{width:38px;height:50px;border-radius:11px;display:grid;place-items:center;
+    font-family:'Estedad';font-weight:900;font-size:23px;color:#12315E;
+    background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1.4px solid #D6E6FA;
+    box-shadow:0 8px 16px -14px rgba(7,26,56,.6)}
+  .codes .b.on{background:linear-gradient(180deg,#2E6FE8,#1D4ED8);border-color:#1D4ED8;color:#fff;
+    box-shadow:0 14px 24px -12px rgba(29,78,216,.85)}
+  .codes .b.caret{width:3px;height:40px;border-radius:2px;background:#2563EB;border:none;box-shadow:none;
+    background:linear-gradient(180deg,#38BDF8,#2563EB)}
+  .beam{position:absolute;left:196px;top:-24px;width:420px;height:210px;pointer-events:none;
+    transform:rotate(-16deg);transform-origin:0% 100%;
+    background:linear-gradient(90deg,rgba(125,211,252,.55),rgba(59,130,246,.20) 46%,rgba(59,130,246,0) 88%);
+    filter:blur(26px);-webkit-mask-image:linear-gradient(90deg,#000,transparent 86%);
+    mask-image:linear-gradient(90deg,#000,transparent 86%)}
+  .ghost-num{position:absolute;font-family:'Estedad';font-weight:900;color:rgba(37,99,235,.12);
+    text-shadow:0 10px 24px rgba(37,99,235,.18);pointer-events:none}
+  .sms{position:absolute;right:0;top:0;padding:14px 15px;border-radius:18px}
+  .sms .tail{position:absolute;left:-7px;top:44px;width:16px;height:16px;border-radius:4px;
+    background:inherit;border-left:1px solid rgba(255,255,255,.9);border-bottom:1px solid rgba(255,255,255,.9);
+    transform:rotate(45deg)}
+  .rail{position:absolute;right:0;top:128px;width:336px;display:flex;flex-direction:column;gap:8px}
+  .step{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;
+    background:rgba(255,255,255,.82);border:1px solid rgba(219,233,250,.95);
+    box-shadow:0 16px 30px -28px rgba(7,26,56,.6);backdrop-filter:blur(8px)}
+  .step.on{background:linear-gradient(100deg,rgba(236,253,245,.95),rgba(255,255,255,.9));border-color:rgba(183,235,209,.95)}
+  .step .k{font-family:'Estedad';font-weight:900;font-size:10px;color:#9FB4CD;width:16px;flex:none}
+  .step.on .k{color:#10B981}
 </style>
 </head>
 <body>
-
-<!-- ══════════════ ۰۱ · ورود با کد ══════════════ -->
+<!-- ══════════════════ ۰۱ · کد ورود ══════════════════ -->
 <section class="slide" id="s1">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۱</span><span class="sep"></span> ورود و ثبت‌نام</div>
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
 
-  <h2 class="t">یک کد کوتاه،<br>به‌جای <em>رمز و فرم طولانی</em></h2>
-  <p class="s">کاربر شماره‌اش را می‌زند، کد می‌آید، وارد می‌شود. ثبت‌نام هم در همین مسیر انجام می‌شود؛ بدون فیلد اضافه.</p>
+  <div class="eyebrow"><span class="n">۰۱</span><span class="sep"></span> ورود و ثبت‌نام</div>
+  <h2 class="t">یک کد کوتاه،<br><em>به‌جای رمز و فرم طولانی</em></h2>
+  <p class="s">شماره را می‌زند، کد می‌آید، وارد می‌شود. ثبت‌نام هم در همین مسیر انجام می‌شود؛ بدون فیلد اضافه.</p>
   <div class="sig"></div>
 
-  <div class="stage">
-    <!-- phone -->
-    <div class="card" style="position:absolute;right:0;top:2px;width:300px;height:458px;border-radius:44px;padding:9px;
-         background:linear-gradient(160deg,#EAF2FE,#C9DCF7 40%,#9FBCE4 70%,#E8F1FD)">
-      <div style="position:relative;width:100%;height:100%;border-radius:37px;background:#fff;overflow:hidden;
-           box-shadow:inset 0 0 0 1px rgba(7,26,56,.06)">
-        <div style="position:absolute;left:50%;top:10px;transform:translateX(-50%);width:78px;height:20px;border-radius:99px;background:#0A1830"></div>
-        <div style="position:absolute;inset:0;padding:52px 22px 18px;display:flex;flex-direction:column">
-          <div class="ico" style="width:52px;height:52px;margin:0 auto 12px;background:linear-gradient(150deg,#EAF2FF,#D8E7FF);border-radius:16px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9"><path d="M12 3 19 6v5.6c0 4.2-2.9 6.9-7 8.9-4.1-2-7-4.7-7-8.9V6l7-3Z"/><path d="m8.9 11.8 2.2 2.2 4-4.2"/></svg>
-          </div>
-          <div style="text-align:center;font-family:'Estedad';font-weight:900;font-size:24px;color:#0B1B36">کد تأیید</div>
-          <div style="text-align:center;font-size:12.5px;color:#657B98;margin-top:5px;line-height:1.9">کد ۵ رقمی به <b style="color:#1E3A8A;direction:ltr;display:inline-block">۰۹۱۲ ۳۴۵ ۶۷۸۹</b> پیامک شد.</div>
+  <div class="art">
+    <div class="bleed" style="position:absolute;left:-40px;top:-30px;width:420px;height:420px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.26),rgba(37,99,235,.06) 52%,transparent 72%);
+         filter:blur(16px)"></div>
+    <div class="bleed" style="position:absolute;left:286px;top:190px;width:520px;height:520px;border-radius:50%;
+         background:radial-gradient(circle,rgba(37,99,235,.10),transparent 66%);filter:blur(28px)"></div>
 
-          <div style="display:flex;gap:7px;justify-content:center;margin-top:18px;direction:ltr">
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;font-family:'Estedad';font-weight:900;font-size:21px;color:#0F1F3D;background:#F7FAFF;border:1.6px solid #D7E3F6">۴</b>
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;font-family:'Estedad';font-weight:900;font-size:21px;color:#0F1F3D;background:#F7FAFF;border:1.6px solid #D7E3F6">۹</b>
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;font-family:'Estedad';font-weight:900;font-size:21px;color:#0F1F3D;background:#F7FAFF;border:1.6px solid #D7E3F6">۲</b>
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;font-family:'Estedad';font-weight:900;font-size:21px;color:#0F1F3D;background:#F7FAFF;border:1.6px solid #D7E3F6">۸</b>
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;font-family:'Estedad';font-weight:900;font-size:21px;color:#0F1F3D;background:#F7FAFF;border:1.6px solid #D7E3F6">۱</b>
-            <b style="width:38px;height:50px;border-radius:11px;display:grid;place-items:center;background:#EFF5FF;border:1.8px solid #3B82F6;box-shadow:0 0 0 4px rgba(59,130,246,.14)">
-              <i style="width:2px;height:24px;background:#2563EB;border-radius:2px"></i></b>
+    <div class="phone">
+      <div class="scr">
+        <div class="notch"></div>
+        <div style="padding:40px 18px 0;text-align:center">
+          <div style="display:grid;place-items:center;width:44px;height:44px;border-radius:14px;margin:0 auto 12px;
+               background:linear-gradient(160deg,#EFF6FF,#DCEAFF);border:1px solid #CFE3FA;
+               box-shadow:0 10px 18px -14px rgba(37,99,235,.8)">
+            <img src="../infographic/img/ashna-icon.svg" alt="" style="height:24px;width:auto">
+          </div>
+          <div style="font-family:'Estedad';font-weight:900;font-size:17.5px;color:#0B1B36">کد تأیید</div>
+          <div style="font-size:10px;color:#8AA0BC;margin-top:5px;line-height:1.7">
+            کد ۵ رقمی به <span style="direction:ltr;display:inline-block;color:#3E5C82;font-weight:700">۰۹۱۲ ۳۴۵ ۶۷۸۹</span> پیامک شد.
           </div>
 
-          <div class="btn" style="margin-top:16px;height:46px;font-size:15px">تأیید و ورود</div>
-          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11.5px;color:#7A8DA6">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
-            ارسال دوباره تا <b style="color:#1E3A8A">۰۱:۴۵</b>
+          <div class="codes" style="justify-content:center;margin-top:16px">
+            <span class="b">۴</span>
+            <span class="b">۹</span>
+            <span class="b">۲</span>
+            <span class="b on">۸</span>
+            <span class="b" style="color:#C7D9F2">—</span>
+            <span class="b caret"></span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:#9BB0C8;font-size:10.5px">
-            <span style="height:1px;background:#E4EBF5;flex:1"></span>یا ورود بدون پیامک<span style="height:1px;background:#E4EBF5;flex:1"></span>
+
+          <div class="btn" style="margin-top:16px;font-size:13.5px;height:42px">تأیید و ورود</div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:11px;font-size:9.5px;color:#93A8C3">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>
+            ارسال دوباره تا <span style="font-weight:800;color:#2563EB">۴۵ ثانیه</span>
           </div>
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border-radius:11px;
-               background:#EDFBF3;border:1.4px solid #BFEBD6;color:#0E8F63;font-size:12.5px;font-weight:800">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 11.5a3.5 3.5 0 0 1 3.5-3.5h3A3.5 3.5 0 0 1 17 11.5"/><path d="M8.5 11.5v2.5a3.5 3.5 0 0 0 7 0v-2.5"/><path d="M12 15v3"/></svg>
+
+          <div style="display:flex;align-items:center;gap:8px;margin:12px 0 10px">
+            <span style="height:1px;background:#E4EEFA;flex:1"></span>
+            <span style="font-size:9px;color:#B3C5DA">یا</span>
+            <span style="height:1px;background:#E4EEFA;flex:1"></span>
+          </div>
+
+          <div style="height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:7px;
+               background:linear-gradient(180deg,#F2FCF7,#E6FAF0);border:1.4px solid #BFEBD6;color:#0B8A5F;
+               font-size:10px;font-weight:800">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3s5 5 5 9a5 5 0 0 1-10 0c0-4 5-9 5-9z"/><path d="M12 12v3"/></svg>
             ورود سریع با اثر انگشت
           </div>
         </div>
       </div>
     </div>
 
-    <!-- sms bubble -->
-    <div class="card glass" style="position:absolute;left:0;top:30px;width:396px;padding:18px 20px;border-radius:20px;transform:rotate(-1.6deg)">
-      <div style="display:flex;align-items:center;gap:11px">
-        <div class="ico" style="width:40px;height:40px;background:linear-gradient(150deg,#3B82F6,#1D4ED8);border-radius:13px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 6.5h16v9.5H9.5L5 19.8V16H4z"/></svg>
+    <div class="sms glass" style="width:336px">
+      <div class="tail"></div>
+      <div style="display:flex;align-items:center;gap:9px">
+        <div class="ico" style="width:34px;height:34px;background:linear-gradient(150deg,#3B82F6,#1D4ED8);
+             box-shadow:0 12px 20px -12px rgba(37,99,235,.9)">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fff" stroke-width="2"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg>
         </div>
         <div style="flex:1">
-          <div style="font-size:13.5px;font-weight:800;color:#0B1B36">آشنا</div>
-          <div style="font-size:11px;color:#8398B3">الان · پیامک خدماتی</div>
+          <div style="font-size:11.5px;font-weight:800;color:#0B1B36">آشنا</div>
+          <div style="font-size:9px;color:#8AA0BC">الان · پیامک خدماتی</div>
         </div>
-        <span class="pill ok" style="height:24px;padding:0 9px;font-size:10.5px">تحویل شد</span>
+        <span class="pill ok" style="height:21px;font-size:9px;padding:0 8px">تحویل شد</span>
       </div>
-      <div style="margin-top:12px;font-size:13px;line-height:1.95;color:#2B4363">
-        کد ورود شما <b style="font-family:'Estedad';letter-spacing:3px;color:#1D4ED8;direction:ltr;display:inline-block;font-size:15px">۴۹۲۸۱۳</b> است؛ به کسی ندهید.
+      <div style="margin-top:10px;font-size:11px;color:#5C7FA8;line-height:1.9">
+        کد ورود شما <b style="font-family:'Estedad';font-size:14px;color:#1D4ED8;letter-spacing:1px">۴۹۲۸۱</b> است؛ به کسی ندهید.
       </div>
     </div>
 
-    <!-- three steps -->
-    <div style="position:absolute;left:0;top:206px;width:396px">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="card" style="padding:14px 16px;border-radius:16px;display:flex;align-items:center;gap:12px">
-          <div class="ico" style="width:34px;height:34px;background:#EFF5FF;border:1px solid #D3E4FB;color:#2563EB;border-radius:11px">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="7" y="2.6" width="10" height="18.8" rx="2.6"/><path d="M9.8 6h4.4"/></svg>
-          </div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:800;color:#17325A">شماره را وارد می‌کند</div>
-            <div style="font-size:11px;color:#7E93AD;margin-top:2px">فقط یک فیلد، بدون رمز</div></div>
-          <span style="font-family:'Estedad';font-weight:900;font-size:12px;color:#B7C7DC">۰۱</span>
+    <div class="rail">
+      <div class="step">
+        <span class="k">۰۱</span>
+        <div class="ico" style="width:30px;height:30px;background:#EFF4FC;color:#5B7BA6;border-radius:10px">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="7" y="2.5" width="10" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
         </div>
-        <div class="card" style="padding:14px 16px;border-radius:16px;display:flex;align-items:center;gap:12px">
-          <div class="ico" style="width:34px;height:34px;background:#EFF5FF;border:1px solid #D3E4FB;color:#2563EB;border-radius:11px">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6.5h16v9.5H9.5L5 19.8V16H4z"/></svg>
-          </div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:800;color:#17325A">کد می‌آید</div>
-            <div style="font-size:11px;color:#7E93AD;margin-top:2px">پیامک، بله یا ایمیل</div></div>
-          <span style="font-family:'Estedad';font-weight:900;font-size:12px;color:#B7C7DC">۰۲</span>
+        <div style="flex:1">
+          <div style="font-size:11.5px;font-weight:800;color:#12315E">شماره را وارد می‌کند</div>
+          <div style="font-size:9.5px;color:#8AA0BC;margin-top:1px">فقط یک فیلد، بدون رمز</div>
         </div>
-        <div class="card" style="padding:14px 16px;border-radius:16px;display:flex;align-items:center;gap:12px;
-             border-color:#BFEBD6;background:#F4FDF9">
-          <div class="ico" style="width:34px;height:34px;background:#E7F9F0;border:1px solid #BFEBD6;color:#0E8F63;border-radius:11px">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1"><path d="m5 12.5 4.4 4.4L19 7.4"/></svg>
-          </div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:800;color:#0B6B4A">وارد می‌شود</div>
-            <div style="font-size:11px;color:#5E9B84;margin-top:2px">ثبت‌نام خودکار در اولین ورود</div></div>
-          <span style="font-family:'Estedad';font-weight:900;font-size:12px;color:#8FD3B8">۰۳</span>
+      </div>
+      <div class="step">
+        <span class="k">۰۲</span>
+        <div class="ico" style="width:30px;height:30px;background:#EFF4FC;color:#5B7BA6;border-radius:10px">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg>
         </div>
+        <div style="flex:1">
+          <div style="font-size:11.5px;font-weight:800;color:#12315E">کد می‌آید</div>
+          <div style="font-size:9.5px;color:#8AA0BC;margin-top:1px">پیامک، بله یا ایمیل</div>
+        </div>
+      </div>
+      <div class="step on">
+        <span class="k">۰۳</span>
+        <div class="ico" style="width:30px;height:30px;background:#E9FBF2;color:#0B8A5F;border-radius:10px">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m5 12 5 5 9-10"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11.5px;font-weight:800;color:#0B7A55">وارد می‌شود</div>
+          <div style="font-size:9.5px;color:#5FA98B;margin-top:1px">ثبت‌نام هم خودکار، در اولین ورود</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute;right:0;bottom:0;width:336px">
+      <div class="lbl" style="margin-bottom:7px">کد از هر کانالی که انتخاب کند</div>
+      <div style="display:flex;gap:7px">
+        <span class="pill" style="height:28px;font-size:10px;flex:1;justify-content:center">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg>پیامک</span>
+        <span class="pill" style="height:28px;font-size:10px;flex:1;justify-content:center">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/></svg>بله</span>
+        <span class="pill" style="height:28px;font-size:10px;flex:1;justify-content:center">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>ایمیل</span>
       </div>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۱ از ۰۸</div>
   </div>
 </section>
 
-<!-- ══════════════ ۰۲ · شش درگاه ══════════════ -->
+<!-- ══════════════════ ۰۲ · درگاه‌ها ══════════════════ -->
 <section class="slide" id="s2">
-  <div class="eyebrow"><span class="n">۰۲</span><span class="sep"></span> درگاه‌ها و پیام‌رسان‌ها</div>
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
 
-  <h2 class="t">شش درگاه ایرانی،<br><em>هر کدام با یک کلیک</em></h2>
-  <p class="s">از SMS.ir و کاوه‌نگار تا بله و ایمیل؛ درگاه را انتخاب می‌کنی، بقیهٔ تنظیمات از همان یک پنجره انجام می‌شود.</p>
+  <div class="eyebrow"><span class="n">۰۲</span><span class="sep"></span> درگاه‌ها و پیام‌رسان‌ها</div>
+  <h2 class="t">شش درگاه ایرانی،<br><em>هر کدام یک خط مستقیم</em></h2>
+  <p class="s">درگاه را انتخاب می‌کنی، کلید را می‌گذاری، تمام. بقیهٔ تنظیمات از همان یک پنجره انجام می‌شود.</p>
   <div class="sig"></div>
 
-  <div class="stage" style="display:flex;flex-direction:column;gap:12px">
+  <div class="art">
+    <div class="orbit" style="position:absolute;inset:0;transform:translateY(-34px)">
+    <!-- orbit lines -->
+    <svg width="692" height="516" style="position:absolute;inset:0;z-index:0;overflow:visible">
+      <defs>
+        <linearGradient id="gl" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0" stop-color="#2563EB" stop-opacity=".55"/>
+          <stop offset="1" stop-color="#38BDF8" stop-opacity=".18"/>
+        </linearGradient>
+        <linearGradient id="gl2" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0" stop-color="#2563EB" stop-opacity=".28"/>
+          <stop offset="1" stop-color="#38BDF8" stop-opacity=".06"/>
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="rgba(37,99,235,.34)" stroke-width="1.6" stroke-dasharray="3 6" stroke-linecap="round">
+        <path d="M424 242 C 470 242, 480 153, 522 153"/>
+        <path d="M424 268 C 470 268, 480 331, 522 331"/>
+        <path d="M346 320 V 393"/>
+        <path d="M268 242 C 222 242, 212 153, 169 153"/>
+        <path d="M268 268 C 222 268, 212 331, 169 331"/>
+      </g>
+      <path d="M346 164 V 91" fill="none" stroke="url(#gl)" stroke-width="2.6"/>
+      <path d="M424 242 C 470 242, 470 153, 522 153" fill="none" stroke="url(#gl)" stroke-width="2.6"/>
+      <circle cx="346" cy="120" r="4.5" fill="#2563EB"/>
+      <circle cx="478" cy="188" r="4.5" fill="#38BDF8"/>
+    </svg>
 
-    <div style="display:flex;gap:12px;align-items:stretch;height:300px">
-
-      <!-- right: the gateway list -->
-      <div class="card" style="flex:1;padding:15px 15px 13px;border-radius:20px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:'Estedad';font-weight:900;font-size:14px;color:#0B1B36">درگاه ارسال</div>
-          <span class="pill ok" style="height:22px;padding:0 9px;font-size:9.5px">۶ فعال</span>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:11px;
-               background:#F1F7FF;border:1.5px solid #3B82F6">
-            <div class="ico" style="width:25px;height:25px;background:linear-gradient(150deg,#3B82F6,#1D4ED8);border-radius:8px">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#fff" stroke-width="2"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:11.5px;font-weight:800;color:#12315E">SMS.ir</div>
-              <div style="font-size:9px;color:#7189A8">REST v1 · الگوی خدماتی</div>
-            </div>
-            <span style="width:27px;height:16px;border-radius:99px;background:#2563EB;position:relative">
-              <i style="position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff"></i></span>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:11px;background:#fff;border:1px solid var(--line)">
-            <div class="ico" style="width:25px;height:25px;background:#EFF4FB;border-radius:8px;color:#5B7BA6">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5h14v14H5z"/><path d="M9 9h6M9 13h4"/></svg>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:11.5px;font-weight:800;color:#27405F">فراز اس‌ام‌اس</div>
-              <div style="font-size:9px;color:#7189A8">ایران‌پیامک · Api-Key</div>
-            </div>
-            <span style="width:27px;height:16px;border-radius:99px;background:#DCE8F8;position:relative">
-              <i style="position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff"></i></span>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:11px;background:#fff;border:1px solid var(--line)">
-            <div class="ico" style="width:25px;height:25px;background:#EFF4FB;border-radius:8px;color:#5B7BA6">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M9 12h6M12 9v6"/></svg>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:11.5px;font-weight:800;color:#27405F">کاوه‌نگار</div>
-              <div style="font-size:9px;color:#7189A8">verify/lookup · الگو</div>
-            </div>
-            <span style="width:27px;height:16px;border-radius:99px;background:#DCE8F8;position:relative">
-              <i style="position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff"></i></span>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:11px;background:#fff;border:1px solid var(--line)">
-            <div class="ico" style="width:25px;height:25px;background:#EFF4FB;border-radius:8px;color:#5B7BA6">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:11.5px;font-weight:800;color:#27405F">ملی‌پیامک</div>
-              <div style="font-size:9px;color:#7189A8">کنسول · الگو</div>
-            </div>
-            <span style="width:27px;height:16px;border-radius:99px;background:#DCE8F8;position:relative">
-              <i style="position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff"></i></span>
-          </div>
-        </div>
-
-        <div style="margin-top:9px;display:flex;align-items:center;gap:6px">
-          <span style="font-size:9.5px;color:#93A8C3">و دو درگاه دیگر</span>
-          <span class="pill" style="height:20px;font-size:9px;padding:0 8px">آی‌پی‌پنل</span>
-          <span class="pill" style="height:20px;font-size:9px;padding:0 8px">ره‌پیام</span>
-        </div>
-      </div>
-
-      <!-- left: messengers, email, and the user's own route -->
-      <div style="width:330px;display:flex;flex-direction:column;gap:9px;justify-content:space-between">
-        <div class="card" style="padding:11px 12px;border-radius:15px;display:flex;align-items:center;gap:9px">
-          <div class="ico" style="width:32px;height:32px;background:#E8F7FF;border:1px solid #C7E9FA;color:#0891B2;border-radius:10px">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6.5h16v9.5H9.5L5 19.8V16H4z"/><path d="M8 10.5h8M8 13.2h5"/></svg>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:12px;font-weight:800;color:#12315E">بله · Safir v3</div>
-            <div style="font-size:9.5px;color:#7189A8;margin-top:1px">کد در پیام‌رسان داخلی</div>
-          </div>
-          <span class="pill ok" style="height:21px;font-size:9px;padding:0 8px">فعال</span>
-        </div>
-
-        <div class="card" style="padding:11px 12px;border-radius:15px;display:flex;align-items:center;gap:9px">
-          <div class="ico" style="width:32px;height:32px;background:#FFF4E8;border:1px solid #FBE1C2;color:#B45309;border-radius:10px">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:12px;font-weight:800;color:#12315E">ایمیل</div>
-            <div style="font-size:9.5px;color:#7189A8;margin-top:1px">بدون هزینهٔ پیامک</div>
-          </div>
-          <span class="pill" style="height:21px;font-size:9px;padding:0 8px">آماده</span>
-        </div>
-
-        <div class="card" style="padding:12px;border-radius:15px;flex:1;display:flex;flex-direction:column;justify-content:center">
-          <div style="font-size:11px;font-weight:800;color:#12315E;margin-bottom:8px">مسیر پیش‌فرض کاربر</div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span class="pill" style="height:23px;font-size:9.5px;padding:0 8px">پیامک</span>
-            <span style="color:#B7C7DC;font-size:11px">←</span>
-            <span class="pill" style="height:23px;font-size:9.5px;padding:0 8px">بله</span>
-            <span style="color:#B7C7DC;font-size:11px">←</span>
-            <span class="pill" style="height:23px;font-size:9.5px;padding:0 8px">ایمیل</span>
-          </div>
-          <div style="margin-top:8px;font-size:9.5px;color:#8398B3;line-height:1.7">کاربر خودش انتخاب می‌کند کد را از کدام کانال بگیرد.</div>
+    <!-- radar hub -->
+    <div style="position:absolute;left:346px;top:242px;width:0;height:0;z-index:1">
+      <div style="position:absolute;left:-118px;top:-118px;width:236px;height:236px;border-radius:50%;
+           background:conic-gradient(from 210deg,rgba(37,99,235,.22),rgba(56,189,248,.05) 26%,transparent 42%);
+           filter:blur(4px)"></div>
+      <div style="position:absolute;left:-96px;top:-96px;width:192px;height:192px;border-radius:50%;
+           border:1px dashed rgba(37,99,235,.22)"></div>
+      <div style="position:absolute;left:-78px;top:-78px;width:156px;height:156px;border-radius:50%;
+           background:linear-gradient(160deg,#FFFFFF,#EFF6FF);
+           border:1px solid #D6E6FA;
+           box-shadow:0 40px 60px -40px rgba(7,26,56,.8),inset 0 2px 0 #fff,0 0 0 10px rgba(255,255,255,.55)"></div>
+      <div style="position:absolute;left:-78px;top:-78px;width:156px;height:156px;border-radius:50%;
+           display:grid;place-items:center">
+        <div style="text-align:center">
+          <img src="../infographic/img/ashna-icon.svg" alt="" style="height:38px;width:auto;display:block;margin:0 auto 6px">
+          <div style="font-family:'Estedad';font-weight:900;font-size:10.5px;color:#12315E">آشنا</div>
+          <div style="font-size:8.5px;color:#8AA0BC;margin-top:1px">مسیریاب ارسال</div>
         </div>
       </div>
     </div>
 
-    <!-- full-width delivery log -->
-    <div class="card" style="padding:13px 16px;border-radius:17px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#0B1B36">آخرین ارسال‌ها</div>
-        <div style="font-size:9.5px;color:#8AA0BC">گزارش واقعی پنل</div>
+    <!-- six gateways -->
+    <div class="card" style="position:absolute;left:262px;top:37px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#3B82F6,#1D4ED8)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">SMS.ir</div>
+        <div style="font-size:8.5px;color:#8AA0BC" dir="ltr">REST v1 · CODE</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.14)"></span>
+    </div>
+
+    <div class="card" style="position:absolute;left:439px;top:126px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#8B5CF6,#6D28D9)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="7.5"/><path d="M9 12h6M12 9v6"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">کاوه‌نگار</div>
+        <div style="font-size:8.5px;color:#8AA0BC" dir="ltr">verify/lookup</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.14)"></span>
+    </div>
+
+    <div class="card" style="position:absolute;left:439px;top:304px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#14B8A6,#0F766E)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">ملی‌پیامک</div>
+        <div style="font-size:8.5px;color:#8AA0BC">کنسول · الگو</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.14)"></span>
+    </div>
+
+    <div class="card" style="position:absolute;left:262px;top:393px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#F59E0B,#B45309)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><path d="M5 5h14v14H5z"/><path d="M9 9h6M9 13h4"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">فراز اس‌ام‌اس</div>
+        <div style="font-size:8.5px;color:#8AA0BC" dir="ltr">iranpayamak · Api-Key</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
+    </div>
+
+    <div class="card" style="position:absolute;left:85px;top:304px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#F43F5E,#BE123C)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">آی‌پی‌پنل</div>
+        <div style="font-size:8.5px;color:#8AA0BC" dir="ltr">Edge API</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
+    </div>
+
+    <div class="card" style="position:absolute;left:85px;top:126px;width:168px;height:54px;border-radius:14px;display:flex;align-items:center;gap:9px;padding:0 12px;z-index:2">
+      <span class="ico" style="width:28px;height:28px;background:linear-gradient(150deg,#6366F1,#4338CA)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/></svg></span>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:800;color:#12315E">ره‌پیام</div>
+        <div style="font-size:8.5px;color:#8AA0BC">بله · ایمیل · SMS</div></div>
+      <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
+    </div>
+
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:44px;display:flex;gap:8px;z-index:3">
+      <div class="card" style="flex:1;padding:11px 12px;border-radius:14px;display:flex;align-items:center;gap:8px">
+        <span class="ico" style="width:26px;height:26px;background:#EFF6FF;color:#2563EB">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="3.2"/><path d="M11.2 12H20M16.5 12v3.2M19 12v2.4"/></svg></span>
+        <div><div style="font-size:10px;font-weight:800;color:#12315E">کلید API</div>
+          <div style="font-size:8.5px;color:#8AA0BC">در تنظیمات همان درگاه</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #EDF3FB">
-        <span style="width:23px;height:23px;border-radius:7px;background:#EAF2FF;display:grid;place-items:center">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#2563EB" stroke-width="2"><path d="M4 6.5h16v11H4z"/></svg></span>
-        <span style="font-size:10.5px;font-weight:700;color:#27405F;width:66px">SMS.ir</span>
-        <span style="font-size:10px;color:#7189A8;flex:1" dir="ltr">۰۹۱۲ ۳۴۵ ۶۷۸۹</span>
-        <span style="font-size:9.5px;color:#94A9C4">۱۲:۰۴</span>
-        <span class="pill ok" style="height:19px;font-size:8.5px;padding:0 7px">تحویل شد</span>
+      <div class="card" style="flex:1;padding:11px 12px;border-radius:14px;display:flex;align-items:center;gap:8px">
+        <span class="ico" style="width:26px;height:26px;background:#F0FDF7;color:#0B8A5F">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6"/></svg></span>
+        <div><div style="font-size:10px;font-weight:800;color:#12315E">شمارهٔ فرستنده</div>
+          <div style="font-size:8.5px;color:#8AA0BC">اختیاری، برای خط اختصاصی</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #EDF3FB">
-        <span style="width:23px;height:23px;border-radius:7px;background:#E8F7FF;display:grid;place-items:center">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#0891B2" stroke-width="2"><path d="M4 6.5h16v11H4z"/></svg></span>
-        <span style="font-size:10.5px;font-weight:700;color:#27405F;width:66px">بله</span>
-        <span style="font-size:10px;color:#7189A8;flex:1" dir="ltr">۰۹۳۵ ۱۱۱ ۲۲۳۳</span>
-        <span style="font-size:9.5px;color:#94A9C4">۱۲:۰۳</span>
-        <span class="pill ok" style="height:19px;font-size:8.5px;padding:0 7px">تحویل شد</span>
+      <div class="card" style="flex:1;padding:11px 12px;border-radius:14px;display:flex;align-items:center;gap:8px">
+        <span class="ico" style="width:26px;height:26px;background:#FFF7EC;color:#B45309">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+        <div><div style="font-size:10px;font-weight:800;color:#12315E">قالب پیام</div>
+          <div style="font-size:8.5px;color:#8AA0BC">همان کدی که در پنل ساختید</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
-        <span style="width:23px;height:23px;border-radius:7px;background:#FFF4E8;display:grid;place-items:center">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#B45309" stroke-width="2"><path d="M4 6h16v12H4z"/></svg></span>
-        <span style="font-size:10.5px;font-weight:700;color:#27405F;width:66px">ایمیل</span>
-        <span style="font-size:10px;color:#7189A8;flex:1" dir="ltr">user@example.com</span>
-        <span style="font-size:9.5px;color:#94A9C4">۱۲:۰۱</span>
-        <span class="pill warn" style="height:19px;font-size:8.5px;padding:0 7px">در صف</span>
-      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:6px;display:flex;align-items:center;gap:8px;justify-content:center;z-index:3">
+      <span class="pill">۶ درگاه · ۴ فعال</span>
+      <span class="pill">بله · Safir v3</span>
+      <span class="pill">ایمیل</span>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۲ از ۰۸</div>
   </div>
 </section>
 
-
 <!-- ══════════════════ ۰۳ · محدودیت‌ها ══════════════════ -->
 <section class="slide" id="s3">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۳</span><span class="sep"></span> جلوی سوءاستفاده</div>
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
 
+  <div class="eyebrow"><span class="n">۰۳</span><span class="sep"></span> جلوی سوءاستفاده</div>
   <h2 class="t">هر شماره،<br><em>فقط به اندازهٔ خودش</em></h2>
   <p class="s">سقف درخواست برای شماره، آی‌پی و زیرشبکه؛ فاصلهٔ ۶۰ ثانیه بین دو ارسال، و کپچا وقتی حجم درخواست بالا می‌رود.</p>
   <div class="sig"></div>
 
-  <div class="stage" style="display:flex;gap:12px;height:auto">
+  <div class="art">
+    <!-- gauge -->
+    <div style="position:absolute;left:8px;top:6px;width:262px;height:262px">
+      <div style="position:absolute;inset:0;border-radius:50%;
+           background:conic-gradient(from 135deg,rgba(37,99,235,.16) 0deg 270deg,transparent 270deg 360deg);
+           -webkit-mask-image:radial-gradient(closest-side,transparent 78%,#000 80%,#000 100%);
+           mask-image:radial-gradient(closest-side,transparent 78%,#000 80%,#000 100%)"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;
+           background:conic-gradient(from 135deg,#1D4ED8 0deg,#38BDF8 162deg,transparent 162deg 360deg);
+           -webkit-mask-image:radial-gradient(closest-side,transparent 92%,#000 93%,#000 100%);
+           mask-image:radial-gradient(closest-side,transparent 92%,#000 93%,#000 100%);
+           filter:drop-shadow(0 8px 16px rgba(37,99,235,.35))"></div>
+      <div style="position:absolute;inset:18px;border-radius:50%;
+           background:radial-gradient(120% 120% at 40% 20%,#FFFFFF,#F1F7FF 60%,#E3EEFC);
+           box-shadow:inset 0 2px 10px rgba(7,26,56,.06),0 20px 40px -30px rgba(7,26,56,.8)"></div>
+      <div style="position:absolute;inset:18px;display:grid;place-items:center;text-align:center">
+        <div>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:5px">
+            <span style="font-family:'Estedad';font-weight:900;font-size:46px;line-height:.9;color:#0B1B36">۳</span>
+            <span style="font-size:11px;color:#5C7FA8;font-weight:700">از ۵ در ساعت</span>
+          </div>
+          <div style="font-size:9.5px;color:#8AA0BC;margin-top:7px">برای هر شماره</div>
+          <div style="margin-top:9px;display:inline-flex;align-items:center;gap:5px;font-size:8px;color:#0B8A5F;
+               background:#EAFBF2;border:1px solid #C9F0DD;border-radius:99px;padding:3px 8px">سقف فعال</div>
+        </div>
+      </div>
+      <div style="position:absolute;left:50%;top:-2px;transform:translateX(-50%);width:2px;height:14px;border-radius:2px;background:#CBD9EA"></div>
+    </div>
 
-    <div class="card" style="flex:1;padding:16px 17px 12px;border-radius:20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div style="font-family:'Estedad';font-weight:900;font-size:14px;color:#0B1B36">سقف درخواست</div>
-        <span class="pill ok" style="height:22px;padding:0 9px;font-size:9.5px">فعال</span>
+    <!-- meters -->
+    <div style="position:absolute;right:0;top:6px;width:352px;display:flex;gap:14px">
+      <div style="flex:1;text-align:center">
+        <div style="position:relative;height:172px;border-radius:16px;overflow:hidden;
+             background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1px solid #DCEAFA;
+             box-shadow:inset 0 2px 8px rgba(7,26,56,.05)">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:62%;
+               background:linear-gradient(180deg,#60A5FA,#2563EB);box-shadow:0 -10px 24px rgba(37,99,235,.35)"></div>
+          <div style="position:absolute;left:0;right:0;top:62%;height:2px;background:rgba(255,255,255,.9)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:62%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px">
+            <span style="font-family:'Estedad';font-weight:900;font-size:20px;color:#fff">۳</span>
+          </div>
+          <div style="position:absolute;left:0;right:0;top:12px;text-align:center;font-size:9px;color:#8AA0BC">از ۵</div>
+        </div>
+        <div style="font-size:10.5px;font-weight:800;color:#27405F;margin-top:8px">شماره</div>
+        <div style="font-size:8.5px;color:#A3B6CD">در ساعت</div>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">هر شماره در ساعت</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۵</span>
+      <div style="flex:1;text-align:center">
+        <div style="position:relative;height:172px;border-radius:16px;overflow:hidden;
+             background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1px solid #DCEAFA;
+             box-shadow:inset 0 2px 8px rgba(7,26,56,.05)">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:40%;
+               background:linear-gradient(180deg,#7DD3FC,#0EA5E9);box-shadow:0 -10px 24px rgba(14,165,233,.32)"></div>
+          <div style="position:absolute;left:0;right:0;top:60%;height:2px;background:rgba(255,255,255,.9)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:40%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px">
+            <span style="font-family:'Estedad';font-weight:900;font-size:20px;color:#fff">۶</span>
+          </div>
+          <div style="position:absolute;left:0;right:0;top:12px;text-align:center;font-size:9px;color:#8AA0BC">از ۱۵</div>
+        </div>
+        <div style="font-size:10.5px;font-weight:800;color:#27405F;margin-top:8px">آی‌پی</div>
+        <div style="font-size:8.5px;color:#A3B6CD">در ساعت</div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">هر شماره در روز</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۱۰</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">هر آی‌پی در ساعت</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۱۵</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">هر آی‌پی در دقیقه</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۵</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">هر زیرشبکه در دقیقه</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۲۰</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">تلاش برای حدس کد</div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#B42342;background:#FFF3F5;border:1px solid #FBD9DF;border-radius:7px;padding:3px 9px">۵</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EFF4FB">
-        <div style="font-size:12px;font-weight:700;color:#27405F">اعتبار کد <span style="color:#A9BDD6;font-size:10px">(ثانیه)</span></div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۱۲۰</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0">
-        <div style="font-size:12px;font-weight:700;color:#27405F">طول کد <span style="color:#A9BDD6;font-size:10px">(رقم)</span></div>
-        <span style="min-width:34px;text-align:center;font-family:'Estedad';font-weight:900;font-size:12px;color:#1E4C8F;background:#F2F7FF;border:1px solid #DCE9FA;border-radius:7px;padding:3px 9px">۵</span>
+
+      <div style="flex:1;text-align:center">
+        <div style="position:relative;height:172px;border-radius:16px;overflow:hidden;
+             background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1px solid #DCEAFA;
+             box-shadow:inset 0 2px 8px rgba(7,26,56,.05)">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:35%;
+               background:linear-gradient(180deg,#FCD34D,#F59E0B);box-shadow:0 -10px 24px rgba(245,158,11,.32)"></div>
+          <div style="position:absolute;left:0;right:0;top:65%;height:2px;background:rgba(255,255,255,.9)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:35%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px">
+            <span style="font-family:'Estedad';font-weight:900;font-size:20px;color:#fff">۷</span>
+          </div>
+          <div style="position:absolute;left:0;right:0;top:12px;text-align:center;font-size:9px;color:#8AA0BC">از ۲۰</div>
+        </div>
+        <div style="font-size:10.5px;font-weight:800;color:#27405F;margin-top:8px">زیرشبکه</div>
+        <div style="font-size:8.5px;color:#A3B6CD">در دقیقه</div>
       </div>
     </div>
 
-    <div style="width:328px;display:flex;flex-direction:column;gap:12px">
-
-      <div class="card" style="padding:14px 15px;border-radius:18px;display:flex;align-items:center;gap:14px">
-        <div style="width:92px;height:92px;border-radius:50%;flex:none;display:grid;place-items:center;
-             background:conic-gradient(#2563EB 0deg 270deg,#E2EDFB 270deg 360deg)">
-          <div style="width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;
-               box-shadow:inset 0 2px 8px rgba(7,26,56,.06)">
-            <div>
-              <div style="font-family:'Estedad';font-weight:900;font-size:22px;color:#0B1B36;line-height:1">۴۵</div>
-              <div style="font-size:8.5px;color:#8AA0BC;margin-top:3px">ثانیه</div>
+    <!-- status strip -->
+    <div class="card" style="position:absolute;left:0;right:0;top:306px;height:202px;border-radius:22px;display:flex;align-items:stretch">
+      <div style="width:214px;padding:18px 18px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="position:relative;width:74px;height:74px;flex:none;border-radius:50%;
+               background:conic-gradient(#2563EB 0deg 270deg,#E2EDFB 270deg 360deg)">
+            <div style="position:absolute;inset:8px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center">
+              <div>
+                <div style="font-family:'Estedad';font-weight:900;font-size:19px;color:#0B1B36;line-height:1">۴۵</div>
+                <div style="font-size:7.5px;color:#8AA0BC;margin-top:2px">ثانیه</div>
+              </div>
             </div>
           </div>
+          <div>
+            <div style="font-size:11.5px;font-weight:800;color:#12315E">ارسال دوباره</div>
+            <div style="font-size:9.5px;color:#8AA0BC;line-height:1.7;margin-top:3px">دکمه تا پایان شمارش خاموش است.</div>
+          </div>
         </div>
-        <div>
-          <div style="font-size:12.5px;font-weight:800;color:#12315E">ارسال دوباره</div>
-          <div style="font-size:10.5px;color:#7E95B2;line-height:1.8;margin-top:4px">تا وقتی شمارش تمام نشده، دکمه غیرفعال می‌ماند.</div>
-        </div>
-      </div>
-
-      <div class="card" style="padding:13px 15px;border-radius:18px;background:#FFF9F0;border-color:#FBE7C4">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#B45309" stroke-width="2"><path d="M12 4 3 20h18L12 4z"/><path d="M12 10v4M12 17h.01"/></svg>
-          <div style="font-size:12px;font-weight:800;color:#8A5A00">حالت حمله</div>
-        </div>
-        <div style="font-size:10.5px;color:#9A7420;line-height:1.85">بیش از ۲۰ درخواست در دقیقه در کل سایت، کپچا برای همه روشن می‌شود؛ ۳۰ دقیقه.</div>
-        <div style="display:flex;gap:5px;margin-top:9px;flex-wrap:wrap">
-          <span class="pill" style="height:20px;font-size:8.5px;padding:0 7px;background:#fff;border-color:#F5E2C2;color:#9A7420">ریاضی</span>
-          <span class="pill" style="height:20px;font-size:8.5px;padding:0 7px;background:#fff;border-color:#F5E2C2;color:#9A7420">آری‌کپچا</span>
-          <span class="pill" style="height:20px;font-size:8.5px;padding:0 7px;background:#fff;border-color:#F5E2C2;color:#9A7420">reCAPTCHA v3</span>
-          <span class="pill" style="height:20px;font-size:8.5px;padding:0 7px;background:#fff;border-color:#F5E2C2;color:#9A7420">Turnstile</span>
+        <div style="display:flex;gap:6px">
+          <span class="pill" style="height:21px;font-size:7.5px;padding:0 3px">ریاضی</span>
+          <span class="pill" style="height:21px;font-size:7.5px;padding:0 3px">آری‌کپچا</span>
+          <span class="pill" style="height:21px;font-size:7.5px;padding:0 3px">reCAPTCHA</span>
+          <span class="pill" style="height:21px;font-size:7.5px;padding:0 3px">Turnstile</span>
         </div>
       </div>
 
-      <div class="card" style="padding:13px 15px 12px;border-radius:18px;flex:1;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="font-size:12px;font-weight:800;color:#12315E">فهرست مسدود</div>
-          <span style="font-size:9.5px;color:#8AA0BC">۴ مورد</span>
-        </div>
+      <div style="width:1px;background:#EDF3FB;margin:22px 0"></div>
 
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid #F4F8FE">
-          <span style="width:5px;height:5px;border-radius:50%;background:#F87189;flex:none"></span>
-          <span style="font-family:'Estedad';font-weight:800;font-size:10px;color:#8C6A76;direction:ltr">۰۹۱۲ ••• ۸۸۴</span>
-          <span style="margin-right:auto;font-size:8.5px;color:#B99AA2">شماره</span>
+      <div style="flex:1;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:11px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="ico" style="width:26px;height:26px;background:#FFF6E5;color:#B45309;border-radius:9px">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4 3 20h18L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+          <div style="font-size:11.5px;font-weight:800;color:#8A5A00">حالت حمله</div>
+          <span class="pill warn" style="height:20px;font-size:8px;margin-right:auto">خودکار</span>
         </div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid #F4F8FE">
-          <span style="width:5px;height:5px;border-radius:50%;background:#F87189;flex:none"></span>
-          <span style="font-family:'Estedad';font-weight:800;font-size:10px;color:#8C6A76;direction:ltr">۰۹۳۵ ••• ۰۱۷</span>
-          <span style="margin-right:auto;font-size:8.5px;color:#B99AA2">شماره</span>
+        <div style="font-size:9.5px;color:#8A7442;line-height:1.85">
+          بیش از ۲۰ درخواست در دقیقه در کل سایت، کپچا برای همه روشن می‌شود؛ ۳۰ دقیقه.
         </div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid #F4F8FE">
-          <span style="width:5px;height:5px;border-radius:50%;background:#F87189;flex:none"></span>
-          <span style="font-family:'Estedad';font-weight:800;font-size:10px;color:#8C6A76;direction:ltr">۵.۲۲ ••• ۹۰</span>
-          <span style="margin-right:auto;font-size:8.5px;color:#B99AA2">آی‌پی</span>
+        <div style="height:5px;border-radius:5px;background:#F2F6FC;overflow:hidden">
+          <div style="height:5px;width:68%;border-radius:5px;background:linear-gradient(90deg,#FBBF24,#F59E0B)"></div>
         </div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0">
-          <span style="width:5px;height:5px;border-radius:50%;background:#F87189;flex:none"></span>
-          <span style="font-family:'Estedad';font-weight:800;font-size:10px;color:#8C6A76;direction:ltr">۱۸۵.۵۵ ••• ۴</span>
-          <span style="margin-right:auto;font-size:8.5px;color:#B99AA2">آی‌پی</span>
-        </div>
+      </div>
 
-        <div style="margin-top:auto;padding-top:9px;font-size:9px;color:#A3B6CD;line-height:1.7">
-          این شماره‌ها حتی با کد درست هم وارد نمی‌شوند.
+      <div style="width:1px;background:#EDF3FB;margin:22px 0"></div>
+
+      <div style="flex:1;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:7px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:11.5px;font-weight:800;color:#12315E">فهرست مسدود</div>
+          <span style="font-size:8.5px;color:#A3B6CD">۴ مورد</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:9px;color:#8C6A76">
+          <span style="width:5px;height:5px;border-radius:50%;background:#F87189"></span>
+          <span style="font-family:'Estedad';font-weight:800;direction:ltr">۰۹۱۲ ••• ۸۸۴</span>
+          <span style="margin-right:auto;color:#C0A7AE">شماره</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:9px;color:#8C6A76">
+          <span style="width:5px;height:5px;border-radius:50%;background:#F87189"></span>
+          <span style="font-family:'Estedad';font-weight:800;direction:ltr">۰۹۳۵ ••• ۰۱۷</span>
+          <span style="margin-right:auto;color:#C0A7AE">شماره</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:9px;color:#8C6A76">
+          <span style="width:5px;height:5px;border-radius:50%;background:#F87189"></span>
+          <span style="font-family:'Estedad';font-weight:800;direction:ltr">۵.۲۲ ••• ۹۰</span>
+          <span style="margin-right:auto;color:#C0A7AE">آی‌پی</span>
         </div>
       </div>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۳ از ۰۸</div>
   </div>
 </section>
-
 <!-- ══════════════════ ۰۴ · زنجیرهٔ جایگزین ══════════════════ -->
-<section class="slide" id="s4">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۴</span><span class="sep"></span> تحویل بی‌وقفه</div>
+<section class="slide dark" id="s4">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark w" src="../infographic/img/ashna-logo-white.svg" alt="">
 
+  <div class="eyebrow"><span class="n">۰۴</span><span class="sep"></span> تحویل بی‌وقفه</div>
   <h2 class="t">یکی قطع شد،<br><em>بعدی می‌فرستد</em></h2>
   <p class="s">درگاه اصلی و سه پشتیبان پشت سر هم؛ هر درگاه ۵ ثانیه مهلت دارد و درگاه خراب ۵ دقیقه کنار می‌رود.</p>
   <div class="sig"></div>
 
-  <div class="stage" style="display:flex;gap:12px;height:auto">
+  <div class="art">
+    <svg width="692" height="516" style="position:absolute;inset:0;z-index:0;overflow:visible">
+      <defs>
+        <filter id="glowRose" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowMint" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowSoft" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
 
-    <div class="card" style="width:356px;padding:15px 16px 14px;border-radius:20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div style="font-family:'Estedad';font-weight:900;font-size:13.5px;color:#0B1B36">زنجیرهٔ ارسال</div>
-        <span class="pill" style="height:21px;font-size:9px;padding:0 8px">۴ درگاه</span>
+      <!-- lane 01 · broken -->
+      <path d="M400 131 H306" stroke="#F43F5E" stroke-opacity=".9" stroke-width="2.6" fill="none" filter="url(#glowRose)"/>
+      <path d="M262 131 H150" stroke="#F43F5E" stroke-opacity=".38" stroke-width="2.6" fill="none"/>
+      <g stroke="#F43F5E" stroke-opacity=".9" stroke-width="2.6">
+        <path d="m298 122 16 18M314 122 l-16 18"/>
+      </g>
+      <circle cx="402" cy="131" r="3.4" fill="#F43F5E"/>
+
+      <!-- lane 02 · queued -->
+      <path d="M400 261 H238" stroke="#F59E0B" stroke-opacity=".55" stroke-width="2.4" stroke-dasharray="9 8" fill="none"/>
+      <circle cx="232" cy="261" r="4" fill="none" stroke="#F59E0B" stroke-opacity=".6" stroke-width="2"/>
+      <circle cx="402" cy="261" r="3.4" fill="#F59E0B" fill-opacity=".8"/>
+
+      <!-- lane 03 · live -->
+      <path d="M400 391 H190 Q156 391 156 357 V300" stroke="#34D399" stroke-width="2.8" fill="none" filter="url(#glowMint)"/>
+      <path d="M190 391 Q156 391 156 430" stroke="#34D399" stroke-width="2.4" fill="none" stroke-opacity=".55"/>
+      <circle cx="402" cy="391" r="3.6" fill="#34D399"/>
+      <circle cx="156" cy="357" r="3.2" fill="#34D399" filter="url(#glowMint)"/>
+
+      <!-- bus + vias -->
+      <path d="M400 60 V 430" stroke="rgba(140,190,255,.16)" stroke-width="1.4" fill="none"/>
+      <circle cx="400" cy="60" r="4" fill="none" stroke="rgba(140,190,255,.4)" stroke-width="1.6"/>
+      <circle cx="400" cy="430" r="4" fill="none" stroke="rgba(140,190,255,.4)" stroke-width="1.6"/>
+    </svg>
+
+    <!-- jammed timer -->
+    <div style="position:absolute;left:214px;top:64px;z-index:3;display:flex;align-items:center;gap:6px;
+         padding:5px 9px;border-radius:999px;background:rgba(244,63,94,.14);border:1px solid rgba(244,63,94,.35)">
+      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#FDA4AF" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>
+      <span style="font-size:9px;font-weight:800;color:#FDA4AF">۵ ثانیه مهلت</span>
+    </div>
+
+    <!-- gateways -->
+    <div class="card" style="position:absolute;left:400px;top:98px;width:292px;height:66px;border-radius:16px;
+         display:flex;align-items:center;gap:10px;padding:0 13px;z-index:3;border-color:rgba(244,63,94,.32)">
+      <span class="ico" style="width:32px;height:32px;background:rgba(244,63,94,.14);color:#FDA4AF;border-radius:10px">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6.5h16v11H4z"/><path d="m4 7.5 8 6 8-6"/></svg></span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:800;color:#EAF3FF">SMS.ir <span style="font-weight:600;color:#7E9ABD;font-size:9px">· درگاه اصلی</span></div>
+        <div style="font-size:9px;color:#8FA9C9;margin-top:2px">بی‌پاسخ ماند · از چرخه بیرون رفت</div>
       </div>
+      <span class="pill bad" style="height:21px;font-size:8.5px;padding:0 8px">قطع</span>
+    </div>
 
-      <div style="position:relative;padding-right:26px">
-        <div style="position:absolute;right:11px;top:16px;bottom:58px;width:2px;border-radius:2px;
-             background:repeating-linear-gradient(180deg,#CFE0F5 0 6px,transparent 6px 12px)"></div>
+    <div class="card" style="position:absolute;left:400px;top:228px;width:292px;height:66px;border-radius:16px;
+         display:flex;align-items:center;gap:10px;padding:0 13px;z-index:3">
+      <span class="ico" style="width:32px;height:32px;background:rgba(245,158,11,.14);color:#FCD34D;border-radius:10px">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7.5"/><path d="M9 12h6M12 9v6"/></svg></span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:800;color:#EAF3FF">کاوه‌نگار <span style="font-weight:600;color:#7E9ABD;font-size:9px">· پشتیبان اول</span></div>
+        <div style="font-size:9px;color:#8FA9C9;margin-top:2px">در صف · ۵ دقیقه بعد دوباره تست می‌شود</div>
+      </div>
+      <span class="pill" style="height:21px;font-size:8.5px;padding:0 8px">در صف</span>
+    </div>
 
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;position:relative">
-          <span style="position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
-                background:#E9FBF2;border:2px solid #34D399;display:grid;place-items:center">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#0B8A5F" stroke-width="2.6"><path d="m5 12 5 5 9-10"/></svg></span>
-          <div style="flex:1;background:#F4FBF7;border:1.4px solid #CDF0DE;border-radius:12px;padding:9px 11px">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:11.5px;font-weight:800;color:#12315E">SMS.ir <span style="font-weight:600;color:#7E95B2;font-size:9.5px">· درگاه اصلی</span></div>
-              <span style="font-size:9px;font-weight:800;color:#0B8A5F">پاسخ داد</span>
-            </div>
-            <div style="font-size:9.5px;color:#7E95B2;margin-top:2px">کد ساخته و ارسال شد</div>
-          </div>
+    <div class="card" style="position:absolute;left:400px;top:358px;width:292px;height:66px;border-radius:16px;
+         display:flex;align-items:center;gap:10px;padding:0 13px;z-index:3;border-color:rgba(52,211,153,.35);
+         box-shadow:0 30px 60px -40px rgba(0,0,0,.9),0 0 0 1px rgba(52,211,153,.12),inset 0 1px 0 rgba(255,255,255,.08)">
+      <span class="ico" style="width:32px;height:32px;background:rgba(52,211,153,.16);color:#6EE7B7;border-radius:10px">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:800;color:#EAF3FF">ملی‌پیامک <span style="font-weight:600;color:#7E9ABD;font-size:9px">· پشتیبان دوم</span></div>
+        <div style="font-size:9px;color:#8FA9C9;margin-top:2px">همان کد را فرستاد · کاربر کاری نکرد</div>
+      </div>
+      <span class="pill ok" style="height:21px;font-size:8.5px;padding:0 8px">ارسال شد</span>
+    </div>
+
+    <!-- arrival node -->
+    <div style="position:absolute;left:40px;top:224px;width:116px;height:74px;border-radius:16px;z-index:3;
+         background:linear-gradient(160deg,rgba(52,211,153,.18),rgba(16,185,129,.06));
+         border:1px solid rgba(52,211,153,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+         box-shadow:0 24px 44px -34px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.1)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6EE7B7" stroke-width="2"><rect x="7" y="2.5" width="10" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
+      <div style="font-size:9.5px;font-weight:800;color:#C7F5E1">کد رسید</div>
+    </div>
+
+    <div style="position:absolute;left:0;bottom:52px;width:330px;display:flex;gap:9px;z-index:3">
+      <div class="card" style="flex:1;padding:12px 13px;border-radius:15px">
+        <div class="lbl" style="font-size:8.5px">کاربر متوجه نشد</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:21px;line-height:1;color:#EAF3FF">۱</span>
+          <span style="font-size:8.5px;color:#8FA9C9">پیامک رسید</span>
         </div>
-
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;position:relative">
-          <span style="position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
-                background:#FFF0F2;border:2px solid #F87189;display:grid;place-items:center">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#B42342" stroke-width="2.8"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
-          <div style="flex:1;background:#FFF8F9;border:1.4px solid #FBD9DF;border-radius:12px;padding:9px 11px">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:11.5px;font-weight:800;color:#12315E">کاوه‌نگار</div>
-              <span style="font-size:9px;font-weight:800;color:#B42342">بی‌پاسخ پس از ۵ ثانیه</span>
-            </div>
-            <div style="font-size:9.5px;color:#8C6A76;margin-top:2px">از چرخه بیرون رفت، ۵ دقیقه بعد دوباره تست می‌شود</div>
-          </div>
+      </div>
+      <div class="card" style="flex:1;padding:12px 13px;border-radius:15px">
+        <div class="lbl" style="font-size:8.5px">جایگزینی</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:21px;line-height:1;color:#6EE7B7">۴٫۲</span>
+          <span style="font-size:8.5px;color:#8FA9C9">ثانیه تا پشتیبان</span>
         </div>
-
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;position:relative">
-          <span style="position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
-                background:#F1F7FF;border:2px solid #60A5FA;display:grid;place-items:center">
-            <span style="width:7px;height:7px;border-radius:50%;background:#2563EB"></span></span>
-          <div style="flex:1;background:#F5F9FF;border:1.6px solid #93C5FD;border-radius:12px;padding:9px 11px;
-               box-shadow:0 12px 22px -18px rgba(37,99,235,.9)">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:11.5px;font-weight:800;color:#12315E">ملی‌پیامک <span style="font-weight:600;color:#7E95B2;font-size:9.5px">· پشتیبان اول</span></div>
-              <span style="font-size:8.5px;font-weight:800;color:#1D4ED8">در حال ارسال</span>
-            </div>
-            <div style="font-size:9.5px;color:#7E95B2;margin-top:2px">همان کد، بدون اینکه کاربر کاری کند</div>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;position:relative">
-          <span style="position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
-                background:#F3F7FD;border:2px solid #D5E3F5;display:grid;place-items:center">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#94A9C4" stroke-width="2.6"><circle cx="12" cy="12" r="4"/></svg></span>
-          <div style="flex:1;border:1.4px dashed #D8E5F7;border-radius:12px;padding:9px 11px">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:11.5px;font-weight:800;color:#5C7FA8">آی‌پی‌پنل <span style="font-weight:600;color:#94A9C4;font-size:9.5px">· پشتیبان دوم</span></div>
-              <span style="font-size:9px;font-weight:800;color:#94A9C4">آماده</span>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:9px;position:relative">
-          <span style="position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
-                background:#F3F7FD;border:2px solid #D5E3F5;display:grid;place-items:center">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#94A9C4" stroke-width="2.6"><circle cx="12" cy="12" r="4"/></svg></span>
-          <div style="flex:1;border:1.4px dashed #D8E5F7;border-radius:12px;padding:9px 11px">
-            <div style="font-size:11.5px;font-weight:800;color:#5C7FA8">کاربر کد را می‌گیرد</div>
-            <div style="font-size:9.5px;color:#94A9C4;margin-top:2px">فقط یک پیامک؛ نه خطا، نه فرم دوباره</div>
-          </div>
+      </div>
+      <div class="card" style="flex:1;padding:12px 13px;border-radius:15px">
+        <div class="lbl" style="font-size:8.5px">فرم دوباره</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:21px;line-height:1;color:#EAF3FF">۰</span>
+          <span style="font-size:8.5px;color:#8FA9C9">بار</span>
         </div>
       </div>
     </div>
 
-    <div style="width:324px;display:flex;flex-direction:column;gap:12px">
-      <div class="card" style="padding:14px 15px;border-radius:18px">
-        <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#0B1B36;margin-bottom:10px">تنظیمات زنجیره</div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EFF4FB">
-          <span style="font-size:11px;color:#5C7FA8">مهلت هر درگاه</span>
-          <span style="font-size:11px;font-weight:800;color:#1E4C8F">۵ ثانیه</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EFF4FB">
-          <span style="font-size:11px;color:#5C7FA8">استراحت درگاه خراب</span>
-          <span style="font-size:11px;font-weight:800;color:#1E4C8F">۵ دقیقه</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-          <span style="font-size:11px;color:#5C7FA8">بررسی سلامت مسیر</span>
-          <span style="font-size:11px;font-weight:800;color:#1E4C8F">هر ۵ دقیقه</span>
-        </div>
-      </div>
-
-      <div class="card" style="padding:13px 15px;border-radius:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:11.5px;font-weight:800;color:#12315E">تشخیص تطبیقی</div>
-          <span style="width:30px;height:18px;border-radius:99px;background:#2563EB;position:relative;flex:none">
-            <i style="position:absolute;left:2.5px;top:2.5px;width:13px;height:13px;border-radius:50%;background:#fff"></i></span>
-        </div>
-        <div style="font-size:10px;color:#7E95B2;line-height:1.85">زمان پاسخِ عادی هر درگاه یاد گرفته می‌شود؛ اگر کندتر شد، زودتر سراغ بعدی می‌رود.</div>
-      </div>
-
-      <div class="card" style="padding:13px 15px;border-radius:18px;flex:1;display:flex;flex-direction:column">
-        <div style="font-size:10.5px;color:#8AA0BC;margin-bottom:8px">آخرین تلاش‌ها</div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:6px;height:6px;border-radius:50%;background:#34D399"></span>SMS.ir <span style="margin-right:auto;color:#94A9C4">۱۲:۰۴:۰۲</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:6px;height:6px;border-radius:50%;background:#F87189"></span>کاوه‌نگار <span style="margin-right:auto;color:#94A9C4">۱۲:۰۴:۰۷</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:7px;padding:5px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:6px;height:6px;border-radius:50%;background:#60A5FA"></span>ملی‌پیامک <span style="margin-right:auto;color:#94A9C4">۱۲:۰۴:۰۸</span>
-        </div>
-        <div style="margin-top:auto;padding-top:10px;border-top:1px solid #EFF4FB;font-size:9px;color:#A3B6CD;line-height:1.7">
-          گزارش کامل هر تلاش در تب لاگ می‌ماند.
-        </div>
-      </div>
+    <div style="position:absolute;left:0;right:0;bottom:2px;display:flex;align-items:center;gap:9px;z-index:3">
+      <span class="pill" style="height:24px;font-size:9px;padding:0 10px">مهلت هر درگاه ۵ ثانیه</span>
+      <span class="pill" style="height:24px;font-size:9px;padding:0 10px">استراحت ۵ دقیقه</span>
+      <span class="pill" style="height:24px;font-size:9px;padding:0 10px">تشخیص تطبیقی</span>
+      <span style="margin-right:auto;font-size:9px;color:#7E9ABD">هر تلاش در لاگ می‌ماند</span>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۴ از ۰۸</div>
   </div>
 </section>
 
-<!-- ══════════════════ ۰۵ · ورود اجتماعی ══════════════════ -->
+<!-- ══════════════════ ۰۵ · گوگل و تلگرام ══════════════════ -->
 <section class="slide" id="s5">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۵</span><span class="sep"></span> گوگل و تلگرام</div>
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
 
-  <h2 class="t">ورود با گوگل و تلگرام،<br><em>در همان فرم</em></h2>
-  <p class="s">دو دکمه زیر فرم ورود؛ تلگرام شمارهٔ تأییدشده را می‌آورد، گوگل ایمیل را. حساب همان‌جا ساخته می‌شود.</p>
+  <div class="eyebrow"><span class="n">۰۵</span><span class="sep"></span> ورود اجتماعی</div>
+  <h2 class="t">دو در،<br><em>یک حساب کاربری</em></h2>
+  <p class="s">گوگل ایمیل را می‌آورد، تلگرام شمارهٔ تأییدشده را. هر دو داخل همان فرم ورود کار می‌کنند، نه صفحهٔ جدا.</p>
   <div class="sig"></div>
 
-  <div class="stage" style="display:flex;gap:12px;align-items:flex-start">
+  <div class="art">
+    <!-- beams -->
+    <div class="bleed" style="position:absolute;left:118px;top:196px;width:250px;height:64px;transform:rotate(-4deg);
+         background:linear-gradient(90deg,rgba(66,133,244,.42),rgba(66,133,244,0));filter:blur(16px);z-index:0"></div>
+    <div class="bleed" style="position:absolute;right:118px;top:196px;width:250px;height:64px;transform:rotate(4deg);
+         background:linear-gradient(270deg,rgba(34,158,217,.45),rgba(34,158,217,0));filter:blur(16px);z-index:0"></div>
 
-    <div class="card" style="width:330px;padding:20px 20px 18px;border-radius:22px">
-      <div style="display:grid;place-items:center;width:52px;height:52px;border-radius:15px;background:#F1F7FF;border:1px solid #DCE9FA;margin:0 auto 12px">
-        <img src="../infographic/img/ashna-icon.svg" alt="" style="height:28px;width:auto">
-      </div>
-      <div style="text-align:center;font-family:'Estedad';font-weight:900;font-size:17px;color:#0B1B36">ورود / ثبت‌نام</div>
-      <div style="text-align:center;font-size:10.5px;color:#7E95B2;line-height:1.8;margin-top:5px">شماره موبایل یا ایمیل خود را وارد کنید.</div>
-
-      <div style="margin-top:14px;height:40px;border:1.4px solid #DCE8F6;border-radius:11px;display:flex;align-items:center;padding:0 12px;gap:8px;background:#FCFDFF">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#A9BDD6" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M11 18h2"/></svg>
-        <span style="font-size:10.5px;color:#A9BDD6">۰۹۱۲ ...</span>
-      </div>
-
-      <div class="btn" style="height:41px;font-size:13px;margin-top:10px;border-radius:11px">دریافت کد تأیید</div>
-
-      <div style="display:flex;align-items:center;gap:9px;margin:14px 0 12px">
-        <span style="height:1px;background:#E6EEF9;flex:1"></span>
-        <span style="font-size:9.5px;color:#A9BDD6">یا ادامه با</span>
-        <span style="height:1px;background:#E6EEF9;flex:1"></span>
-      </div>
-
-      <div style="display:flex;gap:9px">
-        <div style="flex:1;height:38px;border:1.4px solid #E2EAF6;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff">
-          <svg viewBox="0 0 24 24" width="15" height="15"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg>
-          <span style="font-size:10.5px;font-weight:800;color:#3C5573">گوگل</span>
+    <!-- google tile -->
+    <div style="position:absolute;left:14px;top:44px;width:186px;height:330px;border-radius:26px;z-index:2;
+         transform:rotate(-7deg);transform-origin:80% 90%;
+         background:linear-gradient(165deg,#FFFFFF,#F2F7FF 58%,#E3EDFB);
+         border:1px solid rgba(203,222,244,.95);
+         box-shadow:0 46px 70px -46px rgba(7,26,56,.62),inset 0 1px 0 #fff">
+      <div style="position:absolute;inset:0;border-radius:26px;padding:18px;display:flex;flex-direction:column">
+        <div style="width:56px;height:56px;border-radius:18px;display:grid;place-items:center;
+             background:linear-gradient(160deg,#FFFFFF,#EFF4FF);border:1px solid #DCE8F8;
+             box-shadow:0 16px 26px -18px rgba(66,133,244,.7)">
+          <svg viewBox="0 0 24 24" width="30" height="30">
+            <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/>
+            <path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/>
+            <path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5z"/>
+            <path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6z"/>
+          </svg>
         </div>
-        <div style="flex:1;height:38px;border:1.4px solid #CFE9F6;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:7px;background:#F6FCFF">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#229ED9" stroke-width="1.9"><path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/></svg>
-          <span style="font-size:10.5px;font-weight:800;color:#17708F">تلگرام</span>
+        <div style="margin-top:16px">
+          <div style="font-family:'Estedad';font-weight:900;font-size:15px;color:#12315E">گوگل</div>
+          <div style="font-size:9.5px;color:#8AA0BC;margin-top:4px;line-height:1.8">همان حساب گوگل کاربر</div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.82);border:1px solid #E4EEFA;border-radius:8px;padding:6px 8px">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#4285F4" stroke-width="2.6"><path d="m5 12 4.5 4.5L19 6"/></svg>
+            <span style="font-size:8.5px;color:#3E5C82;font-weight:700">ایمیل تأییدشده</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.82);border:1px solid #E4EEFA;border-radius:8px;padding:6px 8px">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#4285F4" stroke-width="2.6"><path d="m5 12 4.5 4.5L19 6"/></svg>
+            <span style="font-size:8.5px;color:#3E5C82;font-weight:700">نام و تصویر پروفایل</span>
+          </div>
+        </div>
+
+        <div style="margin-top:auto;display:inline-flex;align-items:center;gap:5px;font-size:8px;color:#7E95B2;
+             background:rgba(255,255,255,.8);border:1px solid #E2ECF9;border-radius:7px;padding:4px 7px;align-self:flex-start">
+          OIDC · PKCE · state
         </div>
       </div>
-
-      <div style="font-size:9.5px;color:#93A8C3;line-height:1.8;text-align:center;margin-top:13px">
-        حساب در همان اولین ورود ساخته می‌شود؛ فرم ثبت‌نام جدا لازم نیست.
-      </div>
-
-      <div style="height:1px;background:#EFF4FB;margin:14px 0 11px"></div>
-      <div style="text-align:center;font-size:10.5px;font-weight:800;color:#2C63C6">ورود با رمز عبور ثابت</div>
     </div>
 
-    <div style="width:350px;display:flex;flex-direction:column;gap:12px">
-      <div class="card" style="padding:15px 16px;border-radius:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
-          <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#0B1B36">آدرس بازگشت</div>
-          <span class="pill" style="height:20px;font-size:8.5px;padding:0 7px">هر سرویس جدا</span>
+    <!-- telegram tile -->
+    <div style="position:absolute;right:14px;top:44px;width:186px;height:330px;border-radius:26px;z-index:2;
+         transform:rotate(7deg);transform-origin:20% 90%;
+         background:linear-gradient(165deg,#FFFFFF,#EEFAFF 58%,#DDF3FD);
+         border:1px solid rgba(190,229,246,.95);
+         box-shadow:0 46px 70px -46px rgba(7,26,56,.62),inset 0 1px 0 #fff">
+      <div style="position:absolute;inset:0;border-radius:26px;padding:18px;display:flex;flex-direction:column">
+        <div style="width:56px;height:56px;border-radius:18px;display:grid;place-items:center;
+             background:linear-gradient(160deg,#F6FDFF,#E4F7FF);border:1px solid #C9EAF8;
+             box-shadow:0 16px 26px -18px rgba(34,158,217,.75)">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#229ED9" stroke-width="1.7" stroke-linejoin="round">
+            <path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/>
+          </svg>
+        </div>
+        <div style="margin-top:16px">
+          <div style="font-family:'Estedad';font-weight:900;font-size:15px;color:#12315E">تلگرام</div>
+          <div style="font-size:9.5px;color:#8AA0BC;margin-top:4px;line-height:1.8">بدون کد پیامکی، بدون فرم</div>
         </div>
 
-        <div style="font-size:9.5px;color:#7E95B2;margin-bottom:4px">گوگل</div>
-        <div style="display:flex;align-items:center;gap:7px;background:#F7FAFF;border:1px solid #E4EEFA;border-radius:9px;padding:7px 9px;direction:ltr">
-          <span style="font-size:8.5px;color:#3E5C82;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">/ashna-sso/callback/google/</span>
-          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#8FA8C6" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 5H5v10"/></svg>
-        </div>
-
-        <div style="font-size:9.5px;color:#7E95B2;margin:9px 0 4px">تلگرام</div>
-        <div style="display:flex;align-items:center;gap:7px;background:#F7FAFF;border:1px solid #E4EEFA;border-radius:9px;padding:7px 9px;direction:ltr">
-          <span style="font-size:8.5px;color:#3E5C82;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">/ashna-sso/callback/telegram/</span>
-          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#8FA8C6" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 5H5v10"/></svg>
-        </div>
-
-        <div style="font-size:9.5px;color:#94A9C4;line-height:1.8;margin-top:9px">مراحل ساخت اپ در کنسول گوگل و BotFather، زیر همان فیلد نوشته شده است.</div>
-      </div>
-
-      <div class="card" style="padding:13px 16px;border-radius:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0">
-          <div>
-            <div style="font-size:11px;font-weight:800;color:#12315E">نمایش روی فرم‌ها</div>
-            <div style="font-size:9.5px;color:#8AA0BC;margin-top:2px">صفحهٔ ورود، مودال و ووکامرس</div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.82);border:1px solid #D8EFFA;border-radius:8px;padding:6px 8px">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#229ED9" stroke-width="2.6"><path d="m5 12 4.5 4.5L19 6"/></svg>
+            <span style="font-size:8.5px;color:#17708F;font-weight:700">شمارهٔ تأییدشده</span>
           </div>
-          <span style="width:30px;height:18px;border-radius:99px;background:#2563EB;position:relative;flex:none">
-            <i style="position:absolute;left:2.5px;top:2.5px;width:13px;height:13px;border-radius:50%;background:#fff"></i></span>
-        </div>
-        <div style="height:1px;background:#EFF4FB;margin:6px 0"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0">
-          <div>
-            <div style="font-size:11px;font-weight:800;color:#12315E">گرفتن شماره در اولین ورود</div>
-            <div style="font-size:9.5px;color:#8AA0BC;margin-top:2px">اگر سرویس شماره نداشت</div>
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.82);border:1px solid #D8EFFA;border-radius:8px;padding:6px 8px">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#229ED9" stroke-width="2.6"><path d="m5 12 4.5 4.5L19 6"/></svg>
+            <span style="font-size:8.5px;color:#17708F;font-weight:700">نام نمایشی</span>
           </div>
-          <span style="width:30px;height:18px;border-radius:99px;background:#2563EB;position:relative;flex:none">
-            <i style="position:absolute;left:2.5px;top:2.5px;width:13px;height:13px;border-radius:50%;background:#fff"></i></span>
+        </div>
+
+        <div style="margin-top:auto;display:inline-flex;align-items:center;gap:5px;font-size:8px;color:#17708F;
+             background:rgba(255,255,255,.8);border:1px solid #D8EFFA;border-radius:7px;padding:4px 7px;align-self:flex-start">
+          BotFather · OIDC
         </div>
       </div>
+    </div>
 
-      <div class="card" style="padding:13px 16px;border-radius:18px">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0B8A5F" stroke-width="2"><path d="M12 3 4 6v6c0 5 3.4 7.9 8 9 4.6-1.1 8-4 8-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
-          <div style="font-size:11px;font-weight:800;color:#12315E">چرا امن است</div>
+    <!-- gate -->
+    <div style="position:absolute;left:251px;top:22px;width:190px;height:410px;z-index:3">
+      <div class="bleed" style="position:absolute;inset:-14px;border-radius:34px;
+           background:radial-gradient(60% 46% at 50% 32%,rgba(37,99,235,.30),transparent 70%);filter:blur(14px)"></div>
+      <div style="position:absolute;inset:0;border-radius:28px;overflow:hidden;
+           background:linear-gradient(170deg,#0B2450,#071A38 60%,#05122B);
+           border:1px solid rgba(125,190,255,.28);
+           box-shadow:0 50px 80px -50px rgba(7,26,56,.9),inset 0 1px 0 rgba(255,255,255,.14)">
+        <div style="position:absolute;left:0;right:0;top:0;height:1px;
+             background:linear-gradient(90deg,transparent,rgba(125,211,252,.9),transparent)"></div>
+        <div style="position:absolute;inset:0;background:
+             radial-gradient(70% 40% at 50% 8%,rgba(56,189,248,.35),transparent 66%)"></div>
+        <div style="position:absolute;inset:0;padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center">
+          <img src="../infographic/img/ashna-icon.svg" alt="" style="height:52px;width:auto;filter:drop-shadow(0 12px 22px rgba(56,189,248,.5))">
+          <div style="margin-top:12px;font-family:'Estedad';font-weight:900;font-size:15px;color:#F2F8FF">یک حساب</div>
+          <div style="font-size:9px;color:#8FB3D8;margin-top:4px;line-height:1.8">با هر دو راه،<br>همان کاربر</div>
+
+          <div style="margin-top:16px;width:100%;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:7px;
+               background:linear-gradient(180deg,#3B82F6,#1D4ED8);color:#fff;font-size:11.5px;font-weight:800;
+               box-shadow:0 18px 30px -16px rgba(37,99,235,.95)">
+            ادامه با شماره
+          </div>
+
+          <div style="margin-top:10px;width:100%;display:flex;align-items:center;gap:6px">
+            <span style="height:1px;background:rgba(140,190,255,.22);flex:1"></span>
+            <span style="font-size:8px;color:#7E9ABD">یا</span>
+            <span style="height:1px;background:rgba(140,190,255,.22);flex:1"></span>
+          </div>
+
+          <div style="margin-top:10px;width:100%;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;
+               background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.9);color:#1B2A44;font-size:10.5px;font-weight:800">
+            <svg viewBox="0 0 24 24" width="15" height="15">
+              <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/>
+              <path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/>
+              <path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5z"/>
+              <path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6z"/>
+            </svg>
+            ورود با گوگل
+          </div>
+          <div style="margin-top:8px;width:100%;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;
+               background:rgba(34,158,217,.16);border:1px solid rgba(34,158,217,.45);color:#A6E4FB;font-size:10.5px;font-weight:800">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/></svg>
+            ورود با تلگرام
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:4px;height:4px;border-radius:50%;background:#34D399"></span>PKCE با SHA-256 روی هر ورود
+      </div>
+    </div>
+
+    <!-- callback chips -->
+    <div style="position:absolute;left:14px;top:392px;width:186px;z-index:4" dir="ltr">
+      <div style="background:rgba(255,255,255,.9);border:1px solid rgba(214,229,247,.95);border-radius:10px;
+           padding:8px 9px;font-size:7.5px;color:#3E5C82;font-family:monospace;box-shadow:0 14px 24px -22px rgba(7,26,56,.7)">
+        /ashna-sso/callback/google/
+      </div>
+    </div>
+    <div style="position:absolute;right:14px;top:392px;width:186px;z-index:4" dir="ltr">
+      <div style="background:rgba(255,255,255,.9);border:1px solid rgba(214,229,247,.95);border-radius:10px;
+           padding:8px 9px;font-size:7.5px;color:#3E5C82;font-family:monospace;box-shadow:0 14px 24px -22px rgba(7,26,56,.7)">
+        /ashna-sso/callback/telegram/
+      </div>
+    </div>
+
+    <div class="card" style="position:absolute;left:0;right:0;bottom:2px;padding:13px 16px;border-radius:16px;z-index:4">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="ico" style="width:26px;height:26px;background:#EAFBF2;color:#0B8A5F">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 5 3.4 7.9 8 9 4.6-1.1 8-4 8-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span>
+        <div style="flex:1;font-size:9.5px;color:#5C7FA8;line-height:1.75">
+          <b style="color:#12315E">PKCE با SHA-256</b>، حالت یک‌بارمصرف و نگه‌داشتن کلید سرویس سمت سرور.
         </div>
-        <div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:4px;height:4px;border-radius:50%;background:#34D399"></span>state یک‌بارمصرف، جلوی بازپخش را می‌گیرد
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:9.5px;color:#5C7FA8">
-          <span style="width:4px;height:4px;border-radius:50%;background:#34D399"></span>کلید سرویس هیچ‌وقت به مرورگر نمی‌رود
-        </div>
+        <span class="pill ok" style="height:22px;font-size:8.5px">امن</span>
       </div>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۵ از ۰۸</div>
   </div>
 </section>
 
 <!-- ══════════════════ ۰۶ · ظاهر ══════════════════ -->
 <section class="slide" id="s6">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۶</span><span class="sep"></span> استودیوی ظاهر</div>
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <div class="bleed" style="position:absolute;left:-90px;top:300px;width:340px;height:340px;border-radius:50%;
+       background:radial-gradient(circle,rgba(244,114,182,.30),transparent 66%);filter:blur(26px);z-index:0"></div>
+  <div class="bleed" style="position:absolute;right:-70px;top:80px;width:320px;height:320px;border-radius:50%;
+       background:radial-gradient(circle,rgba(56,189,248,.30),transparent 66%);filter:blur(26px);z-index:0"></div>
+  <div class="bleed" style="position:absolute;left:180px;top:60px;width:300px;height:300px;border-radius:50%;
+       background:radial-gradient(circle,rgba(16,185,129,.22),transparent 66%);filter:blur(30px);z-index:0"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
 
+  <div class="eyebrow"><span class="n">۰۶</span><span class="sep"></span> استودیوی ظاهر</div>
   <h2 class="t">فرم را همرنگ<br><em>سایت خودت کن</em></h2>
-  <p class="s">چهار پیش‌فرض آماده، رنگ دکمه، گردی گوشه و سبک خانه‌های کد؛ پیش‌نمایش همان‌جا و بدون ذخیره زنده است.</p>
+  <p class="s">چهار پیش‌فرض آماده، رنگ دلخواه برای دکمه، گردی گوشه و سبک خانه‌های کد؛ پیش‌نمایش همان لحظه عوض می‌شود.</p>
   <div class="sig"></div>
 
-  <div class="stage" style="display:flex;gap:12px;align-items:flex-start;height:auto">
-
-    <div class="card" style="width:340px;padding:15px 16px;border-radius:20px">
-      <div style="font-size:10.5px;color:#8AA0BC;margin-bottom:8px">پیش‌فرض</div>
-      <div style="display:flex;gap:8px">
-        <div style="flex:1;text-align:center">
-          <div style="height:44px;border-radius:11px;background:linear-gradient(160deg,#60A5FA,#2563EB);border:2px solid #1D4ED8"></div>
-          <div style="font-size:8.5px;color:#5C7FA8;margin-top:5px">مدرن آبی</div>
-        </div>
-        <div style="flex:1;text-align:center">
-          <div style="height:44px;border-radius:11px;background:linear-gradient(160deg,#FB7185,#E11D48);border:2px solid #FECDD3"></div>
-          <div style="font-size:8.5px;color:#5C7FA8;margin-top:5px">دیجی‌استایل</div>
-        </div>
-        <div style="flex:1;text-align:center">
-          <div style="height:44px;border-radius:11px;background:linear-gradient(160deg,#34D399,#059669);border:2px solid #A7F3D0"></div>
-          <div style="font-size:8.5px;color:#5C7FA8;margin-top:5px">زمردی</div>
-        </div>
-        <div style="flex:1;text-align:center">
-          <div style="height:44px;border-radius:11px;background:linear-gradient(160deg,#334155,#0F172A);border:2px solid #1E293B"></div>
-          <div style="font-size:8.5px;color:#5C7FA8;margin-top:5px">لوکس تاریک</div>
+  <div class="art">
+    <!-- fan of presets -->
+    <div style="position:absolute;left:0;top:0;width:420px;height:516px;z-index:1">
+      <div style="position:absolute;left:22px;top:82px;width:166px;height:216px;border-radius:18px;
+           transform:rotate(-26deg);transform-origin:80% 92%;
+           background:linear-gradient(165deg,#475569,#0F172A 62%,#020617);
+           border:1px solid rgba(255,255,255,.10);
+           box-shadow:0 40px 60px -44px rgba(7,26,56,.9)">
+        <div style="position:absolute;left:14px;bottom:16px;width:98px;height:58px;border-radius:9px;
+             background:rgba(255,255,255,.95);box-shadow:0 10px 20px -12px rgba(0,0,0,.7);padding:9px 9px 0">
+          <div style="height:4px;width:58%;border-radius:2px;background:#D5E2F2"></div>
+          <div style="height:4px;width:38%;border-radius:2px;background:#E8F0FA;margin-top:4px"></div>
+          <div style="height:11px;border-radius:4px;background:#0F172A;margin-top:8px"></div>
         </div>
       </div>
 
-      <div style="height:1px;background:#EFF4FB;margin:13px 0 11px"></div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
-        <div style="font-size:10.5px;color:#8AA0BC">رنگ دکمه</div>
-        <span style="font-size:9.5px;font-weight:800;color:#1E4C8F;direction:ltr">#2563EB</span>
-      </div>
-      <div style="display:flex;gap:8px">
-        <span style="width:26px;height:26px;border-radius:8px;background:#2563EB;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2563EB"></span>
-        <span style="width:26px;height:26px;border-radius:8px;background:#7C3AED"></span>
-        <span style="width:26px;height:26px;border-radius:8px;background:#059669"></span>
-        <span style="width:26px;height:26px;border-radius:8px;background:#E11D48"></span>
-        <span style="width:26px;height:26px;border-radius:8px;background:#EA580C"></span>
-        <span style="width:26px;height:26px;border-radius:8px;background:#0F172A"></span>
-        <span style="width:26px;height:26px;border-radius:8px;border:1.4px dashed #C7D9F2;display:grid;place-items:center">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#8FA8C6" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
-      </div>
-
-      <div style="height:1px;background:#EFF4FB;margin:13px 0 11px"></div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-size:10.5px;color:#8AA0BC">گردی گوشه</div>
-        <span style="font-size:9.5px;font-weight:800;color:#1E4C8F">۱۶ پیکسل</span>
-      </div>
-      <div style="position:relative;height:6px;border-radius:6px;background:#E4EEFB">
-        <div style="position:absolute;right:0;top:0;height:6px;width:52%;border-radius:6px;background:linear-gradient(90deg,#38BDF8,#2563EB)"></div>
-        <span style="position:absolute;top:-5px;right:calc(52% - 8px);width:16px;height:16px;border-radius:50%;background:#fff;border:2.5px solid #2563EB;
-              box-shadow:0 4px 10px -2px rgba(37,99,235,.5)"></span>
-      </div>
-
-      <div style="height:1px;background:#EFF4FB;margin:14px 0 11px"></div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
-        <div style="font-size:10.5px;color:#8AA0BC">عرض فرم</div>
-        <span style="font-size:9.5px;font-weight:800;color:#1E4C8F">۴۲۰ پیکسل</span>
-      </div>
-      <div style="position:relative;height:6px;border-radius:6px;background:#E4EEFB">
-        <div style="position:absolute;right:0;top:0;height:6px;width:64%;border-radius:6px;background:linear-gradient(90deg,#38BDF8,#2563EB)"></div>
-        <span style="position:absolute;top:-5px;right:calc(64% - 8px);width:16px;height:16px;border-radius:50%;background:#fff;border:2.5px solid #2563EB;
-              box-shadow:0 4px 10px -2px rgba(37,99,235,.5)"></span>
-      </div>
-
-      <div style="height:1px;background:#EFF4FB;margin:16px 0 11px"></div>
-
-      <div style="font-size:10.5px;color:#8AA0BC;margin-bottom:9px">چیدمان</div>
-      <div style="display:flex;gap:7px">
-        <div style="flex:1;height:30px;border:1.6px solid #93C5FD;background:#F5F9FF;border-radius:9px;display:grid;place-items:center;font-size:8.5px;font-weight:800;color:#1D4ED8">کارت</div>
-        <div style="flex:1;height:30px;border:1px solid #E4EEFA;border-radius:9px;display:grid;place-items:center;font-size:8.5px;font-weight:700;color:#7E95B2">اسپلیت راست</div>
-        <div style="flex:1;height:30px;border:1px solid #E4EEFA;border-radius:9px;display:grid;place-items:center;font-size:8.5px;font-weight:700;color:#7E95B2">اسپلیت چپ</div>
-      </div>
-
-      <div style="height:1px;background:#EFF4FB;margin:14px 0 11px"></div>
-
-      <div style="font-size:10.5px;color:#8AA0BC;margin-bottom:9px">سبک خانه‌های کد</div>
-      <div style="display:flex;gap:7px">
-        <div style="flex:1;border:1.6px solid #93C5FD;background:#F5F9FF;border-radius:9px;padding:6px 0;display:flex;gap:3px;justify-content:center">
-          <span style="width:14px;height:19px;border-radius:4px;background:#DBEAFE;border:1px solid #BFDBFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۸</span>
-          <span style="width:14px;height:19px;border-radius:4px;background:#DBEAFE;border:1px solid #BFDBFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۴</span>
-          <span style="width:14px;height:19px;border-radius:4px;background:#DBEAFE;border:1px solid #BFDBFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۹</span>
+      <div style="position:absolute;left:44px;top:60px;width:166px;height:216px;border-radius:18px;
+           transform:rotate(-17deg);transform-origin:78% 92%;
+           background:linear-gradient(165deg,#FB7185,#E11D48 64%,#9F1239);
+           border:1px solid rgba(255,255,255,.22);
+           box-shadow:0 40px 60px -44px rgba(190,18,60,.75)">
+        <div style="position:absolute;left:14px;bottom:16px;width:98px;height:58px;border-radius:9px;
+             background:rgba(255,255,255,.95);box-shadow:0 10px 20px -12px rgba(0,0,0,.7);padding:9px 9px 0">
+          <div style="height:4px;width:58%;border-radius:2px;background:#D5E2F2"></div>
+          <div style="height:4px;width:38%;border-radius:2px;background:#E8F0FA;margin-top:4px"></div>
+          <div style="height:11px;border-radius:4px;background:#E11D48;margin-top:8px"></div>
         </div>
-        <div style="flex:1;border:1px solid #E4EEFA;border-radius:9px;padding:6px 0;display:flex;gap:3px;justify-content:center">
-          <span style="width:14px;height:19px;border-bottom:2px solid #93C5FD;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۸</span>
-          <span style="width:14px;height:19px;border-bottom:2px solid #93C5FD;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۴</span>
-          <span style="width:14px;height:19px;border-bottom:2px solid #93C5FD;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۹</span>
+      </div>
+
+      <div style="position:absolute;left:76px;top:44px;width:166px;height:216px;border-radius:18px;
+           transform:rotate(-8.5deg);transform-origin:76% 92%;
+           background:linear-gradient(165deg,#34D399,#059669 64%,#065F46);
+           border:1px solid rgba(255,255,255,.24);
+           box-shadow:0 40px 60px -44px rgba(5,150,105,.75)">
+        <div style="position:absolute;left:14px;bottom:16px;width:98px;height:58px;border-radius:9px;
+             background:rgba(255,255,255,.95);box-shadow:0 10px 20px -12px rgba(0,0,0,.7);padding:9px 9px 0">
+          <div style="height:4px;width:58%;border-radius:2px;background:#D5E2F2"></div>
+          <div style="height:4px;width:38%;border-radius:2px;background:#E8F0FA;margin-top:4px"></div>
+          <div style="height:11px;border-radius:4px;background:#059669;margin-top:8px"></div>
         </div>
-        <div style="flex:1;border:1px solid #E4EEFA;border-radius:9px;padding:6px 0;display:flex;gap:3px;justify-content:center">
-          <span style="width:14px;height:19px;border-radius:99px;background:#DBEAFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۸</span>
-          <span style="width:14px;height:19px;border-radius:99px;background:#DBEAFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۴</span>
-          <span style="width:14px;height:19px;border-radius:99px;background:#DBEAFE;display:grid;place-items:center;font-size:8px;font-weight:900;color:#2563EB">۹</span>
+      </div>
+
+      <div style="position:absolute;left:112px;top:34px;width:166px;height:216px;border-radius:18px;
+           transform:rotate(-1deg);transform-origin:74% 92%;
+           background:linear-gradient(165deg,#60A5FA,#2563EB 64%,#1E3A8A);
+           border:1px solid rgba(255,255,255,.28);
+           box-shadow:0 40px 60px -44px rgba(29,78,216,.8)">
+        <div style="position:absolute;left:14px;bottom:16px;width:98px;height:58px;border-radius:9px;
+             background:rgba(255,255,255,.95);box-shadow:0 10px 20px -12px rgba(0,0,0,.7);padding:9px 9px 0">
+          <div style="height:4px;width:58%;border-radius:2px;background:#D5E2F2"></div>
+          <div style="height:4px;width:38%;border-radius:2px;background:#E8F0FA;margin-top:4px"></div>
+          <div style="height:11px;border-radius:4px;background:#2563EB;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- real preview card on top -->
+      <div style="position:absolute;left:150px;top:18px;width:250px;height:322px;border-radius:18px;overflow:hidden;
+           transform:rotate(4.5deg);transform-origin:20% 92%;
+           background:#0B1B36;border:1px solid rgba(255,255,255,.14);
+           box-shadow:0 54px 80px -46px rgba(7,26,56,.95),inset 0 1px 0 rgba(255,255,255,.14)">
+        <img src="../infographic/img/appearance.webp" alt="پیش‌نمایش زندهٔ استودیوی ظاهر"
+             style="width:100%;display:block">
+        <div style="position:absolute;left:0;right:0;bottom:0;height:44px;
+             background:linear-gradient(180deg,rgba(11,27,54,0),rgba(11,27,54,.92))"></div>
+        <div style="position:absolute;right:12px;bottom:11px;font-size:9px;font-weight:800;color:#DBEAFE">پیش‌نمایش زنده</div>
+        <div style="position:absolute;left:12px;bottom:11px;display:flex;gap:4px">
+          <span style="width:16px;height:16px;border-radius:5px;background:#2563EB;box-shadow:0 0 0 1.5px rgba(255,255,255,.7)"></span>
+          <span style="width:16px;height:16px;border-radius:5px;background:#E11D48"></span>
+          <span style="width:16px;height:16px;border-radius:5px;background:#059669"></span>
+          <span style="width:16px;height:16px;border-radius:5px;background:#0F172A;border:1px solid rgba(255,255,255,.35)"></span>
         </div>
       </div>
     </div>
 
-    <div style="width:340px;display:flex;flex-direction:column;gap:10px">
-      <div class="card" style="padding:9px;border-radius:18px">
-        <div style="display:flex;align-items:center;gap:6px;margin:2px 0 7px 0">
-          <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
-          <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
-          <span style="width:7px;height:7px;border-radius:50%;background:#CBD9EA"></span>
-          <span style="margin-right:auto;font-size:8.5px;color:#A9BDD6">استودیوی ظاهر</span>
+    <!-- control panel -->
+    <div class="glass" style="position:absolute;right:0;top:26px;width:250px;padding:16px;border-radius:20px;z-index:3;
+         transform:rotate(-1.6deg)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+        <div style="font-family:'Estedad';font-weight:900;font-size:12px;color:#0B1B36">ظاهر فرم</div>
+        <span class="pill" style="height:19px;font-size:8px;padding:0 7px">زنده</span>
+      </div>
+
+      <div class="lbl" style="margin-bottom:6px">رنگ دکمه</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <span style="width:24px;height:24px;border-radius:7px;background:#2563EB;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2563EB"></span>
+        <span style="width:24px;height:24px;border-radius:7px;background:#7C3AED"></span>
+        <span style="width:24px;height:24px;border-radius:7px;background:#E11D48"></span>
+        <span style="width:24px;height:24px;border-radius:7px;background:#059669"></span>
+        <span style="width:24px;height:24px;border-radius:7px;background:#EA580C"></span>
+        <span style="width:24px;height:24px;border-radius:7px;background:#0F172A"></span>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span class="lbl">گردی گوشه</span>
+        <span style="font-size:9px;font-weight:800;color:#1E4C8F">۱۶</span>
+      </div>
+      <div style="position:relative;height:5px;border-radius:5px;background:#E1EDFB;margin-bottom:13px">
+        <div style="position:absolute;right:0;top:0;height:5px;width:52%;border-radius:5px;background:linear-gradient(90deg,#38BDF8,#1D4ED8)"></div>
+        <span style="position:absolute;top:-4.5px;right:calc(52% - 7px);width:14px;height:14px;border-radius:50%;
+             background:#fff;border:2.4px solid #1D4ED8;box-shadow:0 4px 10px -2px rgba(37,99,235,.55)"></span>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span class="lbl">عرض فرم</span>
+        <span style="font-size:9px;font-weight:800;color:#1E4C8F">۴۲۰</span>
+      </div>
+      <div style="position:relative;height:5px;border-radius:5px;background:#E1EDFB;margin-bottom:13px">
+        <div style="position:absolute;right:0;top:0;height:5px;width:66%;border-radius:5px;background:linear-gradient(90deg,#38BDF8,#1D4ED8)"></div>
+        <span style="position:absolute;top:-4.5px;right:calc(66% - 7px);width:14px;height:14px;border-radius:50%;
+             background:#fff;border:2.4px solid #1D4ED8;box-shadow:0 4px 10px -2px rgba(37,99,235,.55)"></span>
+      </div>
+
+      <div class="lbl" style="margin-bottom:6px">چیدمان</div>
+      <div style="display:flex;gap:5px;margin-bottom:12px">
+        <span style="flex:1;height:24px;border-radius:7px;border:1.4px solid #93C5FD;background:#F3F8FF;display:grid;place-items:center;font-size:8px;font-weight:800;color:#1D4ED8">کارت</span>
+        <span style="flex:1;height:24px;border-radius:7px;border:1px solid #E2ECF9;display:grid;place-items:center;font-size:8px;font-weight:700;color:#8AA0BC">اسپلیت</span>
+        <span style="flex:1;height:24px;border-radius:7px;border:1px solid #E2ECF9;display:grid;place-items:center;font-size:8px;font-weight:700;color:#8AA0BC">مودال</span>
+      </div>
+
+      <div class="lbl" style="margin-bottom:6px">خانه‌های کد</div>
+      <div style="display:flex;gap:5px">
+        <span style="flex:1;height:26px;border-radius:7px;border:1.4px solid #93C5FD;background:#F3F8FF;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i style="width:9px;height:12px;border-radius:3px;background:#BFDBFE"></i><i style="width:9px;height:12px;border-radius:3px;background:#BFDBFE"></i><i style="width:9px;height:12px;border-radius:3px;background:#BFDBFE"></i></span>
+        <span style="flex:1;height:26px;border-radius:7px;border:1px solid #E2ECF9;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i style="width:9px;height:12px;border-bottom:2px solid #BFDBFE"></i><i style="width:9px;height:12px;border-bottom:2px solid #BFDBFE"></i><i style="width:9px;height:12px;border-bottom:2px solid #BFDBFE"></i></span>
+        <span style="flex:1;height:26px;border-radius:7px;border:1px solid #E2ECF9;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i style="width:9px;height:12px;border-radius:99px;background:#BFDBFE"></i><i style="width:9px;height:12px;border-radius:99px;background:#BFDBFE"></i><i style="width:9px;height:12px;border-radius:99px;background:#BFDBFE"></i></span>
+      </div>
+    </div>
+
+    <div class="glass" style="position:absolute;right:0;top:390px;width:250px;padding:13px 15px;border-radius:18px;z-index:3">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="ico" style="width:24px;height:24px;background:#EFF6FF;color:#2563EB">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19V5h8a4 4 0 0 1 0 8H5"/></svg></span>
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:800;color:#12315E">فونت و اندازهٔ متن</div>
+          <div style="font-size:8.5px;color:#8AA0BC">وزیرمتن یا فونت خود قالب</div>
         </div>
-        <img src="../infographic/img/appearance.webp" alt="پیش‌نمایش زندهٔ استودیوی ظاهر" style="width:100%;display:block;border-radius:11px">
+        <span class="pill" style="height:20px;font-size:8px">خودکار</span>
       </div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:9.5px;color:#8AA0BC;padding:0 2px">
-        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#2563EB" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>
-        پیش‌نمایش همان لحظه، بدون نیاز به ذخیره
-      </div>
+    </div>
+
+    <div style="position:absolute;left:0;bottom:14px;display:flex;align-items:center;gap:7px;font-size:9.5px;color:#7E95B2;z-index:3">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#2563EB" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>
+      بدون ذخیره، همان لحظه
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۶ از ۰۸</div>
   </div>
 </section>
+<!-- ══════════════════ ۰۷ · پنل واقعی ══════════════════ -->
+<section class="slide dark" id="s7">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <div class="bleed" style="position:absolute;left:50%;top:-140px;transform:translateX(-50%);width:900px;height:560px;
+       background:radial-gradient(50% 50% at 50% 50%,rgba(56,189,248,.30),rgba(37,99,235,.14) 46%,transparent 72%);
+       filter:blur(18px);z-index:0"></div>
+  <img class="brandmark w" src="../infographic/img/ashna-logo-white.svg" alt="">
 
-<!-- ══════════════════ ۰۷ · اثبات: پنل ══════════════════ -->
-<section class="slide" id="s7">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
   <div class="eyebrow"><span class="n">۰۷</span><span class="sep"></span> از نصب واقعی</div>
-
   <h2 class="t">پنل مدیریت،<br><em>همان‌طور که هست</em></h2>
   <p class="s">اسکرین‌شات بدون روتوش از نسخهٔ ۳.۱.۴؛ آمار امروز، سلامت درگاه‌ها و گزارش تحویل.</p>
   <div class="sig"></div>
 
-  <div class="stage short" style="display:flex;flex-direction:column;gap:12px">
-    <div class="window">
-      <div class="bar">
-        <i></i><i></i><i></i>
-        <span class="url">example.com/wp-admin/admin.php?page=ashna</span>
-      </div>
-      <div style="position:relative">
+  <div class="art">
+    <div style="position:absolute;left:26px;top:14px;width:640px;height:324px;
+         transform:perspective(1500px) rotateX(12deg) rotateY(-7deg) rotateZ(.6deg);
+         transform-style:preserve-3d;z-index:2">
+      <div style="position:absolute;inset:0;border-radius:16px;overflow:hidden;
+           border:1px solid rgba(160,205,255,.22);background:#081A33;
+           box-shadow:0 60px 90px -50px rgba(0,0,0,.95),0 0 60px -20px rgba(56,189,248,.35)">
         <img src="img/panel-top.webp" alt="داشبورد واقعی افزونه آشنا" style="width:100%;display:block">
-
+        <div style="position:absolute;inset:0;border-radius:16px;
+             background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0) 34%,rgba(0,0,0,.18) 100%)"></div>
+        <div style="position:absolute;left:0;right:0;top:0;height:1px;
+             background:linear-gradient(90deg,transparent,rgba(190,225,255,.85),transparent)"></div>
       </div>
     </div>
 
-    <div style="display:flex;gap:9px">
-      <span class="pill" style="height:26px;font-size:10px;padding:0 12px;background:#fff">آمار امروز</span>
-      <span class="pill" style="height:26px;font-size:10px;padding:0 12px;background:#fff">سلامت درگاه‌ها</span>
-      <span class="pill" style="height:26px;font-size:10px;padding:0 12px;background:#fff">گزارش تحویل</span>
-      <span style="margin-right:auto;font-size:9.5px;color:#94A9C4;align-self:center">نسخهٔ ۳.۱.۴ · وردپرس ۶.۶</span>
+    <!-- floor reflection -->
+    <div style="position:absolute;left:26px;top:342px;width:640px;height:150px;overflow:hidden;z-index:1;
+         -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 78%);
+         mask-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent 78%)">
+      <img src="img/panel-top.webp" alt="" style="width:100%;display:block;transform:scaleY(-1);
+           transform-origin:top;filter:blur(3px);opacity:.32">
+    </div>
+
+    <div class="pill" style="position:absolute;right:6px;top:352px;z-index:4;height:26px;font-size:9.5px">نسخهٔ ۳.۱.۴</div>
+    <div class="pill" style="position:absolute;right:120px;top:352px;z-index:4;height:26px;font-size:9.5px">وردپرس ۶.۶</div>
+    <div class="pill ok" style="position:absolute;left:6px;top:352px;z-index:4;height:26px;font-size:9.5px">بدون روتوش</div>
+
+    <div style="position:absolute;left:0;right:0;top:398px;display:flex;gap:9px;z-index:4">
+      <div class="card" style="flex:1;padding:13px 14px;border-radius:16px">
+        <div class="lbl" style="font-size:9px">امروز</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:24px;line-height:1;color:#EAF3FF">۴۲</span>
+          <span style="font-size:9px;color:#8FA9C9">کد ارسال‌شده</span>
+        </div>
+        <div style="height:3px;border-radius:3px;background:rgba(140,190,255,.14);margin-top:9px">
+          <div style="height:3px;width:72%;border-radius:3px;background:linear-gradient(90deg,#38BDF8,#2563EB)"></div></div>
+      </div>
+      <div class="card" style="flex:1;padding:13px 14px;border-radius:16px">
+        <div class="lbl" style="font-size:9px">نرخ تحویل</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:24px;line-height:1;color:#6EE7B7">۹۸٪</span>
+          <span style="font-size:9px;color:#8FA9C9">۲۴ ساعت</span>
+        </div>
+        <div style="height:3px;border-radius:3px;background:rgba(140,190,255,.14);margin-top:9px">
+          <div style="height:3px;width:98%;border-radius:3px;background:linear-gradient(90deg,#34D399,#0EA5E9)"></div></div>
+      </div>
+      <div class="card" style="flex:1;padding:13px 14px;border-radius:16px">
+        <div class="lbl" style="font-size:9px">درگاه‌های سالم</div>
+        <div style="display:flex;align-items:baseline;gap:5px;margin-top:5px">
+          <span style="font-family:'Estedad';font-weight:900;font-size:24px;line-height:1;color:#EAF3FF">۴</span>
+          <span style="font-size:9px;color:#8FA9C9">از ۶</span>
+        </div>
+        <div style="height:3px;border-radius:3px;background:rgba(140,190,255,.14);margin-top:9px">
+          <div style="height:3px;width:66%;border-radius:3px;background:linear-gradient(90deg,#FCD34D,#F59E0B)"></div></div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:4px;display:flex;align-items:center;gap:8px;z-index:4">
+      <span class="pill" style="height:26px;font-size:9.5px">آمار امروز</span>
+      <span class="pill" style="height:26px;font-size:9.5px">سلامت درگاه‌ها</span>
+      <span class="pill" style="height:26px;font-size:9.5px">گزارش تحویل</span>
+      <span style="margin-right:auto;font-size:9px;color:#7E9ABD">همه از یک نصب واقعی</span>
     </div>
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۷ از ۰۸</div>
   </div>
 </section>
 
-<!-- ══════════════════ ۰۸ · اثبات: فرم ══════════════════ -->
-<section class="slide" id="s8">
-  <img src="../infographic/img/ashna-icon.svg" alt="" class="brandmark">
-  <div class="eyebrow"><span class="n">۰۸</span><span class="sep"></span> همان چیزی که کاربر می‌بیند</div>
+<!-- ══════════════════ ۰۸ · فرم واقعی ══════════════════ -->
+<section class="slide dark" id="s8">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <div class="bleed" style="position:absolute;left:120px;top:-160px;width:520px;height:620px;
+       background:conic-gradient(from 168deg at 50% 0%,transparent 0deg,rgba(125,211,252,.22) 12deg,rgba(37,99,235,.10) 26deg,transparent 34deg);
+       filter:blur(22px);z-index:0"></div>
+  <div class="bleed" style="position:absolute;left:60px;top:-40px;width:420px;height:420px;border-radius:50%;
+       background:radial-gradient(circle,rgba(56,189,248,.24),transparent 66%);filter:blur(26px);z-index:0"></div>
+  <img class="brandmark w" src="../infographic/img/ashna-logo-white.svg" alt="">
 
+  <div class="eyebrow"><span class="n">۰۸</span><span class="sep"></span> همان چیزی که کاربر می‌بیند</div>
   <h2 class="t">فرم واقعی،<br><em>روی سایت واقعی</em></h2>
   <p class="s">اسکرین‌شات فرم از یک نصب واقعی؛ با دکمهٔ اثر انگشت، ورود بدون پیامک و مسیر رمز عبور ثابت.</p>
   <div class="sig"></div>
 
-  <div class="stage short" style="display:flex;gap:12px;align-items:stretch;height:auto">
-
-    <div style="width:340px;display:flex;flex-direction:column;gap:11px">
-      <div class="card" style="padding:16px;border-radius:18px">
-        <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#0B1B36;margin-bottom:11px">کجا دیده می‌شود</div>
-
-        <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #EFF4FB">
-          <span style="width:26px;height:26px;border-radius:8px;background:#EFF6FF;display:grid;place-items:center;flex:none">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563EB" stroke-width="2"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6"/></svg></span>
-          <div style="flex:1">
-            <div style="font-size:11px;font-weight:800;color:#12315E">صفحهٔ اختصاصی</div>
-            <div style="font-size:9px;color:#8AA0BC;margin-top:1px" dir="ltr">[ashna_otp_login]</div>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #EFF4FB">
-          <span style="width:26px;height:26px;border-radius:8px;background:#EFF6FF;display:grid;place-items:center;flex:none">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563EB" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 12h8"/></svg></span>
-          <div style="flex:1">
-            <div style="font-size:11px;font-weight:800;color:#12315E">مودال و کشویی</div>
-            <div style="font-size:9px;color:#8AA0BC;margin-top:1px">وسط صفحه، کنار یا شیت موبایل</div>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:9px;padding:9px 0">
-          <span style="width:26px;height:26px;border-radius:8px;background:#F0FDF7;display:grid;place-items:center;flex:none">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0B8A5F" stroke-width="2"><path d="M4 7h16l-1.4 13H5.4z"/><path d="M9 7V5h6v2"/></svg></span>
-          <div style="flex:1">
-            <div style="font-size:11px;font-weight:800;color:#12315E">ووکامرس و حساب کاربری</div>
-            <div style="font-size:9px;color:#8AA0BC;margin-top:1px">جای فرم ورود پیش‌فرض</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="padding:14px 16px;border-radius:18px;background:#F7FBFF;border-color:#DCEAF9">
-        <div style="display:flex;gap:9px;align-items:flex-start">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#2563EB" stroke-width="2" style="flex:none;margin-top:2px"><path d="M12 3 4 6v6c0 5 3.4 7.9 8 9 4.6-1.1 8-4 8-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
-          <div style="font-size:10px;color:#4E7099;line-height:1.9">
-            کد ۵ رقمی می‌شود، ۱۲۰ ثانیه اعتبار دارد و پس از پنج تلاش اشتباه باطل می‌شود.
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:auto;display:flex;align-items:center;gap:7px;font-size:9.5px;color:#94A9C4;padding:0 2px">
-        <span style="width:5px;height:5px;border-radius:50%;background:#34D399"></span>
-        اسکرین‌شات واقعی، بدون بازسازی
-      </div>
-    </div>
-
-    <div style="width:340px;display:flex;flex-direction:column;justify-content:space-between">
-      <div class="window">
-        <div class="bar">
-          <i></i><i></i><i></i>
-          <span class="url">shop.example.com/my-account</span>
-        </div>
+  <div class="art">
+    <!-- the real form -->
+    <div style="position:absolute;left:34px;top:6px;width:330px;z-index:3;
+         transform:perspective(1200px) rotateY(-5deg) rotateX(2deg) rotateZ(-1.2deg)">
+      <div style="border-radius:20px;overflow:hidden;
+           border:1px solid rgba(175,215,255,.3);
+           box-shadow:0 60px 90px -46px rgba(0,0,0,.95),0 0 70px -26px rgba(56,189,248,.45)">
         <img src="../infographic/img/00-card.webp" alt="فرم ورود واقعی افزونه آشنا" style="width:100%;display:block">
       </div>
-      <div style="margin-top:9px;display:flex;align-items:center;gap:6px;justify-content:center;font-size:9.5px;color:#94A9C4">
-        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#8FA8C6" stroke-width="2"><path d="M4 8V4h4M20 16v4h-4M20 8V4h-4M4 16v4h4"/></svg>
-        همین فرم، روی صفحهٔ حساب کاربری ووکامرس
+
+      <!-- cursor on the phone field -->
+      <div style="position:absolute;right:64px;top:172px;z-index:5">
+        <svg width="26" height="30" viewBox="0 0 26 30">
+          <path d="M3 2 22 15 13.6 16.6 18.5 26 14.4 28 9.6 18.4 3 24z"
+                fill="#FFFFFF" stroke="#071A38" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <div style="position:absolute;right:18px;top:22px;white-space:nowrap;padding:4px 8px;border-radius:8px;
+             background:#FFFFFF;color:#0B1B36;font-size:9px;font-weight:800;
+             box-shadow:0 12px 22px -12px rgba(0,0,0,.9)">شماره را می‌زند</div>
       </div>
     </div>
+
+    <!-- proof list -->
+    <div class="card" style="position:absolute;right:0;top:10px;width:318px;padding:16px;border-radius:20px;z-index:3">
+      <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#EAF3FF;margin-bottom:12px">کجا دیده می‌شود</div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(140,190,255,.14)">
+        <span class="ico" style="width:28px;height:28px;background:rgba(125,190,255,.12);color:#8EC5FF;border-radius:9px">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <div style="flex:1">
+          <div style="font-size:10.5px;font-weight:800;color:#DCEAFF">صفحهٔ اختصاصی</div>
+          <div style="font-size:8.5px;color:#8FA9C9;direction:ltr;text-align:right" dir="ltr">[ashna_otp_login]</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(140,190,255,.14)">
+        <span class="ico" style="width:28px;height:28px;background:rgba(125,190,255,.12);color:#8EC5FF;border-radius:9px">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 12h8"/></svg></span>
+        <div style="flex:1">
+          <div style="font-size:10.5px;font-weight:800;color:#DCEAFF">مودال و کشویی</div>
+          <div style="font-size:8.5px;color:#8FA9C9">وسط صفحه، کنار یا شیت موبایل</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0">
+        <span class="ico" style="width:28px;height:28px;background:rgba(110,231,183,.12);color:#6EE7B7;border-radius:9px">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16l-1.4 13H5.4z"/><path d="M9 7V5h6v2"/></svg></span>
+        <div style="flex:1">
+          <div style="font-size:10.5px;font-weight:800;color:#DCEAFF">ووکامرس و حساب کاربری</div>
+          <div style="font-size:8.5px;color:#8FA9C9">جای فرم ورود پیش‌فرض</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="position:absolute;right:0;top:246px;width:318px;padding:14px 16px;border-radius:18px;z-index:3">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:10.5px;font-weight:800;color:#DCEAFF">تلاش‌های اشتباه روی یک کد</div>
+        <span style="font-size:9px;color:#8FA9C9">۵ از ۵</span>
+      </div>
+      <div style="display:flex;gap:5px;margin-top:10px">
+        <span style="flex:1;height:6px;border-radius:6px;background:#F43F5E"></span>
+        <span style="flex:1;height:6px;border-radius:6px;background:#F43F5E"></span>
+        <span style="flex:1;height:6px;border-radius:6px;background:#F43F5E"></span>
+        <span style="flex:1;height:6px;border-radius:6px;background:#F43F5E"></span>
+        <span style="flex:1;height:6px;border-radius:6px;background:#F43F5E;box-shadow:0 0 12px 1px rgba(244,63,94,.65)"></span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px">
+        <span style="font-size:9px;color:#FDA4AF">کد باطل شد، باید کد تازه بگیرد</span>
+        <span class="pill bad" style="height:20px;font-size:8.5px;padding:0 8px">باطل</span>
+      </div>
+    </div>
+
+    <div style="position:absolute;right:0;top:352px;width:318px;display:flex;gap:7px;z-index:3">
+      <span class="pill" style="height:25px;font-size:9px">کد ۵ رقمی</span>
+      <span class="pill" style="height:25px;font-size:9px">اعتبار ۱۲۰ ثانیه</span>
+      <span class="pill" style="height:25px;font-size:9px">۶۰ ثانیه فاصله</span>
+    </div>
+
+    <div class="card" style="position:absolute;right:0;top:392px;width:318px;padding:14px 16px;border-radius:18px;z-index:3">
+      <div style="font-size:10.5px;font-weight:800;color:#DCEAFF;margin-bottom:9px">گذاشتن روی سایت</div>
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);
+           border:1px solid rgba(140,190,255,.18);border-radius:9px;padding:8px 10px;direction:ltr">
+        <code style="font-size:9.5px;color:#A9CDF5;letter-spacing:.2px">[ashna_otp_login]</code>
+        <span style="margin-left:auto;font-size:8px;color:#7E9ABD">شورت‌کد</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <span class="pill" style="height:21px;font-size:8px">مودال</span>
+        <span class="pill" style="height:21px;font-size:8px">ویجت</span>
+        <span class="pill" style="height:21px;font-size:8px">صفحهٔ اختصاصی</span>
+      </div>
+    </div>
+
   </div>
 
   <div class="foot">
-    <div class="who">آشنا <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
     <div class="no">قاب ۰۸ از ۰۸</div>
   </div>
 </section>
