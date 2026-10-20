@@ -4,7 +4,7 @@ define('WP_PLUGIN_DIR', dirname(__DIR__));
 function get_plugin_data($file) {
     $source = file_get_contents($file);
     preg_match('/Requires PHP:\s*([0-9.]+)/', $source, $php);
-    return array('Name' => 'Signa OTP', 'RequiresPHP' => $php[1], 'RequiresWP' => '5.8');
+    return array('Name' => 'Ashna', 'RequiresPHP' => $php[1], 'RequiresWP' => '5.8');
 }
 function is_wp_version_compatible($version) { return true; }
 function is_php_version_compatible($version) { return version_compare(PHP_VERSION, $version, '>='); }
@@ -30,5 +30,5 @@ $compatible = version_compare(PHP_VERSION, '8.2', '>=');
 if ($compatible ? $result !== true : !($result instanceof WP_Error && $result->code === 'plugin_php_incompatible')) {
     throw new RuntimeException('Wrong WordPress requirement validation result');
 }
-if (class_exists('Signa_License_Bootstrap', false)) { throw new RuntimeException('Validation loaded the license bootstrap'); }
+if (class_exists('Ashna_License_Bootstrap', false)) { throw new RuntimeException('Validation loaded the license bootstrap'); }
 echo 'PASS requirement / PHP ' . PHP_VERSION . ' / ' . ($compatible ? 'allowed' : 'blocked') . "\n";

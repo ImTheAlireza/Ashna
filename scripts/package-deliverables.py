@@ -1,5 +1,5 @@
-"""Package the current plugin and the standalone HTML/CSS gallery website.
-Run from any directory: python scripts/package-deliverables.py
+"""Package the current Ashna plugin (and, optionally, the legacy gallery website).
+Run from any directory: python scripts/package-deliverables.py --plugin-only
 """
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -18,33 +18,37 @@ OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
 DESIGN = ROOT / 'product-images/gallery-design'
 
-plugin_readme = '''نسخهٔ فعلی سیگنا با لوگوی جدید — ۲.۷.۷
+LICENSE_MISSING_NOTE = 'فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار ashna.php قرار بگیرد.'
+LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
 
-این ZIP از کد فعلی مخزن ساخته شده و شامل لوگوی جدید در سربرگ مدیریت، منوی وردپرس، فرم ورود پیش‌فرض و پیش‌نمایش زنده است.
-لوگوی سفارشی انتخاب‌شده توسط مدیر سایت همچنان اولویت دارد.
+plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۳
+محصولی از پارسنا — https://parsena.ir/ashna
+
+این ZIP از کد فعلی مخزن ساخته شده است. لوگوی آشنا در سربرگ مدیریت، منوی وردپرس، فرم ورود پیش‌فرض و پیش‌نمایش زنده استفاده شده و لوگوی سفارشی انتخاب‌شده توسط مدیر سایت همچنان اولویت دارد.
+
+ورود با گوگل و تلگرام (OIDC + PKCE) در همین نسخه اضافه شده است؛ تب «ورود با گوگل و تلگرام» برای هر سرویس آدرس بازگشتی جداگانه، راهنمای مرحله‌به‌مرحلهٔ کنسول و دکمهٔ «بررسی اتصال» دارد. آدرس هر سرویس را از همان کارت کپی و در کنسول گوگل (Authorized redirect URIs) یا BotFather (Web Login → Redirect URI) ثبت کنید. اگر پیش‌تر نسخهٔ ۳.۱.۰ یا ۳.۱.۱ را با آدرس مشترک ‎/ashna-sso/callback/‎ تنظیم کرده‌اید، آدرس تازهٔ هر سرویس را اضافه کنید؛ آدرس قدیمی برای بازگشت همچنان پذیرفته می‌شود.
 
 نصب: پیشخوان وردپرس ← افزونه‌ها ← افزودن ← بارگذاری افزونه.
-قبل از جایگزینی نسخهٔ نصب‌شده، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
+قبل از نصب یا جایگزینی، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
-مهم: نسخهٔ قبلی لایسنس و هش 4f106eb02a251f2a6951ca3f530596590081002d حفظ شده است؛ فایل جایگزین مخصوص PHP 7.4 استفاده نمی‌شود. فعال‌شدن امکانات همچنان به فایل معتبر RTL_License_c1595a7238d64f3a.php و تأیید isActive() نیاز دارد. فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.
+مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 4f106eb02a251f2a6951ca3f530596590081002d و تأیید isActive() نیاز دارد. {license_note}
 وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. ionCube Loader باید در PHP وب فعال و با همان PHP و فایل لایسنس سازگار باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
-بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند.
-تست‌های خودکار با هوک واقعی وردپرس و سرویس‌های شبیه‌سازی‌شده انجام شده‌اند؛ تست با فایل واقعی لایسنس و وردپرس زندهٔ مشتری انجام نشده است.
+بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر ionCube Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و هیچ فایلی اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
 
-فایل‌های تبلیغاتی، گالری، Git، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
+فایل‌های تبلیغاتی، Git، تست‌ها، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
 '''
 if args.without_license:
-    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری سیگنا — ۲.۷.۷
+    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۳.۱.۳
+محصولی از پارسنا — https://parsena.ir/ashna
 
-این بستهٔ جداگانه از کد فعلی افزونه ساخته شده و بررسی لایسنس راست‌چین در فایل signa.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. لوگو و سایر امکانات بدون تغییر حفظ شده‌اند.
-نسخهٔ لایسنس‌دار مخزن و ZIP قبلی تغییر نکرده‌اند.
+این بستهٔ جداگانه فقط برای تست و عیب‌یابی است و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. نسخهٔ قابل ارسال به راست‌چین، بستهٔ لایسنس‌دار ashna-otp.zip است.
 
 ابتدا از سایت و دیتابیس بکاپ بگیرید؛ ترجیحاً روی سایت آزمایشی تست کنید.
-نسخهٔ قبلی سیگنا را غیرفعال کنید، این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ signa-otp جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
+اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna-otp جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
 برای حفظ تنظیمات، لازم نیست افزونه را از طریق دکمهٔ «حذف» وردپرس پاک کنید.
-پس از استخراج دستی، فایل signa.php قدیمیِ کدگذاری‌شده را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
+پس از استخراج دستی، فایل ashna.php کدگذاری‌شدهٔ قبلی را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
 
-حداقل وردپرس ۵.۸ و PHP ۷.۴ مطابق سربرگ افزونه.
+حداقل وردپرس ۵.۸ و PHP ۷.۴ مطابق سربرگ همین بسته.
 این نسخه برای جداکردن احتمال خطای Loader/لایسنس از سایر خطاهای هاست مناسب است؛ رفع قطعی خطای گزارش‌شدهٔ سایت، بدون گزارش خطا قابل تأیید نیست.
 '''
 website_readme = '''# کد وب‌سایت گالری سیگنا
@@ -106,33 +110,53 @@ def archive_check(path, prefix):
 license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
 include_license = not args.without_license and license_file.is_file()
 if include_license:
-    expected_hash = re.search(r"'([0-9a-f]{40})'\s*!==\s*\$rtlLicenseFileHash", (ROOT / 'signa.php').read_text())
+    expected_hash = re.search(r"'([0-9a-f]{40})'\s*!==\s*\$rtlLicenseFileHash", (ROOT / 'ashna.php').read_text())
     if not expected_hash or hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_hash.group(1):
         raise SystemExit('License file does not match the verifier hash; refusing to package a mismatched license.')
-    plugin_readme = plugin_readme.replace('فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار signa.php قرار بگیرد.', 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.')
 
-plugin = OUT / ('signa-otp-no-license.zip' if args.without_license else 'signa-otp-with-logo.zip')
+if not args.without_license:
+    plugin_readme = plugin_readme.format(license_note=LICENSE_INCLUDED_NOTE if include_license else LICENSE_MISSING_NOTE)
+
+SLUG = 'ashna-otp'
+plugin = OUT / (SLUG + '-no-license.zip' if args.without_license else SLUG + '.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
-    for name in ['index.php', 'signa.php', 'uninstall.php', 'README.md']:
-        if args.without_license and name == 'signa.php':
-            bundle.write(ROOT / 'scripts/templates/signa-no-license.php', 'signa-otp/signa.php')
+    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md']:
+        if args.without_license and name == 'ashna.php':
+            bundle.write(ROOT / 'scripts/templates/ashna-no-license.php', SLUG + '/ashna.php')
         elif args.without_license and name == 'index.php':
-            index = (ROOT / name).read_text().replace('Signa - ورود', 'Signa (بدون لایسنس) - ورود', 1)
+            index = (ROOT / name).read_text()
+            assert index.count('آشنا | ورود') == 1, 'Plugin Name header changed; update the no-license label'
+            index = index.replace('آشنا | ورود', 'آشنا (بدون لایسنس) | ورود', 1)
             # The separate unencoded edition does not share the licensed file's PHP floor.
             index = re.sub(r'(Requires PHP:\s*)[0-9.]+', r'\g<1>7.4', index, count=1)
-            add_bytes(bundle, 'signa-otp/index.php', index)
+            add_bytes(bundle, SLUG + '/index.php', index)
         else:
-            bundle.write(ROOT / name, 'signa-otp/' + name)
+            bundle.write(ROOT / name, SLUG + '/' + name)
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file():
-                bundle.write(source, 'signa-otp/' + source.relative_to(ROOT).as_posix())
+                bundle.write(source, SLUG + '/' + source.relative_to(ROOT).as_posix())
     if include_license:
-        bundle.write(license_file, 'signa-otp/' + license_file.name)
-    add_bytes(bundle, 'signa-otp/README-INSTALL-FA.txt', plugin_readme)
+        bundle.write(license_file, SLUG + '/' + license_file.name)
+    add_bytes(bundle, SLUG + '/README-INSTALL-FA.txt', plugin_readme)
+
+# Acceptance check: nothing from the previous product name may ship in the plugin.
+LEGACY_NAME = re.compile(r'(?<![A-Za-z])sign[aA](?![a-z])|(?<![A-Z])Signa(?![a-z])|SIGNA(?![A-Z])|سیگنا')
+with ZipFile(plugin) as bundle:
+    for name in bundle.namelist():
+        content = bundle.read(name)
+        hits = [name] if LEGACY_NAME.search(name) else []
+        if not name.endswith(('.png', '.woff2')) and LEGACY_NAME.search(content.decode('utf-8')):
+            hits.append(name + ' (content)')
+        if hits:
+            raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))
 
 website = OUT / 'signa-website-source.zip'
 if not args.plugin_only and not args.without_license:
+    # Legacy Signa gallery: its logo files left the plugin with the Ashna rename.
+    legacy_logos = [name for name in ['assets/images/signa-icon.png', 'assets/images/signa-logo.png'] if not (ROOT / name).is_file()]
+    if legacy_logos:
+        raise SystemExit('Legacy Signa website packaging needs ' + ', '.join(legacy_logos) + ' (removed in the Ashna rename). The plugin ZIP was built; use --plugin-only.')
     with ZipFile(website, 'w', ZIP_DEFLATED) as bundle:
         for name in ['index.html', 'render.html', 'styles.css', 'slides.js', 'package.json', 'package-lock.json']:
             text = (DESIGN / name).read_text()
@@ -157,12 +181,12 @@ if not args.plugin_only and not args.without_license:
             bundle.write(ROOT / 'product-images/gallery' / name, 'signa-website/gallery/' + name)
         bundle.write(ROOT / 'product-images/signa-gallery-8-images.zip', 'signa-website/signa-gallery-8-images.zip')
 
-report = [archive_check(OUT / name, 'signa-otp') for name in ['signa-otp-with-logo.zip', 'signa-otp-no-license.zip'] if (OUT / name).exists()]
+report = [archive_check(OUT / name, SLUG) for name in [SLUG + '.zip', SLUG + '-no-license.zip'] if (OUT / name).exists()]
 if website.exists():
     report.append(archive_check(website, 'signa-website'))
-diagnostics = OUT / 'signa-activation-diagnostics.zip'
+diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
-    report.append(archive_check(diagnostics, 'signa-activation-diagnostics'))
+    report.append(archive_check(diagnostics, 'ashna-activation-diagnostics'))
 guide = OUT / 'Signa-Help-FA.pdf'
 if guide.exists():
     report.append({'file': guide.name, 'bytes': guide.stat().st_size,

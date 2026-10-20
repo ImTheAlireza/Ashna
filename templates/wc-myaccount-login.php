@@ -2,7 +2,7 @@
 /**
  * WooCommerce My Account OTP Login Wrapper Template
  *
- * @package Signa_OTP
+ * @package Ashna
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,15 +13,19 @@ if ( function_exists( 'do_action' ) ) {
 	do_action( 'woocommerce_before_customer_login_form' );
 }
 
-$redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
+// Like WooCommerce's own login form: only an explicitly requested page (?redirect_to=) is
+// passed on. Otherwise the destination is decided after sign-in, so filters such as Dokan's
+// vendor-dashboard redirect (woocommerce_login_redirect) still apply.
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only destination of a public form.
+$ashna_redirect = isset( $_GET['redirect_to'] ) ? esc_url_raw( Ashna_Helper::as_string( wp_unslash( $_GET['redirect_to'] ) ) ) : '';
 
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-echo Signa_Frontend::get_login_form_html(
+$ashna_form_html = Ashna_Frontend::get_login_form_html(
 	array(
-		'redirect' => $redirect,
+		'redirect' => $ashna_redirect,
 		'context'  => 'wc-myaccount',
 	)
 );
+echo $ashna_form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside templates/login-form.php.
 
 if ( function_exists( 'do_action' ) ) {
 	do_action( 'woocommerce_after_customer_login_form' );

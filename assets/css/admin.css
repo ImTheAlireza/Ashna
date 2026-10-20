@@ -1,8 +1,8 @@
 /**
- * Signa OTP v2.1 - Refined Enterprise SaaS Admin Dashboard Stylesheet (RTL + High-Contrast Dark Mode)
+ * Ashna - Refined Enterprise SaaS Admin Dashboard Stylesheet (RTL + High-Contrast Dark Mode)
  */
 
-#signa-app-shell.signa-app-shell {
+#ashna-app-shell.ashna-app-shell {
 	--s-bg-app: #f1f5f9;
 	--s-bg-surface: #ffffff;
 	--s-bg-subtle: #f8fafc;
@@ -32,7 +32,7 @@
 }
 
 /* High-Contrast Dark Mode Theme */
-#signa-app-shell.signa-app-shell.is-dark {
+#ashna-app-shell.ashna-app-shell.is-dark {
 	--s-bg-app: #0b1120;
 	--s-bg-surface: #151f32;
 	--s-bg-subtle: #1e293b;
@@ -52,23 +52,23 @@
 	border-color: #334155;
 }
 
-#signa-app-shell.signa-app-shell *,
-#signa-app-shell.signa-app-shell *::before,
-#signa-app-shell.signa-app-shell *::after,
-#signa-app-shell.signa-app-shell button,
-#signa-app-shell.signa-app-shell input,
-#signa-app-shell.signa-app-shell select,
-#signa-app-shell.signa-app-shell textarea {
+#ashna-app-shell.ashna-app-shell *,
+#ashna-app-shell.ashna-app-shell *::before,
+#ashna-app-shell.ashna-app-shell *::after,
+#ashna-app-shell.ashna-app-shell button,
+#ashna-app-shell.ashna-app-shell input,
+#ashna-app-shell.ashna-app-shell select,
+#ashna-app-shell.ashna-app-shell textarea {
 	box-sizing: border-box;
 	font-family: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-#signa-app-shell.signa-app-shell .dashicons,
-#signa-app-shell.signa-app-shell .dashicons::before {
+#ashna-app-shell.ashna-app-shell .dashicons,
+#ashna-app-shell.ashna-app-shell .dashicons::before {
 	font-family: dashicons !important;
 }
 
-.signa-nav-svg {
+.ashna-nav-svg {
 	width: 19px;
 	height: 19px;
 	flex-shrink: 0;
@@ -76,7 +76,7 @@
 }
 
 /* Floating Toast */
-.signa-toast {
+.ashna-toast {
 	position: fixed;
 	bottom: 28px;
 	left: 28px;
@@ -94,14 +94,14 @@
 	border-right: 4px solid #10b981;
 }
 
-.signa-toast.is-error {
+.ashna-toast.is-error {
 	border-right-color: #ef4444;
 }
 
 /* ==========================================
    TOPBAR (Sticky Glassmorphic Header)
    ========================================== */
-#signa-app-shell .signa-topbar {
+#ashna-app-shell .ashna-topbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -117,17 +117,17 @@
 	backdrop-filter: blur(12px);
 }
 
-#signa-app-shell.is-dark .signa-topbar {
+#ashna-app-shell.is-dark .ashna-topbar {
 	border-bottom: 1px solid #334155;
 }
 
-.signa-topbar-brand {
+.ashna-topbar-brand {
 	display: flex;
 	align-items: center;
 	gap: 14px;
 }
 
-.signa-brand-logo {
+.ashna-brand-logo {
 	width: 48px;
 	height: 48px;
 	border-radius: 14px;
@@ -140,20 +140,20 @@
 	flex-shrink: 0;
 }
 
-.signa-brand-logo img {
+.ashna-brand-logo img {
 	display: block;
 	width: 40px;
 	height: 40px;
 	object-fit: contain;
 }
 
-.signa-brand-title-row {
+.ashna-brand-title-row {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-#signa-app-shell .signa-brand-title-row h1 {
+#ashna-app-shell .ashna-brand-title-row h1 {
 	margin: 0;
 	padding: 0;
 	font-size: 20px;
@@ -162,7 +162,7 @@
 	line-height: 1.2;
 }
 
-.signa-badge-ver {
+.ashna-badge-ver {
 	background: var(--s-primary-soft);
 	color: var(--s-primary);
 	font-size: 11.5px;
@@ -171,20 +171,20 @@
 	border-radius: 99px;
 }
 
-.signa-topbar-brand p {
+.ashna-topbar-brand p {
 	margin: 4px 0 0 0;
 	font-size: 12.5px;
 	color: var(--s-text-muted);
 }
 
-.signa-topbar-actions {
+.ashna-topbar-actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
 }
 
-.signa-gateway-status-pill {
+.ashna-gateway-status-pill {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -196,24 +196,24 @@
 	color: var(--s-text);
 }
 
-.signa-status-dot {
+.ashna-status-dot {
 	width: 9px;
 	height: 9px;
 	border-radius: 50%;
 	display: inline-block;
 }
 
-.signa-status-dot.is-online {
+.ashna-status-dot.is-online {
 	background: #10b981;
 	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
 }
 
-.signa-status-dot.is-warning {
+.ashna-status-dot.is-warning {
 	background: #f59e0b;
 	box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22);
 }
 
-#signa-app-shell .signa-icon-btn {
+#ashna-app-shell .ashna-icon-btn {
 	width: 40px !important;
 	height: 40px !important;
 	padding: 0 !important;
@@ -232,13 +232,13 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-icon-btn:hover {
+#ashna-app-shell .ashna-icon-btn:hover {
 	background: var(--s-bg-hover);
 	border-color: var(--s-primary);
 	color: var(--s-primary);
 }
 
-#signa-app-shell .signa-dark-icon {
+#ashna-app-shell .ashna-dark-icon {
 	display: inline-flex !important;
 	align-items: center !important;
 	justify-content: center !important;
@@ -247,34 +247,34 @@
 	line-height: 0;
 }
 
-#signa-app-shell .signa-icon-moon {
+#ashna-app-shell .ashna-icon-moon {
 	display: block !important;
 	width: 20px !important;
 	height: 20px !important;
 	flex-shrink: 0 !important;
 }
 
-#signa-app-shell .signa-icon-sun {
+#ashna-app-shell .ashna-icon-sun {
 	display: none !important;
 	width: 20px !important;
 	height: 20px !important;
 	flex-shrink: 0 !important;
 }
 
-#signa-app-shell.is-dark .signa-icon-moon {
+#ashna-app-shell.is-dark .ashna-icon-moon {
 	display: none !important;
 }
 
-#signa-app-shell.is-dark .signa-icon-sun {
+#ashna-app-shell.is-dark .ashna-icon-sun {
 	display: block !important;
 }
 
-#signa-app-shell .signa-topbar svg {
+#ashna-app-shell .ashna-topbar svg {
 	flex-shrink: 0 !important;
 	display: block;
 }
 
-#signa-app-shell .signa-btn-secondary {
+#ashna-app-shell .ashna-btn-secondary {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -294,13 +294,13 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-btn-secondary:hover {
+#ashna-app-shell .ashna-btn-secondary:hover {
 	background: var(--s-bg-hover);
 	border-color: var(--s-primary);
 	color: var(--s-primary) !important;
 }
 
-#signa-app-shell .signa-btn-save {
+#ashna-app-shell .ashna-btn-save {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -319,11 +319,11 @@
 	transition: opacity 0.15s ease;
 }
 
-#signa-app-shell .signa-btn-save:hover {
+#ashna-app-shell .ashna-btn-save:hover {
 	opacity: 0.92;
 }
 
-#signa-app-shell .signa-btn-danger {
+#ashna-app-shell .ashna-btn-danger {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -340,12 +340,12 @@
 	outline: none !important;
 }
 
-#signa-app-shell .signa-btn-danger:hover {
+#ashna-app-shell .ashna-btn-danger:hover {
 	background: #ef4444;
 	color: #ffffff;
 }
 
-.signa-kbd {
+.ashna-kbd {
 	background: rgba(255, 255, 255, 0.22);
 	padding: 2px 6px;
 	border-radius: 5px;
@@ -356,13 +356,13 @@
 /* ==========================================
    APP BODY & CLEAN SIDEBAR MENU
    ========================================== */
-.signa-app-body {
+.ashna-app-body {
 	display: grid;
 	grid-template-columns: 250px 1fr;
 	min-height: 700px;
 }
 
-#signa-app-shell .signa-sidebar {
+#ashna-app-shell .ashna-sidebar {
 	background: var(--s-bg-surface);
 	border-left: 1px solid #33415522;
 	padding: 24px 14px;
@@ -370,11 +370,11 @@
 	flex-direction: column;
 }
 
-#signa-app-shell.is-dark .signa-sidebar {
+#ashna-app-shell.is-dark .ashna-sidebar {
 	border-left: 1px solid #334155;
 }
 
-.signa-sidebar-group-title {
+.ashna-sidebar-group-title {
 	font-size: 11px;
 	font-weight: 800;
 	color: var(--s-text-muted);
@@ -383,17 +383,17 @@
 	opacity: 0.85;
 }
 
-.signa-sidebar-group-title:first-child {
+.ashna-sidebar-group-title:first-child {
 	padding-top: 2px;
 }
 
-.signa-nav {
+.ashna-nav {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 }
 
-#signa-app-shell .signa-nav-item {
+#ashna-app-shell .ashna-nav-item {
 	display: flex;
 	align-items: center;
 	gap: 11px;
@@ -415,19 +415,19 @@
 	position: relative;
 }
 
-#signa-app-shell .signa-nav-item:hover {
+#ashna-app-shell .ashna-nav-item:hover {
 	background: var(--s-bg-hover);
 	color: var(--s-primary);
 }
 
-#signa-app-shell .signa-nav-item.active {
+#ashna-app-shell .ashna-nav-item.active {
 	background: var(--s-primary);
 	color: #ffffff !important;
 	font-weight: 700;
 	box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
-#signa-app-shell .signa-nav-item .dashicons {
+#ashna-app-shell .ashna-nav-item .dashicons {
 	font-size: 19px;
 	width: 19px;
 	height: 19px;
@@ -436,13 +436,13 @@
 	opacity: 0.9;
 }
 
-.signa-nav-label {
+.ashna-nav-label {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.signa-nav-counter {
+.ashna-nav-counter {
 	margin-right: auto;
 	background: #ef4444;
 	color: #fff;
@@ -452,7 +452,7 @@
 	border-radius: 99px;
 }
 
-.signa-sidebar-footer {
+.ashna-sidebar-footer {
 	margin-top: auto;
 	padding: 16px 12px 4px 12px;
 	border-top: 1px solid #33415522;
@@ -461,7 +461,7 @@
 	font-size: 11.5px;
 }
 
-.signa-sidebar-footer p {
+.ashna-sidebar-footer p {
 	margin: 0 0 2px 0;
 	font-weight: 700;
 	color: var(--s-text-secondary);
@@ -470,20 +470,20 @@
 /* ==========================================
    MAIN CONTENT AREA
    ========================================== */
-#signa-app-shell .signa-main {
+#ashna-app-shell .ashna-main {
 	padding: 28px 30px;
 }
 
-.signa-panel {
+.ashna-panel {
 	display: none;
-	animation: signaFadeIn 0.18s ease;
+	animation: ashnaFadeIn 0.18s ease;
 }
 
-.signa-panel.active {
+.ashna-panel.active {
 	display: block;
 }
 
-@keyframes signaFadeIn {
+@keyframes ashnaFadeIn {
 	from {
 		opacity: 0;
 		transform: translateY(3px);
@@ -495,14 +495,14 @@
 }
 
 /* KPI CARDS (Left-Aligned Metric Numbers + Right-Aligned Icon & Labels) */
-.signa-kpi-grid {
+.ashna-kpi-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 16px;
 	margin-bottom: 22px;
 }
 
-.signa-kpi-card {
+.ashna-kpi-card {
 	background: var(--s-bg-surface);
 	border: 1px solid #33415522;
 	border-radius: 16px;
@@ -514,23 +514,23 @@
 	transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.signa-kpi-card:hover {
+.ashna-kpi-card:hover {
 	transform: translateY(-2px);
 	border-color: var(--s-primary);
 }
 
-#signa-app-shell.is-dark .signa-kpi-card {
+#ashna-app-shell.is-dark .ashna-kpi-card {
 	border-color: #334155;
 }
 
-.signa-kpi-main {
+.ashna-kpi-main {
 	display: flex;
 	align-items: center;
 	gap: 13px;
 	min-width: 0;
 }
 
-.signa-kpi-icon {
+.ashna-kpi-icon {
 	width: 48px;
 	height: 48px;
 	border-radius: 14px;
@@ -540,48 +540,48 @@
 	flex-shrink: 0;
 }
 
-.signa-kpi-icon.is-blue {
+.ashna-kpi-icon.is-blue {
 	background: rgba(59, 130, 246, 0.14);
 	color: #3b82f6;
 	border: 1px solid rgba(59, 130, 246, 0.24);
 }
 
-.signa-kpi-icon.is-green {
+.ashna-kpi-icon.is-green {
 	background: rgba(16, 185, 129, 0.14);
 	color: #10b981;
 	border: 1px solid rgba(16, 185, 129, 0.24);
 }
 
-.signa-kpi-icon.is-purple {
+.ashna-kpi-icon.is-purple {
 	background: rgba(139, 92, 246, 0.14);
 	color: #a855f7;
 	border: 1px solid rgba(139, 92, 246, 0.24);
 }
 
-.signa-kpi-icon.is-red {
+.ashna-kpi-icon.is-red {
 	background: rgba(239, 68, 68, 0.14);
 	color: #ef4444;
 	border: 1px solid rgba(239, 68, 68, 0.24);
 }
 
-.signa-kpi-info {
+.ashna-kpi-info {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 
-.signa-kpi-info span {
+.ashna-kpi-info span {
 	font-size: 13px;
 	font-weight: 700;
 	color: var(--s-text);
 }
 
-.signa-kpi-info small {
+.ashna-kpi-info small {
 	font-size: 11.5px;
 	color: var(--s-text-muted);
 }
 
-.signa-kpi-number-box {
+.ashna-kpi-number-box {
 	min-width: 54px;
 	height: 44px;
 	padding: 0 14px;
@@ -594,57 +594,57 @@
 	border: 1px solid var(--s-border-input);
 }
 
-.signa-kpi-number-box strong {
+.ashna-kpi-number-box strong {
 	font-size: 22px;
 	font-weight: 900;
 	line-height: 1;
 	color: var(--s-text);
 }
 
-.signa-kpi-number-box.is-blue strong {
+.ashna-kpi-number-box.is-blue strong {
 	color: #3b82f6;
 }
 
-.signa-kpi-number-box.is-green strong {
+.ashna-kpi-number-box.is-green strong {
 	color: #10b981;
 }
 
-.signa-kpi-number-box.is-purple strong {
+.ashna-kpi-number-box.is-purple strong {
 	color: #a855f7;
 }
 
-.signa-kpi-number-box.is-red strong {
+.ashna-kpi-number-box.is-red strong {
 	color: #ef4444;
 }
 
 /* BENTO GRID & CARDS */
-.signa-bento-row {
+.ashna-bento-row {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
 	gap: 20px;
 }
 
-.signa-col-8 {
+.ashna-col-8 {
 	grid-column: span 8;
 }
 
-.signa-col-7 {
+.ashna-col-7 {
 	grid-column: span 7;
 }
 
-.signa-col-6 {
+.ashna-col-6 {
 	grid-column: span 6;
 }
 
-.signa-col-5 {
+.ashna-col-5 {
 	grid-column: span 5;
 }
 
-.signa-col-4 {
+.ashna-col-4 {
 	grid-column: span 4;
 }
 
-#signa-app-shell .signa-card {
+#ashna-app-shell .ashna-card {
 	background: var(--s-bg-surface);
 	border: 1px solid #33415522;
 	border-radius: 16px;
@@ -653,11 +653,11 @@
 	flex-direction: column;
 }
 
-#signa-app-shell.is-dark .signa-card {
+#ashna-app-shell.is-dark .ashna-card {
 	border-color: #334155;
 }
 
-.signa-card-head {
+.ashna-card-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -667,13 +667,13 @@
 	border-bottom: 1px solid #33415522;
 }
 
-.signa-card-head-title {
+.ashna-card-head-title {
 	display: flex;
 	align-items: center;
 	gap: 14px;
 }
 
-.signa-card-icon {
+.ashna-card-icon {
 	width: 44px;
 	height: 44px;
 	border-radius: 12px;
@@ -686,43 +686,43 @@
 	border: 1px solid rgba(59, 130, 246, 0.22);
 }
 
-.signa-card-icon.is-blue {
+.ashna-card-icon.is-blue {
 	background: rgba(59, 130, 246, 0.14);
 	color: #3b82f6;
 	border-color: rgba(59, 130, 246, 0.24);
 }
 
-.signa-card-icon.is-purple {
+.ashna-card-icon.is-purple {
 	background: rgba(139, 92, 246, 0.14);
 	color: #a855f7;
 	border-color: rgba(139, 92, 246, 0.24);
 }
 
-.signa-card-icon.is-green {
+.ashna-card-icon.is-green {
 	background: rgba(16, 185, 129, 0.14);
 	color: #10b981;
 	border-color: rgba(16, 185, 129, 0.24);
 }
 
-.signa-card-icon.is-amber {
+.ashna-card-icon.is-amber {
 	background: rgba(245, 158, 11, 0.14);
 	color: #f59e0b;
 	border-color: rgba(245, 158, 11, 0.24);
 }
 
-.signa-card-icon.is-red {
+.ashna-card-icon.is-red {
 	background: rgba(239, 68, 68, 0.14);
 	color: #ef4444;
 	border-color: rgba(239, 68, 68, 0.24);
 }
 
-.signa-card-icon.is-cyan {
+.ashna-card-icon.is-cyan {
 	background: rgba(6, 182, 212, 0.14);
 	color: #06b6d4;
 	border-color: rgba(6, 182, 212, 0.24);
 }
 
-.signa-empty-state-box {
+.ashna-empty-state-box {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -736,7 +736,7 @@
 	flex: 1;
 }
 
-.signa-empty-state-icon {
+.ashna-empty-state-icon {
 	width: 54px;
 	height: 54px;
 	border-radius: 50%;
@@ -748,19 +748,19 @@
 	margin-bottom: 4px;
 }
 
-.signa-empty-state-box strong {
+.ashna-empty-state-box strong {
 	font-size: 14px;
 	font-weight: 800;
 	color: var(--s-text);
 }
 
-.signa-empty-state-box p {
+.ashna-empty-state-box p {
 	margin: 0;
 	font-size: 12.5px;
 	color: var(--s-text-muted);
 }
 
-.signa-info-note {
+.ashna-info-note {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -774,32 +774,32 @@
 	margin-top: 14px;
 }
 
-#signa-app-shell.is-dark .signa-card-head {
+#ashna-app-shell.is-dark .ashna-card-head {
 	border-bottom-color: #334155;
 }
 
-#signa-app-shell .signa-card-head h2 {
+#ashna-app-shell .ashna-card-head h2 {
 	margin: 0 0 4px 0;
 	font-size: 16px;
 	font-weight: 700;
 	color: var(--s-text);
 }
 
-.signa-card-head p {
+.ashna-card-head p {
 	margin: 0;
 	font-size: 12.5px;
 	color: var(--s-text-muted);
 }
 
 /* 7-DAY BAR CHART */
-.signa-chart-legend {
+.ashna-chart-legend {
 	display: flex;
 	gap: 12px;
 	font-size: 12px;
 	color: var(--s-text-muted);
 }
 
-.signa-chart-legend i {
+.ashna-chart-legend i {
 	display: inline-block;
 	width: 10px;
 	height: 10px;
@@ -807,7 +807,7 @@
 	margin-left: 4px;
 }
 
-.signa-bar-chart {
+.ashna-bar-chart {
 	display: flex;
 	align-items: flex-end;
 	justify-content: space-between;
@@ -816,7 +816,7 @@
 	padding-top: 20px;
 }
 
-.signa-bar-col {
+.ashna-bar-col {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -824,7 +824,7 @@
 	height: 100%;
 }
 
-.signa-bar-track {
+.ashna-bar-track {
 	width: 100%;
 	max-width: 38px;
 	height: 140px;
@@ -835,7 +835,7 @@
 	padding: 3px;
 }
 
-.signa-bar-fill-total {
+.ashna-bar-fill-total {
 	width: 100%;
 	background: linear-gradient(180deg, #3b82f6, #2563eb);
 	border-radius: 7px;
@@ -844,7 +844,7 @@
 	min-height: 6px;
 }
 
-.signa-bar-num {
+.ashna-bar-num {
 	position: absolute;
 	top: -20px;
 	left: 50%;
@@ -854,14 +854,14 @@
 	color: var(--s-text);
 }
 
-.signa-bar-label {
+.ashna-bar-label {
 	margin-top: 8px;
 	font-size: 11.5px;
 	color: var(--s-text-muted);
 }
 
 /* HEALTH LIST */
-.signa-health-list {
+.ashna-health-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -870,7 +870,7 @@
 	gap: 12px;
 }
 
-.signa-health-list li {
+.ashna-health-list li {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -880,13 +880,13 @@
 	color: var(--s-text-secondary);
 }
 
-.signa-health-list li:last-child {
+.ashna-health-list li:last-child {
 	border-bottom: none;
 	padding-bottom: 0;
 }
 
 /* PILLS & BADGES */
-.signa-pill {
+.ashna-pill {
 	display: inline-block;
 	padding: 3px 10px;
 	border-radius: 99px;
@@ -894,27 +894,27 @@
 	font-weight: 700;
 }
 
-.signa-pill.is-ok {
+.ashna-pill.is-ok {
 	background: rgba(16, 185, 129, 0.16);
 	color: #10b981;
 }
 
-.signa-pill.is-warn {
+.ashna-pill.is-warn {
 	background: rgba(245, 158, 11, 0.18);
 	color: #f59e0b;
 }
 
-.signa-pill.is-err {
+.ashna-pill.is-err {
 	background: rgba(239, 68, 68, 0.16);
 	color: #ef4444;
 }
 
-.signa-pill.is-info {
+.ashna-pill.is-info {
 	background: rgba(59, 130, 246, 0.16);
 	color: #3b82f6;
 }
 
-.signa-pill.is-muted {
+.ashna-pill.is-muted {
 	background: var(--s-bg-subtle);
 	color: var(--s-text-secondary);
 	border: 1px solid var(--s-border-input);
@@ -923,7 +923,7 @@
 /* ==========================================
    RADIO CHOICE CARDS (Modern Horizontal Design Language)
    ========================================== */
-.signa-section-label {
+.ashna-section-label {
 	display: block;
 	font-size: 13.5px;
 	font-weight: 700;
@@ -931,32 +931,32 @@
 	color: var(--s-text);
 }
 
-.signa-choice-grid {
+.ashna-choice-grid {
 	display: grid;
 	gap: 14px;
 }
 
-.signa-cols-1 {
+.ashna-cols-1 {
 	grid-template-columns: 1fr;
 }
 
-.signa-cols-2 {
+.ashna-cols-2 {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.signa-cols-3 {
+.ashna-cols-3 {
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.signa-cols-4 {
+.ashna-cols-4 {
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.signa-span-2 {
+.ashna-span-2 {
 	grid-column: span 2;
 }
 
-#signa-app-shell .signa-choice-card {
+#ashna-app-shell .ashna-choice-card {
 	display: flex !important;
 	flex-direction: column !important;
 	align-items: stretch !important;
@@ -971,30 +971,30 @@
 	position: relative;
 }
 
-#signa-app-shell .signa-choice-card.is-row-card {
+#ashna-app-shell .ashna-choice-card.is-row-card {
 	flex-direction: row;
 	align-items: center;
 }
 
-#signa-app-shell .signa-choice-card:hover {
+#ashna-app-shell .ashna-choice-card:hover {
 	border-color: var(--s-primary);
 	background: var(--s-bg-hover);
 	transform: translateY(-2px);
 }
 
-#signa-app-shell .signa-choice-card input[type="radio"] {
+#ashna-app-shell .ashna-choice-card input[type="radio"] {
 	position: absolute;
 	opacity: 0;
 	pointer-events: none;
 }
 
-#signa-app-shell .signa-choice-card.selected {
+#ashna-app-shell .ashna-choice-card.selected {
 	border-color: var(--s-primary);
 	background: var(--s-primary-soft);
 	box-shadow: 0 0 0 1px var(--s-primary), 0 8px 22px -6px rgba(37, 99, 235, 0.28);
 }
 
-.signa-choice-card-top {
+.ashna-choice-card-top {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1002,14 +1002,14 @@
 	width: 100%;
 }
 
-.signa-choice-top-left {
+.ashna-choice-top-left {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 	flex-shrink: 0;
 }
 
-.signa-choice-icon-svg {
+.ashna-choice-icon-svg {
 	width: 42px;
 	height: 42px;
 	border-radius: 12px;
@@ -1023,37 +1023,37 @@
 	transition: transform 0.18s ease;
 }
 
-#signa-app-shell .signa-choice-card:hover .signa-choice-icon-svg,
-#signa-app-shell .signa-choice-card.selected .signa-choice-icon-svg {
+#ashna-app-shell .ashna-choice-card:hover .ashna-choice-icon-svg,
+#ashna-app-shell .ashna-choice-card.selected .ashna-choice-icon-svg {
 	transform: scale(1.05);
 }
 
-.signa-choice-icon-svg.is-blue {
+.ashna-choice-icon-svg.is-blue {
 	background: rgba(59, 130, 246, 0.14);
 	color: #3b82f6;
 	border-color: rgba(59, 130, 246, 0.25);
 }
 
-.signa-choice-icon-svg.is-green {
+.ashna-choice-icon-svg.is-green {
 	background: rgba(16, 185, 129, 0.14);
 	color: #10b981;
 	border-color: rgba(16, 185, 129, 0.25);
 }
 
-.signa-choice-icon-svg.is-purple {
+.ashna-choice-icon-svg.is-purple {
 	background: rgba(139, 92, 246, 0.14);
 	color: #a855f7;
 	border-color: rgba(139, 92, 246, 0.25);
 }
 
-.signa-choice-icon-svg.is-amber {
+.ashna-choice-icon-svg.is-amber {
 	background: rgba(245, 158, 11, 0.14);
 	color: #f59e0b;
 	border-color: rgba(245, 158, 11, 0.25);
 }
 
 /* MULTI-ICON FLOW BADGES (e.g. [SMS Icon] <- [Bale Real Logo], [Phone] + [Email]) */
-.signa-flow-icons {
+.ashna-flow-icons {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -1065,7 +1065,7 @@
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.signa-flow-node {
+.ashna-flow-node {
 	width: 40px;
 	height: 40px;
 	padding: 8px;
@@ -1078,13 +1078,13 @@
 	transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.signa-flow-node svg:not(.signa-bale-real-logo) {
+.ashna-flow-node svg:not(.ashna-bale-real-logo) {
 	width: 20px;
 	height: 20px;
 	flex-shrink: 0;
 }
 
-.signa-bale-real-logo {
+.ashna-bale-real-logo {
 	width: 24px;
 	height: 24px;
 	flex-shrink: 0;
@@ -1092,51 +1092,51 @@
 	transition: filter 0.2s ease, transform 0.2s ease;
 }
 
-#signa-app-shell .signa-choice-card:hover .signa-bale-real-logo,
-#signa-app-shell .signa-choice-card.selected .signa-bale-real-logo {
+#ashna-app-shell .ashna-choice-card:hover .ashna-bale-real-logo,
+#ashna-app-shell .ashna-choice-card.selected .ashna-bale-real-logo {
 	filter: drop-shadow(0 0 10px rgba(44, 235, 191, 0.85));
 	transform: scale(1.06);
 }
 
-#signa-app-shell .signa-choice-card:hover .signa-flow-node {
+#ashna-app-shell .ashna-choice-card:hover .ashna-flow-node {
 	transform: scale(1.04);
 }
 
-.signa-flow-node.is-sms,
-.signa-flow-node.is-sms-brand {
+.ashna-flow-node.is-sms,
+.ashna-flow-node.is-sms-brand {
 	background: rgba(59, 130, 246, 0.16);
 	color: #3b82f6;
 	border: 1px solid rgba(59, 130, 246, 0.28);
 }
 
-.signa-flow-node.is-bale,
-.signa-flow-node.is-bale-brand {
+.ashna-flow-node.is-bale,
+.ashna-flow-node.is-bale-brand {
 	background: rgba(19, 185, 151, 0.14);
 	color: #13b997;
 	border: 1px solid rgba(50, 236, 192, 0.34);
 	box-shadow: 0 0 12px rgba(19, 185, 151, 0.22);
 }
 
-.signa-flow-node.is-passkey {
+.ashna-flow-node.is-passkey {
 	background: rgba(16, 185, 129, 0.16);
 	color: #10b981;
 	border: 1px solid rgba(16, 185, 129, 0.3);
 	box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 
-.signa-flow-node.is-email {
+.ashna-flow-node.is-email {
 	background: rgba(168, 85, 247, 0.16);
 	color: #a855f7;
 	border: 1px solid rgba(168, 85, 247, 0.26);
 }
 
-.signa-flow-node.is-phone {
+.ashna-flow-node.is-phone {
 	background: rgba(6, 182, 212, 0.16);
 	color: #06b6d4;
 	border: 1px solid rgba(6, 182, 212, 0.26);
 }
 
-.signa-flow-sep {
+.ashna-flow-sep {
 	font-size: 13px;
 	font-weight: 900;
 	color: var(--s-text-muted);
@@ -1146,12 +1146,12 @@
 	justify-content: center;
 }
 
-.signa-flow-sep svg {
+.ashna-flow-sep svg {
 	width: 15px;
 	height: 15px;
 }
 
-.signa-choice-tag {
+.ashna-choice-tag {
 	display: inline-flex;
 	align-items: center;
 	font-size: 10.5px;
@@ -1161,27 +1161,27 @@
 	white-space: nowrap;
 }
 
-.signa-choice-tag.is-green {
+.ashna-choice-tag.is-green {
 	background: rgba(16, 185, 129, 0.16);
 	color: #10b981;
 }
 
-.signa-choice-tag.is-amber {
+.ashna-choice-tag.is-amber {
 	background: rgba(245, 158, 11, 0.18);
 	color: #f59e0b;
 }
 
-.signa-choice-tag.is-purple {
+.ashna-choice-tag.is-purple {
 	background: rgba(168, 85, 247, 0.16);
 	color: #a855f7;
 }
 
-.signa-choice-tag.is-blue {
+.ashna-choice-tag.is-blue {
 	background: rgba(59, 130, 246, 0.16);
 	color: #3b82f6;
 }
 
-.signa-choice-title {
+.ashna-choice-title {
 	display: block;
 	font-size: 14px;
 	font-weight: 800;
@@ -1189,7 +1189,7 @@
 	line-height: 1.45;
 }
 
-.signa-choice-desc {
+.ashna-choice-desc {
 	display: block;
 	font-size: 12px;
 	color: var(--s-text-muted);
@@ -1198,14 +1198,14 @@
 }
 
 /* VISUAL FAILOVER PIPELINE IN SMS TAB */
-.signa-failover-pipeline {
+.ashna-failover-pipeline {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 16px;
 	margin-top: 12px;
 }
 
-.signa-pipeline-step {
+.ashna-pipeline-step {
 	background: var(--s-bg-subtle);
 	border: 1.5px solid var(--s-border-input);
 	border-radius: 14px;
@@ -1217,18 +1217,18 @@
 	transition: border-color 0.15s ease;
 }
 
-.signa-pipeline-step:hover {
+.ashna-pipeline-step:hover {
 	border-color: var(--s-primary);
 }
 
-.signa-pipeline-step-head {
+.ashna-pipeline-step-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
 }
 
-.signa-step-num-badge {
+.ashna-step-num-badge {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -1237,7 +1237,7 @@
 	color: var(--s-text);
 }
 
-.signa-step-num-circle {
+.ashna-step-num-circle {
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
@@ -1251,7 +1251,7 @@
 }
 
 /* LIVE FAILOVER VISUAL ROUTE STRIP & INLINE QUICK SMS TEST BAR */
-.signa-live-route-strip {
+.ashna-live-route-strip {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1264,14 +1264,14 @@
 	margin-top: 14px;
 }
 
-.signa-route-nodes {
+.ashna-route-nodes {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 8px;
 }
 
-.signa-route-pill {
+.ashna-route-pill {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -1284,13 +1284,13 @@
 	color: var(--s-text);
 }
 
-.signa-route-pill.is-primary {
+.ashna-route-pill.is-primary {
 	background: var(--s-primary-soft);
 	border-color: var(--s-primary);
 	color: var(--s-primary);
 }
 
-.signa-inline-test-bar {
+.ashna-inline-test-bar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1303,7 +1303,7 @@
 	border: 1px solid rgba(37, 99, 235, 0.25);
 }
 
-.signa-inline-test-controls {
+.ashna-inline-test-controls {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -1311,7 +1311,7 @@
 	max-width: 460px;
 }
 
-.signa-choice-body {
+.ashna-choice-body {
 	display: flex !important;
 	flex-direction: column !important;
 	align-items: flex-start;
@@ -1320,7 +1320,7 @@
 	min-width: 0;
 }
 
-.signa-choice-body strong {
+.ashna-choice-body strong {
 	display: block !important;
 	width: 100%;
 	font-size: 14.5px;
@@ -1329,7 +1329,7 @@
 	line-height: 1.45;
 }
 
-.signa-choice-body small {
+.ashna-choice-body small {
 	display: block !important;
 	width: 100%;
 	font-size: 12.5px;
@@ -1337,7 +1337,7 @@
 	line-height: 1.65;
 }
 
-.signa-choice-check {
+.ashna-choice-check {
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
@@ -1351,7 +1351,7 @@
 	transition: all 0.18s ease;
 }
 
-#signa-app-shell .signa-choice-card.selected .signa-choice-check {
+#ashna-app-shell .ashna-choice-card.selected .ashna-choice-check {
 	background: var(--s-primary);
 	border-color: var(--s-primary);
 	color: #ffffff;
@@ -1361,31 +1361,31 @@
 /* ==========================================
    FORM INPUTS, SELECTS & DARK MODE FIX
    ========================================== */
-.signa-fields-grid {
+.ashna-fields-grid {
 	display: grid;
 	gap: 18px;
 }
 
-.signa-field {
+.ashna-field {
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
 }
 
-.signa-field label {
+.ashna-field label {
 	font-size: 13px;
 	font-weight: 600;
 	color: var(--s-text);
 }
 
-#signa-app-shell input[type="text"]:not(.signa-prev-input),
-#signa-app-shell input[type="url"],
-#signa-app-shell input[type="email"],
-#signa-app-shell input[type="password"],
-#signa-app-shell input[type="number"],
-#signa-app-shell input[type="search"],
-#signa-app-shell select,
-#signa-app-shell textarea {
+#ashna-app-shell input[type="text"]:not(.ashna-prev-input),
+#ashna-app-shell input[type="url"],
+#ashna-app-shell input[type="email"],
+#ashna-app-shell input[type="password"],
+#ashna-app-shell input[type="number"],
+#ashna-app-shell input[type="search"],
+#ashna-app-shell select,
+#ashna-app-shell textarea {
 	width: 100%;
 	max-width: 100%;
 	min-height: 42px;
@@ -1402,7 +1402,7 @@
 }
 
 /* Crucial Fix for Select Option Dropdown Readability in Light & Dark Mode */
-#signa-app-shell select option {
+#ashna-app-shell select option {
 	background-color: #ffffff !important;
 	color: #0f172a !important;
 	font-family: 'Vazirmatn', Tahoma, sans-serif;
@@ -1410,21 +1410,21 @@
 	padding: 8px;
 }
 
-#signa-app-shell.is-dark select,
-#signa-app-shell.is-dark input[type="text"]:not(.signa-prev-input),
-#signa-app-shell.is-dark input[type="url"],
-#signa-app-shell.is-dark input[type="email"],
-#signa-app-shell.is-dark input[type="password"],
-#signa-app-shell.is-dark input[type="number"],
-#signa-app-shell.is-dark input[type="search"],
-#signa-app-shell.is-dark textarea {
+#ashna-app-shell.is-dark select,
+#ashna-app-shell.is-dark input[type="text"]:not(.ashna-prev-input),
+#ashna-app-shell.is-dark input[type="url"],
+#ashna-app-shell.is-dark input[type="email"],
+#ashna-app-shell.is-dark input[type="password"],
+#ashna-app-shell.is-dark input[type="number"],
+#ashna-app-shell.is-dark input[type="search"],
+#ashna-app-shell.is-dark textarea {
 	background-color: #0f172a !important;
 	color: #f8fafc !important;
 	border-color: #475569 !important;
 }
 
 /* Live Preview Input - Isolated from Admin Dark Mode & Right-Aligned */
-#signa-app-shell #signa-live-preview-card input.signa-prev-input {
+#ashna-app-shell #ashna-live-preview-card input.ashna-prev-input {
 	width: 100% !important;
 	height: 44px;
 	padding: 0 14px;
@@ -1441,29 +1441,29 @@
 	box-shadow: none;
 }
 
-#signa-app-shell #signa-live-preview-card input.signa-prev-input::placeholder {
+#ashna-app-shell #ashna-live-preview-card input.ashna-prev-input::placeholder {
 	color: rgba(100, 116, 139, 0.78) !important;
 	opacity: 1 !important;
 }
 
-#signa-app-shell #signa-live-preview-card.is-dark-preview-card input.signa-prev-input::placeholder {
+#ashna-app-shell #ashna-live-preview-card.is-dark-preview-card input.ashna-prev-input::placeholder {
 	color: rgba(203, 213, 225, 0.65) !important;
 	opacity: 1 !important;
 }
 
-#signa-app-shell.is-dark select option {
+#ashna-app-shell.is-dark select option {
 	background-color: #1e293b !important;
 	color: #f8fafc !important;
 }
 
-#signa-app-shell input:focus,
-#signa-app-shell select:focus,
-#signa-app-shell textarea:focus {
+#ashna-app-shell input:focus,
+#ashna-app-shell select:focus,
+#ashna-app-shell textarea:focus {
 	border-color: var(--s-primary) !important;
 	box-shadow: 0 0 0 3px var(--s-primary-soft) !important;
 }
 
-.signa-field small {
+.ashna-field small {
 	font-size: 11.5px;
 	color: var(--s-text-muted);
 }
@@ -1471,13 +1471,13 @@
 /* ==========================================
    SWITCHES GRID & FIXED iOS TOGGLE GEOMETRY
    ========================================== */
-.signa-switches-grid {
+.ashna-switches-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
 	gap: 14px;
 }
 
-.signa-switch-row {
+.ashna-switch-row {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1490,15 +1490,15 @@
 	transition: border-color 0.15s ease;
 }
 
-.signa-switches-grid .signa-switch-row {
+.ashna-switches-grid .ashna-switch-row {
 	margin-bottom: 0;
 }
 
-.signa-switch-row:hover {
+.ashna-switch-row:hover {
 	border-color: var(--s-primary);
 }
 
-.signa-switch-row strong {
+.ashna-switch-row strong {
 	display: block;
 	font-size: 13.5px;
 	font-weight: 700;
@@ -1506,7 +1506,7 @@
 	margin-bottom: 4px;
 }
 
-.signa-switch-row p {
+.ashna-switch-row p {
 	margin: 0;
 	font-size: 12px;
 	line-height: 1.55;
@@ -1514,7 +1514,7 @@
 }
 
 /* Force LTR inside switch so knob math is identical in RTL & LTR */
-.signa-switch {
+.ashna-switch {
 	position: relative;
 	display: inline-block;
 	width: 50px;
@@ -1523,14 +1523,14 @@
 	direction: ltr !important;
 }
 
-.signa-switch input {
+.ashna-switch input {
 	opacity: 0;
 	width: 0;
 	height: 0;
 	position: absolute;
 }
 
-.signa-slider {
+.ashna-slider {
 	position: absolute;
 	cursor: pointer;
 	top: 0;
@@ -1542,7 +1542,7 @@
 	border-radius: 99px;
 }
 
-.signa-slider::before {
+.ashna-slider::before {
 	position: absolute;
 	content: "";
 	height: 20px;
@@ -1555,24 +1555,24 @@
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.signa-switch input:checked + .signa-slider {
+.ashna-switch input:checked + .ashna-slider {
 	background-color: var(--s-primary);
 }
 
-.signa-switch input:checked + .signa-slider::before {
+.ashna-switch input:checked + .ashna-slider::before {
 	transform: translateX(22px);
 }
 
 /* ==========================================
    GATEWAY SELECTOR CARDS, LOGOS & PILLS
    ========================================== */
-.signa-gw-selector-grid {
+.ashna-gw-selector-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 	gap: 12px;
 }
 
-#signa-app-shell .signa-gw-select-card {
+#ashna-app-shell .ashna-gw-select-card {
 	display: flex;
 	align-items: center;
 	gap: 11px;
@@ -1591,18 +1591,18 @@
 	position: relative;
 }
 
-#signa-app-shell .signa-gw-select-card:hover {
+#ashna-app-shell .ashna-gw-select-card:hover {
 	border-color: var(--s-primary);
 	background: var(--s-bg-hover);
 }
 
-#signa-app-shell .signa-gw-select-card.selected {
+#ashna-app-shell .ashna-gw-select-card.selected {
 	border-color: var(--s-primary);
 	background: var(--s-primary-soft);
 	box-shadow: 0 0 0 1px var(--s-primary);
 }
 
-.signa-gw-check-badge {
+.ashna-gw-check-badge {
 	display: none;
 	margin-right: auto;
 	background: var(--s-primary);
@@ -1613,12 +1613,12 @@
 	border-radius: 99px;
 }
 
-.signa-gw-select-card.selected .signa-gw-check-badge {
+.ashna-gw-select-card.selected .ashna-gw-check-badge {
 	display: inline-block;
 }
 
 /* Gateway Brand Logo Badges */
-.signa-gw-logo {
+.ashna-gw-logo {
 	width: 32px;
 	height: 32px;
 	border-radius: 9px;
@@ -1628,48 +1628,48 @@
 	flex-shrink: 0;
 }
 
-.signa-gw-pill .signa-gw-logo {
+.ashna-gw-pill .ashna-gw-logo {
 	width: 24px;
 	height: 24px;
 	border-radius: 6px;
 }
 
-.signa-gw-logo.is-sandbox {
+.ashna-gw-logo.is-sandbox {
 	background: rgba(245, 158, 11, 0.16);
 	color: #f59e0b;
 }
 
-.signa-gw-logo.is-smsir {
+.ashna-gw-logo.is-smsir {
 	background: rgba(14, 165, 233, 0.16);
 	color: #0ea5e9;
 }
 
-.signa-gw-logo.is-kavenegar {
+.ashna-gw-logo.is-kavenegar {
 	background: rgba(139, 92, 246, 0.16);
 	color: #8b5cf6;
 }
 
-.signa-gw-logo.is-melipayamak {
+.ashna-gw-logo.is-melipayamak {
 	background: rgba(37, 99, 235, 0.16);
 	color: #3b82f6;
 }
 
-.signa-gw-logo.is-farazsms {
+.ashna-gw-logo.is-farazsms {
 	background: rgba(239, 68, 68, 0.16);
 	color: #ef4444;
 }
 
-.signa-gw-logo.is-ippanel {
+.ashna-gw-logo.is-ippanel {
 	background: rgba(16, 185, 129, 0.16);
 	color: #10b981;
 }
 
-.signa-gw-pill.active .signa-gw-logo {
+.ashna-gw-pill.active .ashna-gw-logo {
 	background: rgba(255, 255, 255, 0.22);
 	color: #ffffff;
 }
 
-.signa-gw-tabs-bar {
+.ashna-gw-tabs-bar {
 	margin-top: 24px;
 	padding-top: 18px;
 	border-top: 1px solid #33415522;
@@ -1680,13 +1680,13 @@
 	gap: 12px;
 }
 
-.signa-gw-pills {
+.ashna-gw-pills {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 }
 
-#signa-app-shell .signa-gw-pill {
+#ashna-app-shell .ashna-gw-pill {
 	display: inline-flex;
 	align-items: center;
 	gap: 7px;
@@ -1703,18 +1703,18 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-gw-pill:hover {
+#ashna-app-shell .ashna-gw-pill:hover {
 	border-color: var(--s-primary);
 	background: var(--s-bg-hover);
 }
 
-#signa-app-shell .signa-gw-pill.active {
+#ashna-app-shell .ashna-gw-pill.active {
 	background: var(--s-primary);
 	border-color: var(--s-primary);
 	color: #ffffff !important;
 }
 
-.signa-gateway-box {
+.ashna-gateway-box {
 	margin-top: 18px;
 	padding: 22px;
 	border-radius: 14px;
@@ -1723,14 +1723,14 @@
 	display: none;
 }
 
-.signa-gw-box-head {
+.ashna-gw-box-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 16px;
 }
 
-.signa-gw-box-head h3 {
+.ashna-gw-box-head h3 {
 	margin: 0;
 	font-size: 15px;
 	color: var(--s-text);
@@ -1739,7 +1739,7 @@
 /* ==========================================
    APPEARANCE STUDIO & LIVE PREVIEW
    ========================================== */
-.signa-studio-layout {
+.ashna-studio-layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 430px;
 	gap: 22px;
@@ -1747,27 +1747,27 @@
 	transition: grid-template-columns 0.25s ease;
 }
 
-.signa-studio-layout.is-split-preview-active {
+.ashna-studio-layout.is-split-preview-active {
 	grid-template-columns: minmax(0, 1fr) 500px;
 }
 
-.signa-studio-layout.is-wide-preview {
+.ashna-studio-layout.is-wide-preview {
 	grid-template-columns: minmax(310px, 1fr) 680px !important;
 }
 
 @media (max-width: 1400px) {
-	.signa-studio-layout.is-wide-preview {
+	.ashna-studio-layout.is-wide-preview {
 		grid-template-columns: minmax(280px, 42%) 58% !important;
 	}
 }
 
-.signa-preset-grid {
+.ashna-preset-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 	gap: 10px;
 }
 
-#signa-app-shell .signa-preset-btn {
+#ashna-app-shell .ashna-preset-btn {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1783,12 +1783,12 @@
 	outline: none !important;
 }
 
-#signa-app-shell .signa-preset-btn:hover {
+#ashna-app-shell .ashna-preset-btn:hover {
 	border-color: var(--s-primary);
 	background: var(--s-bg-hover);
 }
 
-.signa-swatch {
+.ashna-swatch {
 	width: 18px;
 	height: 18px;
 	border-radius: 50%;
@@ -1796,7 +1796,7 @@
 	flex-shrink: 0;
 }
 
-.signa-color-input-wrap {
+.ashna-color-input-wrap {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1806,7 +1806,7 @@
 	border-radius: 10px;
 }
 
-.signa-color-input-wrap input[type="color"] {
+.ashna-color-input-wrap input[type="color"] {
 	width: 32px;
 	height: 32px;
 	border: none;
@@ -1815,7 +1815,7 @@
 	cursor: pointer;
 }
 
-.signa-studio-preview-col {
+.ashna-studio-preview-col {
 	position: sticky !important;
 	top: 124px !important;
 	align-self: start !important;
@@ -1823,18 +1823,18 @@
 }
 
 /* Exclusive Collapsible Accordion Cards in Appearance Studio */
-#signa-app-shell .signa-accordion-card {
+#ashna-app-shell .ashna-accordion-card {
 	padding: 0 !important;
 	overflow: hidden;
 	transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-#signa-app-shell .signa-accordion-card.is-open {
+#ashna-app-shell .ashna-accordion-card.is-open {
 	border-color: var(--s-primary) !important;
 	box-shadow: 0 10px 28px -8px rgba(37, 99, 235, 0.14);
 }
 
-#signa-app-shell .signa-accordion-card > .signa-accordion-trigger {
+#ashna-app-shell .ashna-accordion-card > .ashna-accordion-trigger {
 	margin: 0 !important;
 	padding: 20px 24px !important;
 	border-bottom: 1px solid transparent !important;
@@ -1843,16 +1843,16 @@
 	transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-#signa-app-shell .signa-accordion-card > .signa-accordion-trigger:hover {
+#ashna-app-shell .ashna-accordion-card > .ashna-accordion-trigger:hover {
 	background-color: var(--s-bg-subtle);
 }
 
-#signa-app-shell .signa-accordion-card.is-open > .signa-accordion-trigger {
+#ashna-app-shell .ashna-accordion-card.is-open > .ashna-accordion-trigger {
 	border-bottom-color: var(--s-border) !important;
 	background-color: var(--s-bg-subtle);
 }
 
-#signa-app-shell .signa-accordion-chevron {
+#ashna-app-shell .ashna-accordion-chevron {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1866,19 +1866,19 @@
 	flex-shrink: 0;
 }
 
-#signa-app-shell .signa-accordion-card.is-open .signa-accordion-chevron {
+#ashna-app-shell .ashna-accordion-card.is-open .ashna-accordion-chevron {
 	transform: rotate(180deg);
 	color: var(--s-primary);
 	border-color: var(--s-primary);
 	background: var(--s-primary-soft);
 }
 
-#signa-app-shell .signa-accordion-body {
+#ashna-app-shell .ashna-accordion-body {
 	padding: 22px 24px 24px 24px;
 }
 
 /* Ambient Glass Orbs Behind Live Preview Card */
-#signa-app-shell .signa-prev-glass-orbs {
+#ashna-app-shell .ashna-prev-glass-orbs {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
@@ -1888,18 +1888,18 @@
 	overflow: hidden;
 }
 
-#signa-app-shell .signa-prev-glass-orbs.is-glass-active {
+#ashna-app-shell .ashna-prev-glass-orbs.is-glass-active {
 	opacity: 0.92;
 }
 
-#signa-app-shell .signa-glass-orb {
+#ashna-app-shell .ashna-glass-orb {
 	position: absolute;
 	border-radius: 50%;
 	filter: blur(2px);
 	transition: background 0.35s ease;
 }
 
-#signa-app-shell .signa-glass-orb.orb-1 {
+#ashna-app-shell .ashna-glass-orb.orb-1 {
 	width: 150px;
 	height: 150px;
 	background: #3b82f6;
@@ -1908,7 +1908,7 @@
 	box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.45);
 }
 
-#signa-app-shell .signa-glass-orb.orb-2 {
+#ashna-app-shell .ashna-glass-orb.orb-2 {
 	width: 135px;
 	height: 135px;
 	background: #ec4899;
@@ -1917,7 +1917,7 @@
 	box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.45);
 }
 
-#signa-app-shell .signa-glass-orb.orb-3 {
+#ashna-app-shell .ashna-glass-orb.orb-3 {
 	width: 95px;
 	height: 95px;
 	background: linear-gradient(135deg, #10b981, #f59e0b);
@@ -1927,14 +1927,14 @@
 	border-radius: 24px;
 }
 
-.signa-preview-box {
+.ashna-preview-box {
 	background: var(--s-bg-surface);
 	border: 1px solid var(--s-border-input);
 	border-radius: 16px;
 	overflow: hidden;
 }
 
-.signa-preview-toolbar {
+.ashna-preview-toolbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1945,12 +1945,12 @@
 	font-weight: 700;
 }
 
-.signa-preview-step-btns {
+.ashna-preview-step-btns {
 	display: flex;
 	gap: 4px;
 }
 
-#signa-app-shell .signa-prev-step-btn {
+#ashna-app-shell .ashna-prev-step-btn {
 	padding: 5px 10px;
 	border-radius: 6px;
 	border: 1px solid var(--s-border-input);
@@ -1962,27 +1962,27 @@
 	outline: none !important;
 }
 
-#signa-app-shell .signa-prev-step-btn.active {
+#ashna-app-shell .ashna-prev-step-btn.active {
 	background: var(--s-primary);
 	border-color: var(--s-primary);
 	color: #fff;
 }
 
-.signa-preview-canvas {
+.ashna-preview-canvas {
 	padding: 28px 20px;
 	background-color: #f1f5f9;
 	background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
 	background-size: 16px 16px;
 }
 
-.signa-prev-card {
+.ashna-prev-card {
 	padding: 24px 20px;
 	box-shadow: none !important;
 	border: none !important;
 	transition: all 0.2s ease;
 }
 
-.signa-prev-digit {
+.ashna-prev-digit {
 	width: 40px;
 	height: 46px;
 	border: 1.5px solid #cbd5e1;
@@ -1997,13 +1997,13 @@
 }
 
 /* COPY CARDS */
-.signa-copy-cards-grid {
+.ashna-copy-cards-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 	gap: 14px;
 }
 
-.signa-copy-card {
+.ashna-copy-card {
 	background: var(--s-bg-subtle);
 	border: 1px solid var(--s-border-input);
 	border-radius: 12px;
@@ -2013,7 +2013,7 @@
 	gap: 10px;
 }
 
-.signa-copy-card code {
+.ashna-copy-card code {
 	padding: 8px 10px;
 	border-radius: 8px;
 	background: var(--s-bg-input);
@@ -2023,7 +2023,7 @@
 	text-align: left;
 }
 
-#signa-app-shell .signa-copy-btn {
+#ashna-app-shell .ashna-copy-btn {
 	align-self: flex-start;
 	padding: 6px 12px;
 	border-radius: 8px;
@@ -2037,13 +2037,13 @@
 }
 
 /* MODERN TABLE */
-.signa-modern-table {
+.ashna-modern-table {
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 13px;
 }
 
-.signa-modern-table th {
+.ashna-modern-table th {
 	background: var(--s-bg-subtle);
 	color: var(--s-text-muted);
 	font-weight: 700;
@@ -2052,13 +2052,13 @@
 	border-bottom: 1px solid var(--s-border-input);
 }
 
-.signa-modern-table td {
+.ashna-modern-table td {
 	padding: 13px 16px;
 	border-bottom: 1px solid #33415522;
 	color: var(--s-text);
 }
 
-.signa-otp-code-pill {
+.ashna-otp-code-pill {
 	background: var(--s-primary-soft);
 	color: var(--s-primary);
 	font-weight: 700;
@@ -2066,7 +2066,7 @@
 	border-radius: 6px;
 }
 
-.signa-logs-toolbar {
+.ashna-logs-toolbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2074,7 +2074,7 @@
 	gap: 12px;
 }
 
-.signa-logs-filter-form {
+.ashna-logs-filter-form {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -2082,7 +2082,7 @@
 }
 
 /* UNSAVED CHANGES DOT ON SAVE BUTTON */
-.signa-unsaved-dot {
+.ashna-unsaved-dot {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -2091,19 +2091,19 @@
 	display: inline-block;
 }
 
-#signa-app-shell .signa-btn-save.has-unsaved {
+#ashna-app-shell .ashna-btn-save.has-unsaved {
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.28), 0 6px 16px rgba(37, 99, 235, 0.38);
 }
 
 /* QUICK SETUP & JUMP BAR ON DASHBOARD */
-.signa-quick-setup-grid {
+.ashna-quick-setup-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 14px;
 	margin-bottom: 18px;
 }
 
-.signa-quick-item {
+.ashna-quick-item {
 	background: var(--s-bg-surface);
 	border: 1px solid var(--s-border-input);
 	border-radius: 14px;
@@ -2114,12 +2114,12 @@
 	transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.signa-quick-item:hover {
+.ashna-quick-item:hover {
 	border-color: var(--s-primary);
 	transform: translateY(-1px);
 }
 
-.signa-quick-head {
+.ashna-quick-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2127,13 +2127,13 @@
 	margin-bottom: 6px;
 }
 
-.signa-quick-body {
+.ashna-quick-body {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 }
 
-.signa-quick-icon {
+.ashna-quick-icon {
 	width: 40px;
 	height: 40px;
 	border-radius: 11px;
@@ -2145,45 +2145,45 @@
 	color: #3b82f6;
 }
 
-.signa-quick-icon.is-blue {
+.ashna-quick-icon.is-blue {
 	background: rgba(59, 130, 246, 0.14);
 	color: #3b82f6;
 }
 
-.signa-quick-icon.is-purple {
+.ashna-quick-icon.is-purple {
 	background: rgba(139, 92, 246, 0.14);
 	color: #a855f7;
 }
 
-.signa-quick-icon.is-amber {
+.ashna-quick-icon.is-amber {
 	background: rgba(245, 158, 11, 0.14);
 	color: #f59e0b;
 }
 
-.signa-quick-icon.is-green {
+.ashna-quick-icon.is-green {
 	background: rgba(16, 185, 129, 0.14);
 	color: #10b981;
 }
 
-.signa-quick-text {
+.ashna-quick-text {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 	min-width: 0;
 }
 
-.signa-quick-item strong {
+.ashna-quick-item strong {
 	font-size: 13.5px;
 	font-weight: 800;
 	color: var(--s-text);
 }
 
-.signa-quick-item small {
+.ashna-quick-item small {
 	font-size: 11.5px;
 	color: var(--s-text-muted);
 }
 
-#signa-app-shell .signa-jump-tab {
+#ashna-app-shell .ashna-jump-tab {
 	background: transparent;
 	border: none;
 	padding: 2px 6px;
@@ -2195,18 +2195,18 @@
 	transition: background 0.15s ease;
 }
 
-#signa-app-shell .signa-jump-tab:hover {
+#ashna-app-shell .ashna-jump-tab:hover {
 	background: var(--s-primary-soft);
 }
 
 /* ELEMENTOR NATIVE WIDGETS SHOWCASE */
-.signa-elementor-showcase-grid {
+.ashna-elementor-showcase-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	gap: 16px;
 }
 
-.signa-el-widget-card {
+.ashna-el-widget-card {
 	display: flex;
 	align-items: flex-start;
 	gap: 14px;
@@ -2216,7 +2216,7 @@
 	padding: 18px;
 }
 
-.signa-el-widget-icon {
+.ashna-el-widget-icon {
 	width: 44px;
 	height: 44px;
 	border-radius: 12px;
@@ -2228,16 +2228,16 @@
 	flex-shrink: 0;
 }
 
-.signa-el-widget-icon.is-purple {
+.ashna-el-widget-icon.is-purple {
 	background: rgba(147, 51, 234, 0.14);
 	color: #9333ea;
 }
 
-.signa-el-widget-body {
+.ashna-el-widget-body {
 	flex: 1;
 }
 
-.signa-el-widget-title-row {
+.ashna-el-widget-title-row {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2246,13 +2246,13 @@
 	margin-bottom: 6px;
 }
 
-.signa-el-widget-title-row strong {
+.ashna-el-widget-title-row strong {
 	font-size: 14px;
 	font-weight: 800;
 	color: var(--s-text);
 }
 
-.signa-el-widget-body p {
+.ashna-el-widget-body p {
 	margin: 0;
 	font-size: 12.5px;
 	line-height: 1.7;
@@ -2260,14 +2260,14 @@
 }
 
 /* QUICK SETUP CHECKLIST IN DASHBOARD */
-.signa-checklist-progress-wrap {
+.ashna-checklist-progress-wrap {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 	min-width: 190px;
 }
 
-.signa-checklist-progress-meta {
+.ashna-checklist-progress-meta {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2275,19 +2275,19 @@
 	font-size: 12px;
 }
 
-.signa-checklist-progress-label {
+.ashna-checklist-progress-label {
 	color: var(--s-text-muted);
 	font-weight: 600;
 }
 
-.signa-checklist-progress-pct {
+.ashna-checklist-progress-pct {
 	color: #10b981;
 	font-weight: 800;
 	font-size: 13px;
 	direction: ltr;
 }
 
-.signa-checklist-progress-bar {
+.ashna-checklist-progress-bar {
 	width: 100%;
 	height: 8px;
 	border-radius: 99px;
@@ -2296,20 +2296,20 @@
 	overflow: hidden;
 }
 
-.signa-checklist-progress-fill {
+.ashna-checklist-progress-fill {
 	height: 100%;
 	border-radius: 99px;
 	background: linear-gradient(90deg, #10b981, #059669);
 	transition: width 0.35s ease;
 }
 
-.signa-checklist-list {
+.ashna-checklist-list {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.signa-checklist-row {
+.ashna-checklist-row {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2321,16 +2321,16 @@
 	transition: border-color 0.18s ease, background-color 0.18s ease;
 }
 
-.signa-checklist-row.is-done {
+.ashna-checklist-row.is-done {
 	border-color: rgba(16, 185, 129, 0.28);
 	background: rgba(16, 185, 129, 0.04);
 }
 
-.signa-checklist-row:hover {
+.ashna-checklist-row:hover {
 	border-color: var(--s-primary);
 }
 
-.signa-checklist-main {
+.ashna-checklist-main {
 	display: flex;
 	align-items: center;
 	gap: 13px;
@@ -2338,7 +2338,7 @@
 	flex: 1;
 }
 
-.signa-checklist-check {
+.ashna-checklist-check {
 	width: 34px;
 	height: 34px;
 	border-radius: 10px;
@@ -2348,23 +2348,23 @@
 	flex-shrink: 0;
 }
 
-.signa-checklist-check.is-done {
+.ashna-checklist-check.is-done {
 	background: rgba(16, 185, 129, 0.16);
 	color: #10b981;
 	border: 1px solid rgba(16, 185, 129, 0.32);
 }
 
-.signa-checklist-check.is-pending {
+.ashna-checklist-check.is-pending {
 	background: rgba(245, 158, 11, 0.16);
 	color: #f59e0b;
 	border: 1px solid rgba(245, 158, 11, 0.32);
 }
 
-.signa-checklist-text {
+.ashna-checklist-text {
 	min-width: 0;
 }
 
-.signa-checklist-text strong {
+.ashna-checklist-text strong {
 	display: block;
 	font-size: 13.5px;
 	font-weight: 800;
@@ -2372,14 +2372,14 @@
 	margin-bottom: 3px;
 }
 
-.signa-checklist-text p {
+.ashna-checklist-text p {
 	margin: 0;
 	font-size: 12px;
 	color: var(--s-text-muted);
 	line-height: 1.6;
 }
 
-.signa-checklist-actions {
+.ashna-checklist-actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -2387,7 +2387,7 @@
 	flex-wrap: wrap;
 }
 
-#signa-app-shell .signa-checklist-jump {
+#ashna-app-shell .ashna-checklist-jump {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -2403,7 +2403,7 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-checklist-jump:hover {
+#ashna-app-shell .ashna-checklist-jump:hover {
 	background: var(--s-primary);
 	color: #ffffff;
 	border-color: var(--s-primary);
@@ -2412,7 +2412,7 @@
 /* ==========================================
    DYNAMIC PROPORTIONAL LIVE PREVIEW & MODAL SIMULATOR (v2.7.2)
    ========================================== */
-.signa-preview-subbar {
+.ashna-preview-subbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -2423,7 +2423,7 @@
 	flex-wrap: wrap;
 }
 
-.signa-preview-mode-tabs {
+.ashna-preview-mode-tabs {
 	display: inline-flex;
 	background: var(--s-bg-subtle);
 	padding: 3px;
@@ -2432,7 +2432,7 @@
 	gap: 3px;
 }
 
-#signa-app-shell .signa-prev-mode-btn {
+#ashna-app-shell .ashna-prev-mode-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
@@ -2448,13 +2448,13 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-prev-mode-btn.active {
+#ashna-app-shell .ashna-prev-mode-btn.active {
 	background: var(--s-primary);
 	color: #ffffff;
 	box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
-#signa-app-shell .signa-prev-expand-btn {
+#ashna-app-shell .ashna-prev-expand-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
@@ -2470,15 +2470,15 @@
 	transition: all 0.15s ease;
 }
 
-#signa-app-shell .signa-prev-expand-btn:hover,
-#signa-app-shell .signa-prev-expand-btn.active {
+#ashna-app-shell .ashna-prev-expand-btn:hover,
+#ashna-app-shell .ashna-prev-expand-btn.active {
 	border-color: var(--s-primary);
 	color: var(--s-primary);
 	background: var(--s-primary-soft);
 }
 
 /* Proportional Viewport Stage inside Live Preview so Split-Screen never squishes or overflows */
-.signa-preview-viewport {
+.ashna-preview-viewport {
 	width: 100% !important;
 	max-width: 100% !important;
 	box-sizing: border-box !important;
@@ -2492,7 +2492,7 @@
 	z-index: 2;
 }
 
-#signa-live-preview-shell {
+#ashna-live-preview-shell {
 	width: 100% !important;
 	max-width: 350px !important;
 	box-sizing: border-box !important;
@@ -2501,28 +2501,28 @@
 	overflow: visible !important;
 }
 
-.signa-studio-layout.is-wide-preview #signa-live-preview-shell:not(.is-split) {
+.ashna-studio-layout.is-wide-preview #ashna-live-preview-shell:not(.is-split) {
 	max-width: 470px !important;
 }
 
-.signa-studio-layout.is-wide-preview .signa-preview-canvas:not(.is-modal-mode) {
+.ashna-studio-layout.is-wide-preview .ashna-preview-canvas:not(.is-modal-mode) {
 	min-height: 490px !important;
 	padding: 36px 28px !important;
 }
 
-#signa-live-preview-shell.is-split {
+#ashna-live-preview-shell.is-split {
 	width: 100% !important;
 	max-width: 100% !important;
 }
 
-#signa-live-preview-shell.is-split #signa-live-preview-card {
+#ashna-live-preview-shell.is-split #ashna-live-preview-card {
 	flex: 0 0 55% !important;
 	min-width: 0 !important;
 	max-width: 55% !important;
 	box-sizing: border-box !important;
 }
 
-#signa-live-preview-shell.is-split #signa-prev-split-banner {
+#ashna-live-preview-shell.is-split #ashna-prev-split-banner {
 	flex: 0 0 45% !important;
 	min-width: 0 !important;
 	max-width: 45% !important;
@@ -2530,7 +2530,7 @@
 }
 
 /* Simulated Website Backdrop for Modal / Drawer Mode inside Live Preview */
-.signa-prev-site-skeleton {
+.ashna-prev-site-skeleton {
 	display: flex;
 	position: absolute;
 	inset: 0;
@@ -2551,11 +2551,11 @@
    fade in/out instead of popping, and the shell slides in with a
    single smooth ease-out curve (no overshoot).
    ========================================================== */
-#signa-app-shell #signa-preview-canvas {
+#ashna-app-shell #ashna-preview-canvas {
 	transition: background 0.4s ease, padding 0.45s cubic-bezier(0.22, 1, 0.36, 1), min-height 0.45s ease !important;
 }
 
-#signa-app-shell .signa-prev-modal-backdrop {
+#ashna-app-shell .ashna-prev-modal-backdrop {
 	display: block;
 	position: absolute;
 	inset: 0;
@@ -2569,25 +2569,25 @@
 	transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode {
 	position: relative;
 	min-height: 460px !important;
 	padding: 0 !important;
 	overflow: hidden !important;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode .signa-prev-site-skeleton {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode .ashna-prev-site-skeleton {
 	opacity: 0.45;
 	visibility: visible;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode .signa-prev-modal-backdrop {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode .ashna-prev-modal-backdrop {
 	opacity: 1;
 	visibility: visible;
 }
 
 /* Center modal: stays in normal flow, grows with the card */
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-center #signa-preview-viewport {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-center #ashna-preview-viewport {
 	position: relative;
 	z-index: 2;
 	width: 100% !important;
@@ -2601,8 +2601,8 @@
 }
 
 /* Drawers: the viewport covers the whole stage so the panel runs top to bottom */
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_left #signa-preview-viewport,
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_right #signa-preview-viewport {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-preview-viewport,
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-preview-viewport {
 	position: absolute !important;
 	inset: 0 !important;
 	z-index: 2;
@@ -2615,18 +2615,18 @@
 	box-sizing: border-box !important;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_left #signa-preview-viewport {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-preview-viewport {
 	align-items: flex-end !important;
 	justify-content: stretch !important;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_right #signa-preview-viewport {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-preview-viewport {
 	align-items: flex-start !important;
 	justify-content: stretch !important;
 }
 
 /* Bottom sheet: the viewport is only the overlay layer; the sheet itself sits at the bottom at content height */
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-bottom_sheet #signa-preview-viewport {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-preview-viewport {
 	position: absolute !important;
 	inset: 0 !important;
 	z-index: 2;
@@ -2643,8 +2643,8 @@
 	justify-content: flex-end !important;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_left #signa-live-preview-shell,
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_right #signa-live-preview-shell {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-live-preview-shell,
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-live-preview-shell {
 	width: 280px !important;
 	max-width: 280px !important;
 	height: 100% !important;
@@ -2652,7 +2652,7 @@
 }
 
 /* Bottom sheet card: content height, all corners rounded, capped at 70% of the stage */
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-bottom_sheet #signa-live-preview-shell {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell {
 	position: relative !important;
 	width: 100% !important;
 	max-width: 100% !important;
@@ -2664,7 +2664,7 @@
 	margin: 0 !important;
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-bottom_sheet #signa-live-preview-shell::before {
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell::before {
 	content: '';
 	position: absolute;
 	top: 8px;
@@ -2679,49 +2679,49 @@
 }
 
 /* Entrance curves: one ease-out, no bounce */
-@keyframes signaSimModalCenter {
+@keyframes ashnaSimModalCenter {
 	0% { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.97); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
-@keyframes signaSimDrawerLeft {
+@keyframes ashnaSimDrawerLeft {
 	0% { transform: translate3d(-100%, 0, 0); }
 	100% { transform: translate3d(0, 0, 0); }
 }
-@keyframes signaSimDrawerRight {
+@keyframes ashnaSimDrawerRight {
 	0% { transform: translate3d(100%, 0, 0); }
 	100% { transform: translate3d(0, 0, 0); }
 }
-@keyframes signaSimBottomSheet {
+@keyframes ashnaSimBottomSheet {
 	0% { transform: translate3d(0, 100%, 0); }
 	100% { transform: translate3d(0, 0, 0); }
 }
 
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-center #signa-live-preview-shell {
-	animation: signaSimModalCenter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-center #ashna-live-preview-shell {
+	animation: ashnaSimModalCenter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_left #signa-live-preview-shell {
-	animation: signaSimDrawerLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-live-preview-shell {
+	animation: ashnaSimDrawerLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-drawer_right #signa-live-preview-shell {
-	animation: signaSimDrawerRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-live-preview-shell {
+	animation: ashnaSimDrawerRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-#signa-app-shell #signa-preview-canvas.is-modal-mode.sim-bottom_sheet #signa-live-preview-shell {
-	animation: signaSimBottomSheet 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell {
+	animation: ashnaSimBottomSheet 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Stage type changed: page mode fades in; modal/drawer/sheet keep their own entrance (higher specificity) */
-#signa-app-shell #signa-live-preview-shell.is-switch-in {
-	animation: signaSwitchFadeIn 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+#ashna-app-shell #ashna-live-preview-shell.is-switch-in {
+	animation: ashnaSwitchFadeIn 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-@keyframes signaSwitchFadeIn {
+@keyframes ashnaSwitchFadeIn {
 	0% { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.985); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 /* ==========================================
-   MINI-VIDEO MOTION PREVIEWS INSIDE CHOICE CARDS (.signa-mini-video)
+   MINI-VIDEO MOTION PREVIEWS INSIDE CHOICE CARDS (.ashna-mini-video)
    ========================================== */
-.signa-mini-video {
+.ashna-mini-video {
 	width: 100%;
 	height: 78px;
 	border-radius: 10px;
@@ -2736,7 +2736,7 @@
 	box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
-.signa-mini-video-badge {
+.ashna-mini-video-badge {
 	position: absolute;
 	top: 6px;
 	left: 7px;
@@ -2754,23 +2754,23 @@
 	letter-spacing: 0.2px;
 }
 
-.signa-mini-video-badge::before {
+.ashna-mini-video-badge::before {
 	content: "";
 	width: 5px;
 	height: 5px;
 	border-radius: 50%;
 	background: #38bdf8;
 	box-shadow: 0 0 6px #38bdf8;
-	animation: signaPulseDot 1.6s infinite ease-in-out;
+	animation: ashnaPulseDot 1.6s infinite ease-in-out;
 }
 
-@keyframes signaPulseDot {
+@keyframes ashnaPulseDot {
 	0%, 100% { opacity: 1; transform: scale(1); }
 	50% { opacity: 0.35; transform: scale(0.75); }
 }
 
 /* Mini Card & Split-Screen Motion Elements */
-.signa-mv-card {
+.ashna-mv-card {
 	width: 54px;
 	height: 54px;
 	border-radius: 7px;
@@ -2781,10 +2781,10 @@
 	justify-content: center;
 	gap: 4px;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-	animation: signaMvFloat 3s ease-in-out infinite;
+	animation: ashnaMvFloat 3s ease-in-out infinite;
 }
 
-.signa-mv-line {
+.ashna-mv-line {
 	height: 4px;
 	border-radius: 3px;
 	background: #cbd5e1;
@@ -2792,7 +2792,7 @@
 	margin: 0 auto;
 }
 
-.signa-mv-input {
+.ashna-mv-input {
 	height: 8px;
 	border-radius: 3px;
 	background: #f1f5f9;
@@ -2802,7 +2802,7 @@
 	overflow: hidden;
 }
 
-.signa-mv-input::after {
+.ashna-mv-input::after {
 	content: "";
 	position: absolute;
 	top: 2px;
@@ -2810,39 +2810,39 @@
 	height: 2px;
 	background: #2563eb;
 	border-radius: 2px;
-	animation: signaMvTyping 2.6s infinite ease-in-out;
+	animation: ashnaMvTyping 2.6s infinite ease-in-out;
 }
 
-.signa-mv-btn {
+.ashna-mv-btn {
 	height: 8px;
 	border-radius: 3px;
 	background: linear-gradient(90deg, #2563eb, #4f46e5);
 	width: 100%;
-	animation: signaMvBtnPulse 2.6s infinite ease-in-out;
+	animation: ashnaMvBtnPulse 2.6s infinite ease-in-out;
 }
 
-.signa-mv-split {
+.ashna-mv-split {
 	width: 108px;
 	height: 54px;
 	border-radius: 7px;
 	overflow: hidden;
 	display: flex;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-	animation: signaMvFloat 3s ease-in-out infinite;
+	animation: ashnaMvFloat 3s ease-in-out infinite;
 }
 
-.signa-mv-split.is-reverse {
+.ashna-mv-split.is-reverse {
 	flex-direction: row-reverse;
 }
 
-.signa-mv-split .signa-mv-card {
+.ashna-mv-split .ashna-mv-card {
 	width: 54px;
 	border-radius: 0;
 	box-shadow: none;
 	animation: none;
 }
 
-.signa-mv-banner {
+.ashna-mv-banner {
 	width: 54px;
 	height: 54px;
 	background: linear-gradient(135deg, #1e3a8a, #3b82f6);
@@ -2853,7 +2853,7 @@
 	gap: 4px;
 }
 
-.signa-mv-banner span {
+.ashna-mv-banner span {
 	display: block;
 	height: 3.5px;
 	border-radius: 2px;
@@ -2861,7 +2861,7 @@
 }
 
 /* Position Alignment Motion */
-.signa-mv-pos-track {
+.ashna-mv-pos-track {
 	width: 124px;
 	height: 54px;
 	border-radius: 7px;
@@ -2871,19 +2871,19 @@
 	align-items: center;
 }
 
-.signa-mv-pos-track.is-center { justify-content: center; }
-.signa-mv-pos-track.is-right { justify-content: flex-start; }
-.signa-mv-pos-track.is-left { justify-content: flex-end; }
+.ashna-mv-pos-track.is-center { justify-content: center; }
+.ashna-mv-pos-track.is-right { justify-content: flex-start; }
+.ashna-mv-pos-track.is-left { justify-content: flex-end; }
 
-.signa-mv-pos-track.is-right .signa-mv-card {
-	animation: signaMvSlideRight 2.8s infinite ease-in-out;
+.ashna-mv-pos-track.is-right .ashna-mv-card {
+	animation: ashnaMvSlideRight 2.8s infinite ease-in-out;
 }
-.signa-mv-pos-track.is-left .signa-mv-card {
-	animation: signaMvSlideLeft 2.8s infinite ease-in-out;
+.ashna-mv-pos-track.is-left .ashna-mv-card {
+	animation: ashnaMvSlideLeft 2.8s infinite ease-in-out;
 }
 
 /* Modal & Drawer Motion Previews */
-.signa-mv-screen {
+.ashna-mv-screen {
 	width: 126px;
 	height: 60px;
 	border-radius: 7px;
@@ -2896,7 +2896,7 @@
 	justify-content: center;
 }
 
-.signa-mv-screen-bg {
+.ashna-mv-screen-bg {
 	position: absolute;
 	inset: 6px;
 	display: flex;
@@ -2905,14 +2905,14 @@
 	opacity: 0.25;
 }
 
-.signa-mv-screen-bg i {
+.ashna-mv-screen-bg i {
 	display: block;
 	height: 5px;
 	border-radius: 3px;
 	background: #94a3b8;
 }
 
-.signa-mv-modal-center {
+.ashna-mv-modal-center {
 	width: 48px;
 	height: 40px;
 	border-radius: 6px;
@@ -2923,10 +2923,10 @@
 	justify-content: center;
 	gap: 3px;
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-	animation: signaMvPopupLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+	animation: ashnaMvPopupLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.signa-mv-drawer-left {
+.ashna-mv-drawer-left {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -2940,10 +2940,10 @@
 	justify-content: center;
 	gap: 3px;
 	box-shadow: 4px 0 14px rgba(0, 0, 0, 0.45);
-	animation: signaMvDrawerLeftLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+	animation: ashnaMvDrawerLeftLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.signa-mv-drawer-right {
+.ashna-mv-drawer-right {
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -2957,10 +2957,10 @@
 	justify-content: center;
 	gap: 3px;
 	box-shadow: -4px 0 14px rgba(0, 0, 0, 0.45);
-	animation: signaMvDrawerRightLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+	animation: ashnaMvDrawerRightLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.signa-mv-bottom-sheet {
+.ashna-mv-bottom-sheet {
 	position: absolute;
 	left: 14px;
 	right: 14px;
@@ -2974,11 +2974,11 @@
 	justify-content: center;
 	gap: 3px;
 	box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.45);
-	animation: signaMvBottomSheetLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+	animation: ashnaMvBottomSheetLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Auth Flow & OTP Channel Motion Previews */
-.signa-mv-flow-stage {
+.ashna-mv-flow-stage {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2987,7 +2987,7 @@
 	padding: 0 12px;
 }
 
-.signa-mv-track {
+.ashna-mv-track {
 	width: 44px;
 	height: 3px;
 	background: rgba(148, 163, 184, 0.28);
@@ -2996,7 +2996,7 @@
 	overflow: hidden;
 }
 
-.signa-mv-packet {
+.ashna-mv-packet {
 	position: absolute;
 	top: 0;
 	right: -14px;
@@ -3005,85 +3005,85 @@
 	border-radius: 99px;
 	background: #38bdf8;
 	box-shadow: 0 0 8px #38bdf8;
-	animation: signaMvPacketFlow 1.8s infinite linear;
+	animation: ashnaMvPacketFlow 1.8s infinite linear;
 }
 
-.signa-mv-packet.is-green {
+.ashna-mv-packet.is-green {
 	background: #10b981;
 	box-shadow: 0 0 8px #10b981;
 }
 
-.signa-mv-packet.is-delay {
+.ashna-mv-packet.is-delay {
 	animation-delay: 0.85s;
 }
 
-@keyframes signaMvFloat {
+@keyframes ashnaMvFloat {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-2px); }
 }
-@keyframes signaMvTyping {
+@keyframes ashnaMvTyping {
 	0%, 15% { width: 0%; }
 	55%, 85% { width: 72%; }
 	100% { width: 0%; }
 }
-@keyframes signaMvBtnPulse {
+@keyframes ashnaMvBtnPulse {
 	0%, 55%, 100% { transform: scale(1); filter: brightness(1); }
 	70% { transform: scale(0.95); filter: brightness(1.25); }
 }
-@keyframes signaMvSlideRight {
+@keyframes ashnaMvSlideRight {
 	0%, 100% { transform: translateX(0); }
 	50% { transform: translateX(-8px); }
 }
-@keyframes signaMvSlideLeft {
+@keyframes ashnaMvSlideLeft {
 	0%, 100% { transform: translateX(0); }
 	50% { transform: translateX(8px); }
 }
-@keyframes signaMvPopupLoop {
+@keyframes ashnaMvPopupLoop {
 	0%, 12% { opacity: 0; transform: scale(0.68) translateY(8px); }
 	28%, 80% { opacity: 1; transform: scale(1) translateY(0); }
 	92%, 100% { opacity: 0; transform: scale(0.85); }
 }
-@keyframes signaMvDrawerLeftLoop {
+@keyframes ashnaMvDrawerLeftLoop {
 	0%, 12% { transform: translateX(-100%); }
 	28%, 80% { transform: translateX(0); }
 	92%, 100% { transform: translateX(-100%); }
 }
-@keyframes signaMvDrawerRightLoop {
+@keyframes ashnaMvDrawerRightLoop {
 	0%, 12% { transform: translateX(100%); }
 	28%, 80% { transform: translateX(0); }
 	92%, 100% { transform: translateX(100%); }
 }
-@keyframes signaMvBottomSheetLoop {
+@keyframes ashnaMvBottomSheetLoop {
 	0%, 12% { transform: translateY(100%); }
 	28%, 80% { transform: translateY(0); }
 	92%, 100% { transform: translateY(100%); }
 }
-@keyframes signaMvPacketFlow {
+@keyframes ashnaMvPacketFlow {
 	0% { right: -16px; }
 	100% { right: 100%; }
 }
 
 /* Polished Category 4 Micro-Animations in Admin Live Preview & Mini-Videos */
-@keyframes signaAnimFadeUp {
+@keyframes ashnaAnimFadeUp {
 	0% { opacity: 0; transform: translate3d(0, 22px, 0) scale(0.98); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
-@keyframes signaAnimZoomSpring {
+@keyframes ashnaAnimZoomSpring {
 	0% { opacity: 0; transform: scale(0.82) translate3d(0, 10px, 0); }
 	65% { opacity: 1; transform: scale(1.035) translate3d(0, -2px, 0); }
 	85% { transform: scale(0.99) translate3d(0, 0, 0); }
 	100% { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
 }
-@keyframes signaAnimSlideRtl {
+@keyframes ashnaAnimSlideRtl {
 	0% { opacity: 0; transform: translate3d(34px, 0, 0); }
 	70% { opacity: 1; transform: translate3d(-4px, 0, 0); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-@keyframes signaStaggerChildIn {
+@keyframes ashnaStaggerChildIn {
 	0% { opacity: 0; transform: translate3d(0, 12px, 0); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-@keyframes signaShakeKeyframes {
+@keyframes ashnaShakeKeyframes {
 	0% { transform: translate3d(0, 0, 0) rotate(0deg); }
 	12% { transform: translate3d(-11px, 0, 0) rotate(-0.8deg); }
 	24% { transform: translate3d(10px, 0, 0) rotate(0.8deg); }
@@ -3094,12 +3094,12 @@
 	84% { transform: translate3d(-2px, 0, 0) rotate(0deg); }
 	100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
-#signa-app-shell .signa-anim-fade_up { animation: signaAnimFadeUp 0.54s cubic-bezier(0.22, 1, 0.36, 1) both; }
-#signa-app-shell .signa-anim-zoom_spring { animation: signaAnimZoomSpring 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-#signa-app-shell .signa-anim-slide_rtl { animation: signaAnimSlideRtl 0.52s cubic-bezier(0.22, 1, 0.36, 1) both; }
-#signa-app-shell .signa-stagger-run { animation: signaStaggerChildIn 0.46s cubic-bezier(0.22, 1, 0.36, 1) both; }
-#signa-app-shell .signa-shake-anim { animation: signaShakeKeyframes 0.64s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
-#signa-app-shell .signa-prev-digit.is-error-digit {
+#ashna-app-shell .ashna-anim-fade_up { animation: ashnaAnimFadeUp 0.54s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-anim-zoom_spring { animation: ashnaAnimZoomSpring 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+#ashna-app-shell .ashna-anim-slide_rtl { animation: ashnaAnimSlideRtl 0.52s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-stagger-run { animation: ashnaStaggerChildIn 0.46s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-shake-anim { animation: ashnaShakeKeyframes 0.64s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+#ashna-app-shell .ashna-prev-digit.is-error-digit {
 	border-color: #ef4444 !important;
 	color: #ef4444 !important;
 	background-color: rgba(239, 68, 68, 0.14) !important;
@@ -3108,44 +3108,1302 @@
 }
 
 @media (max-width: 1024px) {
-	.signa-checklist-row {
+	/* Keep the shell inside the viewport: a 1fr grid track must be allowed to
+	   shrink below its content, otherwise the wide nav row forces the whole
+	   app (and every panel) to overflow and get clipped on tablets/phones. */
+	.ashna-app-body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-app-body > * {
+		min-width: 0;
+	}
+
+	#ashna-app-shell .ashna-sidebar {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	#ashna-app-shell .ashna-main {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.ashna-checklist-row {
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	.signa-checklist-actions {
+	.ashna-checklist-actions {
 		width: 100%;
 		justify-content: flex-end;
 	}
-	.signa-app-body {
+	.ashna-app-body {
 		grid-template-columns: 1fr;
 	}
-	#signa-app-shell .signa-sidebar {
+	#ashna-app-shell .ashna-sidebar {
 		border-left: none;
 		border-bottom: 1px solid var(--s-border-input);
 	}
-	.signa-nav {
+	.ashna-nav {
 		flex-direction: row;
 		overflow-x: auto;
+		max-width: 100%;
+		padding-bottom: 4px;
+		scrollbar-width: thin;
 	}
-	.signa-studio-layout,
-	.signa-bento-row {
+
+	#ashna-app-shell .ashna-nav-item {
+		flex: 0 0 auto;
+		width: auto;
+		white-space: nowrap;
+	}
+
+	.ashna-sidebar-group-title,
+	.ashna-sidebar-footer {
+		display: none;
+	}
+	.ashna-studio-layout,
+	.ashna-bento-row {
 		grid-template-columns: 1fr;
 	}
-	.signa-col-8,
-	.signa-col-7,
-	.signa-col-6,
-	.signa-col-5,
-	.signa-col-4 {
+	.ashna-col-8,
+	.ashna-col-7,
+	.ashna-col-6,
+	.ashna-col-5,
+	.ashna-col-4 {
 		grid-column: span 12;
 	}
-	.signa-kpi-grid,
-	.signa-quick-setup-grid,
-	.signa-cols-4,
-	.signa-cols-3,
-	.signa-cols-2 {
+	.ashna-kpi-grid,
+	.ashna-quick-setup-grid,
+	.ashna-cols-4,
+	.ashna-cols-3,
+	.ashna-cols-2 {
 		grid-template-columns: 1fr;
 	}
-	.signa-span-2 {
+	.ashna-span-2 {
 		grid-column: span 1;
+	}
+}
+
+/* ==========================================
+   FAST FAILOVER CARD & GATEWAY HEALTH
+   ========================================== */
+#ashna-app-shell .ashna-failover-card {
+	margin-top: 20px;
+}
+
+#ashna-app-shell .ashna-failover-note {
+	margin: 16px 0 0;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	line-height: 1.9;
+}
+
+#ashna-app-shell .ashna-failover-note strong {
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-failover-health-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 22px 0 10px;
+}
+
+#ashna-app-shell .ashna-failover-health-head .ashna-section-label {
+	margin: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-scroll {
+	overflow-x: auto;
+	border: 1px solid var(--s-border-input);
+	border-radius: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-table td {
+	vertical-align: middle;
+}
+
+#ashna-app-shell .ashna-gw-health-table tr:last-child td {
+	border-bottom: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-num {
+	white-space: nowrap;
+}
+
+#ashna-app-shell .ashna-gw-health-error small {
+	display: block;
+	margin-top: 2px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-failover-foot {
+	display: block;
+	margin-top: 10px;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}
+
+/* Primary gateway sidelined by the circuit breaker */
+.ashna-status-dot.is-offline {
+	background: #ef4444;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.22);
+}
+
+/* ==========================================
+   PARSENA CREDIT
+   ========================================== */
+#ashna-app-shell .ashna-credit a {
+	color: inherit;
+	font-weight: 700;
+	text-decoration: none;
+	border-bottom: 1px dashed currentColor;
+}
+
+#ashna-app-shell .ashna-credit a:hover,
+#ashna-app-shell .ashna-credit a:focus {
+	color: var(--s-primary);
+}
+
+#ashna-app-shell .ashna-page-credit {
+	margin: 20px 0 4px;
+	text-align: center;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}
+
+.ashna-info-note.is-warning {
+	background: rgba(245, 158, 11, 0.1);
+	border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ashna-gw-logo.is-msgway {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+}
+
+/* Collapsible legacy credentials (e.g. Melipayamak username/password) */
+#ashna-app-shell .ashna-legacy-details {
+	margin-top: 14px;
+	border: 1px dashed var(--s-border-input);
+	border-radius: 10px;
+	padding: 10px 14px;
+}
+
+#ashna-app-shell .ashna-legacy-details summary {
+	cursor: pointer;
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+#ashna-app-shell .ashna-legacy-details[open] summary {
+	margin-bottom: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-state small.ashna-gw-probe {
+	display: block;
+	margin-top: 4px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-gw-health-slot {
+	white-space: nowrap;
+	color: var(--s-text-secondary);
+}
+
+.ashna-flow-node.is-messenger {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+	border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* QC 2 — SMS-bombing protection */
+.ashna-info-note.is-danger {
+	background: rgba(239, 68, 68, 0.09);
+	border-color: rgba(239, 68, 68, 0.3);
+	color: var(--s-text-primary);
+}
+
+#ashna-app-shell #ashna-attack-mode-note,
+#ashna-app-shell #ashna-proxy-hint {
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-top: 0;
+}
+
+#ashna-app-shell #ashna-proxy-hint {
+	margin-top: 14px;
+}
+
+#ashna-app-shell #ashna-attack-mode-note .ashna-btn-secondary,
+#ashna-app-shell #ashna-proxy-hint .ashna-btn-secondary {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+#ashna-app-shell #ashna-real-ip-card .ashna-modern-table td:first-child {
+	color: var(--s-text-muted);
+	white-space: nowrap;
+	width: 42%;
+}
+
+/* QC 4 — integrations */
+#ashna-app-shell .ashna-check-list {
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: 12.5px;
+	line-height: 1.7;
+	color: var(--s-text-secondary);
+}
+
+#ashna-app-shell .ashna-check-list li {
+	position: relative;
+	padding-right: 20px;
+}
+
+#ashna-app-shell .ashna-check-list li::before {
+	content: "✓";
+	position: absolute;
+	right: 0;
+	color: #10b981;
+	font-weight: 800;
+}
+
+#ashna-app-shell .ashna-integrations-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+#ashna-app-shell .ashna-integrations-table td {
+	font-size: 12.5px;
+	line-height: 1.7;
+	vertical-align: top;
+	overflow-wrap: anywhere;
+}
+
+#ashna-app-shell .ashna-integrations-table td:first-child {
+	width: 32%;
+}
+
+#ashna-app-shell .ashna-integrations-table code,
+#ashna-app-shell .ashna-check-list code {
+	white-space: normal;
+	word-break: break-all;
+}
+
+#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+	#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.ashna-col-12 {
+	grid-column: span 12;
+}
+
+/* ==========================================================
+   SECURITY TAB — shield hero + split bento (QC redesign)
+   ========================================================== */
+#ashna-app-shell .ashna-sec-hero {
+	padding: 26px 28px 24px;
+	border-radius: 18px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.10), transparent 58%),
+		var(--s-bg-surface);
+	border: 1px solid rgba(59, 130, 246, 0.22);
+}
+
+#ashna-app-shell.is-dark .ashna-sec-hero {
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.16), transparent 58%),
+		var(--s-bg-surface);
+	border-color: rgba(59, 130, 246, 0.3);
+}
+
+.ashna-sec-hero-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.ashna-sec-hero-title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sec-hero-title h2 {
+	margin: 0 0 4px;
+	font-size: 17px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-hero-title p {
+	margin: 0;
+	max-width: 640px;
+	font-size: 12.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-hero-icon {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 14px;
+	color: #3b82f6;
+	background: rgba(59, 130, 246, 0.14);
+	border: 1px solid rgba(59, 130, 246, 0.26);
+}
+
+.ashna-sec-hero-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* The four headline limits, as input tiles */
+.ashna-sec-limit-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.ashna-sec-limit {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 16px 15px;
+	border-radius: 13px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ashna-sec-limit:focus-within {
+	border-color: rgba(59, 130, 246, 0.55);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.ashna-sec-limit-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.ashna-sec-limit-head span {
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-limit-head em {
+	font-style: normal;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-limit-input {
+	width: 100%;
+	height: 40px;
+	padding: 0 12px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text);
+	font-size: 17px;
+	font-weight: 800;
+	text-align: center;
+	letter-spacing: 0.02em;
+}
+
+.ashna-sec-limit-input:focus {
+	outline: none;
+	border-color: #3b82f6;
+}
+
+.ashna-sec-limit small {
+	font-size: 11px;
+	line-height: 1.65;
+	color: var(--s-text-muted);
+}
+
+/* Advanced settings, folded away */
+.ashna-sec-more {
+	margin-top: 18px;
+	border-top: 1px dashed var(--s-border-input);
+	padding-top: 14px;
+}
+
+.ashna-sec-more > summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	cursor: pointer;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	list-style: none;
+	padding: 4px 2px;
+}
+
+.ashna-sec-more > summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sec-more > summary svg {
+	transition: transform 0.18s ease;
+}
+
+.ashna-sec-more[open] > summary svg {
+	transform: rotate(180deg);
+}
+
+.ashna-sec-more > summary:hover {
+	color: #3b82f6;
+}
+
+.ashna-sec-advanced-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px 18px;
+	margin-top: 16px;
+}
+
+.ashna-sec-unit {
+	font-weight: 500;
+	color: var(--s-text-muted);
+	font-size: 11.5px;
+}
+
+/* Split rows */
+.ashna-sec-split {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: 20px;
+	align-items: stretch;
+	margin-top: 20px;
+}
+
+/* The narrower column can be shorter than the stack beside it; let its card
+   fill the row instead of leaving a naked gap under the border. */
+.ashna-sec-split > .ashna-card {
+	height: 100%;
+}
+
+.ashna-sec-split-bottom {
+	grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+}
+
+.ashna-sec-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sec-ip-table {
+	margin-top: 16px;
+}
+
+.ashna-sec-reason-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+@media (max-width: 1280px) {
+	.ashna-sec-limit-row {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1100px) {
+	.ashna-sec-split,
+	.ashna-sec-split-bottom {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-sec-advanced-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 782px) {
+	#ashna-app-shell .ashna-topbar {
+		padding: 14px 16px;
+	}
+
+	.ashna-topbar-brand p {
+		display: none;
+	}
+
+	.ashna-sec-limit-row,
+	.ashna-sec-advanced-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	#ashna-app-shell .ashna-sec-hero {
+		padding: 20px;
+	}
+}
+
+/* ==========================================
+   SOCIAL SIGN-IN (Google / Telegram) — guided setup
+   ========================================== */
+
+.ashna-sso-hero {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px 16px;
+	padding: 11px 16px;
+	margin-bottom: 14px;
+	border: 1px solid var(--s-border);
+	border-radius: 13px;
+	background: var(--s-bg-surface);
+}
+
+.ashna-sso-hero-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.ashna-sso-hero-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 9px;
+	flex-shrink: 0;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+}
+
+.ashna-sso-hero-copy {
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sso-hero-copy h2 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.5;
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-sso-hero-copy p {
+	margin: 1px 0 0;
+	font-size: 11.5px;
+	line-height: 1.6;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hero-pills {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.ashna-sso-hero-pills .ashna-pill {
+	font-size: 11px;
+	padding: 3px 9px;
+}
+
+.ashna-sso-hero-note {
+	flex: 1 0 100%;
+	margin: 2px 0 0;
+	padding: 8px 10px;
+	border-radius: 9px;
+	background: rgba(245, 158, 11, 0.12);
+	border: 1px solid rgba(245, 158, 11, 0.28);
+	color: #92400e;
+	font-size: 12px;
+	line-height: 1.8;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hero-note {
+	color: #fcd34d;
+}
+
+.ashna-sso-card {
+	margin-bottom: 16px;
+}
+
+.ashna-panel.active .ashna-sso-card {
+	animation: ashnaSsoRise 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ashna-panel.active .ashna-sso-card:nth-of-type(2) {
+	animation-delay: 0.07s;
+}
+
+.ashna-sso-head {
+	border-bottom: 1px dashed var(--s-border);
+	padding-bottom: 16px;
+	margin-bottom: 18px;
+}
+
+.ashna-sso-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sso-columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+	gap: 22px;
+	align-items: stretch;
+}
+
+.ashna-sso-guide {
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border);
+	border-radius: 14px;
+	padding: 18px 18px 16px;
+}
+
+.ashna-sso-col-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 14px;
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-col-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 23px;
+	height: 23px;
+	border-radius: 7px;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	font-size: 12px;
+	font-weight: 800;
+	flex-shrink: 0;
+}
+
+.ashna-sso-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ashna-sso-step {
+	position: relative;
+	display: grid;
+	grid-template-columns: 26px minmax(0, 1fr);
+	gap: 11px;
+	padding-bottom: 16px;
+}
+
+.ashna-sso-step:last-child {
+	padding-bottom: 0;
+}
+
+.ashna-sso-step:not(:last-child)::after {
+	content: '';
+	position: absolute;
+	top: 28px;
+	bottom: 2px;
+	right: 12.5px;
+	width: 1.5px;
+	background: linear-gradient(180deg, var(--s-primary-soft), var(--s-border));
+}
+
+.ashna-sso-step-num {
+	position: relative;
+	z-index: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: var(--s-bg-surface);
+	border: 1.5px solid var(--s-border-input);
+	color: var(--s-text-secondary);
+	font-size: 11.5px;
+	font-weight: 800;
+}
+
+.ashna-sso-step-body strong {
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--s-text);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-step-body p {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-step-body code,
+.ashna-sso-urlbox code,
+.ashna-sso-help code,
+.ashna-sso-hint code {
+	direction: ltr;
+	unicode-bidi: embed;
+	display: inline-block;
+	padding: 1px 5px;
+	border-radius: 5px;
+	background: var(--s-bg-hover);
+	color: var(--s-text-secondary);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 11px;
+	line-height: 1.7;
+	vertical-align: middle;
+}
+
+.ashna-sso-console-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	margin-top: 15px;
+	text-decoration: none;
+}
+
+.ashna-sso-config {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	min-width: 0;
+}
+
+.ashna-sso-urlbox {
+	border: 1.5px dashed var(--s-primary);
+	border-radius: 12px;
+	background: var(--s-primary-soft);
+	padding: 13px 14px;
+}
+
+.ashna-sso-urlbox-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 9px;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-sso-required {
+	font-size: 10.5px;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 99px;
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-required {
+	color: #fca5a5;
+}
+
+.ashna-sso-url-row {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+}
+
+.ashna-sso-url-row code {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 9px 11px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-input);
+	color: var(--s-text);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	overflow-x: auto;
+	white-space: nowrap;
+	direction: ltr;
+	text-align: left;
+	user-select: all;
+}
+
+.ashna-sso-copy {
+	position: relative;
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	min-height: 38px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text-secondary);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ashna-sso-copy:hover {
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+.ashna-sso-copy:active {
+	transform: scale(0.94);
+}
+
+.ashna-sso-copy-ok,
+.ashna-sso-copy.is-copied .ashna-sso-copy-icon {
+	display: none;
+}
+
+.ashna-sso-copy.is-copied {
+	border-color: #10b981;
+	background: rgba(16, 185, 129, 0.14);
+	color: #059669;
+	animation: ashnaSsoPop 0.32s ease;
+}
+
+.ashna-sso-copy.is-copied .ashna-sso-copy-ok {
+	display: block;
+}
+
+.ashna-sso-urlbox > p {
+	margin: 9px 0 0;
+	font-size: 11.5px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint {
+	margin: 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint.is-warn {
+	color: #b45309;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-warn {
+	color: #fbbf24;
+}
+
+.ashna-sso-hint.is-ok {
+	color: #047857;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-ok {
+	color: #34d399;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-invalid {
+	border-color: #ef4444 !important;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-valid {
+	border-color: rgba(16, 185, 129, 0.65) !important;
+}
+
+.ashna-sso-secret {
+	position: relative;
+}
+
+#ashna-app-shell .ashna-sso-secret input {
+	padding-left: 44px !important;
+}
+
+.ashna-sso-eye {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--s-text-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ashna-sso-eye:hover {
+	background: var(--s-bg-hover);
+	color: var(--s-primary);
+}
+
+.ashna-sso-eye-hide {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-show {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-hide {
+	display: block;
+}
+
+.ashna-sso-tools {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-top: 2px;
+}
+
+.ashna-sso-check {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ashna-sso-spinner {
+	display: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid var(--s-border-input);
+	border-top-color: var(--s-primary);
+	border-radius: 50%;
+	animation: ashnaSsoSpin 0.7s linear infinite;
+}
+
+.ashna-sso-check.is-loading .ashna-sso-spinner {
+	display: inline-block;
+}
+
+.ashna-sso-check-hint {
+	font-size: 11px;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-result {
+	margin-top: 4px;
+	padding: 12px 14px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+	animation: ashnaSsoResultIn 0.3s ease both;
+}
+
+.ashna-sso-result[hidden] {
+	display: none;
+}
+
+.ashna-sso-result-title {
+	margin: 0 0 9px;
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-check-row {
+	display: grid;
+	grid-template-columns: 17px minmax(0, 1fr);
+	gap: 8px;
+	align-items: start;
+	padding: 5px 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-check-row svg {
+	width: 15px;
+	height: 15px;
+	margin-top: 3px;
+}
+
+.ashna-sso-check-row.is-ok svg {
+	color: #10b981;
+}
+
+.ashna-sso-check-row.is-warn svg {
+	color: #f59e0b;
+}
+
+.ashna-sso-check-row.is-error svg {
+	color: #ef4444;
+}
+
+.ashna-sso-check-row strong {
+	color: var(--s-text);
+	font-weight: 700;
+}
+
+.ashna-sso-result.is-ok {
+	border-color: rgba(16, 185, 129, 0.4);
+	background: rgba(16, 185, 129, 0.08);
+}
+
+.ashna-sso-result.is-warn {
+	border-color: rgba(245, 158, 11, 0.4);
+	background: rgba(245, 158, 11, 0.08);
+}
+
+.ashna-sso-result.is-error {
+	border-color: rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.07);
+}
+
+.ashna-sso-scope {
+	margin-top: 2px;
+	padding: 12px 14px;
+	border-radius: 11px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+}
+
+.ashna-sso-scope-title {
+	display: block;
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--s-text);
+	margin-bottom: 7px;
+}
+
+.ashna-sso-scope ul {
+	margin: 0;
+	padding: 0 15px 0 0;
+}
+
+.ashna-sso-scope li {
+	font-size: 11.5px;
+	line-height: 1.9;
+	color: var(--s-text-muted);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-scope li::marker {
+	color: var(--s-primary);
+}
+
+/* bullet colour alone reads as a stray dash in RTL lists */
+.ashna-sso-scope ul {
+	list-style: none;
+}
+
+.ashna-sso-scope li {
+	position: relative;
+	padding-right: 15px;
+}
+
+.ashna-sso-scope li::before {
+	content: '';
+	position: absolute;
+	top: 8px;
+	right: 2px;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--s-primary);
+	opacity: 0.75;
+}
+
+.ashna-sso-scope p {
+	margin: 8px 0 0;
+	padding-top: 8px;
+	border-top: 1px dashed var(--s-border);
+	font-size: 11px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+/* Pinned to the bottom of the column so a shorter settings column does not
+   leave a hole beside the (taller) step-by-step guide. */
+.ashna-sso-help {
+	margin-top: auto;
+	border-top: 1px solid var(--s-border);
+	padding-top: 10px;
+}
+
+.ashna-sso-help summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	cursor: pointer;
+	list-style: none;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	padding: 4px 0;
+}
+
+.ashna-sso-help summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sso-chevron {
+	transition: transform 0.22s ease;
+	flex-shrink: 0;
+}
+
+.ashna-sso-help[open] .ashna-sso-chevron {
+	transform: rotate(180deg);
+}
+
+.ashna-sso-help ul {
+	margin: 8px 0 2px;
+	padding: 0 16px 0 0;
+}
+
+.ashna-sso-help li {
+	font-size: 11.5px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+	margin-bottom: 6px;
+}
+
+.ashna-sso-switches {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+@keyframes ashnaSsoRise {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes ashnaSsoPop {
+	50% {
+		transform: scale(1.09);
+	}
+}
+
+@keyframes ashnaSsoSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes ashnaSsoResultIn {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.ashna-sso-hero-pills .ashna-pill,
+.ashna-sso-card .ashna-pill {
+	transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.ashna-sso-card .ashna-pill.is-updated,
+.ashna-sso-hero-pills .ashna-pill.is-updated {
+	animation: ashnaSsoPillPop 0.55s ease;
+}
+
+.ashna-sso-help[open] ul {
+	animation: ashnaSsoResultIn 0.22s ease both;
+}
+
+@keyframes ashnaSsoPillPop {
+	0%, 100% { transform: scale(1); }
+	40% { transform: scale(1.07); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ashna-panel.active .ashna-sso-card,
+	.ashna-sso-copy.is-copied,
+	.ashna-sso-result,
+	.ashna-sso-card .ashna-pill.is-updated,
+	.ashna-sso-hero-pills .ashna-pill.is-updated,
+	.ashna-sso-help[open] ul {
+		animation: none !important;
+	}
+}
+
+@media (max-width: 1280px) {
+	.ashna-sso-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 782px) {
+	.ashna-sso-hero {
+		padding: 10px 12px;
+	}
+
+	.ashna-sso-hero-pills {
+		width: 100%;
+	}
+
+	.ashna-sso-head-actions {
+		gap: 10px;
+	}
+
+	.ashna-sso-url-row {
+		flex-direction: column;
+	}
+
+	.ashna-sso-copy {
+		width: 100%;
+	}
+
+	.ashna-sso-guide {
+		padding: 15px;
 	}
 }

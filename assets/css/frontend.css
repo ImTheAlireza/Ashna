@@ -1,68 +1,68 @@
 /**
- * Signa OTP Frontend Styles (v2.4.0 - High-Performance RTL UI, Vazirmatn & Micro-Interactions)
+ * Ashna Frontend Styles (High-Performance RTL UI, Vazirmatn & Micro-Interactions)
  */
 
-.signa-otp-wrapper {
-	--signa-primary: #2563eb;
-	--signa-secondary: #4f46e5;
-	--signa-btn-bg: #2563eb;
-	--signa-bg: #ffffff;
-	--signa-text: #111827;
-	--signa-muted: #6b7280;
-	--signa-border: #d1d5db;
-	--signa-input-bg: #f8fafc;
-	--signa-radius: 16px;
-	--signa-split-bg: #1e3a8a;
-	--signa-blur: 16px;
-	--signa-card-pad: 32px;
-	--signa-glow-shadow: rgba(37, 99, 235, 0.45);
-	--signa-glow-border: rgba(37, 99, 235, 0.65);
-	--signa-font: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, sans-serif;
-	--signa-title-size: 20px;
-	--signa-subtitle-size: 14px;
-	--signa-btn-size: 15px;
-	--signa-input-h: 48px;
+.ashna-otp-wrapper {
+	--ashna-primary: #2563eb;
+	--ashna-secondary: #4f46e5;
+	--ashna-btn-bg: #2563eb;
+	--ashna-bg: #ffffff;
+	--ashna-text: #111827;
+	--ashna-muted: #6b7280;
+	--ashna-border: #d1d5db;
+	--ashna-input-bg: #f8fafc;
+	--ashna-radius: 16px;
+	--ashna-split-bg: #1e3a8a;
+	--ashna-blur: 16px;
+	--ashna-card-pad: 32px;
+	--ashna-glow-shadow: rgba(37, 99, 235, 0.45);
+	--ashna-glow-border: rgba(37, 99, 235, 0.65);
+	--ashna-font: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, sans-serif;
+	--ashna-title-size: 20px;
+	--ashna-subtitle-size: 14px;
+	--ashna-btn-size: 15px;
+	--ashna-input-h: 48px;
 	direction: rtl;
 	text-align: right;
-	font-family: var(--signa-font) !important;
+	font-family: var(--ashna-font) !important;
 	width: 100%;
 	max-width: 420px;
 	margin: 24px auto;
 	box-sizing: border-box;
 }
 
-.signa-otp-wrapper.signa-pos-center {
+.ashna-otp-wrapper.ashna-pos-center {
 	margin-right: auto;
 	margin-left: auto;
 }
 
-.signa-otp-wrapper.signa-pos-right {
+.ashna-otp-wrapper.ashna-pos-right {
 	margin-right: 0;
 	margin-left: auto;
 }
 
-.signa-otp-wrapper.signa-pos-left {
+.ashna-otp-wrapper.ashna-pos-left {
 	margin-right: auto;
 	margin-left: 0;
 }
 
 /* Split-Screen Layout (Category 1) */
-.signa-otp-wrapper.signa-layout-split_right,
-.signa-otp-wrapper.signa-layout-split_left {
+.ashna-otp-wrapper.ashna-layout-split_right,
+.ashna-otp-wrapper.ashna-layout-split_left {
 	display: flex;
 	align-items: stretch;
-	border-radius: var(--signa-radius);
+	border-radius: var(--ashna-radius);
 	overflow: hidden;
 	box-shadow: 0 20px 48px -12px rgba(15, 23, 42, 0.14), 0 4px 16px -2px rgba(15, 23, 42, 0.06);
 	border: 1px solid rgba(156, 163, 175, 0.25);
 }
 
-.signa-otp-wrapper.signa-layout-split_left {
+.ashna-otp-wrapper.ashna-layout-split_left {
 	flex-direction: row-reverse;
 }
 
-.signa-otp-wrapper.signa-layout-split_right .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_left .signa-otp-card {
+.ashna-otp-wrapper.ashna-layout-split_right .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_left .ashna-otp-card {
 	flex: 1 1 50%;
 	min-width: 0;
 	border: none !important;
@@ -74,11 +74,11 @@
 }
 
 /* Category 2: Card Elevation (Shadows), Borders, Padding & Glassmorphism */
-.signa-otp-wrapper {
+.ashna-otp-wrapper {
 	position: relative;
 }
 
-.signa-frontend-glass-orbs {
+.ashna-frontend-glass-orbs {
 	position: absolute;
 	inset: -18px;
 	pointer-events: none;
@@ -86,106 +86,106 @@
 	overflow: visible;
 }
 
-.signa-fe-orb {
+.ashna-fe-orb {
 	position: absolute;
 	border-radius: 50%;
 	filter: blur(8px);
 	opacity: 0.72;
 }
 
-.signa-fe-orb.is-1 {
+.ashna-fe-orb.is-1 {
 	width: 140px;
 	height: 140px;
-	background: var(--signa-primary);
+	background: var(--ashna-primary);
 	top: -12px;
 	right: -12px;
 }
 
-.signa-fe-orb.is-2 {
+.ashna-fe-orb.is-2 {
 	width: 125px;
 	height: 125px;
-	background: var(--signa-secondary);
+	background: var(--ashna-secondary);
 	bottom: -12px;
 	left: -12px;
 }
 
-.signa-otp-card {
+.ashna-otp-card {
 	position: relative;
 	z-index: 1;
-	background: var(--signa-bg);
-	color: var(--signa-text);
+	background: var(--ashna-bg);
+	color: var(--ashna-text);
 	border: 1px solid rgba(156, 163, 175, 0.25);
-	border-radius: var(--signa-radius);
+	border-radius: var(--ashna-radius);
 	overflow: hidden;
 	background-clip: padding-box;
-	padding: var(--signa-card-pad, 32px) calc(var(--signa-card-pad, 32px) * 0.88);
+	padding: var(--ashna-card-pad, 32px) calc(var(--ashna-card-pad, 32px) * 0.88);
 	box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
 	transition: color 0.42s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.42s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.signa-otp-title,
-.signa-otp-subtitle,
-.signa-label,
-.signa-input {
+.ashna-otp-title,
+.ashna-otp-subtitle,
+.ashna-label,
+.ashna-input {
 	transition: color 0.42s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.38s ease, border-color 0.38s ease;
 }
 
-.signa-otp-wrapper.signa-glassmorphism .signa-otp-card {
-	backdrop-filter: blur(var(--signa-blur, 16px)) saturate(160%) !important;
-	-webkit-backdrop-filter: blur(var(--signa-blur, 16px)) saturate(160%) !important;
+.ashna-otp-wrapper.ashna-glassmorphism .ashna-otp-card {
+	backdrop-filter: blur(var(--ashna-blur, 16px)) saturate(160%) !important;
+	-webkit-backdrop-filter: blur(var(--ashna-blur, 16px)) saturate(160%) !important;
 }
 
 /* Elevation Presets (apply to card in standard mode, or wrapper in split-screen mode) */
-.signa-otp-wrapper.signa-shadow-none .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-shadow-none,
-.signa-otp-wrapper.signa-layout-split_left.signa-shadow-none {
+.ashna-otp-wrapper.ashna-shadow-none .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-shadow-none,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-shadow-none {
 	box-shadow: none;
 }
 
-.signa-otp-wrapper.signa-shadow-soft .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-shadow-soft,
-.signa-otp-wrapper.signa-layout-split_left.signa-shadow-soft {
+.ashna-otp-wrapper.ashna-shadow-soft .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-shadow-soft,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-shadow-soft {
 	box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
 }
 
-.signa-otp-wrapper.signa-shadow-medium .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-shadow-medium,
-.signa-otp-wrapper.signa-layout-split_left.signa-shadow-medium {
+.ashna-otp-wrapper.ashna-shadow-medium .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-shadow-medium,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-shadow-medium {
 	box-shadow: 0 14px 34px -6px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
-.signa-otp-wrapper.signa-shadow-deep .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-shadow-deep,
-.signa-otp-wrapper.signa-layout-split_left.signa-shadow-deep {
+.ashna-otp-wrapper.ashna-shadow-deep .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-shadow-deep,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-shadow-deep {
 	box-shadow: 0 28px 60px -12px rgba(15, 23, 42, 0.28), 0 12px 26px -6px rgba(15, 23, 42, 0.14);
 }
 
-.signa-otp-wrapper.signa-shadow-glow .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-shadow-glow,
-.signa-otp-wrapper.signa-layout-split_left.signa-shadow-glow {
-	box-shadow: 0 0 38px -2px var(--signa-glow-shadow), 0 14px 30px -6px rgba(15, 23, 42, 0.16);
+.ashna-otp-wrapper.ashna-shadow-glow .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-shadow-glow,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-shadow-glow {
+	box-shadow: 0 0 38px -2px var(--ashna-glow-shadow), 0 14px 30px -6px rgba(15, 23, 42, 0.16);
 }
 
 /* Border Style Presets */
-.signa-otp-wrapper.signa-border-none .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-border-none,
-.signa-otp-wrapper.signa-layout-split_left.signa-border-none {
+.ashna-otp-wrapper.ashna-border-none .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-border-none,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-border-none {
 	border: none;
 }
 
-.signa-otp-wrapper.signa-border-top_accent .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-border-top_accent,
-.signa-otp-wrapper.signa-layout-split_left.signa-border-top_accent {
-	border-top: 4px solid var(--signa-primary);
+.ashna-otp-wrapper.ashna-border-top_accent .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-border-top_accent,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-border-top_accent {
+	border-top: 4px solid var(--ashna-primary);
 }
 
-.signa-otp-wrapper.signa-border-glow .signa-otp-card,
-.signa-otp-wrapper.signa-layout-split_right.signa-border-glow,
-.signa-otp-wrapper.signa-layout-split_left.signa-border-glow {
-	border: 1.5px solid var(--signa-glow-border);
+.ashna-otp-wrapper.ashna-border-glow .ashna-otp-card,
+.ashna-otp-wrapper.ashna-layout-split_right.ashna-border-glow,
+.ashna-otp-wrapper.ashna-layout-split_left.ashna-border-glow {
+	border: 1.5px solid var(--ashna-glow-border);
 }
 
-.signa-otp-side-banner {
+.ashna-otp-side-banner {
 	flex: 1 1 50%;
 	min-width: 0;
 	padding: 38px 34px;
@@ -193,12 +193,12 @@
 	flex-direction: column;
 	justify-content: space-between;
 	color: #ffffff;
-	background-color: var(--signa-split-bg, #1e3a8a);
+	background-color: var(--ashna-split-bg, #1e3a8a);
 	position: relative;
 	overflow: hidden;
 }
 
-.signa-side-banner-badge {
+.ashna-side-banner-badge {
 	display: inline-block;
 	padding: 5px 14px;
 	border-radius: 99px;
@@ -211,7 +211,7 @@
 	border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
-.signa-side-banner-title {
+.ashna-side-banner-title {
 	margin: 0 0 12px 0;
 	font-size: 22px;
 	font-weight: 800;
@@ -219,14 +219,14 @@
 	color: #ffffff !important;
 }
 
-.signa-side-banner-subtitle {
+.ashna-side-banner-subtitle {
 	margin: 0;
 	font-size: 14px;
 	line-height: 1.8;
 	color: rgba(255, 255, 255, 0.86);
 }
 
-.signa-side-banner-features {
+.ashna-side-banner-features {
 	list-style: none !important;
 	margin: 28px 0 0 0 !important;
 	padding: 20px 0 0 0 !important;
@@ -236,7 +236,7 @@
 	gap: 12px;
 }
 
-.signa-side-banner-features li {
+.ashna-side-banner-features li {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -246,7 +246,7 @@
 	color: rgba(255, 255, 255, 0.95);
 }
 
-.signa-side-feature-icon {
+.ashna-side-feature-icon {
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
@@ -258,57 +258,57 @@
 	flex-shrink: 0;
 }
 
-.signa-otp-wrapper *,
-.signa-otp-wrapper *::before,
-.signa-otp-wrapper *::after,
-.signa-otp-wrapper button,
-.signa-otp-wrapper input,
-.signa-otp-wrapper select,
-.signa-otp-wrapper textarea {
+.ashna-otp-wrapper *,
+.ashna-otp-wrapper *::before,
+.ashna-otp-wrapper *::after,
+.ashna-otp-wrapper button,
+.ashna-otp-wrapper input,
+.ashna-otp-wrapper select,
+.ashna-otp-wrapper textarea {
 	box-sizing: border-box;
-	font-family: var(--signa-font) !important;
+	font-family: var(--ashna-font) !important;
 }
 
-.signa-otp-header {
+.ashna-otp-header {
 	text-align: center;
 	margin-bottom: 24px;
 }
 
-.signa-otp-custom-logo {
+.ashna-otp-custom-logo {
 	margin-bottom: 14px;
 }
 
-.signa-otp-custom-logo img {
+.ashna-otp-custom-logo img {
 	max-height: 58px;
 	width: auto;
 	display: inline-block;
 }
 
-.signa-otp-icon-badge {
+.ashna-otp-icon-badge {
 	width: 56px;
 	height: 56px;
 	border-radius: 16px;
 	background: linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(59, 130, 246, 0.06));
 	border: 1px solid rgba(37, 99, 235, 0.16);
-	color: var(--signa-primary);
+	color: var(--ashna-primary);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	margin-bottom: 12px;
 }
 
-.signa-otp-icon-badge img {
+.ashna-otp-icon-badge img {
 	display: block;
 	width: 44px;
 	height: 44px;
 	object-fit: contain;
 }
 
-.signa-step-badge-wrap {
+.ashna-step-badge-wrap {
 	margin-bottom: 10px;
 }
 
-.signa-step-badge {
+.ashna-step-badge {
 	display: inline-flex;
 	align-items: center;
 	padding: 3px 11px;
@@ -316,24 +316,24 @@
 	font-size: 11.5px;
 	font-weight: 700;
 	background: rgba(37, 99, 235, 0.09);
-	color: var(--signa-primary);
+	color: var(--ashna-primary);
 }
 
-.signa-otp-title {
+.ashna-otp-title {
 	margin: 0 0 8px 0;
-	font-size: var(--signa-title-size, 20px);
+	font-size: var(--ashna-title-size, 20px);
 	font-weight: 800;
-	color: var(--signa-text);
+	color: var(--ashna-text);
 }
 
-.signa-otp-subtitle {
+.ashna-otp-subtitle {
 	margin: 0;
-	font-size: var(--signa-subtitle-size, 14px);
+	font-size: var(--ashna-subtitle-size, 14px);
 	line-height: 1.7;
-	color: var(--signa-muted);
+	color: var(--ashna-muted);
 }
 
-.signa-otp-alert {
+.ashna-otp-alert {
 	padding: 12px 14px;
 	border-radius: 10px;
 	font-size: 13px;
@@ -341,34 +341,34 @@
 	margin-bottom: 18px;
 }
 
-.signa-otp-alert.is-error {
+.ashna-otp-alert.is-error {
 	background-color: #fef2f2;
 	border: 1px solid #fecaca;
 	color: #b91c1c;
 }
 
-.signa-otp-alert.is-success {
+.ashna-otp-alert.is-success {
 	background-color: #f0fdf4;
 	border: 1px solid #bbf7d0;
 	color: #15803d;
 }
 
-.signa-otp-alert.is-info {
+.ashna-otp-alert.is-info {
 	background-color: #eff6ff;
 	border: 1px solid #bfdbfe;
 	color: #1e40af;
 }
 
-.signa-field-group {
+.ashna-field-group {
 	margin-bottom: 18px;
 }
 
-.signa-input-wrap {
+.ashna-input-wrap {
 	position: relative;
 	width: 100%;
 }
 
-.signa-input-addon {
+.ashna-input-addon {
 	position: absolute;
 	left: 14px;
 	top: 50%;
@@ -376,47 +376,48 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
-	color: var(--signa-muted);
+	color: var(--ashna-muted);
 	font-size: 12.5px;
 	font-weight: 700;
 	pointer-events: none;
 	z-index: 2;
 }
 
-.signa-input-addon.is-flag {
+.ashna-input-addon.is-flag {
 	padding: 3px 8px;
 	border-radius: 6px;
 	background: rgba(148, 163, 184, 0.14);
-	color: var(--signa-text);
+	color: var(--ashna-text);
 }
 
-.signa-label {
+.ashna-label {
 	display: block;
 	font-size: 13.5px;
 	font-weight: 600;
-	color: var(--signa-text);
+	color: var(--ashna-text);
 	opacity: 0.9;
 	margin-bottom: 8px;
 	text-align: right;
 }
 
-.signa-req-badge {
+.ashna-req-badge {
 	font-size: 11px;
-	color: var(--signa-muted);
+	color: inherit; /* label colour at 80%: ~7:1 on light cards, still readable on dark ones */
+	opacity: 0.8;
 	font-weight: 400;
 }
 
-.signa-otp-wrapper input.signa-input {
+.ashna-otp-wrapper input.ashna-input {
 	width: 100% !important;
-	height: var(--signa-input-h, 48px) !important;
+	height: var(--ashna-input-h, 48px) !important;
 	padding: 0 16px !important;
 	margin: 0 !important;
-	font-family: var(--signa-font) !important;
+	font-family: var(--ashna-font) !important;
 	font-size: 14.5px !important;
-	line-height: calc(var(--signa-input-h, 48px) - 2px) !important;
-	border: 1.5px solid var(--signa-border) !important;
-	border-radius: calc(var(--signa-radius) * 0.68) !important;
-	background-color: var(--signa-input-bg, #f8fafc) !important;
+	line-height: calc(var(--ashna-input-h, 48px) - 2px) !important;
+	border: 1.5px solid var(--ashna-border) !important;
+	border-radius: calc(var(--ashna-radius) * 0.68) !important;
+	background-color: var(--ashna-input-bg, #f8fafc) !important;
 	color: #0f172a !important;
 	transition: all 0.2s ease;
 	outline: none !important;
@@ -424,48 +425,48 @@
 	box-shadow: none;
 }
 
-.signa-otp-wrapper.signa-addon-icon input.signa-identifier-input {
+.ashna-otp-wrapper.ashna-addon-icon input.ashna-identifier-input {
 	padding-left: 42px !important;
 }
 
-.signa-otp-wrapper.signa-addon-ir_flag input.signa-identifier-input {
+.ashna-otp-wrapper.ashna-addon-ir_flag input.ashna-identifier-input {
 	padding-left: 68px !important;
 }
 
 /* Category 3: Input Field Styles (outlined, underlined, soft_pill) */
-.signa-otp-wrapper.signa-input-style-outlined input.signa-input {
+.ashna-otp-wrapper.ashna-input-style-outlined input.ashna-input {
 	background-color: transparent !important;
-	color: var(--signa-text) !important;
+	color: var(--ashna-text) !important;
 }
 
-.signa-otp-wrapper.signa-input-style-underlined input.signa-input {
+.ashna-otp-wrapper.ashna-input-style-underlined input.ashna-input {
 	background-color: transparent !important;
 	border: none !important;
-	border-bottom: 2.5px solid var(--signa-border) !important;
+	border-bottom: 2.5px solid var(--ashna-border) !important;
 	border-radius: 0 !important;
 	padding-right: 4px !important;
-	color: var(--signa-text) !important;
+	color: var(--ashna-text) !important;
 }
 
-.signa-otp-wrapper.signa-input-style-underlined input.signa-input:focus {
+.ashna-otp-wrapper.ashna-input-style-underlined input.ashna-input:focus {
 	background-color: transparent !important;
-	border-bottom-color: var(--signa-primary) !important;
+	border-bottom-color: var(--ashna-primary) !important;
 	box-shadow: none !important;
 }
 
-.signa-otp-wrapper.signa-input-style-soft_pill input.signa-input,
-.signa-otp-wrapper.signa-input-style-soft_pill .signa-btn {
+.ashna-otp-wrapper.ashna-input-style-soft_pill input.ashna-input,
+.ashna-otp-wrapper.ashna-input-style-soft_pill .ashna-btn {
 	border-radius: 99px !important;
 }
 
 /* Right-aligned RTL placeholders so Persian text & punctuation render properly on the right */
-.signa-otp-wrapper input.signa-input:placeholder-shown {
+.ashna-otp-wrapper input.ashna-input:placeholder-shown {
 	direction: rtl !important;
 	text-align: right !important;
 }
 
-.signa-otp-wrapper input.signa-input::placeholder {
-	font-family: var(--signa-font) !important;
+.ashna-otp-wrapper input.ashna-input::placeholder {
+	font-family: var(--ashna-font) !important;
 	font-size: 13.5px !important;
 	color: #94a3b8 !important;
 	direction: rtl !important;
@@ -473,80 +474,80 @@
 	opacity: 1;
 }
 
-.signa-otp-wrapper input.signa-input:focus {
+.ashna-otp-wrapper input.ashna-input:focus {
 	background-color: #ffffff !important;
-	border-color: var(--signa-primary) !important;
+	border-color: var(--ashna-primary) !important;
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
 }
 
-.signa-terms-row {
+.ashna-terms-row {
 	font-size: 12px;
-	color: var(--signa-muted);
+	color: var(--ashna-muted);
 	margin-bottom: 16px;
 	line-height: 1.6;
 	text-align: center;
 }
 
-.signa-terms-row a {
-	color: var(--signa-primary);
+.ashna-terms-row a {
+	color: var(--ashna-primary);
 	text-decoration: underline;
 }
 
-.signa-btn {
+.ashna-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
 	width: 100%;
-	height: var(--signa-input-h, 48px);
+	height: var(--ashna-input-h, 48px);
 	padding: 0 20px;
-	font-family: var(--signa-font) !important;
-	font-size: var(--signa-btn-size, 15px);
+	font-family: var(--ashna-font) !important;
+	font-size: var(--ashna-btn-size, 15px);
 	font-weight: 700;
-	border-radius: calc(var(--signa-radius) * 0.68);
+	border-radius: calc(var(--ashna-radius) * 0.68);
 	border: none;
 	cursor: pointer;
 	transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 	text-decoration: none;
 }
 
-.signa-btn-primary {
-	background: var(--signa-btn-bg, var(--signa-primary));
+.ashna-btn-primary {
+	background: var(--ashna-btn-bg, var(--ashna-primary));
 	color: #ffffff !important;
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
 }
 
-.signa-btn-primary:hover {
+.ashna-btn-primary:hover {
 	opacity: 0.93;
 }
 
-.signa-btn-primary:disabled {
+.ashna-btn-primary:disabled {
 	opacity: 0.65;
 	cursor: not-allowed;
 }
 
-.signa-btn-outline {
+.ashna-btn-outline {
 	background: transparent;
-	border: 1.5px solid var(--signa-border);
-	color: var(--signa-text);
+	border: 1.5px solid var(--ashna-border);
+	color: var(--ashna-text);
 }
 
-.signa-btn-sm {
+.ashna-btn-sm {
 	width: auto;
 	height: 38px;
 	font-size: 13px;
 	padding: 0 14px;
-	background: var(--signa-btn-bg, var(--signa-primary));
+	background: var(--ashna-btn-bg, var(--ashna-primary));
 	color: #ffffff;
 }
 
-.signa-alt-action {
+.ashna-alt-action {
 	margin-top: 16px;
 	text-align: center;
 }
 
 /* Recipient display bar in Step 2 */
-.signa-recipient-bar {
+.ashna-recipient-bar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -558,19 +559,19 @@
 	font-size: 13px;
 }
 
-.signa-recipient-meta {
+.ashna-recipient-meta {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.signa-channel-pill {
+.ashna-channel-pill {
 	font-size: 12px;
 	color: #64748b;
 	font-weight: 500;
 }
 
-.signa-recipient-display {
+.ashna-recipient-display {
 	font-weight: 800;
 	color: #0f172a;
 	background: #ffffff;
@@ -579,11 +580,11 @@
 	border: 1px solid #e2e8f0;
 }
 
-.signa-btn-link {
+.ashna-btn-link {
 	background: none;
 	border: none;
 	padding: 0;
-	color: var(--signa-primary);
+	color: var(--ashna-primary);
 	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
 	font-size: 13.5px;
 	font-weight: 700;
@@ -591,113 +592,113 @@
 	text-decoration: none;
 }
 
-.signa-btn-link:hover {
+.ashna-btn-link:hover {
 	text-decoration: underline;
 }
 
 /* Segmented OTP Digit Boxes (Category 4) */
-.signa-otp-digits {
+.ashna-otp-digits {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--signa-digit-gap, 8px);
+	gap: var(--ashna-digit-gap, 8px);
 	direction: ltr;
 }
 
-.signa-digit-box {
-	width: var(--signa-digit-size, 48px);
-	height: calc(var(--signa-digit-size, 48px) * 1.1);
+.ashna-digit-box {
+	width: var(--ashna-digit-size, 48px);
+	height: calc(var(--ashna-digit-size, 48px) * 1.1);
 	text-align: center !important;
-	font-family: var(--signa-font) !important;
-	font-size: calc(var(--signa-digit-size, 48px) * 0.42);
+	font-family: var(--ashna-font) !important;
+	font-size: calc(var(--ashna-digit-size, 48px) * 0.42);
 	font-weight: 700;
-	border: 1.5px solid var(--signa-border);
-	border-radius: calc(var(--signa-radius) * 0.65);
-	background-color: var(--signa-input-bg, #f9fafb);
-	color: var(--signa-text, #111827);
+	border: 1.5px solid var(--ashna-border);
+	border-radius: calc(var(--ashna-radius) * 0.65);
+	background-color: var(--ashna-input-bg, #f9fafb);
+	color: var(--ashna-text, #111827);
 	transition: all 0.18s ease;
 	outline: none;
 	padding: 0;
 }
 
-.signa-digit-style-underline .signa-digit-box {
+.ashna-digit-style-underline .ashna-digit-box {
 	border: none;
-	border-bottom: 2.5px solid var(--signa-border);
+	border-bottom: 2.5px solid var(--ashna-border);
 	border-radius: 0;
 	background: transparent;
-	color: var(--signa-text);
+	color: var(--ashna-text);
 }
 
-.signa-digit-style-pill .signa-digit-box {
+.ashna-digit-style-pill .ashna-digit-box {
 	border-radius: 99px;
 }
 
-.signa-digit-style-separated_glow .signa-digit-box {
-	border: 1.5px solid var(--signa-primary);
-	box-shadow: 0 0 12px var(--signa-glow-shadow, rgba(37, 99, 235, 0.28));
+.ashna-digit-style-separated_glow .ashna-digit-box {
+	border: 1.5px solid var(--ashna-primary);
+	box-shadow: 0 0 12px var(--ashna-glow-shadow, rgba(37, 99, 235, 0.28));
 }
 
-.signa-digit-style-connected .signa-otp-digits {
+.ashna-digit-style-connected .ashna-otp-digits {
 	gap: 0 !important;
-	border: 1.5px solid var(--signa-border);
-	border-radius: calc(var(--signa-radius) * 0.65);
+	border: 1.5px solid var(--ashna-border);
+	border-radius: calc(var(--ashna-radius) * 0.65);
 	overflow: hidden;
-	background-color: var(--signa-input-bg, #f8fafc);
+	background-color: var(--ashna-input-bg, #f8fafc);
 }
 
-.signa-digit-style-connected .signa-digit-box {
+.ashna-digit-style-connected .ashna-digit-box {
 	flex: 1 1 0%;
 	width: auto;
 	border: none !important;
-	border-right: 1px solid var(--signa-border) !important;
+	border-right: 1px solid var(--ashna-border) !important;
 	border-radius: 0 !important;
 	background: transparent !important;
 	box-shadow: none !important;
 }
 
-.signa-digit-style-connected .signa-digit-box:last-child {
+.ashna-digit-style-connected .ashna-digit-box:last-child {
 	border-right: none !important;
 }
 
-.signa-digit-style-connected .signa-digit-box:focus {
+.ashna-digit-style-connected .ashna-digit-box:focus {
 	background-color: rgba(37, 99, 235, 0.1) !important;
 	transform: none !important;
 }
 
-.signa-digit-box:focus {
+.ashna-digit-box:focus {
 	background-color: #ffffff;
-	border-color: var(--signa-primary);
+	border-color: var(--ashna-primary);
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
 	transform: translateY(-1px);
 }
 
-.signa-theme-dark .signa-digit-box:focus {
+.ashna-theme-dark .ashna-digit-box:focus {
 	background-color: rgba(30, 41, 59, 0.95);
 	color: #f8fafc;
 }
 
-.signa-digit-box.is-filled {
-	border-color: var(--signa-primary);
+.ashna-digit-box.is-filled {
+	border-color: var(--ashna-primary);
 }
 
-.signa-otp-digits.signa-shake {
-	animation: signaShake 0.64s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+.ashna-otp-digits.ashna-shake {
+	animation: ashnaShake 0.64s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-.signa-otp-digits.signa-shake .signa-digit-box {
+.ashna-otp-digits.ashna-shake .ashna-digit-box {
 	border-color: #ef4444 !important;
 	background-color: rgba(239, 68, 68, 0.14) !important;
 	color: #ef4444 !important;
 	box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.22), 0 6px 16px -4px rgba(239, 68, 68, 0.35) !important;
-	animation: signaFeDigitErrorWave 0.56s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+	animation: ashnaFeDigitErrorWave 0.56s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-.signa-otp-digits.signa-shake .signa-digit-box:nth-child(2) { animation-delay: 30ms; }
-.signa-otp-digits.signa-shake .signa-digit-box:nth-child(3) { animation-delay: 60ms; }
-.signa-otp-digits.signa-shake .signa-digit-box:nth-child(4) { animation-delay: 90ms; }
-.signa-otp-digits.signa-shake .signa-digit-box:nth-child(5) { animation-delay: 120ms; }
-.signa-otp-digits.signa-shake .signa-digit-box:nth-child(6) { animation-delay: 150ms; }
+.ashna-otp-digits.ashna-shake .ashna-digit-box:nth-child(2) { animation-delay: 30ms; }
+.ashna-otp-digits.ashna-shake .ashna-digit-box:nth-child(3) { animation-delay: 60ms; }
+.ashna-otp-digits.ashna-shake .ashna-digit-box:nth-child(4) { animation-delay: 90ms; }
+.ashna-otp-digits.ashna-shake .ashna-digit-box:nth-child(5) { animation-delay: 120ms; }
+.ashna-otp-digits.ashna-shake .ashna-digit-box:nth-child(6) { animation-delay: 150ms; }
 
-@keyframes signaShake {
+@keyframes ashnaShake {
 	0% { transform: translate3d(0, 0, 0) rotate(0deg); }
 	12% { transform: translate3d(-11px, 0, 0) rotate(-0.8deg); }
 	24% { transform: translate3d(10px, 0, 0) rotate(0.8deg); }
@@ -709,47 +710,47 @@
 	100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
 
-@keyframes signaFeDigitErrorWave {
+@keyframes ashnaFeDigitErrorWave {
 	0% { transform: scale(1); }
 	35% { transform: scale(1.1) translateY(-3px); }
 	70% { transform: scale(0.96); }
 	100% { transform: scale(1); }
 }
 
-.signa-digit-style-underline .signa-digit-box:focus {
+.ashna-digit-style-underline .ashna-digit-box:focus {
 	background: transparent;
 	box-shadow: none;
-	border-bottom-color: var(--signa-primary);
+	border-bottom-color: var(--ashna-primary);
 }
 
 /* Resend & Countdown Timer Styles (Category 4) */
-.signa-resend-row {
+.ashna-resend-row {
 	margin-top: 18px;
 	text-align: center;
 	font-size: 13px;
-	color: var(--signa-muted);
+	color: var(--ashna-muted);
 }
 
-.signa-timer-wrap {
+.ashna-timer-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 8px;
 }
 
-.signa-timer-head {
+.ashna-timer-head {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
 }
 
-.signa-timer-countdown {
-	color: var(--signa-primary);
+.ashna-timer-countdown {
+	color: var(--ashna-primary);
 	font-weight: 800;
 }
 
-.signa-timer-progress-track {
+.ashna-timer-progress-track {
 	width: 100%;
 	max-width: 220px;
 	height: 5px;
@@ -758,107 +759,107 @@
 	overflow: hidden;
 }
 
-.signa-timer-progress-fill {
+.ashna-timer-progress-fill {
 	height: 100%;
 	border-radius: 99px;
-	background: var(--signa-btn-bg, var(--signa-primary));
+	background: var(--ashna-btn-bg, var(--ashna-primary));
 	transition: width 1s linear;
 }
 
-.signa-timer-ring-svg {
+.ashna-timer-ring-svg {
 	transform: rotate(-90deg);
 	flex-shrink: 0;
 }
 
-.signa-ring-bg {
+.ashna-ring-bg {
 	stroke: rgba(148, 163, 184, 0.28);
 }
 
-.signa-ring-fg {
-	stroke: var(--signa-primary);
+.ashna-ring-fg {
+	stroke: var(--ashna-primary);
 	transition: stroke-dashoffset 1s linear;
 }
 
-.signa-timer-minimal_badge .signa-timer-head,
-.signa-timer-circular_ring .signa-timer-head {
+.ashna-timer-minimal_badge .ashna-timer-head,
+.ashna-timer-circular_ring .ashna-timer-head {
 	padding: 6px 14px;
 	border-radius: 99px;
 	background: rgba(37, 99, 235, 0.1);
 	border: 1px solid rgba(37, 99, 235, 0.22);
-	color: var(--signa-text);
+	color: var(--ashna-text);
 	font-weight: 600;
 }
 
-.signa-timer-badge-icon {
-	color: var(--signa-primary);
+.ashna-timer-badge-icon {
+	color: var(--ashna-primary);
 	flex-shrink: 0;
 }
 
 /* Category 4 Form Entrance Animations & Staggered Choreography */
-@keyframes signaFeFadeUp {
+@keyframes ashnaFeFadeUp {
 	0% { opacity: 0; transform: translate3d(0, 22px, 0) scale(0.98); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
-@keyframes signaFeZoomSpring {
+@keyframes ashnaFeZoomSpring {
 	0% { opacity: 0; transform: scale(0.84) translate3d(0, 10px, 0); }
 	65% { opacity: 1; transform: scale(1.03) translate3d(0, -2px, 0); }
 	85% { transform: scale(0.99) translate3d(0, 0, 0); }
 	100% { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
 }
-@keyframes signaFeSlideRtl {
+@keyframes ashnaFeSlideRtl {
 	0% { opacity: 0; transform: translate3d(32px, 0, 0); }
 	70% { opacity: 1; transform: translate3d(-4px, 0, 0); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-@keyframes signaFeChildStagger {
+@keyframes ashnaFeChildStagger {
 	0% { opacity: 0; transform: translate3d(0, 12px, 0); }
 	100% { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-.signa-otp-wrapper.signa-anim-fade_up .signa-otp-card {
-	animation: signaFeFadeUp 0.54s cubic-bezier(0.22, 1, 0.36, 1) both;
+.ashna-otp-wrapper.ashna-anim-fade_up .ashna-otp-card {
+	animation: ashnaFeFadeUp 0.54s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.signa-otp-wrapper.signa-anim-zoom_spring .signa-otp-card {
-	animation: signaFeZoomSpring 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.ashna-otp-wrapper.ashna-anim-zoom_spring .ashna-otp-card {
+	animation: ashnaFeZoomSpring 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-.signa-otp-wrapper.signa-anim-slide_rtl .signa-otp-card {
-	animation: signaFeSlideRtl 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+.ashna-otp-wrapper.ashna-anim-slide_rtl .ashna-otp-card {
+	animation: ashnaFeSlideRtl 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.signa-otp-wrapper:not(.signa-anim-none) .signa-otp-header {
-	animation: signaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+.ashna-otp-wrapper:not(.ashna-anim-none) .ashna-otp-header {
+	animation: ashnaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
 }
-.signa-otp-wrapper:not(.signa-anim-none) .signa-field-group {
-	animation: signaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.11s both;
+.ashna-otp-wrapper:not(.ashna-anim-none) .ashna-field-group {
+	animation: ashnaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.11s both;
 }
-.signa-otp-wrapper:not(.signa-anim-none) .signa-btn {
-	animation: signaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.17s both;
+.ashna-otp-wrapper:not(.ashna-anim-none) .ashna-btn {
+	animation: ashnaFeChildStagger 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.17s both;
 }
 
 /* Loading Spinner */
-.signa-spinner {
+.ashna-spinner {
 	width: 18px;
 	height: 18px;
 	border: 2.5px solid rgba(255, 255, 255, 0.35);
 	border-top-color: #ffffff;
 	border-radius: 50%;
 	display: inline-block;
-	animation: signaSpin 0.7s linear infinite;
+	animation: ashnaSpin 0.7s linear infinite;
 }
 
-@keyframes signaSpin {
+@keyframes ashnaSpin {
 	to {
 		transform: rotate(360deg);
 	}
 }
 
 /* Trigger Button */
-.signa-trigger-btn {
+.ashna-trigger-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	padding: 9px 18px;
 	border-radius: 9px;
-	background-color: var(--signa-primary, #2563eb);
+	background-color: var(--ashna-primary, #2563eb);
 	color: #ffffff !important;
 	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
 	font-size: 14px;
@@ -869,7 +870,7 @@
 }
 
 /* Global Modal Overlay & Slide-Over Drawers (Category 1) */
-.signa-modal-overlay {
+.ashna-modal-overlay {
 	position: fixed;
 	inset: 0;
 	background: rgba(15, 23, 42, 0.62);
@@ -882,19 +883,19 @@
 	direction: rtl;
 }
 
-.signa-modal-dialog {
+.ashna-modal-dialog {
 	position: relative;
 	width: 100%;
 	max-width: 420px;
 	transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.signa-modal-dialog .signa-otp-wrapper {
+.ashna-modal-dialog .ashna-otp-wrapper {
 	margin: 0 !important;
 	max-width: 100% !important;
 }
 
-.signa-modal-sheet-handle {
+.ashna-modal-sheet-handle {
 	display: none;
 	width: 42px;
 	height: 5px;
@@ -904,24 +905,24 @@
 }
 
 /* Slide-Over Drawer Left (in RTL: flex-end places dialog on the left edge) */
-.signa-modal-overlay.signa-modal-style-drawer_left {
+.ashna-modal-overlay.ashna-modal-style-drawer_left {
 	padding: 0;
 	justify-content: flex-end;
 	align-items: stretch;
 }
 
 /* Slide-Over Drawer Right (in RTL: flex-start places dialog on the right edge) */
-.signa-modal-overlay.signa-modal-style-drawer_right {
+.ashna-modal-overlay.ashna-modal-style-drawer_right {
 	padding: 0;
 	justify-content: flex-start;
 	align-items: stretch;
 }
 
-.signa-modal-overlay.signa-modal-style-drawer_left .signa-modal-dialog,
-.signa-modal-overlay.signa-modal-style-drawer_right .signa-modal-dialog {
+.ashna-modal-overlay.ashna-modal-style-drawer_left .ashna-modal-dialog,
+.ashna-modal-overlay.ashna-modal-style-drawer_right .ashna-modal-dialog {
 	max-width: 430px;
 	height: 100vh;
-	background: var(--signa-bg, #ffffff);
+	background: var(--ashna-bg, #ffffff);
 	box-shadow: 0 0 45px rgba(0, 0, 0, 0.28);
 	display: flex;
 	flex-direction: column;
@@ -929,8 +930,8 @@
 	overflow-y: auto;
 }
 
-.signa-modal-overlay.signa-modal-style-drawer_left .signa-otp-card,
-.signa-modal-overlay.signa-modal-style-drawer_right .signa-otp-card {
+.ashna-modal-overlay.ashna-modal-style-drawer_left .ashna-otp-card,
+.ashna-modal-overlay.ashna-modal-style-drawer_right .ashna-otp-card {
 	border: none !important;
 	border-radius: 0 !important;
 	box-shadow: none !important;
@@ -941,32 +942,32 @@
 }
 
 /* Bottom Sheet Style */
-.signa-modal-overlay.signa-modal-style-bottom_sheet {
+.ashna-modal-overlay.ashna-modal-style-bottom_sheet {
 	padding: 0;
 	align-items: flex-end;
 	justify-content: center;
 }
 
-.signa-modal-overlay.signa-modal-style-bottom_sheet .signa-modal-dialog {
+.ashna-modal-overlay.ashna-modal-style-bottom_sheet .ashna-modal-dialog {
 	max-width: 500px;
-	background: var(--signa-bg, #ffffff);
+	background: var(--ashna-bg, #ffffff);
 	border-radius: 24px 24px 0 0;
 	overflow: hidden;
 	box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.22);
 }
 
-.signa-modal-overlay.signa-modal-style-bottom_sheet .signa-modal-sheet-handle {
+.ashna-modal-overlay.ashna-modal-style-bottom_sheet .ashna-modal-sheet-handle {
 	display: block;
 }
 
-.signa-modal-overlay.signa-modal-style-bottom_sheet .signa-otp-card {
+.ashna-modal-overlay.ashna-modal-style-bottom_sheet .ashna-otp-card {
 	border: none !important;
 	border-radius: 0 !important;
 	box-shadow: none !important;
 	padding-top: 20px;
 }
 
-.signa-modal-close {
+.ashna-modal-close {
 	position: absolute;
 	top: 14px;
 	left: 14px;
@@ -985,42 +986,42 @@
 	justify-content: center;
 }
 
-.signa-modal-close:hover {
+.ashna-modal-close:hover {
 	background: #e5e7eb;
 	color: #111827;
 }
 
 @media (max-width: 768px) {
-	.signa-otp-wrapper.signa-layout-split_right,
-	.signa-otp-wrapper.signa-layout-split_left {
+	.ashna-otp-wrapper.ashna-layout-split_right,
+	.ashna-otp-wrapper.ashna-layout-split_left {
 		flex-direction: column-reverse !important;
 	}
-	.signa-otp-side-banner {
+	.ashna-otp-side-banner {
 		padding: 24px 20px;
 	}
-	.signa-side-banner-title {
+	.ashna-side-banner-title {
 		font-size: 18px;
 	}
 }
 
 @media (max-width: 640px) {
-	.signa-modal-overlay.signa-modal-mobile-sheet {
+	.ashna-modal-overlay.ashna-modal-mobile-sheet {
 		padding: 0 !important;
 		align-items: flex-end !important;
 		justify-content: center !important;
 	}
-	.signa-modal-overlay.signa-modal-mobile-sheet .signa-modal-dialog {
+	.ashna-modal-overlay.ashna-modal-mobile-sheet .ashna-modal-dialog {
 		max-width: 100% !important;
 		height: auto !important;
-		background: var(--signa-bg, #ffffff);
+		background: var(--ashna-bg, #ffffff);
 		border-radius: 24px 24px 0 0 !important;
 		overflow: hidden;
 		box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.25);
 	}
-	.signa-modal-overlay.signa-modal-mobile-sheet .signa-modal-sheet-handle {
+	.ashna-modal-overlay.ashna-modal-mobile-sheet .ashna-modal-sheet-handle {
 		display: block !important;
 	}
-	.signa-modal-overlay.signa-modal-mobile-sheet .signa-otp-card {
+	.ashna-modal-overlay.ashna-modal-mobile-sheet .ashna-otp-card {
 		border: none !important;
 		border-radius: 0 !important;
 		box-shadow: none !important;
@@ -1029,7 +1030,7 @@
 }
 
 /* WooCommerce Checkout Banner */
-.signa-wc-checkout-banner {
+.ashna-wc-checkout-banner {
 	background: #f8fafc;
 	border: 1px solid #e2e8f0;
 	border-radius: 12px;
@@ -1038,7 +1039,7 @@
 	font-family: 'Vazirmatn', Tahoma, sans-serif;
 }
 
-.signa-wc-checkout-notice {
+.ashna-wc-checkout-notice {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1047,7 +1048,7 @@
 	font-size: 14px;
 }
 
-.signa-logged-actions {
+.ashna-logged-actions {
 	display: flex;
 	gap: 10px;
 	margin-top: 16px;
@@ -1056,11 +1057,11 @@
 /* ==========================================
    BIOMETRIC PASSKEY LOGIN (WebAuthn / FIDO2)
    ========================================== */
-.signa-passkey-login-wrap {
+.ashna-passkey-login-wrap {
 	margin-top: 14px;
 }
 
-.signa-passkey-divider {
+.ashna-passkey-divider {
 	display: flex;
 	align-items: center;
 	text-align: center;
@@ -1070,20 +1071,20 @@
 	font-weight: 600;
 }
 
-.signa-passkey-divider::before,
-.signa-passkey-divider::after {
+.ashna-passkey-divider::before,
+.ashna-passkey-divider::after {
 	content: '';
 	flex: 1;
 	border-bottom: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-.signa-passkey-divider span {
+.ashna-passkey-divider span {
 	padding: 0 10px;
 }
 
-.signa-btn-passkey {
+.ashna-btn-passkey {
 	background: rgba(16, 185, 129, 0.1) !important;
-	color: #059669 !important;
+	color: #047857 !important; /* 5:1 on the tint (WCAG AA); #059669 was 3.4:1 */
 	border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
 	display: inline-flex;
 	align-items: center;
@@ -1091,7 +1092,7 @@
 	gap: 8px;
 	width: 100%;
 	height: 46px;
-	border-radius: calc(var(--signa-radius, 16px) * 0.68);
+	border-radius: calc(var(--ashna-radius, 16px) * 0.68);
 	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
 	font-size: 13.5px;
 	font-weight: 700;
@@ -1099,14 +1100,18 @@
 	transition: all 0.2s ease;
 }
 
-.signa-btn-passkey:hover {
+.ashna-btn-passkey:hover {
 	background: rgba(16, 185, 129, 0.18) !important;
 	border-color: #10b981 !important;
 	transform: translateY(-1px);
 	box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.25);
 }
 
-.signa-pk-enroll-icon {
+.ashna-theme-dark .ashna-btn-passkey {
+	color: #6ee7b7 !important; /* light green on dark cards */
+}
+
+.ashna-pk-enroll-icon {
 	width: 58px;
 	height: 58px;
 	border-radius: 16px;
@@ -1120,7 +1125,7 @@
 }
 
 /* Passkey Account Manager Card (WooCommerce My Account & Shortcode) */
-.signa-passkey-account-card {
+.ashna-passkey-account-card {
 	background: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 16px;
@@ -1130,7 +1135,7 @@
 	box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
 }
 
-.signa-pk-card-head {
+.ashna-pk-card-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1138,13 +1143,13 @@
 	gap: 14px;
 }
 
-.signa-pk-card-title {
+.ashna-pk-card-title {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 }
 
-.signa-pk-badge-icon {
+.ashna-pk-badge-icon {
 	width: 44px;
 	height: 44px;
 	border-radius: 12px;
@@ -1156,26 +1161,26 @@
 	flex-shrink: 0;
 }
 
-.signa-pk-card-title h4 {
+.ashna-pk-card-title h4 {
 	margin: 0 0 3px 0;
 	font-size: 15px;
 	font-weight: 800;
 	color: #0f172a;
 }
 
-.signa-pk-card-title p {
+.ashna-pk-card-title p {
 	margin: 0;
 	font-size: 12.5px;
 	color: #64748b;
 }
 
-.signa-btn-register-passkey {
+.ashna-btn-register-passkey {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	padding: 9px 16px;
 	border-radius: 10px;
-	background: #10b981;
+	background: #047857; /* white text 5.5:1 (WCAG AA); #10b981 was 2.5:1 */
 	color: #ffffff !important;
 	border: none;
 	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
@@ -1185,11 +1190,11 @@
 	transition: background 0.18s ease;
 }
 
-.signa-btn-register-passkey:hover {
-	background: #059669;
+.ashna-btn-register-passkey:hover {
+	background: #065f46;
 }
 
-.signa-pk-list {
+.ashna-pk-list {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -1198,7 +1203,7 @@
 	border-top: 1px solid #f1f5f9;
 }
 
-.signa-pk-item {
+.ashna-pk-item {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1208,18 +1213,18 @@
 	border: 1px solid #e2e8f0;
 }
 
-.signa-pk-item-info strong {
+.ashna-pk-item-info strong {
 	display: block;
 	font-size: 13px;
 	color: #0f172a;
 }
 
-.signa-pk-item-info small {
+.ashna-pk-item-info small {
 	font-size: 11.5px;
 	color: #64748b;
 }
 
-.signa-pk-delete-btn {
+.ashna-pk-delete-btn {
 	background: rgba(239, 68, 68, 0.1);
 	color: #ef4444;
 	border: 1px solid rgba(239, 68, 68, 0.25);
@@ -1231,19 +1236,138 @@
 	cursor: pointer;
 }
 
-.signa-pk-empty {
+.ashna-pk-empty {
 	margin: 14px 0 0 0;
 	font-size: 12.5px;
 	color: #94a3b8;
 }
 
 @media (max-width: 480px) {
-	.signa-otp-card {
+	.ashna-otp-card {
 		padding: 24px 18px;
 	}
-	.signa-digit-box {
+	.ashna-digit-box {
 		width: 42px;
 		height: 48px;
 		font-size: 18px;
 	}
 }
+
+/* Honeypot field (anti-bot): off-screen, never visible to people */
+.ashna-otp-wrapper .ashna-hp {
+	position: absolute !important;
+	left: -10000px !important;
+	top: auto !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* Dokan: vendor sign-up inside the OTP form */
+.ashna-otp-wrapper .ashna-vendor-signup {
+	margin: 4px 0 14px;
+}
+.ashna-otp-wrapper .ashna-vendor-title {
+	font-weight: 800;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+.ashna-otp-wrapper .ashna-account-type {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+.ashna-otp-wrapper .ashna-account-choice {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 10px 8px;
+	border: 1px solid var(--ashna-input-border, #d1d5db);
+	border-radius: calc(var(--ashna-radius, 16px) * 0.6);
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 700;
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.ashna-otp-wrapper .ashna-account-choice input {
+	margin: 0;
+	accent-color: var(--ashna-primary, #2563eb);
+}
+.ashna-otp-wrapper .ashna-account-choice:has(input:checked) {
+	border-color: var(--ashna-primary, #2563eb);
+	background: color-mix(in srgb, var(--ashna-primary, #2563eb) 8%, transparent);
+}
+.ashna-otp-wrapper .ashna-field-row-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+.ashna-otp-wrapper .ashna-shopurl-preview {
+	display: block;
+	margin-top: 6px;
+	font-size: 11.5px;
+	opacity: 0.7;
+	word-break: break-all;
+	text-align: left;
+}
+.ashna-otp-wrapper .ashna-shopurl-status {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	font-weight: 700;
+}
+.ashna-otp-wrapper .ashna-shopurl-status.is-ok {
+	color: #047857;
+}
+.ashna-otp-wrapper .ashna-shopurl-status.is-taken {
+	color: #dc2626;
+}
+
+/* -------------------------------------------------------------------------
+ * Social sign-in (Google / Telegram) — buttons under the OTP form.
+ * Kept neutral so it follows the card's own palette and works in RTL.
+ * ---------------------------------------------------------------------- */
+.ashna-sso { margin-top: 14px; }
+.ashna-sso-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; color: var(--ashna-muted, #6b7280); font-size: 12.5px; }
+.ashna-sso-divider::before, .ashna-sso-divider::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .18; }
+.ashna-sso-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.ashna-sso-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid rgba(17, 24, 39, .14); border-radius: var(--ashna-radius, 12px); background: #fff; color: #111827; font-size: 14px; font-weight: 600; text-decoration: none; transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+.ashna-sso-btn:hover, .ashna-sso-btn:focus-visible { border-color: rgba(17, 24, 39, .3); box-shadow: 0 4px 14px rgba(17, 24, 39, .08); transform: translateY(-1px); color: #111827; }
+.ashna-sso-btn:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.ashna-sso-btn svg { flex: 0 0 auto; }
+.ashna-sso-telegram { border-color: rgba(34, 158, 217, .3); }
+.ashna-sso-telegram:hover, .ashna-sso-telegram:focus-visible { border-color: rgba(34, 158, 217, .55); }
+
+@media (max-width: 420px) {
+	.ashna-sso-buttons { grid-template-columns: 1fr; }
+}
+
+.ashna-form-notice { margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.8; }
+.ashna-form-notice-error { background: rgba(220, 38, 38, .08); border: 1px solid rgba(220, 38, 38, .25); color: #b91c1c; }
+
+/* -------------------------------------------------------------------------
+ * "Add your phone" card (post-SSO), deliberately small and dismissible.
+ * ---------------------------------------------------------------------- */
+.ashna-sso-phone { position: fixed; inset-inline-start: 18px; inset-block-end: 18px; z-index: 9998; width: min(360px, calc(100vw - 36px)); padding: 16px; border-radius: 16px; background: #fff; color: #111827; box-shadow: 0 18px 48px rgba(15, 23, 42, .22); border: 1px solid rgba(15, 23, 42, .08); font-size: 14px; opacity: 1; transform: translateY(0); transition: opacity .2s ease, transform .2s ease; --ashna-font: 'Vazirmatn', Tahoma, sans-serif; --ashna-primary: #2563eb; --ashna-radius: 14px; --ashna-input-h: 42px; --ashna-btn-size: 14px; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+/* The card lives in wp_footer, outside the login form: its buttons must not stretch like form buttons. */
+.ashna-sso-phone .ashna-btn { width: auto; }
+.ashna-sso-phone .ashna-btn-link { color: #2563eb; }
+.ashna-sso-phone.is-dismissed { opacity: 0; transform: translateY(10px); }
+.ashna-sso-phone-body { display: flex; gap: 12px; }
+.ashna-sso-phone-body[hidden] { display: none; }
+.ashna-sso-phone-icon { flex: 0 0 auto; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: rgba(37, 99, 235, .1); color: #2563eb; }
+.ashna-sso-phone strong { display: block; font-size: 14.5px; margin-bottom: 2px; }
+.ashna-sso-phone p { margin: 0 0 10px; font-size: 12.8px; line-height: 1.85; color: #4b5563; }
+.ashna-sso-phone-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ashna-sso-phone-close { position: absolute; inset-inline-end: 8px; inset-block-start: 6px; border: 0; background: transparent; font-size: 20px; line-height: 1; color: #9ca3af; cursor: pointer; padding: 4px 6px; }
+.ashna-sso-phone-close:hover { color: #4b5563; }
+.ashna-sso-phone-input, .ashna-sso-code-input { width: 100%; height: 44px; margin-bottom: 10px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(15, 23, 42, .16); font-size: 15px; }
+.ashna-sso-phone-input:focus, .ashna-sso-code-input:focus { outline: 2px solid #2563eb; outline-offset: 1px; border-color: transparent; }
+.ashna-sso-phone-msg { margin-top: 8px; font-size: 12.5px; line-height: 1.7; min-height: 1px; }
+.ashna-sso-phone-msg.is-error { color: #b91c1c; }
+.ashna-sso-phone-msg.is-ok { color: #047857; }
+@media (max-width: 520px) { .ashna-sso-phone { inset-inline: 12px; inset-block-end: 12px; width: auto; } }

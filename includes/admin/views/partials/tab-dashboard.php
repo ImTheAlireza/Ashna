@@ -2,14 +2,14 @@
 /**
  * Admin Settings Partial: tab-dashboard.php (Polished Top Cards, Left-Aligned KPI Numbers & Vector Icons)
  *
- * @package Signa_OTP
+ * @package Ashna
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$active_backups = Signa_Gateway_Manager::get_backup_sms_gateways();
+$active_backups = Ashna_Gateway_Manager::get_backup_sms_gateways();
 $backup_names   = array();
 foreach ( $active_backups as $bgw ) {
 	$backup_names[] = $bgw->get_id();
@@ -30,12 +30,14 @@ $strategy_labels = array(
 	'sms_fallback_bale' => 'اول پیامک ← سپس بله',
 	'bale'              => 'فقط پیام‌رسان بله',
 	'both'              => 'ارسال همزمان (پیامک + بله)',
+	'messenger'         => 'فقط پیام‌رسان‌های ایرانی (راه‌پیام)',
+	'messenger_fallback_sms' => 'اول پیام‌رسان‌های ایرانی ← سپس پیامک',
 );
 $active_strategy_label = isset( $strategy_labels[ $settings['mobile_delivery_channel'] ] )
 	? $strategy_labels[ $settings['mobile_delivery_channel'] ]
 	: $settings['mobile_delivery_channel'];
 
-$step1_done = ( 'sandbox' !== $settings['active_sms_gateway'] ) || ! empty( $settings['bale_client_id'] ) || ! empty( $settings['bale_bot_token'] );
+$step1_done = ( 'sandbox' !== $settings['active_sms_gateway'] ) || ! empty( $settings['bale_api_key'] ) || ! empty( $settings['bale_bot_token'] ) || ! empty( $settings['msgway_api_key'] );
 $step2_done = ! empty( $settings['mobile_delivery_channel'] );
 $step3_done = ! empty( $settings['enable_passkey'] );
 $step4_done = 'none' !== $settings['captcha_type'];
@@ -83,11 +85,11 @@ $checklist_steps = array(
 	array(
 		'done'        => $step5_done,
 		'title'       => '۵. نمایش فرم ورود در سایت (ووکامرس / المنتور / شورت‌کد)',
-		'desc'        => 'جایگزینی خودکار فرم حساب کاربری ووکامرس، ویجت اختصاصی المنتور یا شورت‌کد [signa_otp_login].',
+		'desc'        => 'جایگزینی خودکار فرم حساب کاربری ووکامرس، ویجت اختصاصی المنتور یا شورت‌کد [ashna_otp_login].',
 		'status_text' => $step5_done ? 'متصل به سایت' : 'آماده جایگذاری',
 		'btn_text'    => 'ووکامرس و المنتور',
 		'target_tab'  => 'woocommerce',
-		'shortcode'   => '[signa_otp_login]',
+		'shortcode'   => '[ashna_otp_login]',
 	),
 );
 
@@ -100,87 +102,93 @@ foreach ( $checklist_steps as $c_step ) {
 $checklist_total   = count( $checklist_steps );
 $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 100 );
 ?>
-				<section class="signa-panel active" id="signa-tab-dashboard">
+				<section class="ashna-panel active" id="ashna-tab-dashboard">
 					<!-- Quick Configuration & Jump Bar -->
-					<div class="signa-quick-setup-grid">
-						<div class="signa-quick-item">
-							<div class="signa-quick-head">
-								<span class="signa-pill <?php echo 'sandbox' === $settings['active_sms_gateway'] ? 'is-warn' : 'is-ok'; ?>">
+					<div class="ashna-quick-setup-grid">
+						<div class="ashna-quick-item">
+							<div class="ashna-quick-head">
+								<span class="ashna-pill <?php echo 'sandbox' === $settings['active_sms_gateway'] ? 'is-warn' : 'is-ok'; ?>">
 									<?php echo 'sandbox' === $settings['active_sms_gateway'] ? 'حالت تست (Sandbox)' : 'درگاه عملیاتی فعال'; ?>
 								</span>
-								<button type="button" class="signa-jump-tab" data-target-tab="sms_gateways">تنظیم درگاه &larr;</button>
+								<button type="button" class="ashna-jump-tab" data-target-tab="sms_gateways">تنظیم درگاه &larr;</button>
 							</div>
-							<div class="signa-quick-body">
-								<span class="signa-quick-icon is-blue">
+							<div class="ashna-quick-body">
+								<span class="ashna-quick-icon is-blue">
 									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
 								</span>
-								<div class="signa-quick-text">
+								<div class="ashna-quick-text">
 									<strong><?php echo esc_html( $active_gw_title ); ?></strong>
-									<small><?php echo empty( $backup_names ) ? 'بدون درگاه پشتیبان (Failover)' : sprintf( '%d پشتیبان فعال (%s)', count( $backup_names ), implode( '، ', $backup_names ) ); ?></small>
+									<small><?php echo esc_html( empty( $backup_names ) ? 'بدون درگاه پشتیبان (Failover)' : sprintf( '%d پشتیبان فعال (%s)', count( $backup_names ), implode( '، ', $backup_names ) ) ); ?></small>
 								</div>
 							</div>
 						</div>
 
-						<div class="signa-quick-item">
-							<div class="signa-quick-head">
-								<span class="signa-pill is-info">مسیر ارسال کد</span>
-								<button type="button" class="signa-jump-tab" data-target-tab="auth_flow">تغییر مسیر &larr;</button>
+						<div class="ashna-quick-item">
+							<div class="ashna-quick-head">
+								<span class="ashna-pill is-info">مسیر ارسال کد</span>
+								<button type="button" class="ashna-jump-tab" data-target-tab="auth_flow">تغییر مسیر &larr;</button>
 							</div>
-							<div class="signa-quick-body">
-								<div class="signa-flow-icons" style="flex-shrink:0;">
+							<div class="ashna-quick-body">
+								<div class="ashna-flow-icons" style="flex-shrink:0;">
 									<?php if ( 'bale_fallback_sms' === $settings['mobile_delivery_channel'] ) : ?>
-										<span class="signa-flow-node is-bale" title="بله"><?php echo Signa_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-										<span class="signa-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
-										<span class="signa-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="ashna-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
 									<?php elseif ( 'sms_fallback_bale' === $settings['mobile_delivery_channel'] ) : ?>
-										<span class="signa-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
-										<span class="signa-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
-										<span class="signa-flow-node is-bale" title="بله"><?php echo Signa_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+										<span class="ashna-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 									<?php elseif ( 'both' === $settings['mobile_delivery_channel'] ) : ?>
-										<span class="signa-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
-										<span class="signa-flow-sep is-plus">+</span>
-										<span class="signa-flow-node is-bale" title="بله"><?php echo Signa_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+										<span class="ashna-flow-sep is-plus">+</span>
+										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+									<?php elseif ( 'messenger_fallback_sms' === $settings['mobile_delivery_channel'] ) : ?>
+										<span class="ashna-flow-node is-messenger" title="پیام‌رسان‌های ایرانی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+										<span class="ashna-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+									<?php elseif ( 'messenger' === $settings['mobile_delivery_channel'] ) : ?>
+										<span class="ashna-flow-node is-messenger" title="پیام‌رسان‌های ایرانی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
 									<?php elseif ( 'bale' === $settings['mobile_delivery_channel'] ) : ?>
-										<span class="signa-flow-node is-bale" title="بله"><?php echo Signa_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="ashna-flow-node is-bale" title="بله"><?php echo Ashna_Helper::get_bale_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 									<?php else : ?>
-										<span class="signa-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+										<span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
 									<?php endif; ?>
 								</div>
-								<div class="signa-quick-text">
+								<div class="ashna-quick-text">
 									<strong><?php echo esc_html( $active_strategy_label ); ?></strong>
 									<small>ورود بیومتریک Passkey: <?php echo ! empty( $settings['enable_passkey'] ) ? 'فعال' : 'غیرفعال'; ?> • کد <?php echo esc_html( (string) $settings['otp_length'] ); ?> رقمی</small>
 								</div>
 							</div>
 						</div>
 
-						<div class="signa-quick-item">
-							<div class="signa-quick-head">
-								<span class="signa-pill <?php echo 'none' === $settings['captcha_type'] ? 'is-muted' : 'is-ok'; ?>">
+						<div class="ashna-quick-item">
+							<div class="ashna-quick-head">
+								<span class="ashna-pill <?php echo 'none' === $settings['captcha_type'] ? 'is-muted' : 'is-ok'; ?>">
 									<?php echo 'none' === $settings['captcha_type'] ? 'بدون کپچا' : 'محافظت فعال'; ?>
 								</span>
-								<button type="button" class="signa-jump-tab" data-target-tab="security_firewall">تنظیمات امنیت &larr;</button>
+								<button type="button" class="ashna-jump-tab" data-target-tab="security_firewall">تنظیمات امنیت &larr;</button>
 							</div>
-							<div class="signa-quick-body">
-								<span class="signa-quick-icon is-amber">
+							<div class="ashna-quick-body">
+								<span class="ashna-quick-icon is-amber">
 									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
 								</span>
-								<div class="signa-quick-text">
+								<div class="ashna-quick-text">
 									<strong>کپچا: <?php echo esc_html( $active_captcha_label ); ?></strong>
 									<small>سقف مجاز: <?php echo esc_html( (string) $settings['max_requests_per_hour'] ); ?> بار در ساعت برای هر شماره</small>
 								</div>
 							</div>
 						</div>
 
-						<div class="signa-quick-item">
-							<div class="signa-quick-head">
-								<span class="signa-pill is-ok">المنتور و شورت‌کد</span>
-								<button type="button" class="signa-jump-tab" data-target-tab="woocommerce">مشاهده ابزارها &larr;</button>
+						<div class="ashna-quick-item">
+							<div class="ashna-quick-head">
+								<span class="ashna-pill is-ok">المنتور و شورت‌کد</span>
+								<button type="button" class="ashna-jump-tab" data-target-tab="woocommerce">مشاهده ابزارها &larr;</button>
 							</div>
-							<div class="signa-quick-body">
-								<span class="signa-quick-icon is-green">
+							<div class="ashna-quick-body">
+								<span class="ashna-quick-icon is-green">
 									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
 								</span>
-								<div class="signa-quick-text">
+								<div class="ashna-quick-text">
 									<strong>یکپارچگی قالب و صفحه‌ساز</strong>
 									<small>۲ ویجت بومی المنتور + سازگار با دیجیتز</small>
 								</div>
@@ -189,73 +197,73 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 					</div>
 
 					<!-- KPI Summary Cards (Numbers cleanly positioned on the LEFT side of each card) -->
-					<div class="signa-kpi-grid">
-						<div class="signa-kpi-card">
-							<div class="signa-kpi-main">
-								<div class="signa-kpi-icon is-blue">
+					<div class="ashna-kpi-grid">
+						<div class="ashna-kpi-card">
+							<div class="ashna-kpi-main">
+								<div class="ashna-kpi-icon is-blue">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
 								</div>
-								<div class="signa-kpi-info">
+								<div class="ashna-kpi-info">
 									<span>کل کدهای ارسال‌شده</span>
 									<small><?php echo esc_html( number_format_i18n( $stats['today'] ) ); ?> ارسال در امروز</small>
 								</div>
 							</div>
-							<div class="signa-kpi-number-box is-blue">
+							<div class="ashna-kpi-number-box is-blue">
 								<strong><?php echo esc_html( number_format_i18n( $stats['total'] ) ); ?></strong>
 							</div>
 						</div>
 
-						<div class="signa-kpi-card">
-							<div class="signa-kpi-main">
-								<div class="signa-kpi-icon is-green">
+						<div class="ashna-kpi-card">
+							<div class="ashna-kpi-main">
+								<div class="ashna-kpi-icon is-green">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
 								</div>
-								<div class="signa-kpi-info">
+								<div class="ashna-kpi-info">
 									<span>ورودهای موفق (Verified)</span>
 									<small>نرخ تبدیل: %<?php echo esc_html( (string) $stats['conversion_rate'] ); ?></small>
 								</div>
 							</div>
-							<div class="signa-kpi-number-box is-green">
+							<div class="ashna-kpi-number-box is-green">
 								<strong><?php echo esc_html( number_format_i18n( $stats['verified'] ) ); ?></strong>
 							</div>
 						</div>
 
-						<div class="signa-kpi-card">
-							<div class="signa-kpi-main">
-								<div class="signa-kpi-icon is-purple">
+						<div class="ashna-kpi-card">
+							<div class="ashna-kpi-main">
+								<div class="ashna-kpi-icon is-purple">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 								</div>
-								<div class="signa-kpi-info">
+								<div class="ashna-kpi-info">
 									<span>کاربران ثبت‌نامی با OTP</span>
 									<small>ثبت‌نام خودکار یکپارچه</small>
 								</div>
 							</div>
-							<div class="signa-kpi-number-box is-purple">
+							<div class="ashna-kpi-number-box is-purple">
 								<strong><?php echo esc_html( number_format_i18n( $stats['otp_users'] ) ); ?></strong>
 							</div>
 						</div>
 
-						<div class="signa-kpi-card">
-							<div class="signa-kpi-main">
-								<div class="signa-kpi-icon is-red">
+						<div class="ashna-kpi-card">
+							<div class="ashna-kpi-main">
+								<div class="ashna-kpi-icon is-red">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 								</div>
-								<div class="signa-kpi-info">
+								<div class="ashna-kpi-info">
 									<span>ارسال‌های ناموفق / خطا</span>
 									<small><?php echo esc_html( (string) count( $active_lockouts ) ); ?> مسدودی امنیتی فعال</small>
 								</div>
 							</div>
-							<div class="signa-kpi-number-box is-red">
+							<div class="ashna-kpi-number-box is-red">
 								<strong><?php echo esc_html( number_format_i18n( $stats['failed'] ) ); ?></strong>
 							</div>
 						</div>
 					</div>
 
 					<!-- Quick Setup Checklist for Customers (چک‌لیست راه‌اندازی سریع) -->
-					<div class="signa-card signa-setup-checklist-card" style="margin-bottom:20px;">
-						<div class="signa-card-head">
-							<div class="signa-card-head-title">
-								<span class="signa-card-icon is-green">
+					<div class="ashna-card ashna-setup-checklist-card" style="margin-bottom:20px;">
+						<div class="ashna-card-head">
+							<div class="ashna-card-head-title">
+								<span class="ashna-card-icon is-green">
 									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
 								</span>
 								<div>
@@ -264,44 +272,44 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 								</div>
 							</div>
 
-							<div class="signa-checklist-progress-wrap">
-								<div class="signa-checklist-progress-meta">
-									<span class="signa-checklist-progress-label"><?php echo esc_html( sprintf( '%d از %d گام تکمیل شده', $checklist_completed, $checklist_total ) ); ?></span>
-									<strong class="signa-checklist-progress-pct">%<?php echo esc_html( (string) $checklist_percent ); ?></strong>
+							<div class="ashna-checklist-progress-wrap">
+								<div class="ashna-checklist-progress-meta">
+									<span class="ashna-checklist-progress-label"><?php echo esc_html( sprintf( '%d از %d گام تکمیل شده', $checklist_completed, $checklist_total ) ); ?></span>
+									<strong class="ashna-checklist-progress-pct">%<?php echo esc_html( (string) $checklist_percent ); ?></strong>
 								</div>
-								<div class="signa-checklist-progress-bar">
-									<div class="signa-checklist-progress-fill" style="width:<?php echo esc_attr( (string) $checklist_percent ); ?>%;"></div>
+								<div class="ashna-checklist-progress-bar">
+									<div class="ashna-checklist-progress-fill" style="width:<?php echo esc_attr( (string) $checklist_percent ); ?>%;"></div>
 								</div>
 							</div>
 						</div>
 
-						<div class="signa-checklist-list">
+						<div class="ashna-checklist-list">
 							<?php foreach ( $checklist_steps as $step_idx => $c_step ) : ?>
-								<div class="signa-checklist-row <?php echo ! empty( $c_step['done'] ) ? 'is-done' : 'is-pending'; ?>">
-									<div class="signa-checklist-main">
-										<span class="signa-checklist-check <?php echo ! empty( $c_step['done'] ) ? 'is-done' : 'is-pending'; ?>">
+								<div class="ashna-checklist-row <?php echo ! empty( $c_step['done'] ) ? 'is-done' : 'is-pending'; ?>">
+									<div class="ashna-checklist-main">
+										<span class="ashna-checklist-check <?php echo ! empty( $c_step['done'] ) ? 'is-done' : 'is-pending'; ?>">
 											<?php if ( ! empty( $c_step['done'] ) ) : ?>
 												<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 											<?php else : ?>
 												<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
 											<?php endif; ?>
 										</span>
-										<div class="signa-checklist-text">
+										<div class="ashna-checklist-text">
 											<strong><?php echo esc_html( $c_step['title'] ); ?></strong>
 											<p><?php echo esc_html( $c_step['desc'] ); ?></p>
 										</div>
 									</div>
 
-									<div class="signa-checklist-actions">
+									<div class="ashna-checklist-actions">
 										<?php if ( ! empty( $c_step['shortcode'] ) ) : ?>
-											<button type="button" class="signa-copy-btn" data-copy="<?php echo esc_attr( $c_step['shortcode'] ); ?>" title="کپی شورت‌کد فرم ورود">
+											<button type="button" class="ashna-copy-btn" data-copy="<?php echo esc_attr( $c_step['shortcode'] ); ?>" title="کپی شورت‌کد فرم ورود">
 												کپی <code><?php echo esc_html( $c_step['shortcode'] ); ?></code>
 											</button>
 										<?php endif; ?>
-										<span class="signa-pill <?php echo ! empty( $c_step['done'] ) ? 'is-ok' : 'is-warn'; ?>">
+										<span class="ashna-pill <?php echo ! empty( $c_step['done'] ) ? 'is-ok' : 'is-warn'; ?>">
 											<?php echo esc_html( $c_step['status_text'] ); ?>
 										</span>
-										<button type="button" class="signa-checklist-jump signa-jump-tab" data-target-tab="<?php echo esc_attr( $c_step['target_tab'] ); ?>">
+										<button type="button" class="ashna-checklist-jump ashna-jump-tab" data-target-tab="<?php echo esc_attr( $c_step['target_tab'] ); ?>">
 											<span><?php echo esc_html( $c_step['btn_text'] ); ?></span>
 											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
 										</button>
@@ -311,12 +319,12 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 						</div>
 					</div>
 
-					<div class="signa-bento-row">
+					<div class="ashna-bento-row">
 						<!-- 7-Day Visual Bar Chart -->
-						<div class="signa-card signa-col-8">
-							<div class="signa-card-head">
-								<div class="signa-card-head-title">
-									<span class="signa-card-icon is-blue">
+						<div class="ashna-card ashna-col-8">
+							<div class="ashna-card-head">
+								<div class="ashna-card-head-title">
+									<span class="ashna-card-icon is-blue">
 										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 									</span>
 									<div>
@@ -324,30 +332,30 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 										<p>مقایسه تعداد کل درخواست‌ها و ورودهای موفق روزانه</p>
 									</div>
 								</div>
-								<div class="signa-chart-legend">
+								<div class="ashna-chart-legend">
 									<span><i style="background:#3b82f6;"></i> کل ارسالی</span>
 									<span><i style="background:#10b981;"></i> تایید شده</span>
 								</div>
 							</div>
-							<div class="signa-bar-chart">
+							<div class="ashna-bar-chart">
 								<?php foreach ( $chart_data as $day ) : ?>
-									<div class="signa-bar-col">
-										<div class="signa-bar-track" title="<?php echo esc_attr( sprintf( '%s: %d ارسال (%d موفق)', $day['label'], $day['total'], $day['verified'] ) ); ?>">
-											<div class="signa-bar-fill-total" style="height:<?php echo esc_attr( (string) $day['height_pct'] ); ?>%;">
-												<span class="signa-bar-num"><?php echo esc_html( (string) $day['total'] ); ?></span>
+									<div class="ashna-bar-col">
+										<div class="ashna-bar-track" title="<?php echo esc_attr( sprintf( '%s: %d ارسال (%d موفق)', $day['label'], $day['total'], $day['verified'] ) ); ?>">
+											<div class="ashna-bar-fill-total" style="height:<?php echo esc_attr( (string) $day['height_pct'] ); ?>%;">
+												<span class="ashna-bar-num"><?php echo esc_html( (string) $day['total'] ); ?></span>
 											</div>
 										</div>
-										<span class="signa-bar-label"><?php echo esc_html( $day['label'] ); ?></span>
+										<span class="ashna-bar-label"><?php echo esc_html( $day['label'] ); ?></span>
 									</div>
 								<?php endforeach; ?>
 							</div>
 						</div>
 
 						<!-- System Health Check -->
-						<div class="signa-card signa-col-4">
-							<div class="signa-card-head">
-								<div class="signa-card-head-title">
-									<span class="signa-card-icon is-green">
+						<div class="ashna-card ashna-col-4">
+							<div class="ashna-card-head">
+								<div class="ashna-card-head-title">
+									<span class="ashna-card-icon is-green">
 										<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 									</span>
 									<div>
@@ -356,36 +364,36 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 									</div>
 								</div>
 							</div>
-							<ul class="signa-health-list">
+							<ul class="ashna-health-list">
 								<li>
 									<span>ماژول cURL و ارتباط وب‌سرویس</span>
-									<span class="signa-pill <?php echo $curl_active ? 'is-ok' : 'is-err'; ?>"><?php echo $curl_active ? 'فعال' : 'غیرفعال'; ?></span>
+									<span class="ashna-pill <?php echo $curl_active ? 'is-ok' : 'is-err'; ?>"><?php echo $curl_active ? 'فعال' : 'غیرفعال'; ?></span>
 								</li>
 								<li>
 									<span>ماژول رمزنگاری OpenSSL</span>
-									<span class="signa-pill <?php echo $openssl_active ? 'is-ok' : 'is-err'; ?>"><?php echo $openssl_active ? 'فعال' : 'غیرفعال'; ?></span>
+									<span class="ashna-pill <?php echo $openssl_active ? 'is-ok' : 'is-err'; ?>"><?php echo $openssl_active ? 'فعال' : 'غیرفعال'; ?></span>
 								</li>
 								<li>
 									<span>افزونه فروشگاه‌ساز ووکامرس</span>
-									<span class="signa-pill <?php echo $wc_active ? 'is-ok' : 'is-warn'; ?>"><?php echo $wc_active ? 'نصب و فعال' : 'نصب نیست'; ?></span>
+									<span class="ashna-pill <?php echo $wc_active ? 'is-ok' : 'is-warn'; ?>"><?php echo $wc_active ? 'نصب و فعال' : 'نصب نیست'; ?></span>
 								</li>
 								<li>
 									<span>ویجت‌های صفحه‌ساز المنتور</span>
-									<span class="signa-pill <?php echo $elementor_active ? 'is-ok' : 'is-muted'; ?>"><?php echo $elementor_active ? 'فعال (۲ ویجت)' : 'المنتور نصب نیست'; ?></span>
+									<span class="ashna-pill <?php echo $elementor_active ? 'is-ok' : 'is-muted'; ?>"><?php echo $elementor_active ? 'فعال (۲ ویجت)' : 'المنتور نصب نیست'; ?></span>
 								</li>
 								<li>
 									<span>سازگاری متای دیجیتز (Digits)</span>
-									<span class="signa-pill is-ok">فعال (دوطرفه)</span>
+									<span class="ashna-pill is-ok">فعال (دوطرفه)</span>
 								</li>
 							</ul>
 						</div>
 					</div>
 
 					<!-- Recent Logs Feed -->
-					<div class="signa-card" style="margin-top:20px;">
-						<div class="signa-card-head">
-							<div class="signa-card-head-title">
-								<span class="signa-card-icon is-purple">
+					<div class="ashna-card" style="margin-top:20px;">
+						<div class="ashna-card-head">
+							<div class="ashna-card-head-title">
+								<span class="ashna-card-icon is-purple">
 									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 								</span>
 								<div>
@@ -393,9 +401,9 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 									<p>۶ درخواست اخیر ثبت‌شده در سیستم (مفید برای مشاهده سریع کد در حالت تست)</p>
 								</div>
 							</div>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=signa-otp-logs' ) ); ?>" class="signa-btn-secondary">مشاهده تمام لاگ‌ها</a>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=ashna-otp-logs' ) ); ?>" class="ashna-btn-secondary">مشاهده تمام لاگ‌ها</a>
 						</div>
-						<table class="signa-modern-table">
+						<table class="ashna-modern-table">
 							<thead>
 								<tr>
 									<th>گیرنده</th>
@@ -413,17 +421,19 @@ $checklist_percent = (int) round( ( $checklist_completed / $checklist_total ) * 
 									<?php foreach ( $recent_logs as $rlog ) : ?>
 										<tr>
 											<td><strong dir="ltr"><?php echo esc_html( $rlog->recipient ); ?></strong></td>
-											<td><span class="signa-pill is-muted"><?php echo esc_html( $rlog->channel . ' / ' . $rlog->gateway ); ?></span></td>
-											<td><code class="signa-otp-code-pill" dir="ltr"><?php echo esc_html( $rlog->otp_code ); ?></code></td>
+											<td><span class="ashna-pill is-muted"><?php echo esc_html( $rlog->channel . ' / ' . $rlog->gateway ); ?></span></td>
+											<td><code class="ashna-otp-code-pill" dir="ltr"><?php echo esc_html( $rlog->otp_code ); ?></code></td>
 											<td>
 												<?php if ( 'verified' === $rlog->status ) : ?>
-													<span class="signa-pill is-ok">تایید شده</span>
+													<span class="ashna-pill is-ok">تایید شده</span>
 												<?php elseif ( 'failed' === $rlog->status ) : ?>
-													<span class="signa-pill is-err">خطا</span>
+													<span class="ashna-pill is-err">خطا</span>
 												<?php elseif ( 'sent' === $rlog->status ) : ?>
-													<span class="signa-pill is-info">ارسال شده</span>
+													<span class="ashna-pill is-info">ارسال شده</span>
+												<?php elseif ( 'pending' === $rlog->status ) : ?>
+													<span class="ashna-pill is-info">در حال ارسال</span>
 												<?php else : ?>
-													<span class="signa-pill is-muted">منقضی</span>
+													<span class="ashna-pill is-muted">منقضی</span>
 												<?php endif; ?>
 											</td>
 											<td><?php echo esc_html( $rlog->response_message ); ?></td>
