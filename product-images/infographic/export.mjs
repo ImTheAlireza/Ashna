@@ -1,13 +1,13 @@
 // Final export: CDP clip slices in page coordinates (no scrolling, no texture-merge artifacts).
 import fs from 'node:fs';
-process.env.LD_LIBRARY_PATH = '/tmp/alx';
+process.env.LD_LIBRARY_PATH = '/tmp/alx/lib';
 const chromium = (await import('/home/user/Ashna/.cache/browser/node_modules/@sparticuz/chromium/build/index.js')).default;
 const { chromium: pw } = await import('/home/user/Ashna/.cache/browser/node_modules/playwright-core/index.mjs');
 
 const browser = await pw.launch({
   executablePath: await chromium.executablePath(),
   args: [...chromium.args, '--font-render-hinting=none', '--force-color-profile=srgb'],
-  env: { ...process.env, LD_LIBRARY_PATH: '/tmp/alx' },
+  env: { ...process.env, LD_LIBRARY_PATH: '/tmp/alx/lib' },
   headless: true,
 });
 const page = await browser.newPage({ viewport: { width: 1000, height: 1200 }, deviceScaleFactor: 1, colorScheme: 'light' });

@@ -32,6 +32,11 @@ for part in parts:
     poster.paste(part, (0, y))
     y += part.height
 
+# برش‌ها با deviceScaleFactor=2 گرفته می‌شوند؛ قبل از ذخیره به عرض دقیق ۱۰۰۰ برمی‌گردیم
+if width != 1000:
+    poster = poster.resize((1000, round(height * 1000 / width)), Image.LANCZOS)
+    width, height = poster.size
+
 poster.save(OUT, "JPEG", quality=QUALITY, optimize=True, progressive=True, subsampling=1)
 size = os.path.getsize(OUT)
 print(f"{width} × {height} پیکسل، {size / 1024:.0f} کیلوبایت (کیفیت {QUALITY})")

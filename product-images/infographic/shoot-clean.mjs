@@ -1,12 +1,12 @@
 // Clean panel screenshots: topbar + sidebar hidden so the cards fill the frame.
-process.env.LD_LIBRARY_PATH = '/tmp/alx';
+process.env.LD_LIBRARY_PATH = '/tmp/alx/lib';
 const chromium = (await import('/home/user/Ashna/.cache/browser/node_modules/@sparticuz/chromium/build/index.js')).default;
 const { chromium: pw } = await import('/home/user/Ashna/.cache/browser/node_modules/playwright-core/index.mjs');
 const out = '/home/user/Ashna/product-images/infographic/raw';
 
 const browser = await pw.launch({
   executablePath: await chromium.executablePath(),
-  args: [...chromium.args], env: { ...process.env, LD_LIBRARY_PATH: '/tmp/alx' }, headless: true,
+  args: [...chromium.args], env: { ...process.env, LD_LIBRARY_PATH: '/tmp/alx/lib' }, headless: true,
 });
 const ctx = await browser.newContext({ viewport: { width: 1400, height: 1500 }, deviceScaleFactor: 2, locale: 'fa-IR' });
 const page = await ctx.newPage();
