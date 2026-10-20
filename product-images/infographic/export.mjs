@@ -39,5 +39,5 @@ for (let y = 0; y < total; y += step) {
   fs.writeFileSync(`${dir}/s${String(i).padStart(2, '0')}.png`, Buffer.from(res.data, 'base64'));
   i++;
 }
-console.log('slices:', i);
+console.log('slices:', i, '→ next: python3 stitch.py');
 await browser.close();

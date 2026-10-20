@@ -75,7 +75,7 @@ h1{position:relative;z-index:1}
   .stat b{display:block;font-family:'Estedad';font-weight:900;font-size:21px;color:var(--brand);line-height:1.15}
   .stat span{display:block;font-size:10.3px;color:var(--muted);margin-top:2px;line-height:1.6}
 
-  .stage{position:relative;display:grid;place-items:center;padding:34px 0 36px}
+  .stage{position:relative;display:grid;place-items:center;padding:58px 0 60px}
   .stage::before{content:"";position:absolute;width:290px;height:290px;border-radius:50%;background:radial-gradient(circle at 50% 42%,#D9E4FF 0%,#ECF2FF 58%,rgba(236,242,255,0) 73%)}
   .stage::after{
     content:"";position:absolute;inset:-4px 0;background-image:radial-gradient(#BCCDEF 1.2px,transparent 1.3px);background-size:16px 16px;opacity:.3;
@@ -88,8 +88,8 @@ h1{position:relative;z-index:1}
   }
   .float svg{width:13px;height:13px;flex:none}
   .float b{font-weight:700;color:#182135}
-  .f1{top:0;left:50%;transform:translateX(-50%);color:var(--mint)}
-  .f2{bottom:2px;left:50%;transform:translateX(-50%);color:var(--brand)}
+  .f1{top:12px;left:50%;transform:translateX(-50%);color:var(--mint)}
+  .f2{bottom:12px;left:50%;transform:translateX(-50%);color:var(--brand)}
 
   /* ─ steps ─ */
   .steps{display:grid;grid-template-columns:repeat(3,1fr);background:#F4F8FF;border-top:1px solid #E4ECFA;border-bottom:1px solid #E4ECFA;padding:20px 40px;gap:4px}
@@ -117,16 +117,19 @@ h1{position:relative;z-index:1}
   .btitle{flex:1}
   .btitle h2{font-family:'Estedad';font-weight:900;font-size:20px;margin:0 0 1px;letter-spacing:-.2px}
   .btitle p{margin:0;font-size:11.2px;color:var(--muted);line-height:1.8}
-  .bcount{font-size:10.3px;color:#586881;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 10px;white-space:nowrap}
+  .bcount{display:inline-flex;align-items:center;gap:6px;font-size:10.3px;color:#41506B;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 10px;white-space:nowrap;font-weight:600}
+  .bcount::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand);display:block}
 
   .shot{border-radius:13px;overflow:hidden;background:#fff;border:1px solid var(--line2);box-shadow:0 18px 36px -28px rgba(15,23,42,.55);margin:0}
   .shot{position:relative}
   .shot img{display:block;width:100%;height:auto}
   .shot .fade{display:block;position:absolute;left:0;right:0;bottom:0;height:64px;z-index:2;background:linear-gradient(to top,#fff 12%,rgba(255,255,255,0));pointer-events:none}
+  .shot.plain .fade{display:none}
   .band.soft .shot .fade{background:linear-gradient(to top,#F6F9FE 12%,rgba(246,249,254,0))}
   .shot figcaption{display:flex;align-items:center;gap:7px;padding:7px 12px;background:#F7F9FD;border-bottom:1px solid var(--line);font-size:10px;color:#5A6A84}
   .shot figcaption b{font-weight:700;color:#38455D}
   .shot figcaption .dot{width:6px;height:6px;border-radius:50%;background:var(--mint);flex:none}
+  .figtag{margin-left:auto;font-size:9px;line-height:1;color:#0B7A55;background:#E9FBF3;border:1px solid #C6EFDF;border-radius:999px;padding:3px 7px;white-space:nowrap;font-weight:600}
 
   .sub{margin-top:18px}
   .sub-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
@@ -267,11 +270,11 @@ h1{position:relative;z-index:1}
         <h2>ورود و ثبت‌نام</h2>
         <p>با چه چیزی وارد شوند، کد از کدام مسیر برسد، و بعد از ورود کجا بروند.</p>
       </div>
-      <span class="bcount">۱۰ قابلیت</span>
+      <span class="bcount">تب روش و مسیر ورود</span>
     </div>
 
     <figure class="shot">
-      <figcaption><span class="dot"></span><b>روش و مسیر ورود</b> — انتخاب ورودی و مسیر ارسال کد، در پنل آشنا</figcaption>
+      <figcaption><span class="dot"></span><b>روش و مسیر ورود</b> — انتخاب ورودی و مسیر ارسال کد، در پنل آشنا<span class="figtag">پنل واقعی آشنا</span></figcaption>
       <img src="img/auth.webp" alt="تنظیمات روش و مسیر ورود"><span class="fade"></span>
     </figure>
 
@@ -279,15 +282,13 @@ h1{position:relative;z-index:1}
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ثبت‌نام خودکار در اولین ورود با کد</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ورود با ایمیل، یا رمز عبور — قابل خاموش کردن</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>فرم تمام‌صفحه با شورت‌کد، یا پنجرهٔ شناور روی هر صفحه</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>جایگزینی صفحهٔ ورود وردپرس، با یک خط در wp-config</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>انتخاب نقش کاربر تازه و مسیر برگشت جدا برای هر نقش</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>افزودن شماره به حساب‌های قبلی، تیک قوانین با لینک دلخواه</li>
     </ul>
 
     <div class="sub">
       <div class="sub-head"><span class="bar"></span><h3>ورود با گوگل و تلگرام، و Passkey</h3><span>دو مسیر اجتماعی با آدرس بازگشت اختصاصی</span></div>
       <figure class="shot">
-        <figcaption><span class="dot"></span><b>ورود با گوگل و تلگرام</b> — و راهنمای گام‌به‌گام کنسول، داخل همان تب</figcaption>
+        <figcaption><span class="dot"></span><b>ورود با گوگل و تلگرام</b> — و راهنمای گام‌به‌گام کنسول، داخل همان تب<span class="figtag">پنل واقعی آشنا</span></figcaption>
         <img src="img/sso.webp" alt="تنظیمات ورود با گوگل و تلگرام"><span class="fade"></span>
       </figure>
       <ul class="chips three" style="margin-top:11px">
@@ -306,15 +307,14 @@ h1{position:relative;z-index:1}
         <h2>پیامک و پیام‌رسان‌ها</h2>
         <p>شش درگاه ایرانی، سه پشتیبان، و مسیرهای داخلی؛ همه با کلید خودت.</p>
       </div>
-      <span class="bcount">۱۲ قابلیت</span>
+      <span class="bcount">تب درگاه پیامک</span>
     </div>
     <figure class="shot">
-      <figcaption><span class="dot"></span><b>درگاه پیامک</b> — سامانهٔ اصلی و زنجیرهٔ سه‌مرحله‌ای پشتیبان</figcaption>
+      <figcaption><span class="dot"></span><b>درگاه پیامک</b> — سامانهٔ اصلی و زنجیرهٔ سه‌مرحله‌ای پشتیبان<span class="figtag">پنل واقعی آشنا</span></figcaption>
       <img src="img/gateways.webp" alt="انتخاب درگاه پیامک و زنجیرهٔ پشتیبان"><span class="fade"></span>
     </figure>
     <ul class="chips">
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>SMS.ir، کاوه‌نگار، ملی‌پیامک، فراز اس‌ام‌اس</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>آی‌پی‌پنل (Edge) و راه‌پیام (MsgWay)</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>شش درگاه: SMS.ir، کاوه‌نگار، ملی‌پیامک، فراز، آی‌پی‌پنل، راه‌پیام</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>بله: سفیر نسخهٔ ۳ و ربات</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ایتا، روبیکا، بله، گپ و آی‌گپ با یک کلید راه‌پیام</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ایمیل با قالب فارسی</li>
@@ -323,7 +323,7 @@ h1{position:relative;z-index:1}
     <div class="sub">
       <div class="sub-head"><span class="bar"></span><h3>پیام‌رسان‌ها و ایمیل</h3><span>بله، راه‌پیام و ایمیل، در همان تب</span></div>
       <figure class="shot">
-        <figcaption><span class="dot"></span><b>پیام‌رسان‌ها و ایمیل</b> — ارسال کد در بله و ایمیل، با قالب فارسی</figcaption>
+        <figcaption><span class="dot"></span><b>پیام‌رسان‌ها و ایمیل</b> — ارسال کد در بله و ایمیل، با قالب فارسی<span class="figtag">پنل واقعی آشنا</span></figcaption>
         <img src="img/messengers.webp" alt="تنظیمات پیام‌رسان بله و ایمیل"><span class="fade"></span>
       </figure>
     </div>
@@ -337,17 +337,16 @@ h1{position:relative;z-index:1}
         <h2>امنیت</h2>
         <p>سقف‌ها، کپچا و قفل‌ها؛ و کدی که خام در دیتابیس نمی‌ماند.</p>
       </div>
-      <span class="bcount">۱۵ قابلیت</span>
+      <span class="bcount">تب امنیت و ضد اسپم</span>
     </div>
     <figure class="shot">
-      <figcaption><span class="dot"></span><b>امنیت و ضد اسپم</b> — سقف‌های دقیقه، ساعت و روز برای هر شماره و هر آی‌پی</figcaption>
+      <figcaption><span class="dot"></span><b>امنیت و ضد اسپم</b> — سقف‌های دقیقه، ساعت و روز برای هر شماره و هر آی‌پی<span class="figtag">پنل واقعی آشنا</span></figcaption>
       <img src="img/security.webp" alt="تنظیمات ضد بمبر و تشخیص آی‌پی واقعی"><span class="fade"></span>
     </figure>
     <ul class="chips">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>سقف دقیقه، ساعت و روز؛ هر شماره، هر IP و شبکهٔ /24 و /64</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>سقف روزانهٔ کل سایت، و حالت حمله با کپچای اجباری</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>کپچای ریاضی داخلی، آرکپچا، Turnstile و reCAPTCHA v3</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>فیلد تله برای ربات‌ها، و محدودیت تلاش برای کد و رمز عبور</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>کد در دیتابیس هش می‌شود؛ خود کد ذخیره نمی‌شود</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>جدول قفل‌ها با دکمهٔ رفع مسدودی، لیست سیاه و سفید، IP واقعی از پشت CDN</li>
     </ul>
@@ -361,16 +360,15 @@ h1{position:relative;z-index:1}
         <h2>فروشگاه و عضویت</h2>
         <p>تسویه‌حساب، حساب کاربری و ثبت‌نام فروشنده، بدون دست‌زدن به قالب.</p>
       </div>
-      <span class="bcount">۱۰ قابلیت</span>
+      <span class="bcount">تب ووکامرس و یکپارچگی‌ها</span>
     </div>
     <figure class="shot">
-      <figcaption><span class="dot"></span><b>ووکامرس و یکپارچگی‌ها</b> — جایگزینی فرم‌های پیش‌فرض حساب و تسویه‌حساب</figcaption>
+      <figcaption><span class="dot"></span><b>ووکامرس و یکپارچگی‌ها</b> — جایگزینی فرم‌های پیش‌فرض حساب و تسویه‌حساب<span class="figtag">پنل واقعی آشنا</span></figcaption>
       <img src="img/shop.webp" alt="یکپارچگی ووکامرس و دکان"><span class="fade"></span>
     </figure>
     <ul class="chips">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>باکس ورود سریع در تسویه‌حساب کلاسیک و بلوکی</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>سازگاری با HPOS و فرم حساب ووکامرس</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>انتقال سبد خرید مهمان به حساب، بعد از ورود</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ثبت‌نام فروشندهٔ دکان با موبایل تأییدشده</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Ultimate Member، Paid Memberships Pro، MemberPress</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ویجت ورود و ویجت دکمهٔ شناور المنتور</li>
@@ -385,24 +383,22 @@ h1{position:relative;z-index:1}
         <h2>پنل مدیریت</h2>
         <p>فارسی، راست‌به‌چپ، با پیش‌نمایش زنده و تم تاریک.</p>
       </div>
-      <span class="bcount">۹ قابلیت</span>
+      <span class="bcount">تب طراحی ظاهر فرم</span>
     </div>
-    <figure class="shot">
-      <figcaption><span class="dot"></span><b>طراحی ظاهر فرم</b> — پیش‌نمایش زنده، دو مرحلهٔ کد، و چهار قالب آماده</figcaption>
+    <figure class="shot plain">
+      <figcaption><span class="dot"></span><b>طراحی ظاهر فرم</b> — پیش‌نمایش زنده، دو مرحلهٔ کد، و چهار قالب آماده<span class="figtag">پنل واقعی آشنا</span></figcaption>
       <img src="img/appearance.webp" alt="استودیوی طراحی فرم با پیش‌نمایش زنده"><span class="fade"></span>
     </figure>
     <ul class="chips">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>فارسی و راست‌به‌چپ، با تم تاریک و روشن</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>پیش‌نمایش زندهٔ فرم، و چهار قالب آماده</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>نمودار هفت روز و نرخ تبدیل</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>گزارش ارسال‌ها و خطاها</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>خروجی و ورودی تنظیمات</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>تست اتصال درگاه، و بررسی سلامت سیستم</li>
     </ul>
     <div class="sub">
       <div class="sub-head"><span class="bar"></span><h3>پیشخوان و تم تاریک</h3><span>همان پنل، در حالت شب</span></div>
       <figure class="shot">
-        <figcaption><span class="dot"></span><b>پیشخوان</b> — وضعیت درگاه، آمار امروز و چک‌لیست راه‌اندازی</figcaption>
+        <figcaption><span class="dot"></span><b>پیشخوان</b> — وضعیت درگاه، آمار امروز و چک‌لیست راه‌اندازی<span class="figtag">پنل واقعی آشنا</span></figcaption>
         <img src="img/dashboard-dark.webp" alt="پیشخوان آشنا در تم تاریک"><span class="fade"></span>
       </figure>
     </div>
@@ -416,14 +412,12 @@ h1{position:relative;z-index:1}
         <h2>برای توسعه‌دهنده</h2>
         <p>ماژولار، قابل توسعه، و بدون وابستگی بیرونی.</p>
       </div>
-      <span class="bcount">۷ قابلیت</span>
+      <span class="bcount">برای توسعه‌دهنده</span>
     </div>
     <ul class="chips" style="margin-top:0">
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>معماری ماژولار با Autoloader</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>درگاه پیامک سفارشی</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>فیلتر و اکشن در همهٔ مراحل ورود</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>آمادهٔ ترجمه، فونت وزیرمتن و استعداد داخل بسته</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>بدون CDN؛ هیچ درخواستی به بیرون</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="#0E9F6E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>تست‌شده روی وردپرس ۵.۸ تا ۷.۱</li>
     </ul>
     <div class="code">
