@@ -55,7 +55,29 @@
   .flag i:nth-child(2){background:#fff}
   .flag i:nth-child(3){background:#DA0000}
 
-  .wordmark{width:460px;display:block;margin-right:-4px;filter:drop-shadow(0 18px 34px rgba(37,99,235,.42))}
+  /* wordmark enlarged with the same gradient face and stepped extrusion as desktop */
+  .wm-wrap{position:relative;width:592px;height:174px;margin:0 0 8px -6px}
+  .wordmark{position:absolute;inset:0;width:100%;height:100%}
+  .wordmark span{position:absolute;inset:0;
+    -webkit-mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat;
+    mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat}
+  .w-glow{background:radial-gradient(56% 108% at 48% 52%,rgba(80,150,255,.9),rgba(46,107,230,.4) 56%,rgba(46,107,230,0) 82%);
+    filter:blur(20px);opacity:.8;z-index:-1}
+  .w-shadow{background:#010A1E;filter:blur(19px);transform:translate(3px,20px) scale(1.012);opacity:.7}
+  .w-shadow2{background:#020C22;filter:blur(8px);transform:translate(2px,9px) scale(1.004);opacity:.6}
+  .w-depth-1{background:#1B4A8E;transform:translate(2.6px,6px)}
+  .w-depth-2{background:#123C77;transform:translate(3.1px,5px)}
+  .w-depth-3{background:#0C2C5C;transform:translate(3.6px,4px)}
+  .w-depth-4{background:#071F44;transform:translate(4.1px,3px)}
+  .w-depth-5{background:#03142E;transform:translate(4.6px,2px)}
+  .w-depth-6{background:#010B1C;transform:translate(5.1px,1px)}
+  .w-depth-7{background:#01060F;transform:translate(5.6px,0)}
+  .w-face{background:linear-gradient(179deg,#FFFFFF 0%,#FFFFFF 24%,#EEF5FF 42%,#CFE2FB 60%,#A2C4F1 79%,#8FB6EC 100%)}
+  .w-shade{background:linear-gradient(0deg,rgba(12,38,86,.36),rgba(12,38,86,0) 46%)}
+  .w-gloss{background:linear-gradient(184deg,rgba(255,255,255,.95),rgba(255,255,255,.5) 22%,rgba(255,255,255,0) 42%);
+    mix-blend-mode:screen;opacity:.92}
+  .w-rim{background:linear-gradient(203deg,rgba(186,224,255,.95),rgba(120,180,250,0) 52%);
+    transform:translate(-1px,-1px);opacity:.4;mix-blend-mode:screen}
 
   .subbar{margin-top:20px;display:inline-flex;align-items:center;gap:14px;padding:11px 22px 13px;border-radius:14px;
     background:linear-gradient(100deg,#1D4ED8 0%,#2563EB 48%,#3B82F6 100%);
@@ -189,7 +211,13 @@
       <div class="pill iran"><span class="flag"><i></i><i></i><i></i></span>محصول ایرانی</div>
     </div>
 
-    <img class="wordmark" src="../infographic/img/ashna-logo-white.svg" alt="آشنا">
+    <div class="wm-wrap" aria-label="آشنا">
+      <div class="wordmark" role="img" aria-label="آشنا">
+        <span class="w-glow"></span><span class="w-shadow"></span><span class="w-shadow2"></span>
+        <span class="w-depth-1"></span><span class="w-depth-2"></span><span class="w-depth-3"></span><span class="w-depth-4"></span><span class="w-depth-5"></span><span class="w-depth-6"></span><span class="w-depth-7"></span>
+        <span class="w-face"></span><span class="w-shade"></span><span class="w-gloss"></span><span class="w-rim"></span>
+      </div>
+    </div>
 
     <div class="subbar">
       <b>ورود و ثبت‌نام پیامکی</b>

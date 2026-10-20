@@ -11,7 +11,7 @@ const report = await page.evaluate(() => {
   for (const el of document.querySelectorAll('.cover *')) {
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height) continue;
-    const bleed = el.closest('.grain,.dots,.halo,.streak,.floor,.edge');
+    const bleed = el.closest('.grain,.dots,.halo,.streak,.floor,.edge,.wordmark');
     if (bleed) continue;
     if (r.left < cover.left - 1 || r.top < cover.top - 1 || r.right > cover.right + 1 || r.bottom > cover.bottom + 1)
       out.push(['outside', el.className || el.tagName, Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]);

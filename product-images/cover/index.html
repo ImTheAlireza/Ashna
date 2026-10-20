@@ -173,10 +173,40 @@
     box-shadow:0 0 0 1px rgba(255,255,255,.25), 0 6px 14px -6px rgba(0,0,0,.7)}
   .flag svg{display:block;width:100%;height:100%}
 
-  .brand{margin-top:22px;height:196px;display:flex;align-items:center}
-  .brand img{height:182px;width:auto;filter:drop-shadow(0 20px 44px rgba(37,99,235,.55))}
+  /* ---- wordmark: enlarged, gradient face, layered depth shadow ---- */
+  .brand{margin-top:0;height:284px;display:flex;align-items:center;position:relative;isolation:isolate}
+  .wordmark{position:relative;height:270px;width:932px;flex:none}
+  .wordmark span{position:absolute;inset:0;
+    -webkit-mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat;
+    mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat}
+  /* ambient blue halo hugging the letterforms */
+  .w-glow{background:radial-gradient(58% 112% at 48% 54%,rgba(96,163,255,.98),rgba(46,107,230,.46) 56%,rgba(46,107,230,0) 84%);
+    filter:blur(34px);transform:translateY(6px) scale(1.03);opacity:.9;z-index:-1}
+  /* one long soft cast shadow, then a three-band extrusion = clean 3D, no banding */
+  .w-shadow{background:#01091C;filter:blur(44px);transform:translate(3px,40px) scale(1.015);opacity:.72}
+  .w-shadow2{background:#01091C;filter:blur(14px);transform:translate(2px,14px);opacity:.5}
+  .w-depth-1{background:#184D93;transform:translate(2.4px,2.4px)}
+  .w-depth-2{background:#0B2A57;transform:translate(4.6px,4.6px)}
+  .w-depth-3{background:#03102A;transform:translate(6.8px,6.8px)}
+  /* face: polished metal — white crown, icy mid, deep blue foot */
+  .w-face{background:linear-gradient(178deg,#FFFFFF 0%,#FFFFFF 20%,#F4F9FF 34%,#D6E7FC 52%,#A8C8F2 70%,#7FA8E3 86%,#6E97D8 100%)}
+  /* specular sweep across the upper third + soft lower bounce light */
+  .w-gloss{background:linear-gradient(177deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.72) 16%,rgba(255,255,255,.18) 30%,rgba(255,255,255,0) 40%);
+    mix-blend-mode:screen;opacity:1}
+  .w-bounce{background:linear-gradient(0deg,rgba(122,178,247,.85) 0%,rgba(122,178,247,.28) 14%,rgba(122,178,247,0) 30%);
+    mix-blend-mode:screen;opacity:.55}
+  /* thin bright rim on the upper-left edges */
+  .w-rim{background:linear-gradient(203deg,rgba(196,230,255,1) 0%,rgba(120,180,250,0) 50%);
+    transform:translate(-2px,-2px);opacity:.34;mix-blend-mode:screen}
+  /* inner shade so the lower half does not wash out against the haze */
+  .w-shade{background:linear-gradient(0deg,rgba(10,34,78,.34) 0%,rgba(10,34,78,0) 42%);opacity:.9}
+  /* lit floor under the wordmark */
+  /* the generic `.wordmark span` rule sets inset/mask, so the pool must opt out explicitly */
+  .wordmark .w-pool{inset:auto;top:auto;left:auto;bottom:-62px;right:40px;width:880px;height:150px;
+    -webkit-mask:none;mask:none;border-radius:50%;z-index:-1;
+    background:radial-gradient(closest-side,rgba(96,168,255,.42),rgba(96,168,255,0) 76%);filter:blur(24px)}
 
-  .subline{display:flex;align-items:center;gap:16px;margin-top:12px}
+  .subline{display:flex;align-items:center;gap:16px;margin-top:16px}
   .subline h1{font-family:'Estedad';font-weight:700;font-size:50px;letter-spacing:-1px;color:#F4F9FF;
     text-shadow:0 12px 30px rgba(3,16,42,.6)}
   .nopass{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 17px;border-radius:12px;
@@ -185,14 +215,14 @@
     box-shadow:0 18px 34px -16px rgba(37,99,235,.95)}
   .nopass svg{width:18px;height:18px}
 
-  .english{margin-top:18px;font-size:21px;letter-spacing:.30em;color:#7FA5D6;font-weight:600;
+  .english{margin-top:14px;font-size:21px;letter-spacing:.30em;color:#7FA5D6;font-weight:600;
     direction:ltr;text-align:right;white-space:nowrap}
 
-  .rule{height:1px;margin-top:22px;
+  .rule{height:1px;margin-top:18px;
     background:linear-gradient(90deg,rgba(130,180,250,.42),rgba(130,180,250,.10) 62%,rgba(130,180,250,0))}
 
-  .features{margin-top:20px;display:flex;flex-direction:column}
-  .feat{display:flex;align-items:center;gap:18px;height:77px}
+  .features{margin-top:12px;display:flex;flex-direction:column}
+  .feat{display:flex;align-items:center;gap:18px;height:76px}
   .fico{width:52px;height:52px;border-radius:15px;flex:none;display:grid;place-items:center;
     border:1px solid rgba(140,185,250,.32);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 16px 30px -22px rgba(2,10,28,.9)}
@@ -331,8 +361,21 @@
       </span>
     </div>
 
-    <div class="brand">
-      <img src="../infographic/img/ashna-logo-white.svg" alt="آشنا">
+    <div class="brand" aria-label="آشنا">
+      <div class="wordmark" role="img" aria-label="آشنا">
+        <span class="w-pool"></span>
+        <span class="w-glow"></span>
+        <span class="w-shadow"></span>
+        <span class="w-shadow2"></span>
+        <span class="w-depth-1"></span>
+        <span class="w-depth-2"></span>
+        <span class="w-depth-3"></span>
+        <span class="w-face"></span>
+        <span class="w-shade"></span>
+        <span class="w-bounce"></span>
+        <span class="w-gloss"></span>
+        <span class="w-rim"></span>
+      </div>
     </div>
 
     <div class="subline">
