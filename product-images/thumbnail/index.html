@@ -38,13 +38,16 @@
     -webkit-mask:url('../infographic/img/ashna-icon.svg') center/contain no-repeat;
     mask:url('../infographic/img/ashna-icon.svg') center/contain no-repeat}
 
-  .glow{background:#3B82F6;filter:blur(22px);transform:scale(1.12);opacity:.55;z-index:-1}
-  .cast{background:#01091C;filter:blur(13px);transform:translate(0,9px) scale(1.03);opacity:.7}
-  .body{background:linear-gradient(168deg,#7EB6FF 0%,#3D8BFA 38%,#1D5AD6 74%,#1746AD 100%)}
-  .gloss{background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.16) 34%,rgba(255,255,255,0) 52%);
-    mix-blend-mode:screen;opacity:.95}
-  .rim{background:linear-gradient(200deg,rgba(190,225,255,.95),rgba(120,180,250,0) 55%);
-    transform:translate(-1px,-1px);opacity:.55;mix-blend-mode:screen}
+  .glow{background:#4E9BFF;filter:blur(24px);transform:scale(1.14);opacity:.62;z-index:-1}
+  .cast{background:#01091C;filter:blur(15px);transform:translate(0,11px) scale(1.05);opacity:.78}
+  /* white mark with a cool blue fall-off so it reads as a solid metal shield, not a flat sticker */
+  .body{background:linear-gradient(170deg,#FFFFFF 0%,#FFFFFF 34%,#EEF5FF 58%,#D8E7FB 80%,#C3D8F4 100%)}
+  .shade{background:linear-gradient(0deg,rgba(28,66,124,.34) 0%,rgba(28,66,124,.10) 26%,rgba(28,66,124,0) 52%);
+    mix-blend-mode:multiply;opacity:.9}
+  .gloss{background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.30) 30%,rgba(255,255,255,0) 52%);
+    mix-blend-mode:screen;opacity:1}
+  .rim{background:linear-gradient(200deg,rgba(255,255,255,1),rgba(160,205,255,0) 56%);
+    transform:translate(-1px,-1px);opacity:.85;mix-blend-mode:screen}
 
   /* ---------------- name ---------------- */
   .name{position:relative;margin-top:16px;font-weight:900;font-size:50px;line-height:1;color:#F4F9FF;
@@ -67,6 +70,7 @@
     <span class="glow"></span>
     <span class="cast"></span>
     <span class="body"></span>
+    <span class="shade"></span>
     <span class="gloss"></span>
     <span class="rim"></span>
   </div>
