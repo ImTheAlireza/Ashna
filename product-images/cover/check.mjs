@@ -5,19 +5,22 @@ const browser = await pw.launch({ executablePath: await chromium.executablePath(
 const page = await browser.newPage({ viewport: { width: 2200, height: 1200 } });
 await page.goto('http://127.0.0.1:8124/product-images/cover/index.html', { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
-const data = await page.evaluate(() => {
-  const sel = ['.chip-sms','.chip-shield','.chip-sso','.phone','.gw','.gw-label','.features','.identity','.feat:nth-child(5)','.brand'];
-  const out = {};
-  for (const s of sel) { const e = document.querySelector(s); if (!e) { out[s]='MISSING'; continue; } const r = e.getBoundingClientRect(); out[s] = [Math.round(r.x),Math.round(r.y),Math.round(r.right),Math.round(r.bottom)]; }
-  const tiles = [...document.querySelectorAll('.gw b')].map(b => { const r=b.getBoundingClientRect(); return [b.textContent.trim(), Math.round(r.x),Math.round(r.y),Math.round(r.right),Math.round(r.bottom)]; });
-  const over = [];
-  const items = [...document.querySelectorAll('.chip, .phone, .gw, .features, .identity')];
-  for (let i=0;i<items.length;i++) for (let j=i+1;j<items.length;j++){
-    const a=items[i].getBoundingClientRect(), b=items[j].getBoundingClientRect();
-    const w=Math.min(a.right,b.right)-Math.max(a.left,b.left), h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
-    if (w>1 && h>1) over.push([items[i].className, items[j].className, Math.round(w), Math.round(h)]);
+const report = await page.evaluate(() => {
+  const cover = document.getElementById('cover').getBoundingClientRect();
+  const out = [];
+  for (const el of document.querySelectorAll('.cover *')) {
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    const bleed = el.closest('.grain,.dots,.halo,.streak,.floor,.edge');
+    if (bleed) continue;
+    if (r.left < cover.left - 1 || r.top < cover.top - 1 || r.right > cover.right + 1 || r.bottom > cover.bottom + 1)
+      out.push(['outside', el.className || el.tagName, Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]);
+    if (el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow === 'visible' && el.clientWidth)
+      out.push(['h-overflow', el.className || el.tagName, el.scrollWidth, el.clientWidth]);
   }
-  return { out, tiles, over };
+  const feats = [...document.querySelectorAll('.feat p')].map(p => [p.textContent.trim().slice(0, 18), Math.round(p.getBoundingClientRect().left)]);
+  const cards = [...document.querySelectorAll('.notif,.mini,.phone,.trust')].map(e => [e.className, Math.round(e.getBoundingClientRect().left), Math.round(e.getBoundingClientRect().right)]);
+  return { out, feats, cards, minFeatLeft: Math.min(...feats.map(f => f[1])) };
 });
-console.log(JSON.stringify(data, null, 1));
+console.log(JSON.stringify(report, null, 1));
 await browser.close();

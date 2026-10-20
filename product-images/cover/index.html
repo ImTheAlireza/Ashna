@@ -10,358 +10,388 @@
   @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
 
   :root{
-    --navy:#04122B; --blue:#2563EB; --blue-l:#60A5FA; --sky:#38BDF8;
-    --mint:#22C58B; --white:#F6FAFF;
+    --blue:#2563EB; --blue-d:#1D4ED8; --sky:#38BDF8; --mint:#22C58B;
+    --ink:#F2F7FF; --muted:#8FAFD8;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:#000}
-  body{display:flex;justify-content:center;align-items:flex-start}
+  html,body{background:#020814}
+  body{display:flex;justify-content:center;align-items:flex-start;-webkit-font-smoothing:antialiased}
 
   .cover{
     position:relative;width:2100px;height:1040px;overflow:hidden;direction:rtl;
-    font-family:'Vazirmatn',sans-serif;color:var(--white);
+    font-family:'Vazirmatn',sans-serif;color:var(--ink);
     background:
-      radial-gradient(1150px 760px at 76% -14%, #12407F 0%, rgba(18,64,127,0) 62%),
-      radial-gradient(980px 660px at 6% 104%, #0B3E7A 0%, rgba(11,62,122,0) 58%),
-      linear-gradient(152deg, #04122B 0%, #061A38 46%, #04122B 100%);
+      radial-gradient(980px 780px at 27% 50%, rgba(37,99,235,.46) 0%, rgba(37,99,235,0) 64%),
+      radial-gradient(720px 520px at 6% 2%, rgba(56,189,248,.22) 0%, rgba(56,189,248,0) 66%),
+      radial-gradient(880px 600px at 97% 4%, rgba(59,130,246,.14) 0%, rgba(59,130,246,0) 68%),
+      radial-gradient(760px 520px at 88% 106%, rgba(34,197,139,.06) 0%, rgba(34,197,139,0) 72%),
+      linear-gradient(152deg,#04122C 0%,#061A3E 44%,#030B20 100%);
   }
 
-  /* ---------- texture ---------- */
-  .grid{
-    position:absolute;inset:0;
-    background-image:radial-gradient(rgba(120,170,230,.19) 1.6px, transparent 1.7px);
-    background-size:44px 44px;
-    mask-image:radial-gradient(1250px 820px at 28% 48%, #000 22%, transparent 80%);
-    -webkit-mask-image:radial-gradient(1250px 820px at 28% 48%, #000 22%, transparent 80%);
-  }
-  .rings{position:absolute;left:-310px;top:-330px;width:1300px;height:1300px;opacity:.55}
-  .rings span{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(96,165,250,.15)}
-  .rings span:nth-child(2){inset:130px}
-  .rings span:nth-child(3){inset:260px}
-  .rings span:nth-child(4){inset:390px}
-  .rings span:nth-child(5){inset:470px;background:radial-gradient(circle, rgba(37,99,235,.16) 0%, rgba(37,99,235,.09) 46%, rgba(37,99,235,0) 78%)}
-  .glow-a{position:absolute;left:150px;top:90px;width:740px;height:740px;border-radius:50%;
-    background:radial-gradient(circle, rgba(56,189,248,.19) 0%, rgba(56,189,248,0) 66%)}
-  .glow-b{position:absolute;right:-200px;bottom:-280px;width:860px;height:860px;border-radius:50%;
-    background:radial-gradient(circle, rgba(37,99,235,.25) 0%, rgba(37,99,235,0) 68%)}
-  .edge-top{position:absolute;left:0;right:0;top:0;height:5px;
-    background:linear-gradient(90deg, rgba(56,189,248,0), #38BDF8 20%, #2563EB 64%, rgba(37,99,235,0))}
-  .edge-bottom{position:absolute;left:0;right:0;bottom:0;height:2px;
-    background:linear-gradient(90deg, rgba(37,99,235,0), rgba(96,165,250,.5), rgba(37,99,235,0))}
+  /* ---------------- texture ---------------- */
+  .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.55'/></svg>")}
+  .dots{position:absolute;inset:0;
+    background-image:radial-gradient(rgba(140,185,240,.30) 1.1px, transparent 1.2px);
+    background-size:36px 36px;
+    mask-image:radial-gradient(820px 680px at 32% 54%, #000 8%, rgba(0,0,0,.34) 54%, transparent 78%);
+    -webkit-mask-image:radial-gradient(820px 680px at 32% 54%, #000 8%, rgba(0,0,0,.34) 54%, transparent 78%)}
+  .halo{position:absolute;left:-210px;top:-250px;width:1260px;height:1260px;border-radius:50%;
+    border:1px solid rgba(96,165,250,.11)}
+  .halo::before,.halo::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(96,165,250,.085)}
+  .halo::before{inset:150px}
+  .halo::after{inset:300px}
+  .streak{position:absolute;width:1560px;height:1.4px;transform:rotate(-19deg);
+    background:linear-gradient(90deg,rgba(120,180,255,0),rgba(120,180,255,.28) 32%,rgba(120,180,255,0) 74%)}
+  .streak.s1{left:-280px;top:186px}
+  .streak.s2{left:-200px;top:806px;opacity:.5}
+  .edge{position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,rgba(56,189,248,0),#38BDF8 26%,#2563EB 62%,rgba(37,99,235,0))}
+  .trust{position:absolute;left:170px;top:872px;width:660px;display:flex;align-items:center;gap:14px;
+    font-size:17px;color:#7FA5D6;z-index:4}
+  .trust b{font-weight:600;color:#A8C8EA}
+  .trust .sep{width:4px;height:4px;border-radius:50%;background:#4E7BB4;flex:none}
+  .trust .live{display:inline-flex;align-items:center;gap:7px;margin-left:4px;color:#7BEBC0;font-weight:600}
+  .trust .live i{width:7px;height:7px;border-radius:50%;background:#22C58B;
+    box-shadow:0 0 10px 2px rgba(34,197,139,.65)}
 
-  /* ---------- identity ---------- */
-  .identity{position:absolute;right:140px;top:96px;width:1140px}
+  .floor{position:absolute;left:120px;top:842px;width:560px;height:120px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(56,189,248,.16),rgba(56,189,248,0));filter:blur(6px)}
 
-  .badges{display:flex;align-items:center;gap:18px;margin-bottom:38px}
-  .pill{display:inline-flex;align-items:center;gap:12px;height:60px;padding:0 26px;border-radius:999px;
-    font-size:25px;font-weight:700;background:rgba(120,170,235,.11);
-    border:1.5px solid rgba(120,170,235,.33);color:#CFE3FF}
-  .pill svg{width:27px;height:27px;flex:none}
-  .pill.iran{background:rgba(34,197,139,.09);border-color:rgba(34,197,139,.36);color:#BFF3DD}
-  .flag{width:38px;height:26px;border-radius:4px;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.32);flex:none}
-  .flag i{display:block;height:33.33%}
-  .flag i:nth-child(1){background:#239F40}
-  .flag i:nth-child(2){background:#fff}
-  .flag i:nth-child(3){background:#DA0000}
+  /* ---------------- art (left) ---------------- */
+  .art{position:absolute;left:0;top:0;width:1010px;height:1040px}
 
-  .wordmark{width:700px;display:block;margin-right:-8px;
-    filter:drop-shadow(0 24px 44px rgba(37,99,235,.42))}
+  /* phone */
+  .phone{position:absolute;left:150px;top:118px;width:378px;height:706px;border-radius:56px;
+    background:linear-gradient(160deg,#F4F8FF 0%,#ADC6E9 24%,#6E8EC0 50%,#DCE8FB 72%,#97B2DA 100%);
+    padding:5px;z-index:3;
+    box-shadow:0 62px 120px -40px rgba(1,8,24,.98), 0 0 0 1px rgba(255,255,255,.10),
+               0 0 120px -16px rgba(56,160,255,.5)}
+  .phone-in{position:relative;width:100%;height:100%;border-radius:52px;overflow:hidden;background:#F6F9FF;
+    box-shadow:inset 0 0 0 1.5px rgba(3,16,42,.5)}
+  .notch{position:absolute;left:50%;top:11px;transform:translateX(-50%);width:92px;height:25px;
+    border-radius:999px;background:#081226;z-index:5}
+  .notch::after{content:"";position:absolute;right:11px;top:8.5px;width:7px;height:7px;border-radius:50%;background:#1B2C4C}
 
-  .subbar{margin-top:26px;display:inline-flex;align-items:center;gap:20px;
-    padding:15px 32px 17px;border-radius:18px;
-    background:linear-gradient(100deg, #1D4ED8 0%, #2563EB 48%, #3B82F6 100%);
-    box-shadow:0 22px 48px -18px rgba(37,99,235,.85), inset 0 1px 0 rgba(255,255,255,.28)}
-  .subbar b{font-family:'Estedad',sans-serif;font-weight:900;font-size:50px;line-height:1;letter-spacing:-.6px}
-  .subbar span{width:2px;height:36px;background:rgba(255,255,255,.42);border-radius:2px}
-  .subbar em{font-style:normal;font-size:29px;font-weight:500;color:#E6F0FF}
+  .screen{position:absolute;inset:0;padding:40px 22px 14px;color:#0F1F3D;
+    display:flex;flex-direction:column;justify-content:center;
+    background:
+      radial-gradient(240px 180px at 76% 0%, rgba(37,99,235,.12), transparent 72%),
+      linear-gradient(180deg,#FFFFFF 0%,#F6FAFF 56%,#ECF3FF 100%)}
+  .s-logo{width:54px;height:54px;border-radius:16px;margin:0 auto 10px;display:grid;place-items:center;
+    background:linear-gradient(150deg,#EAF1FF,#DBE7FF);box-shadow:0 10px 22px -14px rgba(37,99,235,.75)}
+  .s-logo img{width:31px;height:31px}
+  .s-title{text-align:center;font-family:'Estedad';font-weight:900;font-size:30px;color:#0B1B36;letter-spacing:-.4px}
+  .s-sub{text-align:center;font-size:14.5px;color:#5D6E86;margin-top:6px;line-height:1.8}
+  .s-sub b{color:#1E3A8A;font-weight:700;direction:ltr;display:inline-block}
+  .boxes{display:flex;gap:8px;justify-content:center;margin-top:20px;direction:ltr}
+  .boxes b{width:50px;height:64px;border-radius:13px;display:grid;place-items:center;
+    font-family:'Estedad';font-weight:900;font-size:27px;color:#0F1F3D;
+    background:#F7FAFF;border:1.6px solid #D7E3F6;box-shadow:inset 0 1px 0 #fff}
+  .boxes b.on{border-color:#3B82F6;background:#EFF5FF;box-shadow:0 0 0 4px rgba(59,130,246,.16)}
+  .boxes b .caret{width:2px;height:30px;background:#2563EB;border-radius:2px}
+  .s-btn{height:52px;border-radius:13px;margin-top:18px;display:grid;place-items:center;
+    font-size:17px;font-weight:800;color:#fff;background:linear-gradient(180deg,#2F73F1,#1D4ED8);
+    box-shadow:0 18px 28px -16px rgba(29,78,216,.95)}
+  .s-meta{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;
+    font-size:13.5px;color:#7386A0}
+  .s-meta svg{width:13px;height:13px}
+  .s-meta b{color:#1E3A8A;font-weight:700}
+  .s-sep{display:flex;align-items:center;gap:9px;margin:16px 0 12px;color:#94A3B8;font-size:12px}
+  .s-sep::before,.s-sep::after{content:"";height:1px;background:#E2E9F5;flex:1}
+  .s-bio{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:13px;
+    background:#ECFBF3;border:1.4px solid #BFEBD6;color:#0E8F63;font-size:14.5px;font-weight:700}
+  .s-bio svg{width:17px;height:17px}
+  .s-link{text-align:center;font-size:13px;font-weight:700;color:#2563EB;margin-top:12px}
+  .s-home{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:108px;height:4px;
+    border-radius:4px;background:#0F1F3D;opacity:.2}
 
-  .latin{margin-top:30px;font-family:'Estedad',sans-serif;font-weight:700;
-    font-size:29px;letter-spacing:5.2px;color:#8FB3D8;direction:ltr;text-align:right}
-  .latin b{color:#CFE3FF;font-weight:900;letter-spacing:5.8px}
+  /* sms notification */
+  .notif{position:absolute;left:556px;top:146px;width:434px;padding:17px 19px;border-radius:22px;z-index:5;
+    display:flex;gap:13px;align-items:flex-start;transform:rotate(-2.2deg);
+    background:linear-gradient(150deg,rgba(14,34,70,.97),rgba(7,20,44,.97));
+    border:1px solid rgba(130,180,250,.38);
+    box-shadow:0 40px 80px -30px rgba(0,6,18,.98), inset 0 1px 0 rgba(255,255,255,.10)}
+  .notif-av{width:44px;height:44px;border-radius:14px;flex:none;display:grid;place-items:center;
+    background:linear-gradient(150deg,#3B82F6,#1D4ED8);box-shadow:0 10px 20px -12px rgba(37,99,235,.9)}
+  .notif-av img{width:25px;height:25px;filter:brightness(0) invert(1)}
+  .notif-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .notif-head b{font-size:17px;color:#EAF3FF;font-weight:800}
+  .notif-head span{font-size:13px;color:#7C9DC9}
+  .notif-head .ok{display:inline-flex;align-items:center;gap:4px;color:#7BEBC0;font-weight:700;font-size:13px}
+  .notif-head .ok svg{width:11px;height:11px}
+  .notif-text{margin-top:7px;font-size:16px;line-height:1.7;color:#C6DAF2}
+  .notif-text .num{font-family:'Estedad';font-weight:900;font-size:20px;color:#FFFFFF;
+    letter-spacing:3px;direction:ltr;display:inline-block;margin:0 4px}
 
-  /* ---------- features ---------- */
-  .features{position:absolute;right:130px;top:622px;width:1200px;display:grid;gap:20px}
-  .feat{display:flex;align-items:center;gap:22px;font-size:38px;font-weight:500;color:#DCEAFA;letter-spacing:-.4px}
-  .tick{width:48px;height:48px;flex:none;border-radius:15px;display:grid;place-items:center;
-    background:linear-gradient(150deg, rgba(34,197,139,.30), rgba(34,197,139,.10));
-    border:1.5px solid rgba(34,197,139,.55);
-    box-shadow:0 0 24px -6px rgba(34,197,139,.6)}
-  .tick svg{width:26px;height:26px}
-  .feat b{font-weight:800;color:#fff}
+  /* designed micro-cards */
+  .mini{position:absolute;width:414px;padding:20px 22px 22px;border-radius:22px;z-index:4;
+    background:linear-gradient(155deg,rgba(13,32,66,.95),rgba(7,19,42,.95));
+    border:1px solid rgba(130,180,250,.32);
+    box-shadow:0 40px 84px -32px rgba(0,6,18,.98), inset 0 1px 0 rgba(255,255,255,.09)}
+  .card-a{left:532px;top:318px;transform:rotate(-1.2deg)}
+  .card-b{left:566px;top:522px;transform:rotate(1.1deg)}
+  .mini-head{display:flex;align-items:center;gap:13px}
+  .mi{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+  .mi svg{width:20px;height:20px}
+  .mi.mint{background:linear-gradient(150deg,rgba(34,197,139,.34),rgba(6,95,70,.20));color:#9DF0CC;
+    border:1px solid rgba(34,197,139,.42)}
+  .mi.blue{background:linear-gradient(150deg,rgba(59,130,246,.34),rgba(29,78,216,.18));color:#BAD9FF;
+    border:1px solid rgba(96,165,250,.42)}
+  .mi-txt b{display:block;font-size:19px;font-weight:800;color:#EAF3FF}
+  .mi-txt span{display:block;font-size:15px;color:#8FB0D6;margin-top:2px}
 
-  /* ---------- scene ---------- */
-  .scene{position:absolute;left:96px;top:0;width:820px;height:1040px}
+  .q-grid{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid rgba(130,180,250,.16);padding-top:15px}
+  .q-grid div{display:flex;flex-direction:column;gap:5px;padding:0 16px;
+    border-left:1px solid rgba(130,180,250,.14)}
+  .q-grid div:last-child{border-left:0;padding-left:0}
+  .q-grid div:first-child{padding-right:0}
+  .q-grid b{font-family:'Estedad';font-weight:900;font-size:30px;line-height:.95;color:#FFFFFF}
+  .q-grid u{text-decoration:none;font-size:13.5px;color:#B9D2EC;font-weight:600}
+  .q-grid span{font-size:12.5px;color:#7C9EC7}
 
-  .phone{position:absolute;left:352px;top:96px;width:308px;height:648px;
-    border-radius:52px;padding:11px;
-    background:linear-gradient(160deg, #2A4E86 0%, #12294C 40%, #0A1B33 100%);
-    box-shadow:
-      0 46px 90px -30px rgba(0,0,0,.92),
-      0 0 0 1.5px rgba(150,195,255,.30),
-      0 0 90px -20px rgba(37,99,235,.5),
-      inset 0 1px 0 rgba(255,255,255,.22)}
-  .screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;
-    background:linear-gradient(180deg,#FFFFFF 0%,#F3F8FF 100%)}
-  .glare{position:absolute;inset:0;border-radius:42px;pointer-events:none;z-index:6;
-    background:linear-gradient(118deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 76%, rgba(37,99,235,.06) 100%)}
-  .notch{position:absolute;left:50%;top:11px;transform:translateX(-50%);width:92px;height:8px;border-radius:999px;background:#0A1B33;opacity:.13}
+  .gw{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .gw span{height:36px;border-radius:10px;display:grid;place-items:center;font-size:15px;font-weight:600;
+    color:#C3D9F2;background:rgba(120,170,245,.10);border:1px solid rgba(130,180,250,.22)}
+  .gw span.act{background:rgba(34,197,139,.14);border-color:rgba(34,197,139,.45);color:#9DF0CC}
 
-  .s-top{padding:40px 22px 0;text-align:center}
-  .s-logo{width:54px;height:54px;margin:0 auto 12px;border-radius:17px;display:grid;place-items:center;
-    background:#fff;border:1.5px solid #E1ECF8;box-shadow:0 12px 24px -12px rgba(37,99,235,.55)}
-  .s-logo img{width:32px;height:32px;display:block}
-  .s-h{font-size:22px;font-weight:800;color:#0A1B33;letter-spacing:-.4px}
-  .s-p{font-size:13.5px;color:#5A7191;margin-top:5px}
+  .floor{position:absolute;left:96px;top:790px;width:600px;height:150px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(56,189,248,.14),rgba(56,189,248,0));filter:blur(8px)}
 
-  .s-field{margin:18px 20px 0;height:56px;border-radius:15px;background:#fff;border:1.5px solid #D6E4F7;
-    display:flex;align-items:center;gap:10px;padding:0 14px}
-  .s-field .cc{font-size:15px;font-weight:800;color:#2563EB;direction:ltr}
-  .s-field .num{font-size:16.5px;font-weight:700;color:#0A1B33;direction:ltr;letter-spacing:1.1px}
-  .s-field .sep{width:1px;height:23px;background:#D6E4F7}
+  /* ---------------- identity (right) ---------------- */
+  .identity{position:absolute;right:84px;top:56px;width:1010px}
 
-  .s-btn{margin:16px 20px 0;height:60px;border-radius:16px;
-    background:linear-gradient(100deg,#1D4ED8,#3B82F6);display:grid;place-items:center;
-    color:#fff;font-size:19px;font-weight:800;letter-spacing:-.2px;
-    box-shadow:0 16px 26px -14px rgba(37,99,235,.85), inset 0 1px 0 rgba(255,255,255,.22)}
+  .pills{display:flex;align-items:center;gap:12px;height:44px}
+  .pill{display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 18px;border-radius:999px;
+    font-size:20px;font-weight:700;color:#C9DEFA;
+    background:rgba(120,170,235,.09);border:1px solid rgba(120,170,235,.28)}
+  .pill svg{width:19px;height:19px;flex:none;color:#8FC0FF}
+  .pill.iran{background:rgba(34,197,139,.10);border-color:rgba(34,197,139,.30);color:#BDF3DC}
+  .flag{width:28px;height:28px;border-radius:50%;overflow:hidden;flex:none;
+    box-shadow:0 0 0 1px rgba(255,255,255,.25), 0 6px 14px -6px rgba(0,0,0,.7)}
+  .flag svg{display:block;width:100%;height:100%}
 
-  .s-or{display:flex;align-items:center;gap:10px;margin:18px 20px 0;color:#93AECB;font-size:12px}
-  .s-or i{flex:1;height:1px;background:#DCE8F7}
+  .brand{margin-top:22px;height:196px;display:flex;align-items:center}
+  .brand img{height:182px;width:auto;filter:drop-shadow(0 20px 44px rgba(37,99,235,.55))}
 
-  .s-code{display:flex;justify-content:center;gap:8px;margin:18px 20px 0;direction:ltr}
-  .s-code u{width:40px;height:54px;border-radius:12px;display:grid;place-items:center;text-decoration:none;
-    background:#F1F7FF;border:1.5px solid #CBDDF3;font-size:23px;font-weight:900;color:#0A1B33;
-    font-family:'Estedad',sans-serif}
-  .s-code u.on{background:#2563EB;border-color:#2563EB;color:#fff;box-shadow:0 10px 18px -10px rgba(37,99,235,.9)}
+  .subline{display:flex;align-items:center;gap:16px;margin-top:12px}
+  .subline h1{font-family:'Estedad';font-weight:700;font-size:50px;letter-spacing:-1px;color:#F4F9FF;
+    text-shadow:0 12px 30px rgba(3,16,42,.6)}
+  .nopass{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 17px;border-radius:12px;
+    font-family:'Estedad';font-weight:700;font-size:26px;color:#fff;
+    background:linear-gradient(135deg,#3B82F6,#1D4ED8);
+    box-shadow:0 18px 34px -16px rgba(37,99,235,.95)}
+  .nopass svg{width:18px;height:18px}
 
-  .s-note{margin:16px 24px 0;display:flex;align-items:center;justify-content:center;gap:8px;color:#5A7191;font-size:12px}
-  .s-note svg{width:15px;height:15px}
+  .english{margin-top:18px;font-size:21px;letter-spacing:.30em;color:#7FA5D6;font-weight:600;
+    direction:ltr;text-align:right;white-space:nowrap}
 
-  .s-foot{position:absolute;left:0;right:0;bottom:26px;text-align:center}
-  .s-foot .nm{font-family:'Estedad',sans-serif;font-weight:900;font-size:19px;color:#0A1B33;letter-spacing:-.3px}
-  .s-foot .by{font-size:11.5px;color:#93AECB;margin-top:5px}
-  .s-foot .ln{width:44px;height:2px;border-radius:2px;margin:0 auto 12px;
-    background:linear-gradient(90deg,rgba(37,99,235,0),#2563EB,rgba(37,99,235,0))}
+  .rule{height:1px;margin-top:22px;
+    background:linear-gradient(90deg,rgba(130,180,250,.42),rgba(130,180,250,.10) 62%,rgba(130,180,250,0))}
 
-  .s-social{display:flex;justify-content:center;gap:12px;margin-top:14px}
-  .s-social span{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:#fff;border:1.5px solid #E1ECF8}
-  .s-social svg{width:25px;height:25px}
+  .features{margin-top:20px;display:flex;flex-direction:column}
+  .feat{display:flex;align-items:center;gap:18px;height:77px}
+  .fico{width:52px;height:52px;border-radius:15px;flex:none;display:grid;place-items:center;
+    border:1px solid rgba(140,185,250,.32);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 16px 30px -22px rgba(2,10,28,.9)}
+  .fico svg{width:25px;height:25px}
+  .fico.a{background:linear-gradient(150deg,rgba(59,130,246,.32),rgba(29,78,216,.16));color:#BAD9FF}
+  .fico.b{background:linear-gradient(150deg,rgba(56,189,248,.28),rgba(14,116,144,.14));color:#A8E7FF}
+  .fico.c{background:linear-gradient(150deg,rgba(34,197,139,.28),rgba(6,95,70,.16));color:#9DF0CC}
+  .fico.d{background:linear-gradient(150deg,rgba(129,140,248,.30),rgba(67,56,202,.16));color:#C7CBFF}
+  .fico.e{background:linear-gradient(150deg,rgba(45,212,191,.26),rgba(13,148,136,.14));color:#A6F0E6}
+  .feat p{font-size:30px;font-weight:600;color:#E4EEFC;letter-spacing:-.2px;
+    white-space:nowrap;text-shadow:0 8px 22px rgba(2,10,28,.55)}
+  .feat p b{font-weight:800;color:#FFFFFF}
 
-  .brand{position:absolute;left:96px;top:44px;display:flex;align-items:center;gap:13px;
-    color:#7E9CC0;font-size:22px;font-weight:600;letter-spacing:-.2px}
-  .brand .url{color:#5C7CA1;font-family:'Estedad',sans-serif;font-size:20px;letter-spacing:.4px;direction:ltr}
-  .brand .mark{width:13px;height:13px;border-radius:4px;background:linear-gradient(150deg,#60A5FA,#2563EB);
-    box-shadow:0 0 18px rgba(96,165,250,.85)}
-  .brand b{color:#DCEAFA;font-weight:800}
-
-  /* floating chips */
-  .chip{position:absolute;border-radius:18px;
-    background:linear-gradient(150deg, rgba(19,44,84,.97), rgba(10,26,52,.97));
-    border:1.5px solid rgba(120,170,235,.36);
-    box-shadow:0 28px 54px -26px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.14)}
-
-  .chip-sms{left:6px;top:150px;width:286px;padding:20px 20px 18px}
-  .chip-sms .row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-  .chip-sms .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-    background:linear-gradient(150deg, rgba(56,189,248,.35), rgba(37,99,235,.22));border:1.5px solid rgba(96,165,250,.5)}
-  .chip-sms .ico svg{width:22px;height:22px}
-  .chip-sms .t{font-size:19px;font-weight:800;color:#EAF3FF}
-  .chip-sms .p{font-size:13.5px;color:#93AECB;margin-top:2px}
-  .chip-sms .code{display:flex;justify-content:space-between;direction:ltr;margin-top:4px;
-    font-family:'Estedad',sans-serif;font-weight:900;font-size:32px;color:#fff;letter-spacing:2px}
-  .chip-sms .code s{text-decoration:none;color:#60A5FA}
-
-  .chip-shield{left:0;top:404px;width:288px;padding:19px 20px;display:flex;align-items:center;gap:15px}
-  .chip-shield .sh{width:52px;height:52px;flex:none;border-radius:16px;display:grid;place-items:center;
-    background:linear-gradient(150deg, rgba(34,197,139,.34), rgba(34,197,139,.10));border:1.5px solid rgba(34,197,139,.6)}
-  .chip-shield .sh svg{width:28px;height:28px}
-  .chip-shield .t{font-size:18px;font-weight:800;color:#EAF3FF}
-  .chip-shield .p{font-size:12.5px;color:#8FD9BC;margin-top:3px}
-
-  .chip-sso{left:0;top:540px;width:288px;padding:17px 20px}
-  .chip-sso .row{display:flex;align-items:center;gap:15px}
-  .chip-sso .b{width:44px;height:44px;flex:none;border-radius:13px;display:grid;place-items:center;background:#fff}
-  .chip-sso .b svg{width:25px;height:25px}
-  .chip-sso .t{font-size:16px;font-weight:800;color:#EAF3FF}
-  .chip-sso .p{font-size:12px;color:#93AECB;margin-top:2px}
-
-  /* gateway matrix */
-  .gw-label{position:absolute;left:8px;top:770px;display:flex;align-items:center;gap:12px;
-    font-size:19px;color:#7E9CC0;font-weight:600}
-  .gw-label i{display:block;width:44px;height:1.5px;background:linear-gradient(90deg, rgba(96,165,250,.7), rgba(96,165,250,0))}
-  .gw{position:absolute;left:8px;top:806px;width:652px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .gw b{display:flex;align-items:center;gap:11px;height:74px;padding:0 13px;border-radius:15px;
-    background:linear-gradient(150deg, rgba(13,38,74,.92), rgba(8,24,48,.92));
-    border:1.5px solid rgba(120,170,235,.24);font-weight:600;font-size:18.5px;color:#D6E7FA;white-space:nowrap}
-  .gw b u{width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;text-decoration:none;
-    background:rgba(37,99,235,.24);border:1px solid rgba(96,165,250,.4)}
-  .gw b u svg{width:19px;height:19px}
-  .gw b:nth-child(2) u{background:rgba(56,189,248,.18);border-color:rgba(56,189,248,.42)}
-  .gw b:nth-child(3) u{background:rgba(34,197,139,.16);border-color:rgba(34,197,139,.4)}
-  .gw b:nth-child(4) u{background:rgba(245,165,36,.16);border-color:rgba(245,165,36,.4)}
-  .gw b:nth-child(5) u{background:rgba(167,139,250,.18);border-color:rgba(167,139,250,.42)}
-  .gw b:nth-child(6) u{background:rgba(244,63,94,.16);border-color:rgba(244,63,94,.4)}
+  .footer{position:absolute;right:84px;bottom:46px;display:flex;align-items:center;gap:10px;
+    font-size:17px;color:#6E93C4}
+  .footer .dot{width:7px;height:7px;border-radius:50%;background:#38BDF8;
+    box-shadow:0 0 12px 2px rgba(56,189,248,.65)}
+  .footer b{color:#A7C6EC;font-weight:700}
 </style>
 </head>
 <body>
 <div class="cover" id="cover">
-  <div class="grid"></div>
-  <div class="rings"><span></span><span></span><span></span><span></span><span></span></div>
-  <div class="glow-a"></div>
-  <div class="glow-b"></div>
-  <div class="edge-top"></div>
-  <div class="edge-bottom"></div>
 
-  <div class="brand">
-    <span class="mark"></span>
-    محصول <b>پارسنا</b>
-    <span class="url">parsena.ir/ashna</span>
+  <div class="grain"></div>
+  <div class="dots"></div>
+  <div class="halo"></div>
+  <div class="streak s1"></div>
+  <div class="streak s2"></div>
+  <div class="floor"></div>
+  <div class="edge"></div>
+
+  <!-- ================= art ================= -->
+  <div class="art">
+
+    <div class="floor"></div>
+
+    <div class="phone">
+      <div class="phone-in">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="s-logo"><img src="../infographic/img/ashna-icon.svg" alt=""></div>
+          <div class="s-title">کد تأیید</div>
+          <div class="s-sub">کد ۶ رقمی به <b>۰۹۱۲ ۳۴۵ ۶۷۸۹</b> پیامک شد.</div>
+
+          <div class="boxes">
+            <b>۴</b><b>۹</b><b>۲</b><b>۸</b><b>۱</b><b class="on"><span class="caret"></span></b>
+          </div>
+
+          <div class="s-btn">تأیید و ورود</div>
+          <div class="s-meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+            ارسال دوباره تا <b>۰۰:۴۵</b>
+          </div>
+
+          <div class="s-sep">یا ورود بدون پیامک</div>
+          <div class="s-bio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3.6 0 6.2 2.7 6.2 6.3 0 4.3-3 8-4.6 10.1-.7.9-2.5.9-3.2 0C8.8 17.3 5.8 13.6 5.8 9.3 5.8 5.7 8.4 3 12 3Z"/><path d="M12 7.4c1.5 0 2.6 1.2 2.6 2.8"/></svg>
+            ورود با اثر انگشت / چهره
+          </div>
+          <div class="s-link">ویرایش شماره · ورود با رمز عبور</div>
+          <div class="s-home"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notif">
+      <div class="notif-av"><img src="../infographic/img/ashna-icon.svg" alt=""></div>
+      <div style="flex:1">
+        <div class="notif-head">
+          <b>آشنا</b>
+          <span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m4 12.5 5 5L20 6"/></svg>تحویل شد</span>
+        </div>
+        <div class="notif-text">کد ورود شما <span class="num">۴۹۲۸۱۳</span> است؛ به کسی ندهید.</div>
+      </div>
+    </div>
+
+    <div class="mini card-a">
+      <div class="mini-head">
+        <span class="mi mint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2.6 20 6v6c0 4.8-3.3 7.9-8 10.2-4.7-2.3-8-5.4-8-10.2V6l8-3.4Z"/><path d="m8.6 12.2 2.4 2.4 4.4-4.6"/></svg>
+        </span>
+        <span class="mi-txt"><b>ضد اسپم و بمبر</b><span>سقف دقیقه‌ای، برای هر شماره و هر IP</span></span>
+      </div>
+      <div class="q-grid">
+        <div><b>۵</b><u>در دقیقه</u><span>برای هر IP</span></div>
+        <div><b>۱۰</b><u>در ۲۴ ساعت</u><span>برای هر شماره</span></div>
+        <div><b>۶۰</b><u>ثانیه</u><span>فاصله ارسال دوباره</span></div>
+      </div>
+    </div>
+
+    <div class="mini card-b">
+      <div class="mini-head">
+        <span class="mi blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5Z"/><path d="M3 13.2 12 17.7l9-4.5"/><path d="M3 17.9 12 22.4l9-4.5"/></svg>
+        </span>
+        <span class="mi-txt"><b>شش درگاه پیامکی</b><span>ایرانی و پیام‌رسان‌های داخلی</span></span>
+      </div>
+      <div class="gw">
+        <span class="act">SMS.ir</span><span>کاوه‌نگار</span><span>ملی‌پیامک</span>
+        <span>فراز اس‌ام‌اس</span><span>آی‌پی‌پنل</span><span>راه پیام</span>
+      </div>
+    </div>
+
+
+    <div class="trust">
+      <span class="live"><i></i>آمادهٔ نصب</span>
+      <span class="sep"></span>
+      <span>بدون رمز عبور</span>
+      <span class="sep"></span>
+      <span>ورود بیومتریک</span>
+      <span class="sep"></span>
+      <span>ضد اسپم و بمبر</span>
+    </div>
+
   </div>
 
   <!-- ================= identity ================= -->
   <div class="identity">
-    <div class="badges">
-      <div class="pill">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/><path d="M8 14h5"/>
-        </svg>
+
+    <div class="pills">
+      <span class="pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><path d="M12 17v4"/></svg>
         افزونهٔ وردپرس
-      </div>
-      <div class="pill iran">
-        <span class="flag"><i></i><i></i><i></i></span>
-        محصول ایرانی
-      </div>
-    </div>
-
-    <img class="wordmark" src="../infographic/img/ashna-logo-white.svg" alt="آشنا">
-
-    <div class="subbar">
-      <b>ورود و ثبت‌نام پیامکی</b>
-      <span></span>
-      <em>بدون رمز عبور</em>
-    </div>
-
-    <div class="latin"><b>ASHNA</b> — OTP LOGIN WORDPRESS PLUGIN</div>
-  </div>
-
-  <!-- ================= features ================= -->
-  <div class="features">
-    <div class="feat">
-      <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg></span>
-      <span>ورود با کد پیامکی، <b>بدون رمز عبور</b> و بدون فرم‌های طولانی</span>
-    </div>
-    <div class="feat">
-      <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg></span>
-      <span>پشتیبانی از <b>شش درگاه پیامکی ایرانی</b> و پیام‌رسان‌های داخلی</span>
-    </div>
-    <div class="feat">
-      <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg></span>
-      <span><b>ضد اسپم و بمبر</b> با سقف دقیقه‌ای، از هر شماره و هر IP</span>
-    </div>
-    <div class="feat">
-      <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg></span>
-      <span>ورود با <b>گوگل و تلگرام</b>، و Passkey برای ورود بیومتریک و بدون پسورد</span>
-    </div>
-    <div class="feat">
-      <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg></span>
-      <span>ورود و ثبت‌نام در <b>ووکامرس، دکان، المنتور</b> و افزونه‌های عضویت</span>
-    </div>
-  </div>
-
-  <!-- ================= scene ================= -->
-  <div class="scene">
-    <div class="phone">
-      <div class="screen">
-        <div class="glare"></div>
-        <div class="notch"></div>
-        <div class="s-top">
-          <div class="s-logo">
-            <img src="../infographic/img/ashna-icon.svg" alt="" width="34" height="34">
-          </div>
-          <div class="s-h">ورود / ثبت‌نام</div>
-          <div class="s-p">شماره موبایل خود را وارد کنید</div>
-        </div>
-
-        <div class="s-field">
-          <span class="cc">+۹۸</span><span class="sep"></span><span class="num">912 345 6789</span>
-        </div>
-        <div class="s-btn">دریافت کد تأیید</div>
-
-        <div class="s-or"><i></i>کد پیامکی<i></i></div>
-
-        <div class="s-code">
-          <u class="on">۴</u><u class="on">۹</u><u class="on">۲</u><u class="on">۸</u><u>۱</u><u>۳</u>
-        </div>
-        <div class="s-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#5A7191" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5l3 2" stroke-linecap="round"/></svg>
-          اعتبار کد تا ۲ دقیقه
-        </div>
-
-        <div class="s-social">
-          <span><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 01-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1a6 6 0 01-5.6-4.1H3.1v2.6A10 10 0 0012 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 010-3.9V7.5H3.1a10 10 0 000 9z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 003.1 7.5L6.4 10A6 6 0 0112 5.9z"/></svg></span>
-          <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="M6.7 11.9l9.5-3.6c.5-.2.9.1.7.8l-1.6 7.5c-.1.5-.4.6-.9.4l-2.5-1.8-1.2 1.1c-.1.1-.3.2-.5.2l.2-2.5 4.6-4.1c.2-.2 0-.3-.3-.1l-5.7 3.6-2.4-.7c-.5-.2-.5-.6.1-.8z"/></svg></span>
-        </div>
-
-        <div class="s-foot">
-          <div class="ln"></div>
-          <div class="nm">آشنا</div>
-          <div class="by">ورود امن، با یک کد</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SMS notification -->
-    <div class="chip chip-sms">
-      <div class="row">
-        <div class="ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.4 8.4 0 01-9 8.4L5 21l1.2-3.6A8.4 8.4 0 1121 11.5z"/><path d="M8.5 11h7M8.5 14.2h4.2"/>
+      </span>
+      <span class="pill iran">
+        <span class="flag">
+          <svg viewBox="0 0 60 60">
+            <rect width="60" height="20" fill="#239F40"/>
+            <rect y="20" width="60" height="20" fill="#FFFFFF"/>
+            <rect y="40" width="60" height="20" fill="#DA0000"/>
+            <path d="M30 24.6c2.2 1.7 3.3 3.6 3.3 5.4S32.2 33.7 30 35.4c-2.2-1.7-3.3-3.6-3.3-5.4s1.1-3.7 3.3-5.4Z" fill="#DA0000"/>
+            <path d="M22.6 26.4c1.4 2.3 1.4 5.3 0 7.6M37.4 26.4c-1.4 2.3-1.4 5.3 0 7.6" stroke="#DA0000" stroke-width="1.1" fill="none" opacity=".85"/>
           </svg>
-        </div>
-        <div>
-          <div class="t">کد تأیید شما</div>
-          <div class="p">آشنا · همین حالا</div>
-        </div>
-      </div>
-      <div class="code">۴ ۹ ۲ <s>۸</s> ۱ ۳</div>
+        </span>
+        محصول ایرانی
+      </span>
     </div>
 
-    <!-- anti-spam -->
-    <div class="chip chip-shield">
-      <div class="sh">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#4FE0A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3l7 3v5.5c0 4.3-2.9 7.9-7 9.5-4.1-1.6-7-5.2-7-9.5V6l7-3z"/><path d="M8.8 12.2l2.3 2.3 4.1-4.3"/>
-        </svg>
+    <div class="brand">
+      <img src="../infographic/img/ashna-logo-white.svg" alt="آشنا">
+    </div>
+
+    <div class="subline">
+      <h1>ورود و ثبت‌نام پیامکی وردپرس</h1>
+      <span class="nopass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="5" y="10.5" width="14" height="10" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/></svg>
+        بدون رمز عبور
+      </span>
+    </div>
+
+    <div class="english">ASHNA — OTP LOGIN WORDPRESS PLUGIN</div>
+    <div class="rule"></div>
+
+    <div class="features">
+      <div class="feat">
+        <span class="fico a">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2.3" width="10" height="19.4" rx="2.6"/><path d="M9.6 5.6h4.8"/><path d="M9.9 11.2h4.2M9.9 14.4h2.6"/></svg>
+        </span>
+        <p>ورود با <b>کد پیامکی</b>، بدون رمز عبور و بدون فرم‌های طولانی</p>
       </div>
-      <div>
-        <div class="t">ضد اسپم و بمبر</div>
-        <div class="p">سقف دقیقه‌ای · شماره و IP</div>
+
+      <div class="feat">
+        <span class="fico b">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5Z"/><path d="M3 13.5 12 18l9-4.5"/><path d="M3 18.2 12 22.7l9-4.5"/></svg>
+        </span>
+        <p>پشتیبانی از <b>شش درگاه پیامکی ایرانی</b> و پیام‌رسان‌های داخلی</p>
+      </div>
+
+      <div class="feat">
+        <span class="fico c">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.6 20 6v6c0 4.8-3.3 7.9-8 10.2-4.7-2.3-8-5.4-8-10.2V6l8-3.4Z"/><path d="m8.6 12.2 2.4 2.4 4.4-4.6"/></svg>
+        </span>
+        <p>ضد اسپم و بمبر با <b>سقف دقیقه‌ای</b>، از هر شماره و هر IP</p>
+      </div>
+
+      <div class="feat">
+        <span class="fico d">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="9" r="3.4"/><path d="M2.8 20c.5-3.4 3-5.4 6.2-5.4 1.6 0 3 .5 4.1 1.4"/><path d="M15.2 20.2v-4.1l3-3a2.2 2.2 0 0 1 3.1 3.1l-3 3h-3.1Z"/></svg>
+        </span>
+        <p>ورود با <b>گوگل و تلگرام</b>، و Passkey برای ورود بیومتریک و بدون پسورد</p>
+      </div>
+
+      <div class="feat">
+        <span class="fico e">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5h2.4l2.3 9.6h9.7l2.1-7.2H6.4"/><circle cx="9.4" cy="18.4" r="1.6"/><circle cx="16.6" cy="18.4" r="1.6"/><circle cx="18.5" cy="6.6" r="2.6" stroke-width="1.5"/></svg>
+        </span>
+        <p>ورود و ثبت‌نام در <b>ووکامرس، دکان، المنتور</b> و افزونه‌های عضویت</p>
       </div>
     </div>
 
-    <!-- telegram -->
-    <div class="chip chip-sso">
-      <div class="row">
-        <div class="b">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="M6.7 11.9l9.5-3.6c.5-.2.9.1.7.8l-1.6 7.5c-.1.5-.4.6-.9.4l-2.5-1.8-1.2 1.1c-.1.1-.3.2-.5.2l.2-2.5 4.6-4.1c.2-.2 0-.3-.3-.1l-5.7 3.6-2.4-.7c-.5-.2-.5-.6.1-.8z"/></svg>
-        </div>
-        <div>
-          <div class="t">ورود با تلگرام</div>
-          <div class="p">بدون رمز عبور</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- gateway matrix -->
-    <div class="gw-label"><i></i>درگاه‌های پیامکی</div>
-    <div class="gw">
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></u>SMS.ir</b>
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round"><path d="M4 5h16v11H9l-5 4z"/></svg></u>کاوه‌نگار</b>
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 17.5h4"/></svg></u>ملی‌پیامک</b>
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-7-7 18-2.5-8z"/></svg></u>فراز اس‌ام‌اس</b>
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></u>آی‌پی‌پنل</b>
-      <b><u><svg viewBox="0 0 24 24" fill="none" stroke="#9BD0FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l5-10 4 7 3-4 4 7H4z"/></svg></u>راه پیام</b>
-    </div>
   </div>
+
+  <div class="footer">
+    <span class="dot"></span>
+    <span>محصولی از <b>پارسنا</b></span>
+    <span style="opacity:.45">·</span>
+    <span style="direction:ltr">parsena.ir/ashna</span>
+  </div>
+
 </div>
 </body>
 </html>
