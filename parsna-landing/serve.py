@@ -37,8 +37,8 @@ class SecureHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
         self.send_header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
         self.send_header('Content-Security-Policy',
-            "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; "
-            "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; "
+            "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; "
+            "img-src 'self' data:; connect-src 'self'; "
             "frame-ancestors 'self'; base-uri 'self'; form-action 'self';")
         super().end_headers()
 

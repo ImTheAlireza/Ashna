@@ -173,13 +173,13 @@ test("No HTTP resources (mixed content)",
      len(http_resources) == 0,
      f"{len(http_resources)} HTTP resource(s) found" if http_resources else "All HTTPS")
 
-test("Google Fonts over HTTPS",
-     'https://fonts.googleapis.com' in html,
-     "Fonts loaded over HTTPS")
+test("Fonts and assets are self-hosted",
+     'fonts.googleapis.com' not in html and 'fonts.gstatic.com' not in html,
+     "No third-party font requests")
 
-test("External resources have integrity (SRI)",
-     'integrity=' in html or True,  # SRI is optional for Google Fonts
-     "Note: SRI not used for Google Fonts (acceptable)")
+test("No external subresources",
+     not re.search(r'(?:src|href)="https?://(?!parsena\.ir)', html),
+     "All assets served from the same origin")
 
 # ── 9. Directory Traversal ─────────────
 print("\n📂 Access Control")

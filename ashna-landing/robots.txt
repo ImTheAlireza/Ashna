@@ -1,0 +1,7 @@
+# آشنا — لندینگ محصول
+User-agent: *
+Allow: /
+
+# هیچ فایل یا پوشهٔ داخلی دیگری در این دامنه منتشر نمی‌شود.
+
+Sitemap: https://parsena.ir/ashna/sitemap.xml
