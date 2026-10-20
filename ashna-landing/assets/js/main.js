@@ -524,10 +524,8 @@
   }
 
   /* ---------------- Admin tour ---------------- */
-  var viewButtons = $$(".tour-btn[data-view], .side-item[data-view]");
+  var viewButtons = $$(".wptab[data-view], .wpsub[data-view], .wpmenu-item[data-view]");
   var views = $$(".admin-view");
-  var crumb = $("#admin-crumb");
-  var viewLabels = { dashboard: "داشبورد", gateways: "درگاه‌های ارسال", security: "امنیت و فایروال", studio: "استودیوی طراحی" };
 
   function showView(name) {
     views.forEach(function (v) {
@@ -538,9 +536,8 @@
     viewButtons.forEach(function (b) {
       var active = b.getAttribute("data-view") === name;
       b.classList.toggle("is-active", active);
-      if (b.classList.contains("tour-btn")) b.setAttribute("aria-selected", active ? "true" : "false");
+      if (b.classList.contains("wptab") || b.classList.contains("wpsub")) b.setAttribute("aria-selected", active ? "true" : "false");
     });
-    if (crumb) crumb.textContent = viewLabels[name] || "داشبورد";
   }
   viewButtons.forEach(function (btn) {
     btn.addEventListener("click", function () { showView(btn.getAttribute("data-view")); });
