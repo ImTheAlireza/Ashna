@@ -320,6 +320,18 @@
 .rule{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:11px;
   background:rgba(255,255,255,.86);border:1px solid rgba(211,228,250,.95);color:#5C7FA8;
   font-size:10.5px;font-weight:700;box-shadow:0 16px 26px -24px rgba(7,26,56,.7)}
+
+/* — ۰۷ · three real windows — */
+.pwin{position:absolute;border-radius:14px;overflow:hidden;background:#fff;border:1px solid #DCE8F6}
+.pwin.front{z-index:4;box-shadow:0 46px 66px -46px rgba(7,26,56,.62),0 2px 8px rgba(7,26,56,.05)}
+.pwin.second{z-index:5;box-shadow:0 40px 60px -44px rgba(7,26,56,.55),0 2px 8px rgba(7,26,56,.05)}
+.pwin .pbar{height:22px;display:flex;align-items:center;gap:5px;padding:0 10px;direction:ltr;
+  background:linear-gradient(180deg,#F8FBFF,#EFF5FC);border-bottom:1px solid #E8F1FB}
+.pwin .pbar i{width:6px;height:6px;border-radius:50%;background:#D7E4F4;flex:none}
+.purl{margin-left:8px;font-size:8.2px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
+  border-radius:6px;padding:2px 9px;font-family:monospace;letter-spacing:-.2px}
+.pver{margin-left:auto;font-size:8.2px;font-weight:800;color:#1E4C8F;background:#EFF6FF;
+  border:1px solid #D5E6FA;border-radius:6px;padding:2px 7px;font-family:'Estedad';direction:ltr}
 </style>
 </head>
 <body>
@@ -682,23 +694,20 @@
     <div class="bleed" style="position:absolute;left:150px;top:-50px;width:560px;height:320px;border-radius:50%;
          background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(22px)"></div>
 
-    <!-- the chain runs right-to-left: SMS.ir failed, Kavengar took over -->
-    <div style="position:absolute;left:246px;top:132px;width:8px;height:3px;border-radius:3px;z-index:3;
-         background:rgba(16,185,129,.34)"></div>
-    <div style="position:absolute;left:466px;top:132px;width:8px;height:3px;border-radius:3px;z-index:3;
-         background:rgba(244,63,94,.30)"></div>
+    <!-- the link between gateways, as a status node instead of an arrow -->
+    <!-- رابط ۱ · SMS.ir تا کاوه‌نگار: مهلت تمام شد -->
+    <div style="position:absolute;left:448px;top:131px;width:12px;height:3px;border-radius:2px;z-index:3;background:#F6D6DE"></div>
+    <div style="position:absolute;left:466px;top:131px;width:12px;height:3px;border-radius:2px;z-index:3;background:#F6D6DE"></div>
+    <div style="position:absolute;left:452px;top:114px;width:34px;height:34px;border-radius:50%;z-index:5;
+         background:#fff;border:1px solid #FADEE4;display:grid;place-items:center;
+         box-shadow:0 10px 18px -12px rgba(7,26,56,.55)">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#E4708F" stroke-width="2.2"
+           stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.6V12l3 1.8"/></svg>
+    </div>
 
-    <!-- hop 2 · Kavengar → Melipayamak (still waiting) -->
-    <svg width="24" height="20" viewBox="0 0 24 20" style="position:absolute;left:238px;top:123px;z-index:4">
-      <path d="M15 2.5 6.5 10l8.5 7.5" fill="none" stroke="#A9C3DC" stroke-width="2.6"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-
-    <!-- hop 1 · SMS.ir → Kavengar (failed, handed over) -->
-    <svg width="26" height="22" viewBox="0 0 26 22" style="position:absolute;left:458px;top:122px;z-index:4">
-      <path d="M16.5 2.5 7 11l9.5 8.5" fill="none" stroke="#E4708F" stroke-width="2.9"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <!-- رابط ۲ · کاوه‌نگار تا ملی‌پیامک: در حالت آماده‌به‌کار، پس فقط یک خط کم‌رنگ -->
+    <div style="position:absolute;left:231px;top:131px;width:38px;height:3px;border-radius:2px;z-index:3;
+         background-image:repeating-linear-gradient(90deg,#DCE9F7 0 4px,transparent 4px 9px)"></div>
 
     <div class="fcard" style="left:480px;top:36px;width:190px;border-color:#F6D3DA;background:linear-gradient(170deg,#FFFFFF,#FFF7F9)">
       <span class="fwell" style="border-color:#FBE0E5"><img src="img/logos/smsir-flame.png" alt="" style="max-width:30px"></span>
@@ -815,7 +824,7 @@
         <div style="position:absolute;inset:0;background:radial-gradient(68% 38% at 50% 6%,rgba(56,189,248,.32),transparent 66%)"></div>
 
         <div style="position:relative;height:100%;padding:22px 16px 18px;display:flex;flex-direction:column;align-items:center;text-align:center">
-          <img src="../infographic/img/ashna-icon.svg" alt="" style="height:46px;width:auto;filter:drop-shadow(0 12px 20px rgba(56,189,248,.45))">
+          <img src="../infographic/img/ashna-icon.svg" alt="" style="height:46px;width:auto;filter:brightness(0) invert(1) drop-shadow(0 12px 20px rgba(56,189,248,.55))">
           <div style="margin-top:12px;font-family:'Estedad';font-weight:900;font-size:14.5px;color:#F2F8FF">یک حساب</div>
           <div style="font-size:8.5px;color:#8FB3D8;margin-top:3px">با هر دو راه، همان کاربر</div>
 
@@ -1008,46 +1017,34 @@
 
   <div class="eyebrow"><span class="n">۰۷</span><span class="sep"></span> از نصب واقعی</div>
   <h2 class="t">پنل مدیریت،<br><em>همان‌طور که هست</em></h2>
-  <p class="s">کارت‌های وضعیت و صفحهٔ تنظیمات، همان چیزی که مدیر سایت می‌بیند؛ بدون روتوش.</p>
+  <p class="s">دو صفحه از پیشخوان، همان‌طور که مدیر سایت می‌بیند؛ بدون روتوش و بدون ماکاپ.</p>
   <div class="sig"></div>
 
   <div class="art">
-    <div class="bleed" style="position:absolute;left:120px;top:-40px;width:560px;height:340px;border-radius:50%;
-         background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(20px)"></div>
+    <div class="bleed" style="position:absolute;left:60px;top:-80px;width:600px;height:400px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.20),transparent 70%);filter:blur(24px)"></div>
 
-    <!-- the four real dashboard cards, at a size you can actually read -->
-    <div style="position:absolute;left:18px;top:0;display:flex;gap:12px;z-index:3">
-      <img src="img/cards/stat-4.png" alt="کل کدهای ارسال‌شده" style="width:152px;height:auto;display:block;
-           filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-3.png" alt="ورودی‌های موفق" style="width:152px;height:auto;display:block;
-           filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-2.png" alt="کاربران با OTP" style="width:152px;height:auto;display:block;
-           filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-1.png" alt="ارسال‌های ناموفق" style="width:152px;height:auto;display:block;
-           filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
+    <!-- صفحهٔ یکپارچه‌سازی: قاب اصلی -->
+    <div class="pwin front" style="left:30px;top:0;width:608px">
+      <div class="pbar" style="height:26px">
+        <i></i><i></i><i></i>
+        <span class="purl">/wp-admin/admin.php?page=ashna&amp;tab=integrations</span>
+        <span class="pver">v۳.۱.۴</span>
+      </div>
+      <div style="position:relative;overflow:hidden">
+        <img src="img/shop-settings.webp" alt="صفحهٔ یکپارچه‌سازی با ووکامرس" style="width:100%;display:block">
+        <div style="position:absolute;left:0;right:0;bottom:0;height:40px;
+             background:linear-gradient(180deg,rgba(255,255,255,0),#fff 92%)"></div>
+      </div>
     </div>
 
-    <!-- the real settings screen, framed with room to breathe -->
-    <div style="position:absolute;left:26px;top:112px;width:640px;z-index:2">
-      <div style="border-radius:16px;overflow:hidden;background:#fff;border:1px solid #DCE8F6;
-           box-shadow:0 40px 60px -44px rgba(7,26,56,.55),0 2px 6px rgba(7,26,56,.04)">
-        <div style="height:26px;display:flex;align-items:center;gap:6px;padding:0 12px;direction:ltr;
-             background:linear-gradient(180deg,#F7FAFE,#EFF5FC);border-bottom:1px solid #E5EFFB">
-          <i style="width:7px;height:7px;border-radius:50%;background:#D7E4F4"></i>
-          <i style="width:7px;height:7px;border-radius:50%;background:#D7E4F4"></i>
-          <i style="width:7px;height:7px;border-radius:50%;background:#D7E4F4"></i>
-          <span style="margin-left:10px;font-size:8.5px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
-                border-radius:6px;padding:2.5px 9px;font-family:monospace;letter-spacing:-.2px">/wp-admin/admin.php?page=ashna</span>
-        </div>
-        <div style="background:#fff;padding:12px 12px 0">
-          <div style="position:relative;overflow:hidden;border-radius:10px;border:1px solid #EDF3FB">
-            <img src="img/shop-settings.webp" alt="تنظیمات واقعی افزونه آشنا"
-                 style="width:100%;display:block">
-            <div style="position:absolute;left:0;right:0;bottom:0;height:22px;
-                 background:linear-gradient(180deg,rgba(255,255,255,0),#fff 92%)"></div>
-          </div>
-        </div>
+    <!-- صفحهٔ امنیت: قاب دوم، کمی جلوتر و پایین‌تر -->
+    <div class="pwin front second" style="left:150px;top:318px;width:470px">
+      <div class="pbar" style="height:25px">
+        <i></i><i></i><i></i>
+        <span class="purl">/wp-admin/admin.php?page=ashna&amp;tab=security</span>
       </div>
+      <img src="../infographic/img/security.webp" alt="صفحهٔ امنیت و محدودیت‌ها" style="width:100%;display:block">
     </div>
   </div>
 
