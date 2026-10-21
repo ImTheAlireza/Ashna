@@ -601,9 +601,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .browser-dots { display: flex; gap: 5px; }
 .browser-dots i { width: 9px; height: 9px; border-radius: 50%; background: #CBD5E1; }
 .browser-dots i:nth-child(1) { background: #FCA5A5; } .browser-dots i:nth-child(2) { background: #FCD34D; } .browser-dots i:nth-child(3) { background: #86EFAC; }
-.browser-url { flex: 1; max-width: 520px; display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #E2E8F0; border-radius: 7px; padding: 4px 10px; font-size: .62rem; color: #64748B; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.browser-url { flex: 1; max-width: none; display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #E2E8F0; border-radius: 7px; padding: 4px 10px; font-size: .62rem; color: #64748B; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .browser-url .icon { color: #16A34A; }
-.browser-tag { font-size: .56rem; color: #92400E; background: #FEF3C7; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
 
 /* WordPress chrome around the plugin page */
 .wpadmin { background: #f0f0f1; color: #1d2327; font-size: 13px; line-height: 1.6; }
@@ -622,6 +621,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .panel-frame { position: relative; container-type: inline-size; container-name: panel; }
 .panel-frame { display: none; }
 .panel-shot { display: block; }
+/* The live panel needs ~990px of room before it looks like the product.
+   Below that we show a sharp still of the same tab instead of a squeezed grid. */
 @media (min-width: 1100px) {
   .panel-frame { display: block; }
   .panel-shot { display: none; }
@@ -654,16 +655,12 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 @media (min-width: 1100px) { .panel-hint { display: flex; } }
 .panel-hint .icon { color: #94A3B8; }
-.panel-shot { position: relative; }
 .panel-shot img { display: block; width: 100%; height: auto; border-radius: 3px; background: #f1f5f9; }
 .panel-shot-zoom {
-  position: absolute; top: 10px; left: 10px; display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 10px; border-radius: 999px; background: rgba(255, 255, 255, .92);
-  border: 1px solid var(--line); color: var(--ink-soft); font-size: .62rem;
-  box-shadow: 0 4px 12px -6px rgba(15, 23, 42, .25);
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
+  color: #64748B; font-size: .66rem; line-height: 1.8;
 }
-.panel-shot-zoom:hover { color: var(--blue); border-color: #BFDBFE; }
-.panel-shot-note { margin: 10px 4px 2px; font-size: .68rem; color: #64748B; line-height: 1.9; text-align: center; }
+.panel-shot-zoom:hover { color: var(--blue); }
 
 /* --- how the real panel reflows inside the frame ---
    These queries watch the frame's own width, not the browser's, so the panel
@@ -687,9 +684,6 @@ ul { margin: 0; padding: 0; list-style: none; }
   #ashna-app-shell .ashna-col-8 { grid-column: span 12; }
   #ashna-app-shell .ashna-modern-table { display: block; width: 100%; overflow-x: auto; }
 }
-.tour-caption { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 14px 8px 6px; justify-content: center; }
-.tour-caption span { display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; color: #64748B; }
-.tour-caption .icon { color: #059669; }
 
 /* ---------- Features ---------- *//* ---------- Features ---------- */
 .section-features { background: #fff; }
@@ -709,8 +703,11 @@ ul { margin: 0; padding: 0; list-style: none; }
 .int-logo { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 3px; padding: 8px; }
 .int-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .int-logos { display: flex; align-items: center; gap: 8px; }
-.int-logo.pmpro, .int-logo.mpress { background: #fff; border: 1px solid var(--line-soft); box-shadow: 0 1px 2px rgba(15,23,42,.05); padding: 9px; }
-.int-logo.pmpro img, .int-logo.mpress img { max-width: 26px; max-height: 26px; object-fit: contain; }
+.int-logos { gap: 10px; }
+.int-logo.pmpro, .int-logo.mpress { width: 50px; height: 50px; background: #fff; border: 1px solid var(--line-soft); box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+.int-logo.pmpro { background: #FFF7ED; }
+.int-logo.mpress { background: #EEF2FF; }
+.int-logo.pmpro img, .int-logo.mpress img { max-width: 28px; max-height: 28px; object-fit: contain; }
 .int-rows { list-style: none; margin: 10px 0 12px; padding: 0; display: grid; gap: 8px; }
 .int-rows li { display: grid; gap: 2px; padding-inline-start: 10px; border-inline-start: 2px solid var(--line-soft); }
 .int-rows strong { font-size: .78rem; font-weight: 700; color: var(--ink); }
