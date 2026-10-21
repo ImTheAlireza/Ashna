@@ -640,7 +640,12 @@ ul { margin: 0; padding: 0; list-style: none; }
 .panel-scroll:focus-visible { outline: 2px solid var(--blue); }
 .panel-inner { min-width: 0; }
 #ashna-app-shell.ashna-app-shell.is-embed {
-  margin: 0; border: 0; border-radius: 0; box-shadow: none; background: #f1f5f9; min-height: 0;
+  margin: 0; border: 0; border-radius: 0; box-shadow: none; background: var(--s-bg-app); min-height: 0;
+}
+/* the panel's dark mode flips --s-bg-app on the shell; the frame follows it */
+.panel-frame:has(#ashna-app-shell.is-dark) .panel-scroll { background: #0b1120; }
+.panel-frame:has(#ashna-app-shell.is-dark)::after {
+  background: linear-gradient(to top, #0b1120, rgba(11, 17, 32, 0));
 }
 /* sticky offsets are measured inside the scroll window, not the browser */
 #ashna-app-shell.ashna-app-shell.is-embed .ashna-topbar {
