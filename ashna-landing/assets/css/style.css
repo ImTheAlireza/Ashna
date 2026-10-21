@@ -626,6 +626,11 @@ ul { margin: 0; padding: 0; list-style: none; }
   .panel-frame { display: block; }
   .panel-shot { display: none; }
 }
+.panel-frame::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 54px; pointer-events: none;
+  background: linear-gradient(to top, #f1f5f9, rgba(241, 245, 249, 0));
+  border-radius: 0 0 3px 3px;
+}
 .panel-scroll {
   height: 640px; overflow: auto; overscroll-behavior: contain;
   background: #f1f5f9; border-radius: 3px; outline-offset: -2px;
@@ -643,12 +648,21 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 #ashna-app-shell.ashna-app-shell.is-embed .ashna-sidebar { border-radius: 0; }
 .panel-hint {
-  display: flex; width: max-content; margin: 10px auto 0;
+  display: none; width: max-content; margin: 10px auto 0;
   align-items: center; gap: 6px; color: #64748B;
   font-size: .66rem; line-height: 1.8;
 }
+@media (min-width: 1100px) { .panel-hint { display: flex; } }
 .panel-hint .icon { color: #94A3B8; }
+.panel-shot { position: relative; }
 .panel-shot img { display: block; width: 100%; height: auto; border-radius: 3px; background: #f1f5f9; }
+.panel-shot-zoom {
+  position: absolute; top: 10px; left: 10px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; background: rgba(255, 255, 255, .92);
+  border: 1px solid var(--line); color: var(--ink-soft); font-size: .62rem;
+  box-shadow: 0 4px 12px -6px rgba(15, 23, 42, .25);
+}
+.panel-shot-zoom:hover { color: var(--blue); border-color: #BFDBFE; }
 .panel-shot-note { margin: 10px 4px 2px; font-size: .68rem; color: #64748B; line-height: 1.9; text-align: center; }
 
 /* --- how the real panel reflows inside the frame ---
