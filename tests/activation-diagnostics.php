@@ -29,13 +29,13 @@ function wp_die($message) { throw new RuntimeException('access_denied'); }
 require __DIR__ . '/../tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php';
 $pagenow = 'plugins.php';
 $wp_version = '6.8.3';
-$_GET = array('action' => 'activate', 'plugin' => 'ashna-otp/index.php', '_wpnonce' => 'activate-plugin_ashna-otp/index.php');
+$_GET = array('action' => 'activate', 'plugin' => 'ashna/ashna.php', '_wpnonce' => 'activate-plugin_ashna/ashna.php');
 if ($scenario === 'bad_nonce') { $_GET['_wpnonce'] = 'bad'; }
 if ($scenario === 'array_nonce') { $_GET['_wpnonce'] = array('bad'); }
-if ($scenario === 'wrong_target') { $_GET['plugin'] = '../ashna-otp/index.php'; }
+if ($scenario === 'wrong_target') { $_GET['plugin'] = '../ashna/ashna.php'; }
 if ($scenario === 'bulk') { $_GET['action'] = 'activate-selected'; }
 if ($scenario === 'ordinary_page') { $pagenow = 'index.php'; }
-if ($scenario === 'scrape') { $_GET['action'] = 'error_scrape'; $_GET['_wpnonce'] = 'plugin-activation-error_ashna-otp/index.php'; }
+if ($scenario === 'scrape') { $_GET['action'] = 'error_scrape'; $_GET['_wpnonce'] = 'plugin-activation-error_ashna/ashna.php'; }
 $ignored = in_array($scenario, array('unauthorized', 'bad_nonce', 'array_nonce', 'wrong_target', 'bulk', 'ordinary_page'), true);
 if ($scenario === 'scrape') {
     $GLOBALS['reports']['_ashna_activation_diagnostics_activate'] = array('attempt_id' => 'original-request');
@@ -60,7 +60,7 @@ if ($scenario === 'scrape') {
 check($GLOBALS['reports'][$key]['phase'] === 'before_plugin_include', 'Bad first phase');
 check($GLOBALS['reports'][$key]['files']['license_present'] === false, 'Unexpected fixture license');
 check(Ashna_Activation_Diagnostics::is_target('Ashna/index.php'), 'Windows folder variation rejected');
-check(!Ashna_Activation_Diagnostics::is_target('ashna-otp/../index.php'), 'Traversal accepted');
+check(!Ashna_Activation_Diagnostics::is_target('ashna/../index.php'), 'Traversal accepted');
 class Ashna_License_Bootstrap {
     public static $status = 'checking';
     public static function get_status() { return self::$status; }
@@ -89,9 +89,9 @@ if ($scenario === 'fatal') { throw new RuntimeException('PRIVATE-TOKEN'); }
 if ($scenario === 'inactive') { Ashna_License_Bootstrap::$status = 'license_inactive'; }
 if ($scenario === 'success' || $scenario === 'scrape') {
     Ashna_License_Bootstrap::$status = 'active';
-    if ($scenario !== 'scrape') { do_action('activate_plugin', 'ashna-otp/index.php'); }
-    do_action('activate_ashna-otp/index.php');
-    if ($scenario !== 'scrape') { do_action('activated_plugin', 'ashna-otp/index.php'); }
+    if ($scenario !== 'scrape') { do_action('activate_plugin', 'ashna/ashna.php'); }
+    do_action('activate_ashna/ashna.php');
+    if ($scenario !== 'scrape') { do_action('activated_plugin', 'ashna/ashna.php'); }
 }
 if ($scenario === 'redaction') {
     $error = array('type' => E_ERROR, 'message' => 'ionCube failure PRIVATE-TOKEN', 'file' => 'C:\\private\\RTL_License.php', 'line' => 14);

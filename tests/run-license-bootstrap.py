@@ -69,7 +69,7 @@ for scenario, (body, expected) in fixtures.items():
             (plugin / 'conflicting-class.php').write_text('<?php class ' + license_name + ' { }')
         source = (plugin / 'ashna.php').read_text()
         if scenario != 'bad_hash':
-            source = source.replace('4f106eb02a251f2a6951ca3f530596590081002d', hashlib.sha1(fixture.encode()).hexdigest())
+            source = source.replace('321791ab0231890e4569d17c52e64ed93d2eb42d', hashlib.sha1(fixture.encode()).hexdigest())
         (plugin / 'ashna.php').write_text(source)
         if scenario.startswith('no_license'):
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')

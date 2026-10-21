@@ -6,7 +6,7 @@ Usage:  PHP_BINARY=... python tests/run-full-wp.py [attacks] [session] [security
 No arguments runs every shipped suite (attacks, session, security, sso, integrations,
 scenarios). ASHNA_TEST_WP_SITE points at a throw-away WordPress install with Ashna
 active (default: .cache/wp-cli-site). The current source tree is copied into its
-wp-content/plugins/ashna-otp first, laid out like the no-license build.
+wp-content/plugins/ashna first, laid out like the no-license build.
 Each tests/<name>.php must end by printing "... in <name> scenarios".
 """
 from pathlib import Path
@@ -24,7 +24,7 @@ if not (SITE / 'wp-load.php').is_file():
 
 
 def sync_plugin():
-    dest = SITE / 'wp-content/plugins/ashna-otp'
+    dest = SITE / 'wp-content/plugins/ashna'
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True)

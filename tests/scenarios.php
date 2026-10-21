@@ -1168,7 +1168,7 @@ scenario(
 		$settings_before = get_option( 'ashna_otp_settings' );
 		update_option( 'ashna_otp_settings', array_merge( (array) $settings_before, array( 'delete_data_on_uninstall' => 0 ) ) );
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'ashna-otp/index.php' );
+			define( 'WP_UNINSTALL_PLUGIN', 'ashna/ashna.php' );
 		}
 		include ASHNA_OTP_PATH . 'uninstall.php';
 		check( 'uninstall keeps data by default', $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) && false !== get_option( 'ashna_otp_settings' ) );

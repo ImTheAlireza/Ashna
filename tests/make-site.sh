@@ -43,7 +43,7 @@ start = src.index('def sync_plugin'); end = src.index('\ndef ', start + 5)
 ns = {'shutil': shutil, 'Path': Path, 'ROOT': ROOT, 'SITE': SITE}
 exec(src[start:end], ns); ns['sync_plugin']()
 PY
-sed -i -E '0,/(Requires PHP:\s*)[0-9.]+/s//\17.4/' "$SITE/wp-content/plugins/ashna-otp/index.php"
+sed -i -E '0,/(Requires PHP:\s*)[0-9.]+/s//\17.4/' "$SITE/wp-content/plugins/ashna/ashna.php"
 cat > "$SITE/_install.php" <<EOF
 <?php
 define( 'WP_INSTALLING', true );
@@ -62,7 +62,7 @@ cat > "$SITE/_activate.php" <<'EOF'
 $_SERVER['HTTP_HOST'] = '127.0.0.1:9400'; $_SERVER['REQUEST_URI'] = '/'; $_SERVER['SERVER_NAME'] = '127.0.0.1'; $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 require __DIR__ . '/wp-load.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
-$a = activate_plugin( 'ashna-otp/index.php' );
+$a = activate_plugin( 'ashna/ashna.php' );
 global $wpdb;
 echo 'activate: ', is_wp_error( $a ) ? $a->get_error_message() : 'ok', ' | logs table: ', $wpdb->get_var( "SELECT name FROM sqlite_master WHERE name = '{$wpdb->prefix}ashna_otp_logs'" ) ? 'yes' : 'MISSING', ' | schema ', get_option( 'ashna_otp_db_version' ), "\n";
 EOF

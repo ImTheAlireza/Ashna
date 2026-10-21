@@ -23,7 +23,7 @@ $wp_plugin_paths = array();
 require ABSPATH . 'wp-includes/plugin.php';
 function trailingslashit($path) { return rtrim($path, '/\\') . '/'; }
 function wp_normalize_path($path) { return str_replace('\\', '/', $path); }
-function plugins_url($path = '', $file = '') { return 'https://example.test/wp-content/plugins/ashna-otp/' . $path; }
+function plugins_url($path = '', $file = '') { return 'https://example.test/wp-content/plugins/ashna/' . $path; }
 $GLOBALS['options'] = $GLOBALS['cron'] = $GLOBALS['schema'] = $GLOBALS['shortcodes'] = array();
 $GLOBALS['license_calls'] = 0;
 $GLOBALS['can_manage'] = true;

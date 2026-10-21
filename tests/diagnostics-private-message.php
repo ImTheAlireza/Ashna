@@ -43,7 +43,7 @@ if ($scenario === 'uninstall') {
 $pagenow = 'plugins.php';
 $wp_version = '6.8.3';
 $_POST = array();
-$_GET = array('action' => 'activate', 'plugin' => 'ashna-otp/index.php', '_wpnonce' => 'activate-plugin_ashna-otp/index.php');
+$_GET = array('action' => 'activate', 'plugin' => 'ashna/ashna.php', '_wpnonce' => 'activate-plugin_ashna/ashna.php');
 if (in_array($scenario, array('arm', 'arm_no_consent', 'arm_bad_nonce'), true)) {
     $_POST = array('ashna_diag_arm' => '1', 'ashna_diag_consent' => '1', '_wpnonce' => 'ashna_diag_arm');
     if ($scenario === 'arm_no_consent') { unset($_POST['ashna_diag_consent']); }
@@ -94,10 +94,10 @@ if ($scenario === 'other_user') { $GLOBALS['user'] = 8; }
 if ($scenario === 'bad_nonce') { $_GET['_wpnonce'] = 'bad'; }
 if ($scenario === 'scrape') {
     $_GET['action'] = 'error_scrape';
-    $_GET['_wpnonce'] = 'plugin-activation-error_ashna-otp/index.php';
+    $_GET['_wpnonce'] = 'plugin-activation-error_ashna/ashna.php';
 }
 do_action('admin_init');
-$error = array('type' => E_CORE_ERROR, 'message' => 'ionCube: The file ' . WP_PLUGIN_DIR . '/ashna-otp/RTL_License.php cannot run. PRIVATE-TOKEN', 'file' => 'Unknown', 'line' => 0);
+$error = array('type' => E_CORE_ERROR, 'message' => 'ionCube: The file ' . WP_PLUGIN_DIR . '/ashna/RTL_License.php cannot run. PRIVATE-TOKEN', 'file' => 'Unknown', 'line' => 0);
 if ($scenario === 'not_fatal') { $error['type'] = E_NOTICE; }
 if ($scenario === 'not_ioncube') { $error['message'] = 'Uncaught unrelated exception PRIVATE-TOKEN'; }
 if ($scenario === 'long') { $error['message'] .= str_repeat('x', 14000); }

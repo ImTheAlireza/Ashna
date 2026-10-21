@@ -102,7 +102,7 @@ final class Ashna_Activation_Diagnostics {
 		$result = array(
 			'license_present' => is_file( $license ),
 			'license_readable' => $readable,
-			'license_matches_expected_sha1' => $readable ? ( '4f106eb02a251f2a6951ca3f530596590081002d' === @sha1_file( $license ) ) : null,
+			'license_matches_expected_sha1' => $readable ? ( '321791ab0231890e4569d17c52e64ed93d2eb42d' === @sha1_file( $license ) ) : null,
 		);
 		foreach ( array( 'index.php', 'ashna.php' ) as $name ) {
 			$file = $dir . '/' . $name;

@@ -20,7 +20,7 @@ OUT.mkdir(exist_ok=True)
 LICENSE_MISSING_NOTE = 'فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار ashna.php قرار بگیرد.'
 LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
 
-plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۳
+plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۴
 محصولی از پارسنا — https://parsena.ir/ashna
 
 این ZIP از کد فعلی مخزن ساخته شده است. لوگوی آشنا در سربرگ مدیریت، منوی وردپرس، فرم ورود پیش‌فرض و پیش‌نمایش زنده استفاده شده و لوگوی سفارشی انتخاب‌شده توسط مدیر سایت همچنان اولویت دارد.
@@ -30,20 +30,20 @@ plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارم
 نصب: پیشخوان وردپرس ← افزونه‌ها ← افزودن ← بارگذاری افزونه.
 قبل از نصب یا جایگزینی، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
-مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 4f106eb02a251f2a6951ca3f530596590081002d و تأیید isActive() نیاز دارد. {license_note}
+مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 321791ab0231890e4569d17c52e64ed93d2eb42d و تأیید isActive() نیاز دارد. {license_note}
 وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. ionCube Loader باید در PHP وب فعال و با همان PHP و فایل لایسنس سازگار باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
 بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر ionCube Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و هیچ فایلی اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
 
 فایل‌های تبلیغاتی، Git، تست‌ها، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
 '''
 if args.without_license:
-    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۳.۱.۳
+    plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۳.۱.۴
 محصولی از پارسنا — https://parsena.ir/ashna
 
-این بستهٔ جداگانه فقط برای تست و عیب‌یابی است و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. نسخهٔ قابل ارسال به راست‌چین، بستهٔ لایسنس‌دار ashna-otp.zip است.
+این بستهٔ جداگانه فقط برای تست و عیب‌یابی است و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. نسخهٔ قابل ارسال به راست‌چین، بستهٔ لایسنس‌دار ashna.zip است.
 
 ابتدا از سایت و دیتابیس بکاپ بگیرید؛ ترجیحاً روی سایت آزمایشی تست کنید.
-اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna-otp جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
+اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
 برای حفظ تنظیمات، لازم نیست افزونه را از طریق دکمهٔ «حذف» وردپرس پاک کنید.
 پس از استخراج دستی، فایل ashna.php کدگذاری‌شدهٔ قبلی را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
 
@@ -74,19 +74,13 @@ if include_license:
 if not args.without_license:
     plugin_readme = plugin_readme.format(license_note=LICENSE_INCLUDED_NOTE if include_license else LICENSE_MISSING_NOTE)
 
-SLUG = 'ashna-otp'
+SLUG = 'ashna'
 plugin = OUT / (SLUG + '-no-license.zip' if args.without_license else SLUG + '.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
-    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md']:
+    for name in ['ashna.php', 'index.php', 'uninstall.php', 'README.md']:
         if args.without_license and name == 'ashna.php':
+            # Header and bootstrap live in the same unencoded file for this edition.
             bundle.write(ROOT / 'scripts/templates/ashna-no-license.php', SLUG + '/ashna.php')
-        elif args.without_license and name == 'index.php':
-            index = (ROOT / name).read_text()
-            assert index.count('آشنا | ورود') == 1, 'Plugin Name header changed; update the no-license label'
-            index = index.replace('آشنا | ورود', 'آشنا (بدون لایسنس) | ورود', 1)
-            # The separate unencoded edition does not share the licensed file's PHP floor.
-            index = re.sub(r'(Requires PHP:\s*)[0-9.]+', r'\g<1>7.4', index, count=1)
-            add_bytes(bundle, SLUG + '/index.php', index)
         else:
             bundle.write(ROOT / name, SLUG + '/' + name)
     for folder in ['assets', 'includes', 'languages', 'templates']:
@@ -112,5 +106,17 @@ report = [archive_check(OUT / name, SLUG) for name in [SLUG + '.zip', SLUG + '-n
 diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
     report.append(archive_check(diagnostics, 'ashna-activation-diagnostics'))
-(OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
+for guide in [OUT / 'help.pdf']:
+    if guide.exists():
+        report.append({'file': guide.name, 'bytes': guide.stat().st_size,
+                       'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
+# checksums.json is shared with scripts/package-landing.py: keep the entries this
+# script does not produce, as long as the file is still on disk.
+checksums = OUT / 'checksums.json'
+produced = {entry['file'] for entry in report}
+if checksums.exists():
+    for entry in json.loads(checksums.read_text()):
+        if entry['file'] not in produced and (OUT / entry['file']).exists():
+            report.append(entry)
+checksums.write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

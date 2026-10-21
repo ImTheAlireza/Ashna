@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>گالری آشنا — ۸ قاب</title>
+<style>
+  @font-face{font-family:'Vazirmatn';src:url('../../assets/fonts/vazirmatn/Vazirmatn-Variable.woff2') format('woff2');font-weight:100 900;font-display:block}
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
+
+  :root{
+    --navy:#071A38; --blue:#2563EB; --blue-d:#1D4ED8; --sky:#38BDF8;
+    --mint:#10B981; --amber:#F59E0B; --rose:#F43F5E;
+    --ink:#08192F; --dim:#566F8E; --line:rgba(206,224,246,.95);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#C9D8EA}
+  body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    display:flex;flex-direction:column;align-items:center;gap:26px;padding:26px 0}
+
+  /* ══════════════════ canvas ══════════════════ */
+  .slide{position:relative;width:800px;height:900px;overflow:hidden;direction:rtl;isolation:isolate;
+    padding:48px 54px 0;
+    background:
+      radial-gradient(720px 520px at 88% -8%, rgba(96,165,250,.20) 0%, rgba(96,165,250,0) 62%),
+      radial-gradient(620px 460px at 2% 104%, rgba(56,189,248,.16) 0%, rgba(56,189,248,0) 60%),
+      linear-gradient(170deg,#FFFFFF 0%,#F7FBFF 44%,#E9F2FE 100%)}
+  .slide.dark{
+    background:
+      radial-gradient(760px 560px at 82% -10%, rgba(59,130,246,.34) 0%, rgba(59,130,246,0) 62%),
+      radial-gradient(640px 520px at 6% 108%, rgba(56,189,248,.20) 0%, rgba(56,189,248,0) 62%),
+      linear-gradient(166deg,#05122B 0%,#0A2350 46%,#040F1F 100%)}
+
+  .grid,.dots,.noise{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .grid{background-image:
+      linear-gradient(rgba(37,99,235,.055) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(37,99,235,.055) 1px,transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(120% 92% at 72% 16%,#000 12%,rgba(0,0,0,.35) 52%,transparent 82%);
+    mask-image:radial-gradient(120% 92% at 72% 16%,#000 12%,rgba(0,0,0,.35) 52%,transparent 82%)}
+  .dots{background-image:radial-gradient(rgba(37,99,235,.22) 1px,transparent 1.1px);
+    background-size:17px 17px;
+    -webkit-mask-image:radial-gradient(70% 55% at 20% 82%,#000 0%,transparent 72%);
+    mask-image:radial-gradient(70% 55% at 20% 82%,#000 0%,transparent 72%)}
+  .slide.dark .grid{background-image:
+      linear-gradient(rgba(125,190,255,.10) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(125,190,255,.10) 1px,transparent 1px)}
+  .slide.dark .dots{background-image:radial-gradient(rgba(125,190,255,.22) 1px,transparent 1.1px)}
+  .noise{opacity:.42;mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.42'/></svg>")}
+
+  /* ══════════════════ header ══════════════════ */
+  .brandmark{position:absolute;left:52px;top:44px;height:30px;width:auto;z-index:4;
+    filter:drop-shadow(0 8px 14px rgba(7,26,56,.16))}
+  .brandmark.w{height:23px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+
+  .eyebrow{position:relative;z-index:3;display:inline-flex;align-items:center;gap:9px;
+    font-size:12.5px;font-weight:800;color:var(--blue);letter-spacing:.1px}
+  .eyebrow .n{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 9px;
+    border-radius:9px;background:linear-gradient(160deg,#3B82F6,#1D4ED8);color:#fff;font-size:13px;font-weight:800;
+    box-shadow:0 10px 20px -10px rgba(37,99,235,.9)}
+  .eyebrow .sep{width:1px;height:12px;background:rgba(37,99,235,.28)}
+  .slide.dark .eyebrow{color:#8EC5FF}
+  .slide.dark .eyebrow .sep{background:rgba(142,197,255,.35)}
+
+  .t{position:relative;z-index:3;margin-top:13px;font-family:'Estedad',sans-serif;font-weight:900;
+    font-size:53px;line-height:1.15;letter-spacing:-1px;color:var(--navy)}
+  .t em{font-style:normal;background:linear-gradient(102deg,#1D4ED8 6%,#38BDF8 94%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .slide.dark .t{color:#F5FAFF;text-shadow:0 18px 40px rgba(0,0,0,.35)}
+  .slide.dark .t em{background:linear-gradient(102deg,#7DD3FC 4%,#60A5FA 92%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+
+  .s{position:relative;z-index:3;margin-top:12px;font-size:16.5px;line-height:1.88;color:var(--dim);max-width:622px}
+  .slide.dark .s{color:#9FB9D8}
+
+  /* signature: a short gradient rule with a lit node */
+  .sig{position:relative;z-index:3;margin-top:16px;width:84px;height:3px;border-radius:3px;
+    background:linear-gradient(90deg,#1D4ED8,#38BDF8)}
+  .sig::after{content:"";position:absolute;right:-5px;top:-3.5px;width:10px;height:10px;border-radius:50%;
+    background:#fff;border:2px solid #2E74E8;
+    box-shadow:0 0 0 4px rgba(46,116,232,.12),0 0 16px 3px rgba(56,189,248,.6)}
+  .slide.dark .sig::after{background:#08203F;border-color:#7DD3FC;box-shadow:0 0 0 4px rgba(125,211,252,.14),0 0 18px 3px rgba(56,189,248,.7)}
+
+  /* ══════════════════ stage ══════════════════ */
+  .art{position:relative;z-index:2;margin-top:18px;height:516px}
+
+  /* ══════════════════ footer ══════════════════ */
+  .foot{position:absolute;left:54px;right:54px;bottom:26px;z-index:4;display:flex;align-items:center;
+    justify-content:space-between;font-size:12px;color:#5C7FA8}
+  .foot .who{display:flex;align-items:center;gap:9px;font-weight:700;color:#4E6E93}
+  .foot .who b{color:#0B1B36;font-weight:900}
+  .foot .no{font-family:'Estedad';font-weight:900;font-size:12.5px;color:#5C7FA8;letter-spacing:.6px}
+  .slide.dark .foot{color:#7E9ABD}
+  .slide.dark .foot .who{color:#8FA9C9}
+  .slide.dark .foot .who b{color:#DCEAFF}
+  .slide.dark .foot .no{color:#7E9ABD}
+
+  /* ══════════════════ shared atoms ══════════════════ */
+  .card{background:#fff;border:1px solid var(--line);border-radius:20px;
+    box-shadow:0 30px 54px -38px rgba(7,26,56,.55),0 2px 6px rgba(7,26,56,.04)}
+  .glass{background:rgba(255,255,255,.74);border:1px solid rgba(255,255,255,.9);border-radius:20px;
+    box-shadow:0 34px 60px -40px rgba(7,26,56,.55),inset 0 1px 0 rgba(255,255,255,.9);
+    backdrop-filter:blur(14px) saturate(1.1)}
+  .slide.dark .card{background:rgba(255,255,255,.055);border-color:rgba(140,190,255,.16);
+    box-shadow:0 30px 60px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter:blur(10px)}
+  .pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;
+    font-size:11px;font-weight:800;background:rgba(232,241,255,.86);border:1px solid rgba(190,216,247,.8);color:#1E4C8F}
+  .pill.ok{background:rgba(232,251,242,.9);border-color:rgba(175,232,204,.9);color:#0B8A5F}
+  .pill.warn{background:rgba(255,246,229,.92);border-color:rgba(250,226,176,.95);color:#96620A}
+  .pill.bad{background:rgba(255,240,243,.92);border-color:rgba(249,204,213,.95);color:#B42342}
+  .slide.dark .pill{background:rgba(125,190,255,.10);border-color:rgba(125,190,255,.22);color:#BBDCFF}
+  .slide.dark .pill.ok{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.3);color:#6EE7B7}
+  .slide.dark .pill.bad{background:rgba(244,63,94,.14);border-color:rgba(244,63,94,.3);color:#FDA4AF}
+  .ico{display:grid;place-items:center;border-radius:12px;flex:none}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;
+    background:linear-gradient(180deg,#3B82F6,#1D4ED8);color:#fff;font-size:15px;font-weight:800;
+    box-shadow:0 18px 28px -16px rgba(29,78,216,.9)}
+  .lbl{font-size:10px;color:#8AA0BC;font-weight:600}
+  .slide.dark .lbl{color:#7E9ABD}
+  .sep-l{height:1px;background:rgba(226,237,250,.9)}
+  .slide.dark .sep-l{background:rgba(140,190,255,.14)}
+
+  /* ══════════════════ ۰۱ ══════════════════ */
+  .phone{position:absolute;left:14px;top:8px;width:276px;height:482px;border-radius:40px;padding:9px;
+    background:linear-gradient(158deg,#FFFFFF,#EDF4FF 62%,#DDE9FB);
+    border:1px solid rgba(196,216,240,.95);
+    box-shadow:0 50px 70px -46px rgba(7,26,56,.7),0 3px 10px rgba(7,26,56,.06),
+      inset 0 1px 0 rgba(255,255,255,.95);
+    transform:rotate(-4.5deg);transform-origin:60% 90%}
+  .phone .scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;
+    background:linear-gradient(178deg,#FFFFFF,#F4F9FF 60%,#EAF3FE);
+    box-shadow:inset 0 0 0 1px rgba(219,233,250,.9)}
+  .phone .notch{position:absolute;right:50%;transform:translateX(50%);top:9px;width:74px;height:16px;border-radius:99px;background:#0B1B36;opacity:.92}
+  .codes{display:flex;gap:7px;direction:ltr}
+  .codes .b{width:38px;height:50px;border-radius:11px;display:grid;place-items:center;
+    font-family:'Estedad';font-weight:900;font-size:23px;color:#12315E;
+    background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1.4px solid #D6E6FA;
+    box-shadow:0 8px 16px -14px rgba(7,26,56,.6)}
+  .codes .b.on{background:linear-gradient(180deg,#2E6FE8,#1D4ED8);border-color:#1D4ED8;color:#fff;
+    box-shadow:0 14px 24px -12px rgba(29,78,216,.85)}
+  .codes .b.caret{width:3px;height:40px;border-radius:2px;background:#2563EB;border:none;box-shadow:none;
+    background:linear-gradient(180deg,#38BDF8,#2563EB)}
+  .beam{position:absolute;left:196px;top:-24px;width:420px;height:210px;pointer-events:none;
+    transform:rotate(-16deg);transform-origin:0% 100%;
+    background:linear-gradient(90deg,rgba(125,211,252,.55),rgba(59,130,246,.20) 46%,rgba(59,130,246,0) 88%);
+    filter:blur(26px);-webkit-mask-image:linear-gradient(90deg,#000,transparent 86%);
+    mask-image:linear-gradient(90deg,#000,transparent 86%)}
+  .ghost-num{position:absolute;font-family:'Estedad';font-weight:900;color:rgba(37,99,235,.12);
+    text-shadow:0 10px 24px rgba(37,99,235,.18);pointer-events:none}
+  .sms{position:absolute;right:0;top:0;padding:14px 15px;border-radius:18px}
+  .sms .tail{position:absolute;right:-7px;top:44px;width:16px;height:16px;border-radius:4px;
+    background:inherit;border-right:1px solid rgba(255,255,255,.9);border-bottom:1px solid rgba(255,255,255,.9);
+    transform:rotate(45deg)}
+  .rail{position:absolute;right:0;top:108px;width:336px;display:flex;flex-direction:column;gap:10px;justify-content:space-between;bottom:74px}
+  .step{display:flex;align-items:center;gap:10px;padding:15px 14px;border-radius:14px;
+    background:rgba(255,255,255,.82);border:1px solid rgba(219,233,250,.95);
+    box-shadow:0 16px 30px -28px rgba(7,26,56,.6);backdrop-filter:blur(8px)}
+  .step.on{background:linear-gradient(100deg,rgba(236,253,245,.95),rgba(255,255,255,.9));border-color:rgba(183,235,209,.95)}
+  .step .k{font-family:'Estedad';font-weight:900;font-size:10px;color:#9FB4CD;width:16px;flex:none}
+  .step.on .k{color:#10B981}
+
+  /* ═══════════════ components used by frames 02-08 ═══════════════ */
+  .gw{position:absolute;width:206px;height:58px;border-radius:14px;display:flex;align-items:center;gap:10px;
+    padding:0 13px;z-index:2}
+  .gw .ico{width:28px;height:28px;box-shadow:0 12px 18px -14px rgba(7,26,56,.9)}
+  .gw-t{flex:1;min-width:0}
+  .gw-t b{display:block;font-size:11.5px;font-weight:800;color:#12315E;line-height:1.3}
+  .gw-t span{display:block;font-size:8.5px;color:#8AA0BC;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dot{width:7px;height:7px;border-radius:50%;background:#CBD9EA;flex:none}
+  .dot.on{background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.14)}
+
+  .tank{flex:1;text-align:center}
+  .tank-box{position:relative;height:168px;border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,#FFFFFF,#F2F8FF);border:1px solid #DCEAFA;
+    box-shadow:inset 0 2px 8px rgba(7,26,56,.05)}
+  .tank-box .cap{position:absolute;left:0;right:0;top:10px;text-align:center;font-size:9px;font-weight:700;color:#7E97B4;z-index:2}
+  .tank-box .fill{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;
+    padding-top:8px;box-shadow:0 -10px 22px rgba(37,99,235,.22)}
+  .tank-box .fill b{font-family:'Estedad';font-weight:900;font-size:19px;color:#fff;line-height:1}
+  .tank-l{font-size:10.5px;font-weight:800;color:#27405F;margin-top:7px}
+  .tank-s{font-size:8.5px;color:#A3B6CD;margin-top:1px}
+
+  .blk{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6.5px 0;font-size:9px;color:#8C4E5E;border-top:1px solid #F7EEF1}
+  .blk:first-child{border-top:0}
+    .blk span{font-family:'Estedad';font-weight:800;direction:ltr}
+  .blk em{color:#C0A7AE;font-style:normal;font-size:8px;letter-spacing:.2px}
+
+  .kv{display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:9.5px;color:#8FA9C9}
+  .kv b{color:#DBEAFE;font-weight:800;font-size:9.5px}
+  .lg{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:9px;color:#9FB9D8}
+  .lg i{width:6px;height:6px;border-radius:50%;flex:none}
+  .lg em{color:#6F8DB2;font-style:normal;font-size:8px;margin-right:5px}
+
+  .chain-card{display:flex;align-items:center;gap:10px;height:72px;padding:0 13px;border-radius:15px;
+    background:rgba(255,255,255,.055);border:1px solid rgba(140,190,255,.16);
+    box-shadow:0 26px 44px -40px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06)}
+  .chain-card.ok{border-color:rgba(52,211,153,.34);box-shadow:0 26px 44px -40px rgba(0,0,0,.9),0 0 0 1px rgba(52,211,153,.1),inset 0 1px 0 rgba(255,255,255,.08)}
+  .chain-card.idle{opacity:.62;border-style:dashed}
+  .cc-t{font-size:11.5px;font-weight:800;color:#EAF3FF;line-height:1.35}
+  .cc-t span{font-weight:600;color:#7E9ABD;font-size:8.5px}
+  .cc-s{font-size:8.5px;color:#8FA9C9;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .src-card{background:linear-gradient(168deg,#FFFFFF,#F4F9FF 60%,#E8F1FD);border:1px solid rgba(203,222,244,.95);
+    border-radius:18px;padding:16px 15px;text-align:center;box-shadow:0 34px 54px -42px rgba(7,26,56,.6),inset 0 1px 0 #fff}
+  .src-card.tl{background:linear-gradient(168deg,#FFFFFF,#F5FDFF 60%,#E4F7FE)}
+  .src-title{font-family:'Estedad';font-weight:900;font-size:14px;color:#12315E}
+  .src-sub{font-size:9px;color:#8AA0BC;margin:3px 0 10px;line-height:1.6}
+  .src-row{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.85);border:1px solid #E4EEFA;
+    border-radius:7px;padding:5px 7px;font-size:8.5px;color:#3E5C82;font-weight:700;margin-bottom:5px}
+  .src-foot{display:inline-block;margin-top:6px;font-size:7.5px;color:#7E95B2;background:rgba(255,255,255,.8);
+    border:1px solid #E2ECF9;border-radius:6px;padding:3px 6px}
+  .cb-lbl{font-size:8px;color:#7E95B2;font-weight:700;margin:0 0 4px}
+  .cb-chip{background:rgba(255,255,255,.92);border:1px solid rgba(214,229,247,.95);border-radius:8px;
+    padding:6px 8px;font-size:7.7px;color:#2F4F76;font-family:monospace;text-align:left;
+    box-shadow:0 12px 20px -20px rgba(7,26,56,.7)}
+  .sec{display:flex;align-items:center;gap:5px;font-size:9px;color:#3E6B54;font-weight:700}
+
+  .window{background:#fff;border:1px solid #DCE8F6;border-radius:14px;overflow:hidden;
+    box-shadow:0 34px 54px -42px rgba(7,26,56,.7)}
+  .window .bar{height:26px;display:flex;align-items:center;gap:5px;padding:0 10px;
+    background:#F4F9FF;border-bottom:1px solid #E5EFFB;direction:ltr}
+  .window .bar i{width:6px;height:6px;border-radius:50%;background:#D3E1F3;flex:none}
+  .window .url{margin-left:8px;font-size:8px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
+    border-radius:5px;padding:2px 8px}
+
+  .preset{height:64px;border:1.5px solid #E4EEFA;border-radius:11px;padding:6px 4px 5px;background:rgba(255,255,255,.78);
+    display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;box-shadow:0 16px 24px -24px rgba(7,26,56,.7)}
+  .preset.on{border-color:#2563EB;background:linear-gradient(150deg,#F4F9FF,#E8F1FE);
+    box-shadow:0 18px 30px -24px rgba(37,99,235,.8),0 0 0 1px rgba(37,99,235,.25)}
+  .psw{width:32px;height:30px;border-radius:8px;flex:none;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 14px -10px rgba(7,26,56,.8)}
+  .pnm{font-size:7.4px;font-weight:800;color:#33506F;white-space:nowrap;letter-spacing:-.1px}
+  .pchk{position:absolute;left:5px;top:5px;width:13px;height:13px;border-radius:50%;background:#2563EB;
+    display:grid;place-items:center;box-shadow:0 4px 8px -3px rgba(37,99,235,.9);z-index:2}
+  .sw-dot{width:25px;height:25px;border-radius:8px;flex:none}
+  .ctl-l{display:flex;align-items:center;justify-content:space-between;font-size:9.5px;color:#8AA0BC;margin-bottom:7px}
+  .ctl-l span{font-size:9px;color:#1E4C8F;font-weight:800}
+  .track{position:relative;height:5px;border-radius:5px;background:#E4EEFB}
+  .track-in{position:absolute;right:0;top:0;height:5px;border-radius:5px;background:#2563EB}
+  .knob{position:absolute;top:-4.5px;width:14px;height:14px;border-radius:50%;background:#fff;
+    border:2.4px solid #1D4ED8;box-shadow:0 4px 10px -2px rgba(37,99,235,.5)}
+  .seg{flex:1;height:26px;border:1px solid #E4EEFA;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:8px;font-weight:700;color:#8AA0BC}
+  .seg.on{border:1.4px solid #93C5FD;background:#F3F8FF;color:#1D4ED8;font-weight:800}
+  .db{width:8px;height:11px;background:#BFDBFE}
+  .db.bx{border-radius:2px}
+  .db.ul{border-radius:0;background:transparent;border-bottom:2px solid #BFDBFE}
+  .db.pl{border-radius:99px}
+
+  .ln{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:9px;color:#9FB9D8}
+  .ln i{width:5px;height:5px;border-radius:50%;flex:none}
+  .pr{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(140,190,255,.14)}
+  .pr .ico{width:27px;height:27px;border-radius:9px}
+  .pr-t{font-size:10.5px;font-weight:800;color:#DCEAFF}
+  .pr-s{font-size:8.5px;color:#8FA9C9;margin-top:1px}
+  .try{flex:1;height:6px;border-radius:4px;background:#F43F5E}
+  .try.last{box-shadow:0 0 12px 1px rgba(244,63,94,.6)}
+
+/* ══════════════════ v3 additions ══════════════════ */
+
+/* — ۰۱ · phone body drawn at iPhone 18 Pro Max proportions — */
+.phone-v3{position:absolute;left:32px;top:8px;width:240px;height:504px;border-radius:33px;padding:8.5px;
+  background:linear-gradient(158deg,#FFFFFF 0%,#E9F1FB 52%,#CFDDEF 100%);
+  border:1px solid rgba(176,199,226,.95);
+  box-shadow:0 48px 70px -46px rgba(7,26,56,.75),0 3px 10px rgba(7,26,56,.07),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -1px 0 rgba(255,255,255,.6);
+  transform:rotate(-3.2deg);transform-origin:55% 90%}
+.phone-v3 .gl{position:absolute;inset:0;border-radius:33px;pointer-events:none;
+  background:linear-gradient(126deg,rgba(255,255,255,.95) 4%,rgba(255,255,255,0) 26%,
+    rgba(255,255,255,.5) 52%,rgba(255,255,255,0) 66%)}
+.phone-v3 .scr{position:relative;width:100%;height:100%;border-radius:26px;overflow:hidden;
+  background:linear-gradient(178deg,#FFFFFF,#F6FAFF 62%,#EDF5FE);
+  box-shadow:inset 0 0 0 1px rgba(214,230,248,.95)}
+.di{position:absolute;right:50%;transform:translateX(50%);top:8.5px;width:60px;height:17px;border-radius:99px;
+  background:#08192F;opacity:.95;z-index:6}
+.phone-v3 .codes{margin-top:0}
+.phone-v3 .codes .b{width:32px;height:44px;border-radius:10px;font-size:17px;border-width:1.2px}
+.phone-v3 .codes .b.on{position:relative}
+.phone-v3 .codes .caret{width:2px;height:18px;border-radius:2px;background:#fff;display:block;opacity:.92}
+
+/* — ۰۱ · the path of three moments — */
+.stg{position:absolute;left:288px;width:380px;height:68px;display:flex;align-items:center;gap:16px;
+  z-index:2;direction:rtl}
+.med{width:66px;height:66px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:linear-gradient(165deg,#FFFFFF,#F1F7FF);border:1px solid #D8E6F8;
+  box-shadow:0 20px 30px -26px rgba(7,26,56,.7),inset 0 1px 0 #fff}
+.med-on{background:linear-gradient(160deg,#3B82F6,#1D4ED8);border-color:#1D4ED8;
+  box-shadow:0 22px 32px -20px rgba(29,78,216,.85),0 0 0 6px rgba(59,130,246,.10)}
+.med-ok{background:linear-gradient(160deg,#12B981,#059669);border-color:#059669;
+  box-shadow:0 22px 32px -20px rgba(5,150,105,.8),0 0 0 6px rgba(16,185,129,.10)}
+.stg-t{font-size:16px;font-weight:800;color:#0F2A4E;letter-spacing:-.1px}
+.stg-s{font-size:10.5px;color:#7E97B4;margin-top:5px;line-height:1.7}
+
+
+/* — ۰۲ · gateway cards with real marks — */
+.gwc{position:absolute;width:238px;height:72px;border-radius:18px;background:#fff;border:1px solid var(--line);
+  box-shadow:0 26px 44px -34px rgba(7,26,56,.6),0 2px 6px rgba(7,26,56,.04);
+  display:flex;align-items:center;gap:11px;padding:0 12px;z-index:2}
+.gwc .well{width:62px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(180deg,#FFFFFF,#F6FAFF);border:1px solid #E4EEFA;
+  box-shadow:inset 0 1px 0 #fff}
+.gwc .well img{max-width:52px;max-height:34px;width:auto;height:auto;object-fit:contain;display:block}
+.gwc-n{flex:1;font-size:13px;font-weight:800;color:#12315E;letter-spacing:-.1px;white-space:nowrap;overflow:hidden}
+
+
+/* — ۰۴ · relay cards — */
+.fcard{position:absolute;width:190px;height:192px;border-radius:20px;background:#fff;border:1px solid var(--line);
+  box-shadow:0 30px 46px -36px rgba(7,26,56,.55),0 2px 6px rgba(7,26,56,.04);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2}
+.fcard .fwell{width:56px;height:50px;border-radius:14px;display:grid;place-items:center;background:#F8FBFF;
+  border:1px solid #E4EEFA;box-shadow:inset 0 1px 0 #fff}
+.fcard .fwell img{max-width:40px;max-height:30px;width:auto;height:auto;object-fit:contain}
+.fcard .fname{font-size:13.5px;font-weight:800;color:#12315E}
+.fcard .fnote{font-size:9px;color:#93A8C3}
+.rule{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:11px;
+  background:rgba(255,255,255,.86);border:1px solid rgba(211,228,250,.95);color:#5C7FA8;
+  font-size:10.5px;font-weight:700;box-shadow:0 16px 26px -24px rgba(7,26,56,.7)}
+
+/* — ۰۷ · three real windows — */
+.pwin{position:absolute;border-radius:14px;overflow:hidden;background:#fff;border:1px solid #DCE8F6}
+.pwin.front{z-index:4;box-shadow:0 46px 66px -46px rgba(7,26,56,.62),0 2px 8px rgba(7,26,56,.05)}
+.pwin.second{z-index:5;box-shadow:0 40px 60px -44px rgba(7,26,56,.55),0 2px 8px rgba(7,26,56,.05)}
+.pwin .pbar{height:22px;display:flex;align-items:center;gap:5px;padding:0 10px;direction:ltr;
+  background:linear-gradient(180deg,#F8FBFF,#EFF5FC);border-bottom:1px solid #E8F1FB}
+.pwin .pbar i{width:6px;height:6px;border-radius:50%;background:#D7E4F4;flex:none}
+.purl{margin-left:8px;font-size:8.2px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
+  border-radius:6px;padding:2px 9px;font-family:monospace;letter-spacing:-.2px}
+.pver{margin-left:auto;font-size:8.2px;font-weight:800;color:#1E4C8F;background:#EFF6FF;
+  border:1px solid #D5E6FA;border-radius:6px;padding:2px 7px;font-family:'Estedad';direction:ltr}
+</style>
+</head>
+<body>
+<!-- ══════════════════ ۰۱ · کد ورود ══════════════════ -->
+<section class="slide" id="s1">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۱</span><span class="sep"></span> ورود و ثبت‌نام</div>
+  <h2 class="t">یک کد کوتاه،<br><em>به‌جای رمز و فرم طولانی</em></h2>
+  <p class="s">شماره را می‌زند، کد می‌آید، وارد می‌شود. ثبت‌نام هم در همین مسیر انجام می‌شود؛ بدون فیلد اضافه.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <div class="bleed" style="position:absolute;left:-56px;top:-40px;width:420px;height:440px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.24),rgba(37,99,235,.06) 52%,transparent 72%);
+         filter:blur(18px)"></div>
+    <div class="bleed" style="position:absolute;left:300px;top:250px;width:520px;height:420px;border-radius:50%;
+         background:radial-gradient(circle,rgba(16,185,129,.10),transparent 68%);filter:blur(30px)"></div>
+
+    <!-- iPhone 18 Pro Max proportions: 224 x 472 (≈0.475), corner ≈ 13.8% of width -->
+    <div class="phone-v3">
+      <div class="gl"></div>
+      <div class="scr">
+        <div class="di"></div>
+
+        <!-- the SMS, as it actually lands on the lock screen -->
+        <div style="position:absolute;left:12px;right:12px;top:34px;border-radius:14px;padding:8px 9px;
+             background:rgba(255,255,255,.94);border:1px solid rgba(219,233,250,.95);
+             box-shadow:0 12px 22px -16px rgba(7,26,56,.5);display:flex;gap:7px;align-items:center">
+          <div style="width:24px;height:24px;border-radius:7px;flex:none;display:grid;place-items:center;
+               background:linear-gradient(165deg,#F2F8FF,#DFEDFF);border:1px solid #D3E4FA">
+            <img src="../infographic/img/ashna-icon.svg" alt="" style="height:14px;width:auto">
+          </div>
+          <div style="min-width:0">
+            <div style="font-size:7.4px;color:#93A8C3">آشنا · همین حالا</div>
+            <div style="font-size:8.2px;color:#12315E;font-weight:700;margin-top:1px;white-space:nowrap">
+              کد ورود شما <b style="font-size:9.4px;color:#1D4ED8;letter-spacing:.4px">۴۹۲۸۱</b> است
+            </div>
+          </div>
+        </div>
+
+        <div style="position:absolute;left:0;right:0;top:138px;text-align:center">
+          <div style="width:38px;height:38px;border-radius:12px;margin:0 auto;display:grid;place-items:center;
+               background:linear-gradient(165deg,#F0F7FF,#DCEAFF);border:1px solid #CFE3FA;
+               box-shadow:0 10px 18px -14px rgba(37,99,235,.85)">
+            <img src="../infographic/img/ashna-icon.svg" alt="" style="height:21px;width:auto">
+          </div>
+          <div style="font-family:'Estedad';font-weight:900;font-size:15px;color:#0B1B36;margin-top:11px">کد تأیید</div>
+          <div style="font-size:8.2px;color:#8AA0BC;margin-top:4px">کد ۵ رقمی پیامک شد به</div>
+          <div style="font-size:9.2px;color:#3E5C82;font-weight:800;margin-top:2px;letter-spacing:.3px">۰۹۱۲ ۳۴۵ ۶۷۸۹</div>
+
+          <div class="codes" style="justify-content:center;margin-top:15px;gap:5px">
+            <span class="b">۴</span><span class="b">۹</span><span class="b">۲</span><span class="b">۸</span>
+            <span class="b on"><span class="caret"></span></span>
+          </div>
+
+          <div class="btn" style="margin:17px 12px 0;height:38px;font-size:11.5px;border-radius:11px">تأیید و ورود</div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:5px;margin-top:9px;
+               font-size:8px;color:#93A8C3">
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>
+            ارسال دوباره تا <span style="font-weight:800;color:#2563EB">۴۵ ثانیه</span>
+          </div>
+
+
+        </div>
+
+        <div style="position:absolute;left:12px;right:12px;bottom:24px;padding-top:9px;
+             border-top:1px solid #EFF4FB;font-size:7.4px;color:#AFC1D8;line-height:1.9;text-align:center">
+          ثبت‌نام در اولین ورود، خودکار انجام می‌شود.
+        </div>
+        <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:62px;height:3.5px;
+             border-radius:3px;background:#0B1B36;opacity:.22"></div>
+      </div>
+    </div>
+
+    <!-- one continuous path, three moments — no numbers, no checklist boxes -->
+    <div style="position:absolute;left:634px;top:54px;width:3px;height:400px;border-radius:3px;
+         background:linear-gradient(180deg,#2563EB,#38BDF8 48%,#10B981);opacity:.42;z-index:0"></div>
+    <svg width="16" height="392" viewBox="0 0 16 392" style="position:absolute;left:628px;top:58px;z-index:1">
+      <path d="M8 168l4.5 7h-9z" fill="#8FC4F4" opacity=".85"/>
+      <path d="M8 328l4.5 7h-9z" fill="#6FE0B4" opacity=".85"/>
+    </svg>
+
+    <!-- moment 1 -->
+    <div class="stg" style="top:58px">
+      <span class="med"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="#3E6FB8" stroke-width="1.7" stroke-linecap="round"><rect x="7" y="2.6" width="10" height="18.8" rx="3"/><path d="M11 18.4h2"/></svg></span>
+      <div>
+        <div class="stg-t">شماره را می‌زند</div>
+        <div class="stg-s">یک فیلد؛ نه رمز، نه تکرار رمز</div>
+      </div>
+    </div>
+
+    <!-- moment 2 -->
+    <div class="stg" style="top:218px">
+      <span class="med med-on"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10.6H9.4L5 20.2V16H4z"/><path d="M8.4 9.2h7.2M8.4 12.4h4.6"/></svg></span>
+      <div>
+        <div class="stg-t">کد می‌آید</div>
+        <div class="stg-s">پیامک، بله یا ایمیل <span style="display:inline-block;margin-right:6px;padding:1.5px 7px;border-radius:7px;
+             background:#E9F1FE;color:#1D4ED8;font-family:'Estedad';font-weight:900;font-size:10.5px;letter-spacing:.6px">۴۹۲۸۱</span></div>
+      </div>
+    </div>
+
+    <!-- moment 3 -->
+    <div class="stg" style="top:378px">
+      <span class="med med-ok"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.4 4.7 4.6L19 6.8"/></svg></span>
+      <div>
+        <div class="stg-t">وارد می‌شود</div>
+        <div class="stg-s">ثبت‌نام هم خودکار، در همان اولین ورود</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۱ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۲ · درگاه‌ها ══════════════════ -->
+<section class="slide" id="s2">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۲</span><span class="sep"></span> درگاه‌ها و پیام‌رسان‌ها</div>
+  <h2 class="t">شش سامانه،<br><em>هر کدام یک کلید</em></h2>
+  <p class="s">کلید هر سامانه را یک‌بار می‌گذاری؛ از آن به بعد فقط انتخاب می‌شود.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <div class="bleed" style="position:absolute;left:250px;top:130px;width:420px;height:420px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.20),rgba(37,99,235,.05) 55%,transparent 74%);
+         filter:blur(16px)"></div>
+
+    <div style="position:absolute;inset:0;transform:translateY(14px)">
+    <svg width="692" height="516" viewBox="0 0 692 516" style="position:absolute;inset:0;z-index:1">
+      <g stroke="#8FB8E8" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="2 7">
+        <path d="M344 152 V 132"/>
+        <path d="M344 324 V 382"/>
+        <path d="M424 214 Q 442 203 452 190"/>
+        <path d="M424 262 Q 442 278 452 294"/>
+        <path d="M264 214 Q 246 203 244 190"/>
+        <path d="M264 262 Q 246 278 244 294"/>
+      </g>
+      <g fill="#2563EB">
+        <circle cx="344" cy="130" r="2.6"/><circle cx="344" cy="384" r="2.6"/>
+        <circle cx="450" cy="190" r="2.6"/><circle cx="450" cy="294" r="2.6"/>
+        <circle cx="246" cy="190" r="2.6"/><circle cx="246" cy="294" r="2.6"/>
+      </g>
+    </svg>
+
+    <div style="position:absolute;left:258px;top:152px;width:172px;height:172px;border-radius:50%;z-index:2;
+         background:linear-gradient(165deg,#FFFFFF,#EFF6FF 62%,#E3EEFC);border:1px solid #D3E4FA;
+         box-shadow:0 36px 56px -38px rgba(7,26,56,.75),inset 0 2px 0 #fff,0 0 0 9px rgba(255,255,255,.72);
+         display:grid;place-items:center">
+      <div style="text-align:center">
+        <img src="../infographic/img/ashna-icon.svg" alt="" style="height:42px;width:auto;display:block;margin:0 auto 9px">
+        <div style="font-size:10px;color:#7E97B4;font-weight:700">مسیریاب ارسال</div>
+      </div>
+    </div>
+
+    <div class="gwc" style="left:226px;top:46px">
+      <span class="well"><img src="img/logos/smsir-flame.png" alt="SMS.ir" style="max-width:30px"></span>
+      <div class="gwc-n">SMS.ir</div><i class="dot on"></i>
+    </div>
+
+    <div class="gwc" style="left:452px;top:140px">
+      <span class="well"><img src="img/logos/kavenegar.png" alt="کاوه‌نگار" style="max-width:34px"></span>
+      <div class="gwc-n">کاوه‌نگار</div><i class="dot on"></i>
+    </div>
+
+    <div class="gwc" style="left:6px;top:140px">
+      <span class="well"><img src="img/logos/ippanel.png" alt="آی‌پی‌پنل" style="max-width:50px"></span>
+      <div class="gwc-n">آی‌پی‌پنل</div><i class="dot on"></i>
+    </div>
+
+    <div class="gwc" style="left:452px;top:244px">
+      <span class="well"><img src="img/logos/melipayamak.png" alt="ملی‌پیامک" style="max-width:30px"></span>
+      <div class="gwc-n">ملی‌پیامک</div><i class="dot on"></i>
+    </div>
+
+    <div class="gwc" style="left:6px;top:244px">
+      <span class="well"><img src="img/logos/farazsms.png" alt="فراز اس‌ام‌اس" style="max-width:38px"></span>
+      <div class="gwc-n">فراز اس‌ام‌اس</div><i class="dot on"></i>
+    </div>
+
+    <div class="gwc" style="left:226px;top:368px">
+      <span class="well"><img src="img/logos/bale.png" alt="بله" style="max-width:32px"></span>
+      <div class="gwc-n">بله</div><i class="dot on"></i>
+    </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۲ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۳ · محدودیت‌ها ══════════════════ -->
+<section class="slide" id="s3">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۳</span><span class="sep"></span> جلوی سوءاستفاده</div>
+  <h2 class="t">هر شماره،<br><em>فقط به اندازهٔ خودش</em></h2>
+  <p class="s">سقف درخواست برای شماره، آی‌پی و زیرشبکه؛ فاصلهٔ ۶۰ ثانیه بین دو ارسال، و کپچا وقتی حجم درخواست بالا می‌رود.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <!-- ① weekly gauge: 3 of 5 per number -->
+    <div style="position:absolute;left:0;top:-18px;width:236px">
+      <div style="position:relative;width:236px;height:236px">
+        <svg width="236" height="236" viewBox="0 0 236 236">
+          <g transform="rotate(135 118 118)" fill="none" stroke-linecap="round">
+            <circle cx="118" cy="118" r="92" stroke="#E7F0FB" stroke-width="15" stroke-dasharray="433.5 578"/>
+            <circle cx="118" cy="118" r="92" stroke="url(#gauge)" stroke-width="15" stroke-dasharray="260.1 578"/>
+          </g>
+          <defs>
+            <linearGradient id="gauge" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#5EB8F7"/><stop offset="1" stop-color="#1D4ED8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <div style="text-align:center;transform:translateY(-4px)">
+            <div style="font-family:'Estedad';font-weight:900;font-size:52px;line-height:.85;color:#0B1B36;transform:translateX(3px)">۳</div>
+            <div style="font-size:9.5px;color:#6C8CB2;font-weight:700;margin-top:6px">از ۵ در ساعت</div>
+            <div style="font-size:8px;color:#A2B6CC;margin-top:3px">برای هر شماره</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:-12px">
+        <span style="font-size:7.5px;color:#0B8A5F;background:#EAFBF2;border:1px solid #C9F0DD;
+              border-radius:99px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px">
+          <span style="width:4px;height:4px;border-radius:50%;background:#10B981"></span>در محدودهٔ مجاز</span>
+      </div>
+    </div>
+
+    <!-- ② three usage tanks -->
+    <div style="position:absolute;right:0;top:0;width:404px">
+      <div style="display:flex;gap:10px">
+        <div class="tank"><div class="tank-box">
+          <span class="cap">سقف ۵</span>
+          <div class="fill" style="height:60%;background:linear-gradient(180deg,#60A5FA,#2563EB)"><b>۳</b></div>
+        </div><div class="tank-l">شماره</div><div class="tank-s">در ساعت</div></div>
+
+        <div class="tank"><div class="tank-box">
+          <span class="cap">سقف ۱۵</span>
+          <div class="fill" style="height:40%;background:linear-gradient(180deg,#7DD3FC,#0EA5E9)"><b>۶</b></div>
+        </div><div class="tank-l">آی‌پی</div><div class="tank-s">در ساعت</div></div>
+
+        <div class="tank"><div class="tank-box">
+          <span class="cap">سقف ۲۰</span>
+          <div class="fill" style="height:35%;background:linear-gradient(180deg,#FCD34D,#F59E0B)"><b>۷</b></div>
+        </div><div class="tank-l">زیرشبکه</div><div class="tank-s">در دقیقه</div></div>
+      </div>
+      <div style="margin-top:14px;border-top:1px dashed #E3EDFA;padding-top:10px;
+           display:flex;align-items:center;gap:7px">
+        <span style="width:5px;height:5px;border-radius:50%;background:#2563EB;box-shadow:0 0 0 4px rgba(37,99,235,.12)"></span>
+        <span style="font-size:8.5px;color:#8AA0BC">هر سه سقف در پنل قابل تغییرند؛ عددها پیش‌فرض‌اند.</span>
+      </div>
+    </div>
+
+    <!-- ③ status card: three equal columns, one shared header baseline -->
+    <div class="card" style="position:absolute;left:0;right:0;top:310px;height:182px;border-radius:22px;display:flex;align-items:stretch">
+      <!-- cooldown -->
+      <div style="width:230px;padding:15px 17px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="ico" style="width:19px;height:19px;border-radius:7px;background:#EFF5FE;color:#2563EB">
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+          <div style="font-size:10.5px;font-weight:800;color:#12315E">ارسال دوباره</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;margin-top:10px">
+          <div style="position:relative;width:60px;height:60px;flex:none;border-radius:50%;
+               background:conic-gradient(from 0deg,#2563EB 0deg 270deg,#E2EDFB 270deg 360deg)">
+            <div style="position:absolute;inset:7px;border-radius:50%;background:#fff;display:grid;place-items:center">
+              <div style="text-align:center">
+                <div style="font-family:'Estedad';font-weight:900;font-size:16.5px;color:#0B1B36;line-height:1">۴۵</div>
+                <div style="font-size:7.2px;color:#8AA0BC;margin-top:1px">ثانیه</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:8.7px;color:#8AA0BC;line-height:1.75;min-width:0">دکمه تا پایان شمارش خاموش می‌ماند.</div>
+        </div>
+        <div style="margin-top:auto">
+          <div style="font-size:7.4px;color:#A2B6CC;margin-bottom:6px">کپچای پشتیبانی‌شده</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <span class="pill" style="height:17px;font-size:7.4px;padding:0 6px">ریاضی</span>
+          <span class="pill" style="height:17px;font-size:7.4px;padding:0 6px">آری‌کپچا</span>
+          <span class="pill" style="height:17px;font-size:7.4px;padding:0 6px">reCAPTCHA</span>
+          <span class="pill" style="height:17px;font-size:7.4px;padding:0 6px">Turnstile</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:1px;background:#EDF3FB;margin:18px 0"></div>
+
+      <!-- attack mode -->
+      <div style="flex:1;padding:15px 17px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="ico" style="width:19px;height:19px;border-radius:7px;background:#FFF6E5;color:#B45309">
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4 3 20h18L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+          <div style="font-size:10.5px;font-weight:800;color:#8A5A00">حالت حمله</div>
+          <span class="pill warn" style="height:17px;font-size:7.4px;padding:0 7px">خودکار</span>
+        </div>
+        <div style="font-size:8.5px;color:#8A7442;line-height:1.75;margin-top:10px">
+          بیشتر از ۲۰ درخواست در دقیقه در کل سایت، کپچا برای همه روشن می‌شود؛ ۳۰ دقیقه.
+        </div>
+        <div style="margin-top:auto">
+          <div style="display:flex;justify-content:space-between;font-size:7.6px;color:#A98B4E;font-weight:700;margin-bottom:5px">
+            <span>الان ۱۴ درخواست</span><span>آستانه ۲۰</span>
+          </div>
+          <div style="position:relative;height:5px;border-radius:6px;background:#F3F1EA">
+            <div style="position:absolute;inset:0 auto 0 0;width:70%;border-radius:6px;background:linear-gradient(90deg,#FBBF24,#F59E0B)"></div>
+            <div style="position:absolute;right:0;top:-3px;width:2px;height:11px;border-radius:2px;background:#D9C9A4"></div>
+          </div>
+          <div style="font-size:7.4px;color:#B39A66;margin-top:6px">بعد از ۳۰ دقیقه خودکار خاموش می‌شود.</div>
+        </div>
+      </div>
+
+      <div style="width:1px;background:#EDF3FB;margin:18px 0"></div>
+
+      <!-- blocked list -->
+      <div style="flex:1;padding:15px 17px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="ico" style="width:19px;height:19px;border-radius:7px;background:#FDF0F4;color:#B4637B">
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="m7 17 10-10"/></svg></span>
+          <div style="font-size:10.5px;font-weight:800;color:#12315E">فهرست مسدود</div>
+          <span style="font-size:7px;color:#B4637B;background:#FDF0F4;border:1px solid #F8DCE4;border-radius:99px;padding:1px 7px;font-size:7.4px">۴ مورد</span>
+        </div>
+        <div style="margin-top:6px">
+          <div class="blk"><span dir="ltr">۰۹۱۲ ••• ۸۸۴</span><em>شماره</em></div>
+          <div class="blk"><span dir="ltr">۰۹۳۵ ••• ۰۱۷</span><em>شماره</em></div>
+          <div class="blk"><span dir="ltr">۵.۲۲ ••• ۹۰</span><em>آی‌پی</em></div>
+          <div class="blk"><span dir="ltr">۱۸۵.۵۵ ••• ۴</span><em>آی‌پی</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۳ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۴ · زنجیرهٔ جایگزین ══════════════════ -->
+<section class="slide" id="s4">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۴</span><span class="sep"></span> تحویل بی‌وقفه</div>
+  <h2 class="t">یکی قطع شد،<br><em>بعدی می‌فرستد</em></h2>
+  <p class="s">درگاه اصلی جواب نداد؛ آشنا خودش سراغ درگاه بعدی می‌رود. کاربر هیچ‌چیز نمی‌فهمد.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <div class="bleed" style="position:absolute;left:150px;top:-50px;width:560px;height:320px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(22px)"></div>
+
+    <!-- the link between gateways, as a status node instead of an arrow -->
+    <!-- رابط ۱ · SMS.ir تا کاوه‌نگار: مهلت تمام شد -->
+    <div style="position:absolute;left:448px;top:131px;width:12px;height:3px;border-radius:2px;z-index:3;background:#F6D6DE"></div>
+    <div style="position:absolute;left:466px;top:131px;width:12px;height:3px;border-radius:2px;z-index:3;background:#F6D6DE"></div>
+    <div style="position:absolute;left:452px;top:114px;width:34px;height:34px;border-radius:50%;z-index:5;
+         background:#fff;border:1px solid #FADEE4;display:grid;place-items:center;
+         box-shadow:0 10px 18px -12px rgba(7,26,56,.55)">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#E4708F" stroke-width="2.2"
+           stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.6V12l3 1.8"/></svg>
+    </div>
+
+    <!-- رابط ۲ · کاوه‌نگار تا ملی‌پیامک: در حالت آماده‌به‌کار، پس فقط یک خط کم‌رنگ -->
+    <div style="position:absolute;left:231px;top:131px;width:38px;height:3px;border-radius:2px;z-index:3;
+         background-image:repeating-linear-gradient(90deg,#DCE9F7 0 4px,transparent 4px 9px)"></div>
+
+    <div class="fcard" style="left:480px;top:36px;width:190px;border-color:#F6D3DA;background:linear-gradient(170deg,#FFFFFF,#FFF7F9)">
+      <span class="fwell" style="border-color:#FBE0E5"><img src="img/logos/smsir-flame.png" alt="" style="max-width:30px"></span>
+      <div class="fname">SMS.ir</div>
+      <span class="pill bad" style="height:22px;font-size:9px;padding:0 9px">قطع شد</span>
+      <div class="fnote">مهلت ۵ ثانیه تمام شد</div>
+    </div>
+
+    <div class="fcard" style="left:260px;top:36px;width:190px;border-color:#BBEBDA;background:linear-gradient(170deg,#FFFFFF,#F4FCF9)">
+      <span class="fwell" style="border-color:#D3F1E6"><img src="img/logos/kavenegar.png" alt="" style="max-width:36px"></span>
+      <div class="fname">کاوه‌نگار</div>
+      <span class="pill ok" style="height:22px;font-size:9px;padding:0 9px">فرستاد</span>
+      <div class="fnote" style="color:#5FA98B">کد روی گوشی نشست</div>
+    </div>
+
+    <div class="fcard" style="left:40px;top:36px;width:190px">
+      <span class="fwell"><img src="img/logos/melipayamak.png" alt="" style="max-width:28px"></span>
+      <div class="fname">ملی‌پیامک</div>
+      <span class="pill" style="height:22px;font-size:9px;padding:0 9px">آماده</span>
+      <div class="fnote">اگر باز هم قطع شد</div>
+    </div>
+
+    <div class="card" style="position:absolute;left:252px;top:262px;width:420px;height:168px;border-radius:24px;z-index:2;padding:0 24px;
+         display:flex;align-items:center;justify-content:center;gap:18px;background:linear-gradient(100deg,#FFFFFF,#F6FBFF 62%,#EEF8FF)">
+      <div style="width:58px;height:58px;border-radius:50%;flex:none;display:grid;place-items:center;
+           background:linear-gradient(160deg,#12B981,#059669);box-shadow:0 18px 26px -18px rgba(5,150,105,.9)">
+        <svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.4 4.7 4.6L19 6.8"/></svg>
+      </div>
+      <div>
+        <div style="font-size:12px;color:#5FA98B;font-weight:800">کد رسید</div>
+        <div style="font-family:'Estedad';font-weight:900;font-size:31px;color:#0B1B36;letter-spacing:2.5px;margin-top:1px">۴۹۲۸۱</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#10B981"></span>
+          <span style="font-size:9.5px;color:#8AA0BC">از طریق کاوه‌نگار</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:40px;top:262px;width:192px;height:168px;display:flex;flex-direction:column;
+         justify-content:center;gap:12px;z-index:2">
+      <span class="rule" style="height:46px;width:100%;justify-content:flex-start">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.4V12l3 1.8"/></svg>
+        هر درگاه ۵ ثانیه مهلت دارد</span>
+      <span class="rule" style="height:46px;width:100%;justify-content:flex-start">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 12a8 8 0 1 1-2.4-5.6"/><path d="M20 4v4h-4"/></svg>
+        خطا: ۵ دقیقه استراحت</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۴ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۵ · گوگل و تلگرام ══════════════════ -->
+<section class="slide" id="s5">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۵</span><span class="sep"></span> ورود اجتماعی</div>
+  <h2 class="t">دو در،<br><em>یک حساب کاربری</em></h2>
+  <p class="s">گوگل ایمیل را می‌آورد، تلگرام شمارهٔ تأییدشده را. هر دو داخل همان فرم ورود کار می‌کنند، نه صفحهٔ جدا.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <!-- google -->
+    <div class="src-card" style="position:absolute;left:0;top:64px;width:214px;height:330px;z-index:2;
+         display:flex;flex-direction:column;justify-content:center">
+      <div style="width:54px;height:54px;border-radius:16px;display:grid;place-items:center;margin:0 auto 13px;
+           background:linear-gradient(160deg,#FFFFFF,#EFF4FF);border:1px solid #DCE8F8;
+           box-shadow:0 14px 24px -18px rgba(66,133,244,.7)">
+        <svg viewBox="0 0 24 24" width="29" height="29">
+          <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/>
+          <path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/>
+          <path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5z"/>
+          <path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6z"/>
+        </svg>
+      </div>
+      <div class="src-title">گوگل</div>
+      <div class="src-sub">همان حساب گوگل کاربر</div>
+      <div class="src-row" style="margin-top:10px"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#4285F4" stroke-width="3"><path d="m5 12 4.5 4.5L19 6"/></svg>ایمیل تأییدشده</div>
+      <div class="src-row"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#4285F4" stroke-width="3"><path d="m5 12 4.5 4.5L19 6"/></svg>نام و تصویر پروفایل</div>
+      <div class="src-foot">OIDC · PKCE</div>
+    </div>
+
+    <!-- telegram -->
+    <div class="src-card tl" style="position:absolute;right:0;top:64px;width:214px;height:330px;z-index:2;
+         display:flex;flex-direction:column;justify-content:center">
+      <div style="width:54px;height:54px;border-radius:16px;display:grid;place-items:center;margin:0 auto 13px;
+           background:linear-gradient(160deg,#F6FDFF,#E4F7FF);border:1px solid #C9EAF8;
+           box-shadow:0 14px 24px -18px rgba(34,158,217,.8)">
+        <svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="#229ED9" stroke-width="1.7" stroke-linejoin="round">
+          <path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/>
+        </svg>
+      </div>
+      <div class="src-title">تلگرام</div>
+      <div class="src-sub">بدون کد پیامکی، بدون فرم</div>
+      <div class="src-row" style="margin-top:10px"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#229ED9" stroke-width="3"><path d="m5 12 4.5 4.5L19 6"/></svg>شمارهٔ تأییدشده</div>
+      <div class="src-row"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#229ED9" stroke-width="3"><path d="m5 12 4.5 4.5L19 6"/></svg>نام نمایشی</div>
+      <div class="src-foot">BotFather · OIDC</div>
+    </div>
+
+    <!-- the gate -->
+    <div style="position:absolute;left:246px;top:18px;width:200px;height:420px;z-index:3">
+      <div class="bleed" style="position:absolute;inset:-12px;border-radius:32px;
+           background:radial-gradient(58% 44% at 50% 26%,rgba(37,99,235,.32),transparent 70%);filter:blur(14px)"></div>
+      <div style="position:absolute;inset:0;border-radius:26px;overflow:hidden;
+           background:linear-gradient(170deg,#0B2450,#071A38 58%,#05122B);
+           border:1px solid rgba(125,190,255,.28);
+           box-shadow:0 46px 72px -48px rgba(7,26,56,.95),inset 0 1px 0 rgba(255,255,255,.14)">
+        <div style="position:absolute;left:0;right:0;top:0;height:1px;
+             background:linear-gradient(90deg,transparent,rgba(125,211,252,.9),transparent)"></div>
+        <div style="position:absolute;inset:0;background:radial-gradient(68% 38% at 50% 6%,rgba(56,189,248,.32),transparent 66%)"></div>
+
+        <div style="position:relative;height:100%;padding:22px 16px 18px;display:flex;flex-direction:column;align-items:center;text-align:center">
+          <img src="../infographic/img/ashna-icon.svg" alt="" style="height:46px;width:auto;filter:brightness(0) invert(1) drop-shadow(0 12px 20px rgba(56,189,248,.55))">
+          <div style="margin-top:12px;font-family:'Estedad';font-weight:900;font-size:14.5px;color:#F2F8FF">یک حساب</div>
+          <div style="font-size:8.5px;color:#8FB3D8;margin-top:3px">با هر دو راه، همان کاربر</div>
+
+          <div style="margin-top:15px;width:100%;height:33px;border-radius:9px;display:flex;align-items:center;padding:0 10px;
+               background:rgba(255,255,255,.07);border:1px solid rgba(140,190,255,.22);color:#7E9ABD;font-size:9px">
+            ۰۹۱۲ ... یا ایمیل
+          </div>
+
+          <div style="margin-top:7px;width:100%;height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+               background:linear-gradient(180deg,#3B82F6,#1D4ED8);color:#fff;font-size:10.5px;font-weight:800;
+               box-shadow:0 14px 24px -16px rgba(37,99,235,.95)">
+            دریافت کد تأیید
+          </div>
+
+          <div style="margin-top:10px;width:100%;display:flex;align-items:center;gap:6px">
+            <span style="height:1px;background:rgba(140,190,255,.2);flex:1"></span>
+            <span style="font-size:8px;color:#7E9ABD">یا</span>
+            <span style="height:1px;background:rgba(140,190,255,.2);flex:1"></span>
+          </div>
+
+          <div style="margin-top:10px;width:100%;height:33px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:7px;
+               background:rgba(255,255,255,.95);color:#1B2A44;font-size:10px;font-weight:800">
+            <svg viewBox="0 0 24 24" width="13" height="13">
+              <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/>
+              <path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.7-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/>
+              <path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9l3.3-2.5z"/>
+              <path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.7 9.4 6 12 6z"/>
+            </svg>
+            ورود با گوگل
+          </div>
+
+          <div style="margin-top:7px;width:100%;height:33px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:7px;
+               background:rgba(34,158,217,.16);border:1px solid rgba(34,158,217,.45);color:#A6E4FB;font-size:10px;font-weight:800">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 5 3 11.6l4.6 1.7L19 7.4l-9.2 7.5-.3 4 2.6-2.4 3.9 2.6z"/></svg>
+            ورود با تلگرام
+          </div>
+
+          <div style="margin-top:auto;font-size:8px;color:#6F8DB2;line-height:1.8">
+            حساب در اولین ورود ساخته می‌شود
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۵ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۶ · ظاهر ══════════════════ -->
+<section class="slide" id="s6">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <div class="bleed" style="position:absolute;right:-60px;top:120px;width:300px;height:300px;border-radius:50%;
+       background:radial-gradient(circle,rgba(56,189,248,.22),transparent 66%);filter:blur(26px);z-index:0"></div>
+  <div class="bleed" style="position:absolute;left:-70px;top:420px;width:280px;height:280px;border-radius:50%;
+       background:radial-gradient(circle,rgba(244,114,182,.18),transparent 66%);filter:blur(28px);z-index:0"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۶</span><span class="sep"></span> استودیوی ظاهر</div>
+  <h2 class="t">فرم را همرنگ<br><em>سایت خودت کن</em></h2>
+  <p class="s">چهار پیش‌فرض آماده، رنگ دلخواه برای دکمه، گردی گوشه و سبک خانه‌های کد؛ پیش‌نمایش همان لحظه عوض می‌شود.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <!-- preview: flat and readable, inside its own browser chrome -->
+    <div style="position:absolute;left:0;top:0;width:318px;z-index:2">
+      <div class="window">
+        <div class="bar"><i></i><i></i><i></i><span class="url">example.com/wp-admin · استودیوی ظاهر</span></div>
+        <img src="../infographic/img/appearance.webp" alt="پیش‌نمایش زندهٔ استودیوی ظاهر" style="width:100%;display:block">
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:9px;color:#8AA0BC">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2563EB" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>
+        پیش‌نمایش همان لحظه، بدون ذخیره
+      </div>
+      <div style="margin-top:11px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:8.5px;color:#8AA0BC">چهار پیش‌فرض آماده</span>
+          <span style="height:1px;background:#E3EDFA;flex:1"></span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div class="preset on" style="flex:1">
+            <span class="psw" style="background:linear-gradient(160deg,#60A5FA,#2563EB 62%,#1E3A8A)"></span>
+            <span class="pnm">مدرن آبی</span>
+            <span class="pchk"><svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#fff" stroke-width="3.6"><path d="m5 12 4.5 4.5L19 6"/></svg></span>
+          </div>
+          <div class="preset" style="flex:1">
+            <span class="psw" style="background:linear-gradient(160deg,#FB7185,#E11D48 62%,#9F1239)"></span>
+            <span class="pnm">دیجی‌استایل</span>
+          </div>
+          <div class="preset" style="flex:1">
+            <span class="psw" style="background:linear-gradient(160deg,#34D399,#059669 62%,#065F46)"></span>
+            <span class="pnm">زمردی</span>
+          </div>
+          <div class="preset" style="flex:1">
+            <span class="psw" style="background:linear-gradient(160deg,#334155,#0F172A 62%,#020617)"></span>
+            <span class="pnm">لوکس تاریک</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="card" style="position:absolute;right:0;top:0;bottom:0;width:344px;padding:16px;border-radius:20px;z-index:3">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+        <div style="font-family:'Estedad';font-weight:900;font-size:12.5px;color:#0B1B36">ظاهر فرم</div>
+        <span class="pill" style="height:20px;font-size:8px;padding:0 8px">پیش‌نمایش زنده</span>
+      </div>
+
+      <div class="ctl-l">رنگ دکمه <span>#2563EB</span></div>
+      <div style="display:flex;gap:7px;margin-bottom:14px">
+        <span class="sw-dot" style="background:#2563EB;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2563EB"></span>
+        <span class="sw-dot" style="background:#7C3AED"></span>
+        <span class="sw-dot" style="background:#E11D48"></span>
+        <span class="sw-dot" style="background:#059669"></span>
+        <span class="sw-dot" style="background:#EA580C"></span>
+        <span class="sw-dot" style="background:#0F172A"></span>
+        <span class="sw-dot" style="background:#fff;border:1.4px dashed #C7D9F2;display:grid;place-items:center">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#8FA8C6" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></span>
+      </div>
+
+      <div class="ctl-l">گردی گوشه <span>۱۶ پیکسل</span></div>
+      <div class="track" style="margin-bottom:6px"><div class="track-in" style="width:50%"></div><span class="knob" style="right:calc(50% - 7px)"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:7.5px;color:#B3C5DA;margin-bottom:14px"><span>۰</span><span>۳۲</span></div>
+
+      <div class="ctl-l">عرض فرم <span>۴۲۰ پیکسل</span></div>
+      <div class="track" style="margin-bottom:6px"><div class="track-in" style="width:69%"></div><span class="knob" style="right:calc(69% - 7px)"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:7.5px;color:#B3C5DA;margin-bottom:14px"><span>۳۲۰</span><span>۶۴۰</span></div>
+
+      <div class="ctl-l">چیدمان</div>
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <span class="seg on">کارت</span><span class="seg">اسپلیت راست</span><span class="seg">اسپلیت چپ</span>
+      </div>
+
+      <div class="ctl-l">سبک خانه‌های کد</div>
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <span class="seg on" style="height:28px;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i class="db bx"></i><i class="db bx"></i><i class="db bx"></i></span>
+        <span class="seg" style="height:28px;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i class="db ul"></i><i class="db ul"></i><i class="db ul"></i></span>
+        <span class="seg" style="height:28px;display:flex;gap:3px;align-items:center;justify-content:center">
+          <i class="db pl"></i><i class="db pl"></i><i class="db pl"></i></span>
+      </div>
+
+      <div style="height:1px;background:#EDF3FA;margin:0 0 12px"></div>
+
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="ico" style="width:30px;height:30px;background:#EFF6FF;color:#2563EB">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19V5h8a4 4 0 0 1 0 8H5"/></svg></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:800;color:#12315E">فونت و اندازهٔ متن</div>
+          <div style="font-size:8.5px;color:#8AA0BC">وزیرمتن یا فونت خود قالب</div>
+        </div>
+        <span class="pill" style="height:20px;font-size:8px;padding:0 8px">خودکار</span>
+      </div>
+
+      <div style="margin-top:auto;padding-top:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:8.5px;color:#8AA0BC">چه چیزی عوض می‌شود</span>
+          <span style="height:1px;background:#EDF3FA;flex:1"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:8.5px;color:#5B7BA6">
+            <span style="width:7px;height:7px;border-radius:2px;background:#2563EB;flex:none"></span>رنگ دکمه و لینک</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:8.5px;color:#5B7BA6">
+            <span style="width:7px;height:7px;border-radius:3px;background:#93C5FD;flex:none"></span>گردی خانه‌ها</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:8.5px;color:#5B7BA6">
+            <span style="width:9px;height:7px;border-radius:2px;background:#60A5FA;flex:none"></span>عرض و چیدمان</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:8.5px;color:#5B7BA6">
+            <span style="width:7px;height:7px;border-radius:99px;background:#BFDBFE;flex:none"></span>سبک خانهٔ کد</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:9px;font-size:8px;color:#7E95B2">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#10B981" stroke-width="2.4"><path d="m5 12 4.5 4.5L19 6"/></svg>
+          روی قالب فعلی سایت، بدون تغییر فایل قالب
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۶ از ۰۸</div>
+  </div>
+</section>
+<!-- ══════════════════ ۰۷ · پنل واقعی ══════════════════ -->
+<section class="slide" id="s7">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <img class="brandmark" src="../infographic/img/ashna-icon.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۷</span><span class="sep"></span> از نصب واقعی</div>
+  <h2 class="t">پنل مدیریت،<br><em>همان‌طور که هست</em></h2>
+  <p class="s">دو صفحه از پیشخوان، همان‌طور که مدیر سایت می‌بیند؛ بدون روتوش و بدون ماکاپ.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <div class="bleed" style="position:absolute;left:60px;top:-80px;width:600px;height:400px;border-radius:50%;
+         background:radial-gradient(circle,rgba(56,189,248,.20),transparent 70%);filter:blur(24px)"></div>
+
+    <!-- صفحهٔ یکپارچه‌سازی: قاب اصلی -->
+    <div class="pwin front" style="left:30px;top:0;width:608px">
+      <div class="pbar" style="height:26px">
+        <i></i><i></i><i></i>
+        <span class="purl">/wp-admin/admin.php?page=ashna&amp;tab=integrations</span>
+        <span class="pver">v۳.۱.۴</span>
+      </div>
+      <div style="position:relative;overflow:hidden">
+        <img src="img/shop-settings.webp" alt="صفحهٔ یکپارچه‌سازی با ووکامرس" style="width:100%;display:block">
+        <div style="position:absolute;left:0;right:0;bottom:0;height:40px;
+             background:linear-gradient(180deg,rgba(255,255,255,0),#fff 92%)"></div>
+      </div>
+    </div>
+
+    <!-- صفحهٔ امنیت: قاب دوم، کمی جلوتر و پایین‌تر -->
+    <div class="pwin front second" style="left:150px;top:318px;width:470px">
+      <div class="pbar" style="height:25px">
+        <i></i><i></i><i></i>
+        <span class="purl">/wp-admin/admin.php?page=ashna&amp;tab=security</span>
+      </div>
+      <img src="../infographic/img/security.webp" alt="صفحهٔ امنیت و محدودیت‌ها" style="width:100%;display:block">
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۷ از ۰۸</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ۰۸ · فرم واقعی ══════════════════ -->
+<section class="slide dark" id="s8">
+  <div class="grid"></div><div class="dots"></div><div class="noise"></div>
+  <div class="bleed" style="position:absolute;left:50%;top:300px;transform:translate(-50%,-50%);width:900px;height:760px;
+       background:radial-gradient(50% 50% at 50% 50%,rgba(56,189,248,.17),rgba(37,99,235,.07) 46%,transparent 72%);
+       filter:blur(28px);z-index:0"></div>
+  <img class="brandmark w" src="../infographic/img/ashna-logo-white.svg" alt="">
+
+  <div class="eyebrow"><span class="n">۰۸</span><span class="sep"></span> فرم روی سایت</div>
+  <h2 class="t">فرم واقعی،<br><em>روی سایت واقعی</em></h2>
+  <p class="s">همان کارتی که مشتری می‌بیند؛ بدون صفحهٔ جدا، بدون کار اضافه.</p>
+  <div class="sig"></div>
+
+  <div class="art">
+    <!-- a quiet brand watermark, then the real card, lit -->
+    <img src="../infographic/img/ashna-icon.svg" alt="" style="position:absolute;left:50%;top:26px;
+         transform:translateX(-50%);height:470px;width:auto;opacity:.16;z-index:0;filter:brightness(0) invert(1)">
+
+    <div style="position:absolute;left:50%;top:16px;transform:translateX(-50%) perspective(1600px) rotateY(-11deg) rotateZ(-1.8deg);
+         width:378px;z-index:3;transform-style:preserve-3d">
+      <div style="position:relative;border-radius:22px;overflow:hidden;
+           box-shadow:0 60px 90px -50px rgba(0,0,0,.9),0 26px 46px -32px rgba(2,12,30,.9),
+             0 0 0 1px rgba(190,222,255,.28),0 0 64px -28px rgba(56,189,248,.45)">
+        <img src="../infographic/img/00-card.webp" alt="فرم ورود واقعی افزونه آشنا" style="width:100%;display:block">
+        <div style="position:absolute;inset:0;pointer-events:none;
+             background:linear-gradient(122deg,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0) 62%,rgba(10,30,60,.10) 100%)"></div>
+        <div style="position:absolute;left:0;right:0;top:0;height:1px;
+             background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent)"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <div class="who"><b>آشنا</b> <span style="opacity:.4">·</span> افزونهٔ وردپرس</div>
+    <div class="no">قاب ۰۸ از ۰۸</div>
+  </div>
+</section>
+
+</body>
+</html>

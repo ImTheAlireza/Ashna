@@ -1,26 +1,31 @@
 [
   {
-    "file": "ashna-otp.zip",
-    "bytes": 592572,
-    "sha256": "04ade1c6de6c47b80070cb8ed8e7fb58e9a5d8b267de7b2d6706b9074f2a363c",
+    "file": "ashna.zip",
+    "bytes": 591701,
+    "sha256": "955d941a7758a08d43f538ce3f9289da736e00de89bcd96a1bf17660678f6151",
     "files": 89
   },
   {
-    "file": "ashna-otp-no-license.zip",
-    "bytes": 558862,
-    "sha256": "af11c3a8bf4def51f587126a62bbcbe0eca090b98df8d96ec5eea389a280e136",
+    "file": "ashna-no-license.zip",
+    "bytes": 557919,
+    "sha256": "2fbe3144a7e4bea86b5a81790aa26a8ba1bcc8593f318043623931bc57ed8409",
     "files": 88
   },
   {
     "file": "ashna-activation-diagnostics.zip",
-    "bytes": 9988,
-    "sha256": "909a8a2353f77591772faa96cb5158f848f9982b0fa0b88090eaa7f07d5ea535",
+    "bytes": 9987,
+    "sha256": "63d2feb920d18a5109af3184d3f2cedf371b9ebffa82bbdac4c2bb94b6077c22",
     "files": 3
+  },
+  {
+    "file": "help.pdf",
+    "bytes": 2704649,
+    "sha256": "58b2a4ffca9341e1dcbb1331a56c37bdac62ca38312e36c76583cdec6bf1797f"
   },
   {
     "file": "ashna-landing.zip",
     "bytes": 1002623,
-    "sha256": "812ce54e71bb881622ee115fa8cf2200ebc8161091e419be11a6197652eb00f1",
+    "sha256": "fcf9c68441521ed8b7892495a62ad2883bafa8d290d291596dd3f46592511b9e",
     "files": 39
   },
   {
