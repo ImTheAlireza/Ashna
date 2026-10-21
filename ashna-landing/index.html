@@ -131,7 +131,7 @@
 
   <main id="main">
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" id="top">
       <div class="hero-bg" aria-hidden="true">
         <div class="hero-grid"></div>
         <div class="hero-orb hero-orb-1"></div>
@@ -142,173 +142,208 @@
           <circle cx="450" cy="450" r="390" stroke="rgba(96,165,250,.08)"/>
         </svg>
       </div>
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <div class="hero-head">
-          <a class="eyebrow" href="#admin">
-            <span class="eyebrow-badge">جدید</span>
-            داشبورد تازه و استودیوی طراحی زنده
-            <svg class="icon icon-14"><use href="#i-arrow"/></svg>
-          </a>
-          <h1>ورود بدون رمز،<br><span class="grad-text">حتی بدون پیامک.</span></h1>
-          <p class="hero-lead">ورود و ثبت‌نام وردپرس و ووکامرس؛ با کد یک‌بارمصرف، Passkey، گوگل و تلگرام.</p>
-          <p class="hero-lead-sub"><svg class="icon icon-16"><use href="#i-check-circle"/></svg> اگر پنل پیامکی‌ات قطع شود، کد از سه درگاه پشتیبان می‌رود و کاربر پشت در نمی‌ماند.</p>
-          </div>
-          <div class="hero-extra">
-          <div class="hero-cta">
-            <a class="btn btn-primary btn-lg" href="#lab">
-              <svg class="icon icon-20"><use href="#i-play"/></svg>
-              ۹۰ ثانیه امتحان کن
-            </a>
-            <a class="btn btn-outline-light btn-lg" href="#admin">
-              <svg class="icon icon-20"><use href="#i-grid"/></svg>
-              پیشخوان را ببین
-            </a>
-          </div>
-          <ul class="hero-points">
-            <li><svg class="icon icon-16"><use href="#i-check"/></svg> بدون پیامک واقعی</li>
-            <li><svg class="icon icon-16"><use href="#i-check"/></svg> بدون ثبت‌نام</li>
-            <li><svg class="icon icon-16"><use href="#i-check"/></svg> کد روی صفحه</li>
-          </ul>
-          <div class="hero-note">
-            <span class="hero-note-logos" aria-hidden="true">
-              <img src="assets/images/brands/wordpress.svg" alt="" width="15" height="15">
-              <img src="assets/images/brands/woocommerce.svg" alt="" width="15" height="15">
-              <img src="assets/images/brands/elementor.svg" alt="" width="15" height="15">
-            </span>
-            <span>روی وردپرس، ووکامرس و المنتور نصب می‌شود</span>
-          </div>
-          </div>
-        </div>
 
-        <div class="hero-visual" id="hero-demo">
-          <div class="demo-row">
-            <div class="demo-card-col">
-              <div class="demo-otp-wrapper demo-pos-center demo-shadow-medium demo-addon-icon" id="demo-auth-live" dir="rtl" data-otp-length="5">
-                <div class="demo-otp-card" data-demo-card="otp">
-                  <div class="demo-otp-header">
-                    <div class="demo-otp-icon-badge" aria-hidden="true">
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div class="container hero-center">
+        <span class="hero-pill">
+          <span class="hero-pill-dot" aria-hidden="true"></span>
+          افزونهٔ ورود و ثبت‌نام وردپرس
+        </span>
+        <h1 class="hero-title">ورود بدون رمز،<br><span class="grad-text">حتی بدون پیامک.</span></h1>
+
+        <div class="demo-stage" id="hero-demo">
+          <!-- Stage: form (request → verify → password) -->
+          <div class="demo-scene" data-scene="form">
+            <div class="demo-row">
+              <div class="demo-card-col">
+                <div class="demo-otp-wrapper demo-pos-center demo-shadow-medium demo-addon-icon" id="demo-auth-live" dir="rtl" data-otp-length="5">
+                  <div class="demo-otp-card">
+                    <div class="demo-otp-header">
+                      <div class="demo-otp-icon-badge" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                      </div>
+                      <h3 class="demo-otp-title">ورود / ثبت‌نام</h3>
+                      <p class="demo-otp-subtitle">برای ادامه، شماره موبایل یا ایمیل خود را وارد کنید.</p>
                     </div>
-                    <h3 class="demo-otp-title">ورود / ثبت‌نام</h3>
-                    <p class="demo-otp-subtitle">برای ادامه، شماره موبایل یا ایمیل خود را وارد کنید.</p>
+
+                    <div class="demo-otp-alert is-error" role="alert" hidden></div>
+
+                    <div class="demo-swap">
+                      <form class="demo-otp-form demo-step-request" novalidate>
+                        <div class="demo-field-group">
+                          <label class="demo-label" for="demo-identifier">شماره موبایل یا ایمیل</label>
+                          <div class="demo-input-wrap">
+                            <input id="demo-identifier" class="demo-input demo-identifier-input" type="text" inputmode="text" autocomplete="username webauthn" dir="rtl" value="09123456789" placeholder="شماره موبایل (0912...) یا ایمیل" required>
+                            <span class="demo-input-addon is-icon" aria-hidden="true">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            </span>
+                          </div>
+                        </div>
+                        <button type="submit" class="demo-btn demo-btn-primary demo-submit-request">
+                          <span class="demo-btn-text">دریافت کد تایید</span>
+                          <span class="demo-spinner" hidden></span>
+                        </button>
+                        <div class="demo-passkey-login-wrap">
+                          <div class="demo-passkey-divider"><span>یا ورود بدون پیامک</span></div>
+                          <button type="button" class="demo-btn demo-btn-passkey demo-trigger-passkey">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/><path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/></svg>
+                            <span class="demo-btn-text">ورود سریع با اثر انگشت / چهره (Passkey)</span>
+                          </button>
+                        </div>
+                        <div class="demo-alt-action">
+                          <button type="button" class="demo-btn-link demo-switch-to-password">ورود با رمز عبور ثابت</button>
+                        </div>
+                      </form>
+
+                      <form class="demo-otp-form demo-step-verify" novalidate hidden>
+                        <div class="demo-recipient-bar">
+                          <div class="demo-recipient-meta">
+                            <span class="demo-channel-pill">کد ارسالی به:</span>
+                            <span class="demo-recipient-display" dir="ltr">0912***6789</span>
+                          </div>
+                          <button type="button" class="demo-btn-link demo-change-identifier">✎ ویرایش</button>
+                        </div>
+                        <div class="demo-field-group">
+                          <label class="demo-label demo-verify-label">کد تایید ۵ رقمی را وارد کنید</label>
+                          <div class="demo-otp-digits" dir="ltr">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="0" autocomplete="one-time-code" aria-label="رقم ۱ کد تایید">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="1" autocomplete="off" aria-label="رقم ۲ کد تایید">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="2" autocomplete="off" aria-label="رقم ۳ کد تایید">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="3" autocomplete="off" aria-label="رقم ۴ کد تایید">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="4" autocomplete="off" aria-label="رقم ۵ کد تایید">
+                          </div>
+                        </div>
+                        <button type="submit" class="demo-btn demo-btn-primary demo-submit-verify"><span class="demo-btn-text">تایید و ورود به حساب</span></button>
+                        <div class="demo-resend-row">
+                          <div class="demo-timer-wrap" data-timer>
+                            <div class="demo-timer-head"><span>ارسال مجدد کد تا </span><strong class="demo-timer-countdown" dir="ltr">01:00</strong><span> دیگر</span></div>
+                            <div class="demo-timer-progress-track" aria-hidden="true"><div class="demo-timer-progress-fill" style="width:100%"></div></div>
+                          </div>
+                          <button type="button" class="demo-btn-link demo-resend-btn" hidden>↻ ارسال مجدد کد تایید</button>
+                        </div>
+                      </form>
+
+                      <form class="demo-otp-form demo-step-password" novalidate hidden>
+                        <div class="demo-field-group">
+                          <label class="demo-label" for="demo-pw-user">شماره موبایل، ایمیل یا نام کاربری</label>
+                          <input id="demo-pw-user" class="demo-input" type="text" dir="rtl" placeholder="شماره موبایل یا نام کاربری" autocomplete="username">
+                        </div>
+                        <div class="demo-field-group">
+                          <label class="demo-label" for="demo-pw-pass">رمز عبور</label>
+                          <input id="demo-pw-pass" class="demo-input" type="password" dir="rtl" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="demo-btn demo-btn-primary demo-submit-password"><span class="demo-btn-text">ورود به حساب</span></button>
+                        <div class="demo-alt-action">
+                          <button type="button" class="demo-btn-link demo-switch-to-otp">ورود با کد یک‌بارمصرف (OTP)</button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
-
-                  <form class="demo-otp-form demo-step-request" novalidate>
-                    <div class="demo-field-group">
-                      <label class="demo-label" for="demo-identifier">شماره موبایل یا ایمیل</label>
-                      <div class="demo-input-wrap">
-                        <input id="demo-identifier" class="demo-input demo-identifier-input" type="text" inputmode="text" autocomplete="username webauthn" dir="rtl" value="09123456789" placeholder="شماره موبایل (0912...) یا ایمیل" required>
-                        <span class="demo-input-addon is-icon" aria-hidden="true">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                        </span>
-                      </div>
-                    </div>
-                    <button type="submit" class="demo-btn demo-btn-primary demo-submit-request"><span class="demo-btn-text">دریافت کد تایید</span></button>
-                    <div class="demo-passkey-login-wrap">
-                      <div class="demo-passkey-divider"><span>یا ورود بدون پیامک</span></div>
-                      <button type="button" class="demo-btn demo-btn-passkey" data-demo-alt="passkey">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/><path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/></svg>
-                        <span class="demo-btn-text">ورود سریع با اثر انگشت / چهره (Passkey)</span>
-                      </button>
-                    </div>
-                    <div class="demo-alt-action">
-                      <button type="button" class="demo-btn-link" data-demo-alt="password">ورود با رمز عبور ثابت</button>
-                    </div>
-                  </form>
-
-                  <form class="demo-otp-form demo-step-verify" novalidate hidden>
-                    <div class="demo-otp-alert is-error" role="alert" hidden>کد وارد شده اشتباه است.</div>
-                    <div class="demo-recipient-bar">
-                      <div class="demo-recipient-meta">
-                        <span class="demo-channel-pill">کد ارسالی به:</span>
-                        <span class="demo-recipient-display" dir="ltr">0912***6789</span>
-                      </div>
-                      <button type="button" class="demo-btn-link demo-change-identifier">✎ ویرایش</button>
-                    </div>
-                    <div class="demo-field-group">
-                      <label class="demo-label demo-verify-label">کد تایید ۵ رقمی را وارد کنید</label>
-                      <div class="demo-otp-digits" dir="ltr">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="0" autocomplete="one-time-code" aria-label="رقم ۱ کد تایید">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="1" autocomplete="off" aria-label="رقم ۲ کد تایید">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="2" autocomplete="off" aria-label="رقم ۳ کد تایید">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="3" autocomplete="off" aria-label="رقم ۴ کد تایید">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="demo-digit-box" data-index="4" autocomplete="off" aria-label="رقم ۵ کد تایید">
-                      </div>
-                    </div>
-                    <button type="submit" class="demo-btn demo-btn-primary demo-submit-verify"><span class="demo-btn-text">تایید و ورود به حساب</span></button>
-                    <div class="demo-resend-row">
-                      <div class="demo-timer-wrap">
-                        <div class="demo-timer-head"><span>ارسال مجدد کد تا </span><strong class="demo-timer-countdown" dir="ltr">01:00</strong><span> دیگر</span></div>
-                        <div class="demo-timer-progress-track" aria-hidden="true"><div class="demo-timer-progress-fill" style="width:100%"></div></div>
-                      </div>
-                      <button type="button" class="demo-btn-link demo-resend-btn" hidden>↻ ارسال مجدد کد تایید</button>
-                    </div>
-                  </form>
-                </div>
-
-                <div class="demo-success" data-demo-card="success" hidden>
-                  <div class="demo-success-check" aria-hidden="true">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  </div>
-                  <h3>ورود موفق</h3>
-                  <p>با شماره <strong class="demo-success-number" dir="ltr">0912***6789</strong> وارد شدید.</p>
-                  <button type="button" class="demo-btn demo-btn-primary demo-restart">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-                    <span>تلاش مجدد</span>
-                  </button>
                 </div>
               </div>
-            </div>
 
-            <div class="demo-phone-col" id="demo-phone" hidden>
-              <div class="demo-phone">
-                <div class="demo-phone-screen">
-                  <span class="demo-phone-blob is-1"></span>
-                  <span class="demo-phone-blob is-2"></span>
-                  <div class="demo-phone-top">
-                    <div class="demo-phone-status" dir="ltr">
-                      <span class="demo-phone-time">9:41</span>
-                      <span class="demo-phone-notch"><i></i></span>
-                      <span class="demo-phone-status-icons">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
-                      </span>
-                    </div>
-                    <div class="demo-phone-center">
-                      <div class="demo-phone-date">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        <span>یکشنبه، ۱۹ مهر</span>
+              <div class="demo-phone-col" id="demo-phone" hidden>
+                <div class="demo-phone-device">
+                  <span class="demo-phone-side is-1" aria-hidden="true"></span>
+                  <span class="demo-phone-side is-2" aria-hidden="true"></span>
+                  <span class="demo-phone-side is-3" aria-hidden="true"></span>
+                  <span class="demo-phone-side is-4" aria-hidden="true"></span>
+                  <div class="demo-phone">
+                    <div class="demo-phone-screen">
+                      <span class="demo-phone-blob is-1" aria-hidden="true"></span>
+                      <span class="demo-phone-blob is-2" aria-hidden="true"></span>
+                      <div class="demo-phone-top">
+                        <div class="demo-phone-status" dir="ltr">
+                          <span class="demo-phone-time">9:41</span>
+                          <span class="demo-phone-notch" aria-hidden="true">
+                            <span class="demo-notch-cam"></span>
+                            <span class="demo-notch-label"><i></i><span>پیامک جدید</span><i></i></span>
+                          </span>
+                          <span class="demo-phone-status-icons">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
+                          </span>
+                        </div>
+                        <div class="demo-phone-center">
+                          <div class="demo-phone-date">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span>یکشنبه، ۱۹ مهر</span>
+                          </div>
+                          <div class="demo-phone-clock" dir="ltr">09:41</div>
+                        </div>
+                        <div class="demo-notif" hidden>
+                          <div class="demo-notif-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.1 1 4.1 2.7 5.5-.2 1.2-.9 2.6-1.7 3.4-.2.2 0 .6.3.6 1.8-.1 3.6-.8 4.8-1.6 1.2.4 2.5.6 3.9.6 5.5 0 10-3.6 10-8.5S17.5 3 12 3z"/></svg>
+                          </div>
+                          <div class="demo-notif-body">
+                            <div class="demo-notif-head"><span>پیام‌ها • آشنا</span><span class="demo-notif-time">الان</span></div>
+                            <p class="demo-notif-text">کد تایید شما:</p>
+                            <div class="demo-notif-code" dir="ltr" aria-label="کد تایید پیامک‌شده"></div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="demo-phone-clock" dir="ltr">09:41</div>
-                    </div>
-                    <div class="demo-notif">
-                      <div class="demo-notif-icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.1 1 4.1 2.7 5.5-.2 1.2-.9 2.6-1.7 3.4-.2.2 0 .6.3.6 1.8-.1 3.6-.8 4.8-1.6 1.2.4 2.5.6 3.9.6 5.5 0 10-3.6 10-8.5S17.5 3 12 3z"/></svg>
-                      </div>
-                      <div class="demo-notif-body">
-                        <div class="demo-notif-head"><span>پیام‌ها • آشنا</span><span class="demo-notif-time">الان</span></div>
-                        <p class="demo-notif-text">کد تایید شما:</p>
-                        <div class="demo-notif-code" dir="ltr" aria-label="کد تایید پیامک‌شده"></div>
+                      <div class="demo-phone-bottom">
+                        <div class="demo-phone-actions" dir="ltr">
+                          <span class="demo-phone-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12z"/><line x1="6" x2="18" y1="6" y2="6"/><line x1="12" x2="12" y1="12" y2="12"/></svg></span>
+                          <span class="demo-phone-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+                        </div>
+                        <div class="demo-phone-home"></div>
                       </div>
                     </div>
-                  </div>
-                  <div class="demo-phone-bottom">
-                    <div class="demo-phone-actions" dir="ltr">
-                      <span class="demo-phone-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12z"/><line x1="6" x2="18" y1="6" y2="6"/><line x1="12" x2="12" y1="12" y2="12"/></svg></span>
-                      <span class="demo-phone-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
-                    </div>
-                    <div class="demo-phone-home"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <p class="demo-disclaimer">
-            <svg class="icon icon-14"><use href="#i-check-circle"/></svg>
-            نسخهٔ نمایشی رابط؛ هیچ پیامک واقعی ارسال نمی‌شود.
-          </p>
+
+          <!-- Stage: biometric (Passkey scan) -->
+          <div class="demo-scene" data-scene="biometric" hidden>
+            <div class="demo-bio" role="status" aria-live="polite">
+              <h3 class="demo-bio-title" data-bio-title>در حال اسکن...</h3>
+              <div class="demo-bio-grid">
+                <div class="demo-bio-tile" data-bio-tile="faceid">
+                  <div class="demo-bio-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                    <span class="demo-bio-scan" aria-hidden="true"></span>
+                    <span class="demo-bio-check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </span>
+                  </div>
+                  <span class="demo-bio-label">Face ID</span>
+                </div>
+                <div class="demo-bio-tile" data-bio-tile="touchid">
+                  <div class="demo-bio-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/><path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/></svg>
+                    <span class="demo-bio-scan" aria-hidden="true"></span>
+                    <span class="demo-bio-check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </span>
+                  </div>
+                  <span class="demo-bio-label">اثر انگشت</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage: success -->
+          <div class="demo-scene" data-scene="success" hidden>
+            <div class="demo-success">
+              <div class="demo-success-check" aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M20 6 9 17l-5-5"/></svg>
+              </div>
+              <h3>ورود موفق</h3>
+              <p>با شماره <strong class="demo-success-number" dir="ltr">0912***6789</strong> وارد شدید.</p>
+              <button type="button" class="demo-btn demo-btn-primary demo-restart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                <span>تلاش مجدد</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <p class="demo-disclaimer">
+          <svg class="icon icon-14"><use href="#i-check-circle"/></svg>
+          نسخهٔ نمایشی رابط؛ هیچ پیامک واقعی ارسال نمی‌شود.
+        </p>
       </div>
 
       <div class="container">

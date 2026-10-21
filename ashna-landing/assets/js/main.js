@@ -135,36 +135,108 @@
     counters.forEach(function (el) { cio.observe(el); });
   }
 
-  /* ---------------- Hero demo (ورود با کد یک‌بارمصرف) ---------------- */
-  var demoRoot = $("#demo-auth-live");
-  if (demoRoot) {
-    var demoCard = $("[data-demo-card='otp']", demoRoot);
-    var demoSuccess = $("[data-demo-card='success']", demoRoot);
-    var demoPhone = $("#demo-phone");
-    var stepRequest = $(".demo-step-request", demoRoot);
-    var stepVerify = $(".demo-step-verify", demoRoot);
-    var identifierInput = $("#demo-identifier", demoRoot);
-    var recipientEl = $(".demo-recipient-display", demoRoot);
-    var successNumber = $(".demo-success-number", demoRoot);
-    var digitInputs = $$(".demo-digit-box", demoRoot);
-    var alertBox = $(".demo-otp-alert", demoRoot);
-    var countdownEl = $(".demo-timer-countdown", demoRoot);
-    var progressFill = $(".demo-timer-progress-fill", demoRoot);
-    var timerHead = $(".demo-timer-head", demoRoot);
-    var resendBtn = $(".demo-resend-btn", demoRoot);
-    var codeChips = $(".demo-notif-code");
-    var restartBtn = $(".demo-restart", demoRoot);
+  /* ---------------- Hero demo (ورود با کد یک‌بارمصرف / Passkey) ----------------
+     Mirrors the stage machine of the original landing demo:
+       form (request → verify → password) · biometric (scan → verified) · success
+     Every step is local: no request leaves the page.
+     -------------------------------------------------------------------------- */
+  var demoStage = $("#hero-demo");
+  if (demoStage) {
+    var scenes = {
+      form: $("[data-scene='form']", demoStage),
+      biometric: $("[data-scene='biometric']", demoStage),
+      success: $("[data-scene='success']", demoStage)
+    };
+    var cardRoot = $("#demo-auth-live", demoStage);
+    var steps = {
+      request: $(".demo-step-request", demoStage),
+      verify: $(".demo-step-verify", demoStage),
+      password: $(".demo-step-password", demoStage)
+    };
+    var identifierInput = $("#demo-identifier", demoStage);
+    var recipientEl = $(".demo-recipient-display", demoStage);
+    var successNumberEl = $(".demo-success-number", demoStage);
+    var alertBox = $(".demo-otp-alert", demoStage);
+    var digitInputs = $$(".demo-digit-box", demoStage);
+    var digitWrap = $(".demo-otp-digits", demoStage);
+    var phoneCol = $("#demo-phone", demoStage);
+    var cardCol = $(".demo-card-col", demoStage);
+    var phoneBody = $(".demo-phone", demoStage);
+    var notifEl = $(".demo-notif", demoStage);
+    var codeChips = $(".demo-notif-code", demoStage);
+    var countdownEl = $(".demo-timer-countdown", demoStage);
+    var progressFill = $(".demo-timer-progress-fill", demoStage);
+    var timerWrap = $("[data-timer]", demoStage);
+    var resendBtn = $(".demo-resend-btn", demoStage);
+    var requestBtn = $(".demo-submit-request", demoStage);
+    var requestSpinner = $(".demo-spinner", demoStage);
+    var bioTitle = $("[data-bio-title]", demoStage);
+    var bioTiles = $$(".demo-bio-tile", demoStage);
+    var restartBtn = $(".demo-restart", demoStage);
+    var successCheck = $(".demo-success-check", demoStage);
+
     var DEMO_SECONDS = 60;
     var demoCode = "";
     var secondsLeft = DEMO_SECONDS;
-    var demoTimerId = null;
-    var verifyId = null;
-    var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var timerId = null;
+    var timers = [];
+    var currentScene = scenes.form;
+    var isBusy = false;
 
+    function later(fn, ms) {
+      var id = window.setTimeout(fn, ms);
+      timers.push(id);
+      return id;
+    }
+    function clearLater() {
+      timers.forEach(function (id) { window.clearTimeout(id); });
+      timers = [];
+    }
+    function stopCountdown() {
+      if (timerId) window.clearInterval(timerId);
+      timerId = null;
+    }
+    function clearAllTimers() {
+      clearLater();
+      stopCountdown();
+    }
+    function reducedMotion() {
+      return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+    function replayAnimation(el) {
+      if (!el || reducedMotion()) return;
+      el.style.animation = "none";
+      void el.offsetWidth;
+      el.style.animation = "";
+    }
+
+    /* ---------- stage machine ---------- */
+    function showScene(name) {
+      var next = scenes[name];
+      if (!next || next === currentScene) return;
+      var prev = currentScene;
+      prev.classList.add("is-out");
+      window.setTimeout(function () {
+        prev.hidden = true;
+        prev.classList.remove("is-out");
+        next.hidden = false;
+        replayAnimation(next);
+      }, 140);
+      currentScene = next;
+    }
+
+    function setStep(name) {
+      Object.keys(steps).forEach(function (key) {
+        if (steps[key]) steps[key].hidden = key !== name;
+      });
+      hideAlert();
+      if (name !== "verify") hidePhone();
+      if (name === "request" && identifierInput) identifierInput.value = identifierInput.value || "09123456789";
+    }
+
+    /* ---------- helpers ---------- */
     function randomCode() {
-      var out = "";
-      for (var i = 0; i < 5; i++) out += String(Math.floor(Math.random() * 10));
-      return out;
+      return String(Math.floor(10000 + Math.random() * 90000));
     }
     function faDigits(value) {
       return String(value).replace(/[0-9]/g, function (d) { return "۰۱۲۳۴۵۶۷۸۹"[Number(d)]; });
@@ -177,13 +249,90 @@
       if (digits.length < 8) return raw;
       return digits.slice(0, 4) + "***" + digits.slice(-4);
     }
-    function setAlert(show) { if (alertBox) alertBox.hidden = !show; }
+    function hideAlert() {
+      if (!alertBox) return;
+      alertBox.hidden = true;
+      alertBox.textContent = "";
+    }
+    function showAlert(message) {
+      if (!alertBox) return;
+      alertBox.textContent = message;
+      alertBox.hidden = false;
+    }
+    function shakeDigits() {
+      if (!digitWrap || reducedMotion()) return;
+      digitWrap.classList.remove("is-shake");
+      void digitWrap.offsetWidth;
+      digitWrap.classList.add("is-shake");
+      window.setTimeout(function () { digitWrap.classList.remove("is-shake"); }, 680);
+    }
     function clearDigits() {
       digitInputs.forEach(function (input) {
         input.value = "";
         input.classList.remove("is-filled");
       });
+      paintMatches();
     }
+    function paintMatches() {
+      if (!codeChips) return;
+      var typed = digitInputs.map(function (input) { return input.value; }).join("");
+      Array.prototype.forEach.call(codeChips.children, function (chip, index) {
+        chip.classList.toggle("is-match", !!typed[index] && typed[index] === demoCode[index]);
+      });
+    }
+
+    /* ---------- phone + notification ---------- */
+    function nudgeCard(direction) {
+      if (!cardCol || reducedMotion() || !window.matchMedia("(min-width: 1000px)").matches) return;
+      var cls = direction === "in" ? "shift-in" : "shift-out";
+      cardCol.classList.remove("shift-in", "shift-out");
+      void cardCol.offsetWidth;
+      cardCol.classList.add(cls);
+      window.setTimeout(function () { cardCol.classList.remove(cls); }, 560);
+    }
+    function hidePhone(quiet) {
+      if (!phoneCol || phoneCol.hidden) return;
+      if (reducedMotion()) {
+        phoneCol.hidden = true;
+      } else {
+        phoneCol.classList.add("is-out");
+        window.setTimeout(function () {
+          if (!phoneCol.classList.contains("is-out")) return;
+          phoneCol.classList.remove("is-out");
+          phoneCol.hidden = true;
+        }, 250);
+      }
+      if (phoneBody) phoneBody.classList.remove("is-notch-open");
+      if (notifEl) {
+        notifEl.hidden = true;
+        notifEl.classList.remove("is-in");
+      }
+      if (!quiet) nudgeCard("out");
+    }
+    function showPhone() {
+      if (!phoneCol) return;
+      var fresh = phoneCol.hidden;
+      phoneCol.classList.remove("is-out");
+      if (fresh) {
+        phoneCol.hidden = false;
+        replayAnimation(phoneCol);
+        nudgeCard("in");
+        later(function () {
+          if (phoneBody) phoneBody.classList.add("is-notch-open");
+        }, 300);
+      }
+      later(function () {
+        if (phoneBody) phoneBody.classList.remove("is-notch-open");
+        if (notifEl) {
+          notifEl.hidden = false;
+          notifEl.classList.remove("is-in");
+          replayAnimation(notifEl);
+          notifEl.classList.add("is-in");
+        }
+      }, fresh ? 700 : 60);
+    }
+
+    /* ---------- code chips ---------- */
     function paintCode() {
       if (!codeChips) return;
       codeChips.textContent = "";
@@ -193,97 +342,152 @@
         codeChips.appendChild(chip);
       });
     }
-    function stopDemoTimer() {
-      if (demoTimerId) window.clearInterval(demoTimerId);
-      demoTimerId = null;
-    }
+
+    /* ---------- countdown ---------- */
     function paintTimer() {
       var minutes = Math.floor(secondsLeft / 60);
       var seconds = secondsLeft % 60;
       if (countdownEl) countdownEl.textContent = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
       if (progressFill) progressFill.style.width = (secondsLeft / DEMO_SECONDS * 100) + "%";
     }
-    function runDemoTimer() {
-      stopDemoTimer();
+    function runCountdown() {
+      stopCountdown();
       secondsLeft = DEMO_SECONDS;
-      if (timerHead) timerHead.hidden = false;
+      if (timerWrap) timerWrap.hidden = false;
       if (resendBtn) resendBtn.hidden = true;
       paintTimer();
-      demoTimerId = window.setInterval(function () {
+      timerId = window.setInterval(function () {
         secondsLeft -= 1;
         if (secondsLeft <= 0) {
-          stopDemoTimer();
           secondsLeft = 0;
           paintTimer();
-          if (timerHead) timerHead.hidden = true;
+          stopCountdown();
+          if (timerWrap) timerWrap.hidden = true;
           if (resendBtn) resendBtn.hidden = false;
           return;
         }
         paintTimer();
       }, 1000);
     }
-    function requestCode() {
+
+    /* ---------- actions ---------- */
+    function requestCode(event) {
+      if (event) event.preventDefault();
+      if (isBusy) return;
+      var value = identifierInput ? identifierInput.value.trim() : "";
+      if (!value) {
+        showAlert("شماره موبایل یا ایمیل را وارد کنید.");
+        if (identifierInput) identifierInput.focus();
+        return;
+      }
+      clearAllTimers();
+      hideAlert();
       demoCode = randomCode();
       paintCode();
-      var masked = maskContact(identifierInput ? identifierInput.value : "");
+      var masked = maskContact(value);
       if (recipientEl) recipientEl.textContent = masked;
-      if (successNumber) successNumber.textContent = masked;
-      clearDigits();
-      setAlert(false);
-      if (stepRequest) stepRequest.hidden = true;
-      if (stepVerify) stepVerify.hidden = false;
-      if (demoPhone) {
-        demoPhone.hidden = false;
-        demoPhone.classList.remove("is-in");
-        if (!reduceMotion) {
-          void demoPhone.offsetWidth;
-          demoPhone.classList.add("is-in");
-        }
-      }
-      runDemoTimer();
-      window.setTimeout(function () { if (digitInputs[0]) digitInputs[0].focus(); }, reduceMotion ? 0 : 280);
-    }
-    function resetDemo() {
-      stopDemoTimer();
-      window.clearTimeout(verifyId);
-      setAlert(false);
-      clearDigits();
-      demoCode = "";
-      if (demoPhone) { demoPhone.hidden = true; demoPhone.classList.remove("is-in"); }
-      if (stepVerify) stepVerify.hidden = true;
-      if (stepRequest) stepRequest.hidden = false;
-      if (demoSuccess) demoSuccess.hidden = true;
-      if (demoCard) demoCard.hidden = false;
-    }
-    function showSuccess() {
-      stopDemoTimer();
-      if (demoPhone) demoPhone.hidden = true;
-      if (demoCard) demoCard.hidden = true;
-      if (demoSuccess) demoSuccess.hidden = false;
-    }
-    function verifyCode() {
-      var value = digitInputs.map(function (input) { return input.value; }).join("");
-      if (value.length !== 5) return;
-      if (value === demoCode) { setAlert(false); showSuccess(); return; }
-      setAlert(true);
+      if (successNumberEl) successNumberEl.textContent = masked;
+      isBusy = true;
+      if (requestBtn) requestBtn.disabled = true;
+      if (requestSpinner) requestSpinner.hidden = false;
+      later(function () {
+        isBusy = false;
+        if (requestBtn) requestBtn.disabled = false;
+        if (requestSpinner) requestSpinner.hidden = true;
+        clearDigits();
+        setStep("verify");
+        runCountdown();
+        showPhone();
+        later(function () { if (digitInputs[0]) digitInputs[0].focus(); }, 700);
+      }, 300);
     }
 
-    if (stepRequest) {
-      stepRequest.addEventListener("submit", function (event) { event.preventDefault(); requestCode(); });
+    function verifyCode() {
+      hideAlert();
+      var value = digitInputs.map(function (input) { return input.value; }).join("");
+      if (value.length !== 5) {
+        showAlert("کد ۵ رقمی را کامل وارد کنید.");
+        shakeDigits();
+        return;
+      }
+      if (value !== demoCode) {
+        showAlert("کد وارد شده اشتباه است.");
+        shakeDigits();
+        clearDigits();
+        if (digitInputs[0]) digitInputs[0].focus();
+        return;
+      }
+      showSuccess();
     }
-    if (stepVerify) {
-      stepVerify.addEventListener("submit", function (event) { event.preventDefault(); verifyCode(); });
+
+    function showSuccess() {
+      clearAllTimers();
+      hidePhone(true);
+      showScene("success");
+      replayAnimation(successCheck);
     }
-    $$(".demo-change-identifier", demoRoot).forEach(function (btn) {
-      btn.addEventListener("click", resetDemo);
+
+    function startPasskey() {
+      clearAllTimers();
+      hideAlert();
+      hidePhone(true);
+      if (bioTitle) bioTitle.textContent = "در حال اسکن...";
+      bioTiles.forEach(function (tile) { tile.classList.remove("is-verified"); });
+      showScene("biometric");
+      later(function () {
+        if (bioTitle) bioTitle.textContent = "تایید شد";
+        bioTiles.forEach(function (tile) {
+          tile.classList.remove("is-verified");
+          void tile.offsetWidth;
+          tile.classList.add("is-verified");
+        });
+      }, 950);
+      later(showSuccess, 2150);
+    }
+
+    function resetDemo() {
+      clearAllTimers();
+      hideAlert();
+      hidePhone(true);
+      clearDigits();
+      demoCode = "";
+      if (bioTitle) bioTitle.textContent = "در حال اسکن...";
+      bioTiles.forEach(function (tile) { tile.classList.remove("is-verified"); });
+      setStep("request");
+      showScene("form");
+      if (identifierInput) identifierInput.focus();
+    }
+
+    /* ---------- wiring ---------- */
+    if (steps.request) steps.request.addEventListener("submit", requestCode);
+    if (steps.verify) steps.verify.addEventListener("submit", function (event) { event.preventDefault(); verifyCode(); });
+    if (steps.password) steps.password.addEventListener("submit", function (event) { event.preventDefault(); showSuccess(); });
+
+    $$(".demo-trigger-passkey", demoStage).forEach(function (btn) {
+      btn.addEventListener("click", startPasskey);
+    });
+    $$(".demo-switch-to-password", demoStage).forEach(function (btn) {
+      btn.addEventListener("click", function () { hideAlert(); hidePhone(); setStep("password"); });
+    });
+    $$(".demo-switch-to-otp", demoStage).forEach(function (btn) {
+      btn.addEventListener("click", function () { hideAlert(); setStep("request"); });
+    });
+    $$(".demo-change-identifier", demoStage).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        clearAllTimers();
+        hidePhone();
+        setStep("request");
+      });
     });
     if (resendBtn) {
       resendBtn.addEventListener("click", function () {
+        clearAllTimers();
         demoCode = randomCode();
         paintCode();
         clearDigits();
-        setAlert(false);
-        runDemoTimer();
+        hideAlert();
+        runCountdown();
+        showPhone();
         if (digitInputs[0]) digitInputs[0].focus();
       });
     }
@@ -298,11 +502,11 @@
           .slice(0, 1);
         input.value = value;
         input.classList.toggle("is-filled", !!value);
-        setAlert(false);
+        hideAlert();
         if (value && digitInputs[index + 1]) digitInputs[index + 1].focus();
+        paintMatches();
         if (digitInputs.every(function (box) { return !!box.value; })) {
-          window.clearTimeout(verifyId);
-          verifyId = window.setTimeout(verifyCode, 240);
+          later(verifyCode, 240);
         }
       });
       input.addEventListener("keydown", function (event) {
@@ -311,6 +515,7 @@
           prev.value = "";
           prev.classList.remove("is-filled");
           prev.focus();
+          paintMatches();
           event.preventDefault();
         }
         if (event.key === "ArrowLeft" && digitInputs[index + 1]) digitInputs[index + 1].focus();
@@ -329,19 +534,16 @@
             digitInputs[i].classList.add("is-filled");
           }
         });
+        paintMatches();
         if (text.length === 5) verifyCode();
         else if (digitInputs[text.length]) digitInputs[text.length].focus();
       });
     });
 
-    $$("[data-demo-alt]", demoRoot).forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var passkey = btn.getAttribute("data-demo-alt") === "passkey";
-        toast(passkey
-          ? "این نمایش جریان ورود با کد را شبیه‌سازی می‌کند؛ Passkey در نسخهٔ واقعی افزونه با اثر انگشت یا چهره کار می‌کند."
-          : "این نمایش جریان ورود با کد را شبیه‌سازی می‌کند؛ ورود با رمز عبور در نسخهٔ واقعی افزونه فعال است.");
-      });
-    });
+    // Prime the card with its default state
+    if (cardRoot) cardRoot.setAttribute("data-ready", "1");
+    setStep("request");
+    showScene("form");
   }
 
   /* ---------------- Lab tabs ---------------- */
