@@ -22,5 +22,11 @@
     "bytes": 1002623,
     "sha256": "812ce54e71bb881622ee115fa8cf2200ebc8161091e419be11a6197652eb00f1",
     "files": 39
+  },
+  {
+    "file": "parsena-landing.zip",
+    "bytes": 125312,
+    "sha256": "ec07c48df2e30b7f020096c1f1696f4c969c1a5b2c239055bae7a17715119a9e",
+    "files": 7
   }
 ]
