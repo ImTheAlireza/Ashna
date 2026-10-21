@@ -263,7 +263,7 @@
 /* ══════════════════ v3 additions ══════════════════ */
 
 /* — ۰۱ · phone body drawn at iPhone 18 Pro Max proportions — */
-.phone-v3{position:absolute;left:4px;top:8px;width:240px;height:504px;border-radius:33px;padding:8.5px;
+.phone-v3{position:absolute;left:32px;top:8px;width:240px;height:504px;border-radius:33px;padding:8.5px;
   background:linear-gradient(158deg,#FFFFFF 0%,#E9F1FB 52%,#CFDDEF 100%);
   border:1px solid rgba(176,199,226,.95);
   box-shadow:0 48px 70px -46px rgba(7,26,56,.75),0 3px 10px rgba(7,26,56,.07),
@@ -284,7 +284,7 @@
 .phone-v3 .codes .caret{width:2px;height:18px;border-radius:2px;background:#fff;display:block;opacity:.92}
 
 /* — ۰۱ · the path of three moments — */
-.stg{position:absolute;left:260px;width:380px;height:68px;display:flex;align-items:center;gap:16px;
+.stg{position:absolute;left:288px;width:380px;height:68px;display:flex;align-items:center;gap:16px;
   z-index:2;direction:rtl}
 .med{width:66px;height:66px;border-radius:50%;flex:none;display:grid;place-items:center;
   background:linear-gradient(165deg,#FFFFFF,#F1F7FF);border:1px solid #D8E6F8;
@@ -398,9 +398,9 @@
     </div>
 
     <!-- one continuous path, three moments — no numbers, no checklist boxes -->
-    <div style="position:absolute;left:606px;top:54px;width:3px;height:400px;border-radius:3px;
+    <div style="position:absolute;left:634px;top:54px;width:3px;height:400px;border-radius:3px;
          background:linear-gradient(180deg,#2563EB,#38BDF8 48%,#10B981);opacity:.42;z-index:0"></div>
-    <svg width="16" height="392" viewBox="0 0 16 392" style="position:absolute;left:600px;top:58px;z-index:1">
+    <svg width="16" height="392" viewBox="0 0 16 392" style="position:absolute;left:628px;top:58px;z-index:1">
       <path d="M8 168l4.5 7h-9z" fill="#8FC4F4" opacity=".85"/>
       <path d="M8 328l4.5 7h-9z" fill="#6FE0B4" opacity=".85"/>
     </svg>
@@ -682,13 +682,22 @@
     <div class="bleed" style="position:absolute;left:150px;top:-50px;width:560px;height:320px;border-radius:50%;
          background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(22px)"></div>
 
-    <!-- the chain: solid where it worked, broken where it failed -->
-    <div style="position:absolute;left:44px;top:132px;width:620px;height:3px;border-radius:3px;z-index:0;
-         background:linear-gradient(90deg,#E1ECF9 0%,#E1ECF9 35%,rgba(16,185,129,.5) 35%,rgba(16,185,129,.5) 70%,rgba(244,63,94,.32) 70%,rgba(244,63,94,.32) 100%)"></div>
-    <svg width="692" height="200" viewBox="0 0 692 200" style="position:absolute;left:0;top:0;z-index:1">
-      <g fill="#E8738C"><path d="M475 132l-16 9.4v-18.8z"/></g>
-      <g fill="#C6D8EC"><path d="M255 132l-16 9.4v-18.8z"/></g>
-      
+    <!-- the chain runs right-to-left: SMS.ir failed, Kavengar took over -->
+    <div style="position:absolute;left:246px;top:132px;width:8px;height:3px;border-radius:3px;z-index:3;
+         background:rgba(16,185,129,.34)"></div>
+    <div style="position:absolute;left:466px;top:132px;width:8px;height:3px;border-radius:3px;z-index:3;
+         background:rgba(244,63,94,.30)"></div>
+
+    <!-- hop 2 · Kavengar → Melipayamak (still waiting) -->
+    <svg width="24" height="20" viewBox="0 0 24 20" style="position:absolute;left:238px;top:123px;z-index:4">
+      <path d="M15 2.5 6.5 10l8.5 7.5" fill="none" stroke="#A9C3DC" stroke-width="2.6"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <!-- hop 1 · SMS.ir → Kavengar (failed, handed over) -->
+    <svg width="26" height="22" viewBox="0 0 26 22" style="position:absolute;left:458px;top:122px;z-index:4">
+      <path d="M16.5 2.5 7 11l9.5 8.5" fill="none" stroke="#E4708F" stroke-width="2.9"
+            stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
 
     <div class="fcard" style="left:480px;top:36px;width:190px;border-color:#F6D3DA;background:linear-gradient(170deg,#FFFFFF,#FFF7F9)">
@@ -1007,19 +1016,19 @@
          background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(20px)"></div>
 
     <!-- the four real dashboard cards, at a size you can actually read -->
-    <div style="position:absolute;left:41px;top:0;display:flex;gap:14px;z-index:3">
-      <img src="img/cards/stat-4.png" alt="کل کدهای ارسال‌شده" style="width:142px;height:auto;display:block;
+    <div style="position:absolute;left:18px;top:0;display:flex;gap:12px;z-index:3">
+      <img src="img/cards/stat-4.png" alt="کل کدهای ارسال‌شده" style="width:152px;height:auto;display:block;
            filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-3.png" alt="ورودی‌های موفق" style="width:142px;height:auto;display:block;
+      <img src="img/cards/stat-3.png" alt="ورودی‌های موفق" style="width:152px;height:auto;display:block;
            filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-2.png" alt="کاربران با OTP" style="width:142px;height:auto;display:block;
+      <img src="img/cards/stat-2.png" alt="کاربران با OTP" style="width:152px;height:auto;display:block;
            filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
-      <img src="img/cards/stat-1.png" alt="ارسال‌های ناموفق" style="width:142px;height:auto;display:block;
+      <img src="img/cards/stat-1.png" alt="ارسال‌های ناموفق" style="width:152px;height:auto;display:block;
            filter:drop-shadow(0 18px 26px rgba(7,26,56,.12))">
     </div>
 
     <!-- the real settings screen, framed with room to breathe -->
-    <div style="position:absolute;left:26px;top:118px;width:640px;z-index:2">
+    <div style="position:absolute;left:26px;top:112px;width:640px;z-index:2">
       <div style="border-radius:16px;overflow:hidden;background:#fff;border:1px solid #DCE8F6;
            box-shadow:0 40px 60px -44px rgba(7,26,56,.55),0 2px 6px rgba(7,26,56,.04)">
         <div style="height:26px;display:flex;align-items:center;gap:6px;padding:0 12px;direction:ltr;
@@ -1030,11 +1039,13 @@
           <span style="margin-left:10px;font-size:8.5px;color:#8CA3BF;background:#fff;border:1px solid #E5EFFB;
                 border-radius:6px;padding:2.5px 9px;font-family:monospace;letter-spacing:-.2px">/wp-admin/admin.php?page=ashna</span>
         </div>
-        <div style="position:relative;height:356px;overflow:hidden;background:#fff">
-          <img src="../infographic/img/auth.webp" alt="تنظیمات واقعی افزونه آشنا"
-               style="width:100%;display:block;object-fit:cover;object-position:top">
-          <div style="position:absolute;left:0;right:0;bottom:0;height:54px;
-               background:linear-gradient(180deg,rgba(255,255,255,0),#fff 88%)"></div>
+        <div style="background:#fff;padding:12px 12px 0">
+          <div style="position:relative;overflow:hidden;border-radius:10px;border:1px solid #EDF3FB">
+            <img src="img/shop-settings.webp" alt="تنظیمات واقعی افزونه آشنا"
+                 style="width:100%;display:block">
+            <div style="position:absolute;left:0;right:0;bottom:0;height:22px;
+                 background:linear-gradient(180deg,rgba(255,255,255,0),#fff 92%)"></div>
+          </div>
         </div>
       </div>
     </div>
