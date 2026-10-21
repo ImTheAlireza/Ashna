@@ -615,8 +615,17 @@ ul { margin: 0; padding: 0; list-style: none; }
 .wpbody { display: block; }
 .wpcontent { background: #f0f0f1; padding: 12px 14px 16px; min-width: 0; }
 
-/* The scrollable window onto the real panel */
-.panel-frame { position: relative; }
+/* The scrollable window onto the real panel.
+   The frame is a container, so the panel can respond to the space it actually
+   has (not to the viewport): 4 columns when there is room, 3 on laptops,
+   2 and a stacked sidebar on tablets, 1 on phones. */
+.panel-frame { position: relative; container-type: inline-size; container-name: panel; }
+.panel-frame { display: none; }
+.panel-shot { display: block; }
+@media (min-width: 1100px) {
+  .panel-frame { display: block; }
+  .panel-shot { display: none; }
+}
 .panel-scroll {
   height: 640px; overflow: auto; overscroll-behavior: contain;
   background: #f1f5f9; border-radius: 3px; outline-offset: -2px;
@@ -630,25 +639,40 @@ ul { margin: 0; padding: 0; list-style: none; }
 /* sticky offsets are measured inside the scroll window, not the browser */
 #ashna-app-shell.ashna-app-shell.is-embed .ashna-topbar {
   top: 0; border-radius: 0;
-  /* the panel is drawn at 1520px and zoomed: keep the sticky bar crisp */
   backdrop-filter: none; -webkit-backdrop-filter: none;
 }
 #ashna-app-shell.ashna-app-shell.is-embed .ashna-sidebar { border-radius: 0; }
 .panel-hint {
-  position: sticky; bottom: 12px; z-index: 5;
-  display: flex; width: max-content; margin: -46px auto 12px;
-  align-items: center; gap: 6px; padding: 7px 14px;
-  border-radius: 999px; background: rgba(15, 23, 42, .86); color: #fff;
-  font-size: .62rem; box-shadow: 0 10px 22px -12px rgba(15, 23, 42, .8);
-  backdrop-filter: blur(6px); transition: opacity .35s var(--ease), transform .35s var(--ease);
-  pointer-events: none;
+  display: flex; width: max-content; margin: 10px auto 0;
+  align-items: center; gap: 6px; color: #64748B;
+  font-size: .66rem; line-height: 1.8;
 }
-.panel-hint .icon { transform: rotate(0deg); }
-.panel-hint.is-hidden { opacity: 0; transform: translateY(6px); }
-.panel-shot { display: none; }
+.panel-hint .icon { color: #94A3B8; }
 .panel-shot img { display: block; width: 100%; height: auto; border-radius: 3px; background: #f1f5f9; }
 .panel-shot-note { margin: 10px 4px 2px; font-size: .68rem; color: #64748B; line-height: 1.9; text-align: center; }
 
+/* --- how the real panel reflows inside the frame ---
+   These queries watch the frame's own width, not the browser's, so the panel
+   steps down exactly when its cards would otherwise squeeze. */
+@container panel (max-width: 1499px) {
+  /* the plugin draws four cards across on its own 1520px canvas; below that
+     they pair up rather than squeezing the text into ribbons */
+  #ashna-app-shell .ashna-quick-setup-grid,
+  #ashna-app-shell .ashna-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container panel (max-width: 1199px) {
+  #ashna-app-shell .ashna-app-body { grid-template-columns: 216px minmax(0, 1fr); }
+  #ashna-app-shell .ashna-sidebar { padding: 14px 10px; }
+  #ashna-app-shell .ashna-sidebar-group-title { padding-inline: 10px; font-size: .6rem; }
+  #ashna-app-shell .ashna-nav-item { padding-inline: 10px; font-size: .74rem; gap: 8px; }
+  #ashna-app-shell .ashna-main { padding: 18px 16px; }
+  #ashna-app-shell .ashna-col-4,
+  #ashna-app-shell .ashna-col-5,
+  #ashna-app-shell .ashna-col-6,
+  #ashna-app-shell .ashna-col-7,
+  #ashna-app-shell .ashna-col-8 { grid-column: span 12; }
+  #ashna-app-shell .ashna-modern-table { display: block; width: 100%; overflow-x: auto; }
+}
 .tour-caption { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 14px 8px 6px; justify-content: center; }
 .tour-caption span { display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; color: #64748B; }
 .tour-caption .icon { color: #059669; }
@@ -670,18 +694,22 @@ ul { margin: 0; padding: 0; list-style: none; }
 .int-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .int-logo { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 3px; padding: 8px; }
 .int-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.int-logo.pm { width: auto; min-width: 52px; padding: 8px 8px; gap: 4px; }
-.int-logo.pm img { max-height: 22px; width: auto; max-width: 30px; }
+.int-logos { display: flex; align-items: center; gap: 8px; }
+.int-logo.pmpro, .int-logo.mpress { background: #fff; border: 1px solid var(--line-soft); box-shadow: 0 1px 2px rgba(15,23,42,.05); padding: 9px; }
+.int-logo.pmpro img, .int-logo.mpress img { max-width: 26px; max-height: 26px; object-fit: contain; }
+.int-rows { list-style: none; margin: 10px 0 12px; padding: 0; display: grid; gap: 8px; }
+.int-rows li { display: grid; gap: 2px; padding-inline-start: 10px; border-inline-start: 2px solid var(--line-soft); }
+.int-rows strong { font-size: .78rem; font-weight: 700; color: var(--ink); }
+.int-rows span { font-size: .76rem; line-height: 1.9; color: var(--ink-soft); }
 .int-wordmark { font-family: var(--font-head); font-weight: 900; font-size: .82rem; color: #C2410C; letter-spacing: -.2px; }
 .int-logo.cart { background: #F8F0FA; color: #7F54B3; }
 .int-logo.elementor { background: #FDF2F8; color: #BE185D; }
 .int-logo.dokan { background: #FFF7ED; color: #C2410C; }
 .int-logo.um { background: #EEF2FF; color: #4338CA; }
-.int-logo.pm { background: #F0F9FF; color: #0369A1; }
 .int-logo.core { background: #F5F3FF; color: #6D28D9; }
 .integration-card h3 { font-size: 1.02rem; margin-bottom: 6px; }
 .integration-card p { font-size: .8rem; color: var(--muted); line-height: 1.9; }
-.int-solves { margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: .64rem; color: #64748B; }
+.int-solves { margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line); font-size: .64rem; color: #64748B; }
 
 /* ---------- Honesty ---------- */
 .section-honesty { background: linear-gradient(180deg, #FFFBEB, #FFFDF7); }
@@ -793,10 +821,6 @@ ul { margin: 0; padding: 0; list-style: none; }
 /* ============================================================
    Responsive
    ============================================================ */
-@media (max-width: 1279px) {
-  .panel-frame { display: none; }
-  .panel-shot { display: block; }
-}
 @media (max-width: 1180px) {
   .nav a { padding-inline: 8px; font-size: .82rem; }
   .hero-pill { font-size: .74rem; }
@@ -835,7 +859,6 @@ ul { margin: 0; padding: 0; list-style: none; }
   .final-inner { grid-template-columns: 1fr; gap: 32px; }
   .final-card { max-width: 420px; }
   .footer-top { grid-template-columns: 1fr 1fr; }
-  .panel-scroll { height: 540px; }
   .wpadmin { font-size: 12px; }
 }
 @media (max-width: 760px) {
@@ -862,7 +885,6 @@ ul { margin: 0; padding: 0; list-style: none; }
   .checklist-result { padding: 26px 18px; }
   .browser-url { max-width: none; min-width: 0; }
   .wpcontent { padding: 8px 10px 14px; }
-  .panel-scroll { height: 460px; }
   .final-card { max-width: none; }
   .final-actions .btn { width: 100%; }
   .footer-top { grid-template-columns: 1fr 1fr; gap: 24px; }

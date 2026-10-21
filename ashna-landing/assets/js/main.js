@@ -547,44 +547,9 @@
   }
 
   /* ---------------- Admin panel (the real dashboard, in a scroll window) ----------------
-     The panel is laid out at the width the plugin's dashboard is designed for
-     (1520px, the shell of a 1920px WordPress screen) and then zoomed down to the
-     space the frame has. Below 1200px of frame width we stop zooming and let the
-     plugin's own responsive rules take over. */
-  var panelScroll = $("#panel-scroll");
+     The panel keeps its own type scale and reflows with container queries in
+     style.css; this script only wires the controls inside it. */
   var panelShell = $("#ashna-app-shell");
-  var PANEL_DESIGN_W = 1520;
-  function fitPanel() {
-    if (!panelScroll || !panelShell) return;
-    var w = panelScroll.clientWidth;
-    if (!w) return;
-    if (w >= 1100 && typeof panelShell.style.zoom !== "undefined") {
-      var z = Math.min(1, w / PANEL_DESIGN_W);
-      panelShell.style.width = PANEL_DESIGN_W + "px";
-      panelShell.style.zoom = z.toFixed(4);
-    } else {
-      panelShell.style.width = "";
-      panelShell.style.zoom = "";
-    }
-  }
-  fitPanel();
-  var fitTimer = null;
-  window.addEventListener("resize", function () {
-    window.clearTimeout(fitTimer);
-    fitTimer = window.setTimeout(fitPanel, 120);
-  });
-  if (window.ResizeObserver) {
-    new ResizeObserver(fitPanel).observe(panelScroll);
-  }
-  var panelHint = $("#panel-hint");
-  if (panelScroll && panelHint) {
-    var hidePanelHint = function () { panelHint.classList.add("is-hidden"); };
-    panelScroll.addEventListener("scroll", function () {
-      if (panelScroll.scrollTop > 24 || panelScroll.scrollLeft > 24) hidePanelHint();
-    }, { passive: true });
-    window.setTimeout(hidePanelHint, 9000);
-  }
-
   var themeToggle = $("#ashna-theme-toggle");
   if (panelShell && themeToggle) {
     themeToggle.addEventListener("click", function () {
