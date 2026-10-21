@@ -1,0 +1,4409 @@
+/**
+ * Ashna - Refined Enterprise SaaS Admin Dashboard Stylesheet (RTL + High-Contrast Dark Mode)
+ */
+
+#ashna-app-shell.ashna-app-shell {
+	--s-bg-app: #f1f5f9;
+	--s-bg-surface: #ffffff;
+	--s-bg-subtle: #f8fafc;
+	--s-bg-input: #ffffff;
+	--s-bg-hover: #eff6ff;
+	--s-border: #e2e8f0;
+	--s-border-input: #cbd5e1;
+	--s-text: #0f172a;
+	--s-text-secondary: #334155;
+	--s-text-muted: #64748b;
+	--s-primary: #2563eb;
+	--s-primary-hover: #1d4ed8;
+	--s-primary-soft: rgba(37, 99, 235, 0.1);
+	--s-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.06);
+
+	color-scheme: light;
+	font-family: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, sans-serif;
+	background: var(--s-bg-app);
+	color: var(--s-text);
+	margin: 20px 2px 28px 18px;
+	border-radius: 18px;
+	border: 1px solid var(--s-border);
+	box-shadow: var(--s-shadow);
+	direction: rtl;
+	text-align: right;
+	position: relative;
+}
+
+/* High-Contrast Dark Mode Theme */
+#ashna-app-shell.ashna-app-shell.is-dark {
+	--s-bg-app: #0b1120;
+	--s-bg-surface: #151f32;
+	--s-bg-subtle: #1e293b;
+	--s-bg-input: #0f172a;
+	--s-bg-hover: #26354d;
+	--s-border: #2dd4bf1a;
+	--s-border-input: #475569;
+	--s-text: #f8fafc;
+	--s-text-secondary: #e2e8f0;
+	--s-text-muted: #94a3b8;
+	--s-primary: #3b82f6;
+	--s-primary-hover: #60a5fa;
+	--s-primary-soft: rgba(59, 130, 246, 0.18);
+	--s-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+	color-scheme: dark;
+	border-color: #334155;
+}
+
+#ashna-app-shell.ashna-app-shell *,
+#ashna-app-shell.ashna-app-shell *::before,
+#ashna-app-shell.ashna-app-shell *::after,
+#ashna-app-shell.ashna-app-shell button,
+#ashna-app-shell.ashna-app-shell input,
+#ashna-app-shell.ashna-app-shell select,
+#ashna-app-shell.ashna-app-shell textarea {
+	box-sizing: border-box;
+	font-family: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+#ashna-app-shell.ashna-app-shell .dashicons,
+#ashna-app-shell.ashna-app-shell .dashicons::before {
+	font-family: dashicons !important;
+}
+
+.ashna-nav-svg {
+	width: 19px;
+	height: 19px;
+	flex-shrink: 0;
+	opacity: 0.9;
+}
+
+/* Floating Toast */
+.ashna-toast {
+	position: fixed;
+	bottom: 28px;
+	left: 28px;
+	z-index: 999999;
+	background: #0f172a;
+	color: #ffffff;
+	padding: 14px 22px;
+	border-radius: 12px;
+	font-size: 13.5px;
+	font-weight: 600;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-right: 4px solid #10b981;
+}
+
+.ashna-toast.is-error {
+	border-right-color: #ef4444;
+}
+
+/* ==========================================
+   TOPBAR (Sticky Glassmorphic Header)
+   ========================================== */
+#ashna-app-shell .ashna-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	background: var(--s-bg-surface);
+	border-bottom: 1px solid #33415526;
+	border-radius: 18px 18px 0 0;
+	padding: 18px 28px;
+	position: sticky;
+	top: 32px;
+	z-index: 90;
+	backdrop-filter: blur(12px);
+}
+
+#ashna-app-shell.is-dark .ashna-topbar {
+	border-bottom: 1px solid #334155;
+}
+
+.ashna-topbar-brand {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-brand-logo {
+	width: 48px;
+	height: 48px;
+	border-radius: 14px;
+	background: var(--s-bg-subtle);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--s-border);
+	flex-shrink: 0;
+}
+
+.ashna-brand-logo img {
+	display: block;
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+}
+
+.ashna-brand-title-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#ashna-app-shell .ashna-brand-title-row h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	font-weight: 800;
+	color: var(--s-text);
+	line-height: 1.2;
+}
+
+.ashna-badge-ver {
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	font-size: 11.5px;
+	font-weight: 700;
+	padding: 3px 10px;
+	border-radius: 99px;
+}
+
+.ashna-topbar-brand p {
+	margin: 4px 0 0 0;
+	font-size: 12.5px;
+	color: var(--s-text-muted);
+}
+
+.ashna-topbar-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.ashna-gateway-status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	padding: 8px 15px;
+	border-radius: 99px;
+	font-size: 12.5px;
+	color: var(--s-text);
+}
+
+.ashna-status-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.ashna-status-dot.is-online {
+	background: #10b981;
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+}
+
+.ashna-status-dot.is-warning {
+	background: #f59e0b;
+	box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22);
+}
+
+#ashna-app-shell .ashna-icon-btn {
+	width: 40px !important;
+	height: 40px !important;
+	padding: 0 !important;
+	margin: 0;
+	border-radius: 10px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text);
+	cursor: pointer;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	font-size: 16px;
+	outline: none !important;
+	box-shadow: none !important;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-icon-btn:hover {
+	background: var(--s-bg-hover);
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+}
+
+#ashna-app-shell .ashna-dark-icon {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 20px !important;
+	height: 20px !important;
+	line-height: 0;
+}
+
+#ashna-app-shell .ashna-icon-moon {
+	display: block !important;
+	width: 20px !important;
+	height: 20px !important;
+	flex-shrink: 0 !important;
+}
+
+#ashna-app-shell .ashna-icon-sun {
+	display: none !important;
+	width: 20px !important;
+	height: 20px !important;
+	flex-shrink: 0 !important;
+}
+
+#ashna-app-shell.is-dark .ashna-icon-moon {
+	display: none !important;
+}
+
+#ashna-app-shell.is-dark .ashna-icon-sun {
+	display: block !important;
+}
+
+#ashna-app-shell .ashna-topbar svg {
+	flex-shrink: 0 !important;
+	display: block;
+}
+
+#ashna-app-shell .ashna-btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 40px;
+	padding: 0 16px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text) !important;
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	outline: none !important;
+	box-shadow: none !important;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-btn-secondary:hover {
+	background: var(--s-bg-hover);
+	border-color: var(--s-primary);
+	color: var(--s-primary) !important;
+}
+
+#ashna-app-shell .ashna-btn-save {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	padding: 0 18px;
+	border-radius: 10px;
+	border: none;
+	background: linear-gradient(135deg, #2563eb, #4f46e5);
+	color: #ffffff !important;
+	font-family: inherit;
+	font-size: 13.5px;
+	font-weight: 700;
+	cursor: pointer;
+	outline: none !important;
+	box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+	transition: opacity 0.15s ease;
+}
+
+#ashna-app-shell .ashna-btn-save:hover {
+	opacity: 0.92;
+}
+
+#ashna-app-shell .ashna-btn-danger {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 38px;
+	padding: 0 15px;
+	border-radius: 10px;
+	border: 1px solid rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.1);
+	color: #ef4444;
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	outline: none !important;
+}
+
+#ashna-app-shell .ashna-btn-danger:hover {
+	background: #ef4444;
+	color: #ffffff;
+}
+
+.ashna-kbd {
+	background: rgba(255, 255, 255, 0.22);
+	padding: 2px 6px;
+	border-radius: 5px;
+	font-size: 10.5px;
+	font-family: monospace;
+}
+
+/* ==========================================
+   APP BODY & CLEAN SIDEBAR MENU
+   ========================================== */
+.ashna-app-body {
+	display: grid;
+	grid-template-columns: 250px 1fr;
+	min-height: 700px;
+}
+
+#ashna-app-shell .ashna-sidebar {
+	background: var(--s-bg-surface);
+	border-left: 1px solid #33415522;
+	padding: 24px 14px;
+	display: flex;
+	flex-direction: column;
+}
+
+#ashna-app-shell.is-dark .ashna-sidebar {
+	border-left: 1px solid #334155;
+}
+
+.ashna-sidebar-group-title {
+	font-size: 11px;
+	font-weight: 800;
+	color: var(--s-text-muted);
+	padding: 14px 12px 6px 12px;
+	letter-spacing: 0.2px;
+	opacity: 0.85;
+}
+
+.ashna-sidebar-group-title:first-child {
+	padding-top: 2px;
+}
+
+.ashna-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+#ashna-app-shell .ashna-nav-item {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	width: 100%;
+	height: 44px;
+	padding: 0 14px;
+	border-radius: 10px;
+	border: none !important;
+	background: transparent;
+	color: var(--s-text-secondary);
+	font-family: inherit;
+	font-size: 13.5px;
+	font-weight: 600;
+	text-align: right;
+	cursor: pointer;
+	outline: none !important;
+	box-shadow: none !important;
+	transition: background 0.15s ease, color 0.15s ease;
+	position: relative;
+}
+
+#ashna-app-shell .ashna-nav-item:hover {
+	background: var(--s-bg-hover);
+	color: var(--s-primary);
+}
+
+#ashna-app-shell .ashna-nav-item.active {
+	background: var(--s-primary);
+	color: #ffffff !important;
+	font-weight: 700;
+	box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+}
+
+#ashna-app-shell .ashna-nav-item .dashicons {
+	font-size: 19px;
+	width: 19px;
+	height: 19px;
+	line-height: 19px;
+	color: inherit;
+	opacity: 0.9;
+}
+
+.ashna-nav-label {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ashna-nav-counter {
+	margin-right: auto;
+	background: #ef4444;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	padding: 1px 7px;
+	border-radius: 99px;
+}
+
+.ashna-sidebar-footer {
+	margin-top: auto;
+	padding: 16px 12px 4px 12px;
+	border-top: 1px solid #33415522;
+	text-align: center;
+	color: var(--s-text-muted);
+	font-size: 11.5px;
+}
+
+.ashna-sidebar-footer p {
+	margin: 0 0 2px 0;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+}
+
+/* ==========================================
+   MAIN CONTENT AREA
+   ========================================== */
+#ashna-app-shell .ashna-main {
+	padding: 28px 30px;
+}
+
+.ashna-panel {
+	display: none;
+	animation: ashnaFadeIn 0.18s ease;
+}
+
+.ashna-panel.active {
+	display: block;
+}
+
+@keyframes ashnaFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(3px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* KPI CARDS (Left-Aligned Metric Numbers + Right-Aligned Icon & Labels) */
+.ashna-kpi-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 22px;
+}
+
+.ashna-kpi-card {
+	background: var(--s-bg-surface);
+	border: 1px solid #33415522;
+	border-radius: 16px;
+	padding: 18px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.ashna-kpi-card:hover {
+	transform: translateY(-2px);
+	border-color: var(--s-primary);
+}
+
+#ashna-app-shell.is-dark .ashna-kpi-card {
+	border-color: #334155;
+}
+
+.ashna-kpi-main {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+	min-width: 0;
+}
+
+.ashna-kpi-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ashna-kpi-icon.is-blue {
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+	border: 1px solid rgba(59, 130, 246, 0.24);
+}
+
+.ashna-kpi-icon.is-green {
+	background: rgba(16, 185, 129, 0.14);
+	color: #10b981;
+	border: 1px solid rgba(16, 185, 129, 0.24);
+}
+
+.ashna-kpi-icon.is-purple {
+	background: rgba(139, 92, 246, 0.14);
+	color: #a855f7;
+	border: 1px solid rgba(139, 92, 246, 0.24);
+}
+
+.ashna-kpi-icon.is-red {
+	background: rgba(239, 68, 68, 0.14);
+	color: #ef4444;
+	border: 1px solid rgba(239, 68, 68, 0.24);
+}
+
+.ashna-kpi-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.ashna-kpi-info span {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-kpi-info small {
+	font-size: 11.5px;
+	color: var(--s-text-muted);
+}
+
+.ashna-kpi-number-box {
+	min-width: 54px;
+	height: 44px;
+	padding: 0 14px;
+	border-radius: 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+}
+
+.ashna-kpi-number-box strong {
+	font-size: 22px;
+	font-weight: 900;
+	line-height: 1;
+	color: var(--s-text);
+}
+
+.ashna-kpi-number-box.is-blue strong {
+	color: #3b82f6;
+}
+
+.ashna-kpi-number-box.is-green strong {
+	color: #10b981;
+}
+
+.ashna-kpi-number-box.is-purple strong {
+	color: #a855f7;
+}
+
+.ashna-kpi-number-box.is-red strong {
+	color: #ef4444;
+}
+
+/* BENTO GRID & CARDS */
+.ashna-bento-row {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: 20px;
+}
+
+.ashna-col-8 {
+	grid-column: span 8;
+}
+
+.ashna-col-7 {
+	grid-column: span 7;
+}
+
+.ashna-col-6 {
+	grid-column: span 6;
+}
+
+.ashna-col-5 {
+	grid-column: span 5;
+}
+
+.ashna-col-4 {
+	grid-column: span 4;
+}
+
+#ashna-app-shell .ashna-card {
+	background: var(--s-bg-surface);
+	border: 1px solid #33415522;
+	border-radius: 16px;
+	padding: 24px 26px;
+	display: flex;
+	flex-direction: column;
+}
+
+#ashna-app-shell.is-dark .ashna-card {
+	border-color: #334155;
+}
+
+.ashna-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	padding-bottom: 16px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #33415522;
+}
+
+.ashna-card-head-title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-card-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+	border: 1px solid rgba(59, 130, 246, 0.22);
+}
+
+.ashna-card-icon.is-blue {
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+	border-color: rgba(59, 130, 246, 0.24);
+}
+
+.ashna-card-icon.is-purple {
+	background: rgba(139, 92, 246, 0.14);
+	color: #a855f7;
+	border-color: rgba(139, 92, 246, 0.24);
+}
+
+.ashna-card-icon.is-green {
+	background: rgba(16, 185, 129, 0.14);
+	color: #10b981;
+	border-color: rgba(16, 185, 129, 0.24);
+}
+
+.ashna-card-icon.is-amber {
+	background: rgba(245, 158, 11, 0.14);
+	color: #f59e0b;
+	border-color: rgba(245, 158, 11, 0.24);
+}
+
+.ashna-card-icon.is-red {
+	background: rgba(239, 68, 68, 0.14);
+	color: #ef4444;
+	border-color: rgba(239, 68, 68, 0.24);
+}
+
+.ashna-card-icon.is-cyan {
+	background: rgba(6, 182, 212, 0.14);
+	color: #06b6d4;
+	border-color: rgba(6, 182, 212, 0.24);
+}
+
+.ashna-empty-state-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 32px 20px;
+	border-radius: 14px;
+	background: var(--s-bg-subtle);
+	border: 1px dashed var(--s-border-input);
+	gap: 8px;
+	flex: 1;
+}
+
+.ashna-empty-state-icon {
+	width: 54px;
+	height: 54px;
+	border-radius: 50%;
+	background: rgba(16, 185, 129, 0.14);
+	color: #10b981;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 4px;
+}
+
+.ashna-empty-state-box strong {
+	font-size: 14px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-empty-state-box p {
+	margin: 0;
+	font-size: 12.5px;
+	color: var(--s-text-muted);
+}
+
+.ashna-info-note {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 14px;
+	border-radius: 10px;
+	background: rgba(59, 130, 246, 0.09);
+	border: 1px solid rgba(59, 130, 246, 0.2);
+	color: var(--s-text-secondary);
+	font-size: 12px;
+	line-height: 1.6;
+	margin-top: 14px;
+}
+
+#ashna-app-shell.is-dark .ashna-card-head {
+	border-bottom-color: #334155;
+}
+
+#ashna-app-shell .ashna-card-head h2 {
+	margin: 0 0 4px 0;
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-card-head p {
+	margin: 0;
+	font-size: 12.5px;
+	color: var(--s-text-muted);
+}
+
+/* 7-DAY BAR CHART */
+.ashna-chart-legend {
+	display: flex;
+	gap: 12px;
+	font-size: 12px;
+	color: var(--s-text-muted);
+}
+
+.ashna-chart-legend i {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+	margin-left: 4px;
+}
+
+.ashna-bar-chart {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	height: 180px;
+	gap: 12px;
+	padding-top: 20px;
+}
+
+.ashna-bar-col {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+}
+
+.ashna-bar-track {
+	width: 100%;
+	max-width: 38px;
+	height: 140px;
+	background: var(--s-bg-subtle);
+	border-radius: 10px;
+	display: flex;
+	align-items: flex-end;
+	padding: 3px;
+}
+
+.ashna-bar-fill-total {
+	width: 100%;
+	background: linear-gradient(180deg, #3b82f6, #2563eb);
+	border-radius: 7px;
+	position: relative;
+	transition: height 0.3s ease;
+	min-height: 6px;
+}
+
+.ashna-bar-num {
+	position: absolute;
+	top: -20px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-bar-label {
+	margin-top: 8px;
+	font-size: 11.5px;
+	color: var(--s-text-muted);
+}
+
+/* HEALTH LIST */
+.ashna-health-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.ashna-health-list li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 13px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed #33415533;
+	color: var(--s-text-secondary);
+}
+
+.ashna-health-list li:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+/* PILLS & BADGES */
+.ashna-pill {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 99px;
+	font-size: 11.5px;
+	font-weight: 700;
+}
+
+.ashna-pill.is-ok {
+	background: rgba(16, 185, 129, 0.16);
+	color: #10b981;
+}
+
+.ashna-pill.is-warn {
+	background: rgba(245, 158, 11, 0.18);
+	color: #f59e0b;
+}
+
+.ashna-pill.is-err {
+	background: rgba(239, 68, 68, 0.16);
+	color: #ef4444;
+}
+
+.ashna-pill.is-info {
+	background: rgba(59, 130, 246, 0.16);
+	color: #3b82f6;
+}
+
+.ashna-pill.is-muted {
+	background: var(--s-bg-subtle);
+	color: var(--s-text-secondary);
+	border: 1px solid var(--s-border-input);
+}
+
+/* ==========================================
+   RADIO CHOICE CARDS (Modern Horizontal Design Language)
+   ========================================== */
+.ashna-section-label {
+	display: block;
+	font-size: 13.5px;
+	font-weight: 700;
+	margin-bottom: 12px;
+	color: var(--s-text);
+}
+
+.ashna-choice-grid {
+	display: grid;
+	gap: 14px;
+}
+
+.ashna-cols-1 {
+	grid-template-columns: 1fr;
+}
+
+.ashna-cols-2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ashna-cols-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ashna-cols-4 {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ashna-span-2 {
+	grid-column: span 2;
+}
+
+#ashna-app-shell .ashna-choice-card {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: stretch !important;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 18px 20px;
+	border-radius: 15px;
+	border: 1.5px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	cursor: pointer;
+	transition: all 0.18s ease;
+	position: relative;
+}
+
+#ashna-app-shell .ashna-choice-card.is-row-card {
+	flex-direction: row;
+	align-items: center;
+}
+
+#ashna-app-shell .ashna-choice-card:hover {
+	border-color: var(--s-primary);
+	background: var(--s-bg-hover);
+	transform: translateY(-2px);
+}
+
+#ashna-app-shell .ashna-choice-card input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+#ashna-app-shell .ashna-choice-card.selected {
+	border-color: var(--s-primary);
+	background: var(--s-primary-soft);
+	box-shadow: 0 0 0 1px var(--s-primary), 0 8px 22px -6px rgba(37, 99, 235, 0.28);
+}
+
+.ashna-choice-card-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	width: 100%;
+}
+
+.ashna-choice-top-left {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.ashna-choice-icon-svg {
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+	border: 1px solid rgba(59, 130, 246, 0.24);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: transform 0.18s ease;
+}
+
+#ashna-app-shell .ashna-choice-card:hover .ashna-choice-icon-svg,
+#ashna-app-shell .ashna-choice-card.selected .ashna-choice-icon-svg {
+	transform: scale(1.05);
+}
+
+.ashna-choice-icon-svg.is-blue {
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+	border-color: rgba(59, 130, 246, 0.25);
+}
+
+.ashna-choice-icon-svg.is-green {
+	background: rgba(16, 185, 129, 0.14);
+	color: #10b981;
+	border-color: rgba(16, 185, 129, 0.25);
+}
+
+.ashna-choice-icon-svg.is-purple {
+	background: rgba(139, 92, 246, 0.14);
+	color: #a855f7;
+	border-color: rgba(139, 92, 246, 0.25);
+}
+
+.ashna-choice-icon-svg.is-amber {
+	background: rgba(245, 158, 11, 0.14);
+	color: #f59e0b;
+	border-color: rgba(245, 158, 11, 0.25);
+}
+
+/* MULTI-ICON FLOW BADGES (e.g. [SMS Icon] <- [Bale Real Logo], [Phone] + [Email]) */
+.ashna-flow-icons {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 11px;
+	border-radius: 14px;
+	background: var(--s-bg-surface);
+	border: 1px solid var(--s-border-input);
+	flex-shrink: 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ashna-flow-node {
+	width: 40px;
+	height: 40px;
+	padding: 8px;
+	box-sizing: border-box;
+	border-radius: 11px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ashna-flow-node svg:not(.ashna-bale-real-logo) {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+
+.ashna-bale-real-logo {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	filter: drop-shadow(0 0 7px rgba(44, 235, 191, 0.58));
+	transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+#ashna-app-shell .ashna-choice-card:hover .ashna-bale-real-logo,
+#ashna-app-shell .ashna-choice-card.selected .ashna-bale-real-logo {
+	filter: drop-shadow(0 0 10px rgba(44, 235, 191, 0.85));
+	transform: scale(1.06);
+}
+
+#ashna-app-shell .ashna-choice-card:hover .ashna-flow-node {
+	transform: scale(1.04);
+}
+
+.ashna-flow-node.is-sms,
+.ashna-flow-node.is-sms-brand {
+	background: rgba(59, 130, 246, 0.16);
+	color: #3b82f6;
+	border: 1px solid rgba(59, 130, 246, 0.28);
+}
+
+.ashna-flow-node.is-bale,
+.ashna-flow-node.is-bale-brand {
+	background: rgba(19, 185, 151, 0.14);
+	color: #13b997;
+	border: 1px solid rgba(50, 236, 192, 0.34);
+	box-shadow: 0 0 12px rgba(19, 185, 151, 0.22);
+}
+
+.ashna-flow-node.is-passkey {
+	background: rgba(16, 185, 129, 0.16);
+	color: #10b981;
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.ashna-flow-node.is-email {
+	background: rgba(168, 85, 247, 0.16);
+	color: #a855f7;
+	border: 1px solid rgba(168, 85, 247, 0.26);
+}
+
+.ashna-flow-node.is-phone {
+	background: rgba(6, 182, 212, 0.16);
+	color: #06b6d4;
+	border: 1px solid rgba(6, 182, 212, 0.26);
+}
+
+.ashna-flow-sep {
+	font-size: 13px;
+	font-weight: 900;
+	color: var(--s-text-muted);
+	padding: 0 2px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ashna-flow-sep svg {
+	width: 15px;
+	height: 15px;
+}
+
+.ashna-choice-tag {
+	display: inline-flex;
+	align-items: center;
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 99px;
+	white-space: nowrap;
+}
+
+.ashna-choice-tag.is-green {
+	background: rgba(16, 185, 129, 0.16);
+	color: #10b981;
+}
+
+.ashna-choice-tag.is-amber {
+	background: rgba(245, 158, 11, 0.18);
+	color: #f59e0b;
+}
+
+.ashna-choice-tag.is-purple {
+	background: rgba(168, 85, 247, 0.16);
+	color: #a855f7;
+}
+
+.ashna-choice-tag.is-blue {
+	background: rgba(59, 130, 246, 0.16);
+	color: #3b82f6;
+}
+
+.ashna-choice-title {
+	display: block;
+	font-size: 14px;
+	font-weight: 800;
+	color: var(--s-text);
+	line-height: 1.45;
+}
+
+.ashna-choice-desc {
+	display: block;
+	font-size: 12px;
+	color: var(--s-text-muted);
+	line-height: 1.6;
+	margin-top: 3px;
+}
+
+/* VISUAL FAILOVER PIPELINE IN SMS TAB */
+.ashna-failover-pipeline {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	margin-top: 12px;
+}
+
+.ashna-pipeline-step {
+	background: var(--s-bg-subtle);
+	border: 1.5px solid var(--s-border-input);
+	border-radius: 14px;
+	padding: 16px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	transition: border-color 0.15s ease;
+}
+
+.ashna-pipeline-step:hover {
+	border-color: var(--s-primary);
+}
+
+.ashna-pipeline-step-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.ashna-step-num-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-step-num-circle {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11.5px;
+	font-weight: 900;
+}
+
+/* LIVE FAILOVER VISUAL ROUTE STRIP & INLINE QUICK SMS TEST BAR */
+.ashna-live-route-strip {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: var(--s-bg-subtle);
+	border: 1px dashed var(--s-border-input);
+	margin-top: 14px;
+}
+
+.ashna-route-nodes {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.ashna-route-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 11px;
+	border-radius: 99px;
+	font-size: 12px;
+	font-weight: 700;
+	background: var(--s-bg-surface);
+	border: 1px solid var(--s-border-input);
+	color: var(--s-text);
+}
+
+.ashna-route-pill.is-primary {
+	background: var(--s-primary-soft);
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+}
+
+.ashna-inline-test-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-top: 22px;
+	padding: 16px 20px;
+	border-radius: 14px;
+	background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(16, 185, 129, 0.08));
+	border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.ashna-inline-test-controls {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+	max-width: 460px;
+}
+
+.ashna-choice-body {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: flex-start;
+	gap: 5px;
+	width: 100%;
+	min-width: 0;
+}
+
+.ashna-choice-body strong {
+	display: block !important;
+	width: 100%;
+	font-size: 14.5px;
+	font-weight: 800;
+	color: var(--s-text);
+	line-height: 1.45;
+}
+
+.ashna-choice-body small {
+	display: block !important;
+	width: 100%;
+	font-size: 12.5px;
+	color: var(--s-text-muted);
+	line-height: 1.65;
+}
+
+.ashna-choice-check {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	border: 1.5px solid var(--s-border-input);
+	background: var(--s-bg-input);
+	color: transparent;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: all 0.18s ease;
+}
+
+#ashna-app-shell .ashna-choice-card.selected .ashna-choice-check {
+	background: var(--s-primary);
+	border-color: var(--s-primary);
+	color: #ffffff;
+	box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+/* ==========================================
+   FORM INPUTS, SELECTS & DARK MODE FIX
+   ========================================== */
+.ashna-fields-grid {
+	display: grid;
+	gap: 18px;
+}
+
+.ashna-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.ashna-field label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--s-text);
+}
+
+#ashna-app-shell input[type="text"]:not(.ashna-prev-input),
+#ashna-app-shell input[type="url"],
+#ashna-app-shell input[type="email"],
+#ashna-app-shell input[type="password"],
+#ashna-app-shell input[type="number"],
+#ashna-app-shell input[type="search"],
+#ashna-app-shell select,
+#ashna-app-shell textarea {
+	width: 100%;
+	max-width: 100%;
+	min-height: 42px;
+	padding: 8px 13px !important;
+	border-radius: 10px !important;
+	border: 1.5px solid var(--s-border-input) !important;
+	background-color: var(--s-bg-input) !important;
+	color: var(--s-text) !important;
+	font-family: 'Vazirmatn', Tahoma, sans-serif !important;
+	font-size: 13.5px !important;
+	line-height: 1.5 !important;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+/* Crucial Fix for Select Option Dropdown Readability in Light & Dark Mode */
+#ashna-app-shell select option {
+	background-color: #ffffff !important;
+	color: #0f172a !important;
+	font-family: 'Vazirmatn', Tahoma, sans-serif;
+	font-size: 13.5px;
+	padding: 8px;
+}
+
+#ashna-app-shell.is-dark select,
+#ashna-app-shell.is-dark input[type="text"]:not(.ashna-prev-input),
+#ashna-app-shell.is-dark input[type="url"],
+#ashna-app-shell.is-dark input[type="email"],
+#ashna-app-shell.is-dark input[type="password"],
+#ashna-app-shell.is-dark input[type="number"],
+#ashna-app-shell.is-dark input[type="search"],
+#ashna-app-shell.is-dark textarea {
+	background-color: #0f172a !important;
+	color: #f8fafc !important;
+	border-color: #475569 !important;
+}
+
+/* Live Preview Input - Isolated from Admin Dark Mode & Right-Aligned */
+#ashna-app-shell #ashna-live-preview-card input.ashna-prev-input {
+	width: 100% !important;
+	height: 44px;
+	padding: 0 14px;
+	border: 1.5px solid #cbd5e1;
+	border-radius: 10px;
+	margin: 0 !important;
+	box-sizing: border-box !important;
+	text-align: right !important;
+	direction: rtl !important;
+	background-color: #f8fafc;
+	color: #0f172a;
+	font-family: 'Vazirmatn', Tahoma, sans-serif;
+	font-size: 13.5px;
+	box-shadow: none;
+}
+
+#ashna-app-shell #ashna-live-preview-card input.ashna-prev-input::placeholder {
+	color: rgba(100, 116, 139, 0.78) !important;
+	opacity: 1 !important;
+}
+
+#ashna-app-shell #ashna-live-preview-card.is-dark-preview-card input.ashna-prev-input::placeholder {
+	color: rgba(203, 213, 225, 0.65) !important;
+	opacity: 1 !important;
+}
+
+#ashna-app-shell.is-dark select option {
+	background-color: #1e293b !important;
+	color: #f8fafc !important;
+}
+
+#ashna-app-shell input:focus,
+#ashna-app-shell select:focus,
+#ashna-app-shell textarea:focus {
+	border-color: var(--s-primary) !important;
+	box-shadow: 0 0 0 3px var(--s-primary-soft) !important;
+}
+
+.ashna-field small {
+	font-size: 11.5px;
+	color: var(--s-text-muted);
+}
+
+/* ==========================================
+   SWITCHES GRID & FIXED iOS TOGGLE GEOMETRY
+   ========================================== */
+.ashna-switches-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+	gap: 14px;
+}
+
+.ashna-switch-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 18px;
+	border-radius: 12px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	margin-bottom: 10px;
+	transition: border-color 0.15s ease;
+}
+
+.ashna-switches-grid .ashna-switch-row {
+	margin-bottom: 0;
+}
+
+.ashna-switch-row:hover {
+	border-color: var(--s-primary);
+}
+
+.ashna-switch-row strong {
+	display: block;
+	font-size: 13.5px;
+	font-weight: 700;
+	color: var(--s-text);
+	margin-bottom: 4px;
+}
+
+.ashna-switch-row p {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.55;
+	color: var(--s-text-muted);
+}
+
+/* Force LTR inside switch so knob math is identical in RTL & LTR */
+.ashna-switch {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 28px;
+	flex-shrink: 0;
+	direction: ltr !important;
+}
+
+.ashna-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.ashna-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #94a3b8;
+	transition: background-color 0.22s ease;
+	border-radius: 99px;
+}
+
+.ashna-slider::before {
+	position: absolute;
+	content: "";
+	height: 20px;
+	width: 20px;
+	left: 4px;
+	top: 4px;
+	background-color: #ffffff;
+	transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.ashna-switch input:checked + .ashna-slider {
+	background-color: var(--s-primary);
+}
+
+.ashna-switch input:checked + .ashna-slider::before {
+	transform: translateX(22px);
+}
+
+/* ==========================================
+   GATEWAY SELECTOR CARDS, LOGOS & PILLS
+   ========================================== */
+.ashna-gw-selector-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+	gap: 12px;
+}
+
+#ashna-app-shell .ashna-gw-select-card {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	padding: 13px 15px;
+	border-radius: 12px;
+	border: 1.5px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text);
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	text-align: right;
+	outline: none !important;
+	transition: all 0.15s ease;
+	position: relative;
+}
+
+#ashna-app-shell .ashna-gw-select-card:hover {
+	border-color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+#ashna-app-shell .ashna-gw-select-card.selected {
+	border-color: var(--s-primary);
+	background: var(--s-primary-soft);
+	box-shadow: 0 0 0 1px var(--s-primary);
+}
+
+.ashna-gw-check-badge {
+	display: none;
+	margin-right: auto;
+	background: var(--s-primary);
+	color: #fff;
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 99px;
+}
+
+.ashna-gw-select-card.selected .ashna-gw-check-badge {
+	display: inline-block;
+}
+
+/* Gateway Brand Logo Badges */
+.ashna-gw-logo {
+	width: 32px;
+	height: 32px;
+	border-radius: 9px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ashna-gw-pill .ashna-gw-logo {
+	width: 24px;
+	height: 24px;
+	border-radius: 6px;
+}
+
+.ashna-gw-logo.is-sandbox {
+	background: rgba(245, 158, 11, 0.16);
+	color: #f59e0b;
+}
+
+.ashna-gw-logo.is-smsir {
+	background: rgba(14, 165, 233, 0.16);
+	color: #0ea5e9;
+}
+
+.ashna-gw-logo.is-kavenegar {
+	background: rgba(139, 92, 246, 0.16);
+	color: #8b5cf6;
+}
+
+.ashna-gw-logo.is-melipayamak {
+	background: rgba(37, 99, 235, 0.16);
+	color: #3b82f6;
+}
+
+.ashna-gw-logo.is-farazsms {
+	background: rgba(239, 68, 68, 0.16);
+	color: #ef4444;
+}
+
+.ashna-gw-logo.is-ippanel {
+	background: rgba(16, 185, 129, 0.16);
+	color: #10b981;
+}
+
+.ashna-gw-pill.active .ashna-gw-logo {
+	background: rgba(255, 255, 255, 0.22);
+	color: #ffffff;
+}
+
+.ashna-gw-tabs-bar {
+	margin-top: 24px;
+	padding-top: 18px;
+	border-top: 1px solid #33415522;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.ashna-gw-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+#ashna-app-shell .ashna-gw-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 14px;
+	border-radius: 99px;
+	border: 1.5px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text);
+	font-family: inherit;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+	outline: none !important;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-gw-pill:hover {
+	border-color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+#ashna-app-shell .ashna-gw-pill.active {
+	background: var(--s-primary);
+	border-color: var(--s-primary);
+	color: #ffffff !important;
+}
+
+.ashna-gateway-box {
+	margin-top: 18px;
+	padding: 22px;
+	border-radius: 14px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	display: none;
+}
+
+.ashna-gw-box-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.ashna-gw-box-head h3 {
+	margin: 0;
+	font-size: 15px;
+	color: var(--s-text);
+}
+
+/* ==========================================
+   APPEARANCE STUDIO & LIVE PREVIEW
+   ========================================== */
+.ashna-studio-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 430px;
+	gap: 22px;
+	align-items: start;
+	transition: grid-template-columns 0.25s ease;
+}
+
+.ashna-studio-layout.is-split-preview-active {
+	grid-template-columns: minmax(0, 1fr) 500px;
+}
+
+.ashna-studio-layout.is-wide-preview {
+	grid-template-columns: minmax(310px, 1fr) 680px !important;
+}
+
+@media (max-width: 1400px) {
+	.ashna-studio-layout.is-wide-preview {
+		grid-template-columns: minmax(280px, 42%) 58% !important;
+	}
+}
+
+.ashna-preset-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 10px;
+}
+
+#ashna-app-shell .ashna-preset-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	border: 1.5px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text);
+	font-family: inherit;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+	outline: none !important;
+}
+
+#ashna-app-shell .ashna-preset-btn:hover {
+	border-color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+.ashna-swatch {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.ashna-color-input-wrap {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: var(--s-bg-input);
+	border: 1.5px solid var(--s-border-input);
+	padding: 5px 10px;
+	border-radius: 10px;
+}
+
+.ashna-color-input-wrap input[type="color"] {
+	width: 32px;
+	height: 32px;
+	border: none;
+	padding: 0;
+	background: none;
+	cursor: pointer;
+}
+
+.ashna-studio-preview-col {
+	position: sticky !important;
+	top: 124px !important;
+	align-self: start !important;
+	z-index: 40;
+}
+
+/* Exclusive Collapsible Accordion Cards in Appearance Studio */
+#ashna-app-shell .ashna-accordion-card {
+	padding: 0 !important;
+	overflow: hidden;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#ashna-app-shell .ashna-accordion-card.is-open {
+	border-color: var(--s-primary) !important;
+	box-shadow: 0 10px 28px -8px rgba(37, 99, 235, 0.14);
+}
+
+#ashna-app-shell .ashna-accordion-card > .ashna-accordion-trigger {
+	margin: 0 !important;
+	padding: 20px 24px !important;
+	border-bottom: 1px solid transparent !important;
+	cursor: pointer !important;
+	user-select: none;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#ashna-app-shell .ashna-accordion-card > .ashna-accordion-trigger:hover {
+	background-color: var(--s-bg-subtle);
+}
+
+#ashna-app-shell .ashna-accordion-card.is-open > .ashna-accordion-trigger {
+	border-bottom-color: var(--s-border) !important;
+	background-color: var(--s-bg-subtle);
+}
+
+#ashna-app-shell .ashna-accordion-chevron {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border-radius: 8px;
+	background: var(--s-bg-surface);
+	border: 1px solid var(--s-border-input);
+	color: var(--s-text-muted);
+	transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease, border-color 0.2s ease;
+	flex-shrink: 0;
+}
+
+#ashna-app-shell .ashna-accordion-card.is-open .ashna-accordion-chevron {
+	transform: rotate(180deg);
+	color: var(--s-primary);
+	border-color: var(--s-primary);
+	background: var(--s-primary-soft);
+}
+
+#ashna-app-shell .ashna-accordion-body {
+	padding: 22px 24px 24px 24px;
+}
+
+/* Ambient Glass Orbs Behind Live Preview Card */
+#ashna-app-shell .ashna-prev-glass-orbs {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	opacity: 0.22;
+	transition: opacity 0.35s ease;
+	overflow: hidden;
+}
+
+#ashna-app-shell .ashna-prev-glass-orbs.is-glass-active {
+	opacity: 0.92;
+}
+
+#ashna-app-shell .ashna-glass-orb {
+	position: absolute;
+	border-radius: 50%;
+	filter: blur(2px);
+	transition: background 0.35s ease;
+}
+
+#ashna-app-shell .ashna-glass-orb.orb-1 {
+	width: 150px;
+	height: 150px;
+	background: #3b82f6;
+	top: 14%;
+	right: 12%;
+	box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.45);
+}
+
+#ashna-app-shell .ashna-glass-orb.orb-2 {
+	width: 135px;
+	height: 135px;
+	background: #ec4899;
+	bottom: 12%;
+	left: 12%;
+	box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.45);
+}
+
+#ashna-app-shell .ashna-glass-orb.orb-3 {
+	width: 95px;
+	height: 95px;
+	background: linear-gradient(135deg, #10b981, #f59e0b);
+	top: 48%;
+	left: 42%;
+	transform: translate(-50%, -50%) rotate(25deg);
+	border-radius: 24px;
+}
+
+.ashna-preview-box {
+	background: var(--s-bg-surface);
+	border: 1px solid var(--s-border-input);
+	border-radius: 16px;
+	overflow: hidden;
+}
+
+.ashna-preview-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--s-bg-subtle);
+	border-bottom: 1px solid var(--s-border-input);
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+.ashna-preview-step-btns {
+	display: flex;
+	gap: 4px;
+}
+
+#ashna-app-shell .ashna-prev-step-btn {
+	padding: 5px 10px;
+	border-radius: 6px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text);
+	font-family: inherit;
+	font-size: 11px;
+	cursor: pointer;
+	outline: none !important;
+}
+
+#ashna-app-shell .ashna-prev-step-btn.active {
+	background: var(--s-primary);
+	border-color: var(--s-primary);
+	color: #fff;
+}
+
+.ashna-preview-canvas {
+	padding: 28px 20px;
+	background-color: #f1f5f9;
+	background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+	background-size: 16px 16px;
+}
+
+.ashna-prev-card {
+	padding: 24px 20px;
+	box-shadow: none !important;
+	border: none !important;
+	transition: all 0.2s ease;
+}
+
+.ashna-prev-digit {
+	width: 40px;
+	height: 46px;
+	border: 1.5px solid #cbd5e1;
+	border-radius: 9px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 16px;
+	background: #f8fafc;
+	color: #0f172a;
+}
+
+/* COPY CARDS */
+.ashna-copy-cards-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 14px;
+}
+
+.ashna-copy-card {
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	border-radius: 12px;
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.ashna-copy-card code {
+	padding: 8px 10px;
+	border-radius: 8px;
+	background: var(--s-bg-input);
+	color: var(--s-text);
+	border: 1px dashed var(--s-border-input);
+	font-size: 12.5px;
+	text-align: left;
+}
+
+#ashna-app-shell .ashna-copy-btn {
+	align-self: flex-start;
+	padding: 6px 12px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-primary);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+/* MODERN TABLE */
+.ashna-modern-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.ashna-modern-table th {
+	background: var(--s-bg-subtle);
+	color: var(--s-text-muted);
+	font-weight: 700;
+	padding: 13px 16px;
+	text-align: right;
+	border-bottom: 1px solid var(--s-border-input);
+}
+
+.ashna-modern-table td {
+	padding: 13px 16px;
+	border-bottom: 1px solid #33415522;
+	color: var(--s-text);
+}
+
+.ashna-otp-code-pill {
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 6px;
+}
+
+.ashna-logs-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.ashna-logs-filter-form {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+/* UNSAVED CHANGES DOT ON SAVE BUTTON */
+.ashna-unsaved-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #fbbf24;
+	box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.35);
+	display: inline-block;
+}
+
+#ashna-app-shell .ashna-btn-save.has-unsaved {
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.28), 0 6px 16px rgba(37, 99, 235, 0.38);
+}
+
+/* QUICK SETUP & JUMP BAR ON DASHBOARD */
+.ashna-quick-setup-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+.ashna-quick-item {
+	background: var(--s-bg-surface);
+	border: 1px solid var(--s-border-input);
+	border-radius: 14px;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.ashna-quick-item:hover {
+	border-color: var(--s-primary);
+	transform: translateY(-1px);
+}
+
+.ashna-quick-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.ashna-quick-body {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ashna-quick-icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 11px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+}
+
+.ashna-quick-icon.is-blue {
+	background: rgba(59, 130, 246, 0.14);
+	color: #3b82f6;
+}
+
+.ashna-quick-icon.is-purple {
+	background: rgba(139, 92, 246, 0.14);
+	color: #a855f7;
+}
+
+.ashna-quick-icon.is-amber {
+	background: rgba(245, 158, 11, 0.14);
+	color: #f59e0b;
+}
+
+.ashna-quick-icon.is-green {
+	background: rgba(16, 185, 129, 0.14);
+	color: #10b981;
+}
+
+.ashna-quick-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.ashna-quick-item strong {
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-quick-item small {
+	font-size: 11.5px;
+	color: var(--s-text-muted);
+}
+
+#ashna-app-shell .ashna-jump-tab {
+	background: transparent;
+	border: none;
+	padding: 2px 6px;
+	color: var(--s-primary);
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	border-radius: 6px;
+	transition: background 0.15s ease;
+}
+
+#ashna-app-shell .ashna-jump-tab:hover {
+	background: var(--s-primary-soft);
+}
+
+/* ELEMENTOR NATIVE WIDGETS SHOWCASE */
+.ashna-elementor-showcase-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 16px;
+}
+
+.ashna-el-widget-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	border-radius: 14px;
+	padding: 18px;
+}
+
+.ashna-el-widget-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: rgba(37, 99, 235, 0.14);
+	color: #2563eb;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ashna-el-widget-icon.is-purple {
+	background: rgba(147, 51, 234, 0.14);
+	color: #9333ea;
+}
+
+.ashna-el-widget-body {
+	flex: 1;
+}
+
+.ashna-el-widget-title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.ashna-el-widget-title-row strong {
+	font-size: 14px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-el-widget-body p {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.7;
+	color: var(--s-text-muted);
+}
+
+/* QUICK SETUP CHECKLIST IN DASHBOARD */
+.ashna-checklist-progress-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 190px;
+}
+
+.ashna-checklist-progress-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	font-size: 12px;
+}
+
+.ashna-checklist-progress-label {
+	color: var(--s-text-muted);
+	font-weight: 600;
+}
+
+.ashna-checklist-progress-pct {
+	color: #10b981;
+	font-weight: 800;
+	font-size: 13px;
+	direction: ltr;
+}
+
+.ashna-checklist-progress-bar {
+	width: 100%;
+	height: 8px;
+	border-radius: 99px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	overflow: hidden;
+}
+
+.ashna-checklist-progress-fill {
+	height: 100%;
+	border-radius: 99px;
+	background: linear-gradient(90deg, #10b981, #059669);
+	transition: width 0.35s ease;
+}
+
+.ashna-checklist-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.ashna-checklist-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 16px;
+	border-radius: 12px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.ashna-checklist-row.is-done {
+	border-color: rgba(16, 185, 129, 0.28);
+	background: rgba(16, 185, 129, 0.04);
+}
+
+.ashna-checklist-row:hover {
+	border-color: var(--s-primary);
+}
+
+.ashna-checklist-main {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+	min-width: 0;
+	flex: 1;
+}
+
+.ashna-checklist-check {
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ashna-checklist-check.is-done {
+	background: rgba(16, 185, 129, 0.16);
+	color: #10b981;
+	border: 1px solid rgba(16, 185, 129, 0.32);
+}
+
+.ashna-checklist-check.is-pending {
+	background: rgba(245, 158, 11, 0.16);
+	color: #f59e0b;
+	border: 1px solid rgba(245, 158, 11, 0.32);
+}
+
+.ashna-checklist-text {
+	min-width: 0;
+}
+
+.ashna-checklist-text strong {
+	display: block;
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--s-text);
+	margin-bottom: 3px;
+}
+
+.ashna-checklist-text p {
+	margin: 0;
+	font-size: 12px;
+	color: var(--s-text-muted);
+	line-height: 1.6;
+}
+
+.ashna-checklist-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+	flex-wrap: wrap;
+}
+
+#ashna-app-shell .ashna-checklist-jump {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-primary);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-checklist-jump:hover {
+	background: var(--s-primary);
+	color: #ffffff;
+	border-color: var(--s-primary);
+}
+
+/* ==========================================
+   DYNAMIC PROPORTIONAL LIVE PREVIEW & MODAL SIMULATOR (v2.7.2)
+   ========================================== */
+.ashna-preview-subbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 14px;
+	background: var(--s-bg-surface);
+	border-bottom: 1px solid var(--s-border-input);
+	flex-wrap: wrap;
+}
+
+.ashna-preview-mode-tabs {
+	display: inline-flex;
+	background: var(--s-bg-subtle);
+	padding: 3px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	gap: 3px;
+}
+
+#ashna-app-shell .ashna-prev-mode-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 6px;
+	border: none;
+	background: transparent;
+	color: var(--s-text-muted);
+	font-family: inherit;
+	font-size: 11px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-prev-mode-btn.active {
+	background: var(--s-primary);
+	color: #ffffff;
+	box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+#ashna-app-shell .ashna-prev-expand-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 7px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-subtle);
+	color: var(--s-text);
+	font-family: inherit;
+	font-size: 11px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+#ashna-app-shell .ashna-prev-expand-btn:hover,
+#ashna-app-shell .ashna-prev-expand-btn.active {
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+	background: var(--s-primary-soft);
+}
+
+/* Proportional Viewport Stage inside Live Preview so Split-Screen never squishes or overflows */
+.ashna-preview-viewport {
+	width: 100% !important;
+	max-width: 100% !important;
+	box-sizing: border-box !important;
+	overflow: visible !important;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.25s ease;
+	position: relative;
+	z-index: 2;
+}
+
+#ashna-live-preview-shell {
+	width: 100% !important;
+	max-width: 350px !important;
+	box-sizing: border-box !important;
+	zoom: 1 !important;
+	margin: 0 !important;
+	overflow: visible !important;
+}
+
+.ashna-studio-layout.is-wide-preview #ashna-live-preview-shell:not(.is-split) {
+	max-width: 470px !important;
+}
+
+.ashna-studio-layout.is-wide-preview .ashna-preview-canvas:not(.is-modal-mode) {
+	min-height: 490px !important;
+	padding: 36px 28px !important;
+}
+
+#ashna-live-preview-shell.is-split {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+#ashna-live-preview-shell.is-split #ashna-live-preview-card {
+	flex: 0 0 55% !important;
+	min-width: 0 !important;
+	max-width: 55% !important;
+	box-sizing: border-box !important;
+}
+
+#ashna-live-preview-shell.is-split #ashna-prev-split-banner {
+	flex: 0 0 45% !important;
+	min-width: 0 !important;
+	max-width: 45% !important;
+	box-sizing: border-box !important;
+}
+
+/* Simulated Website Backdrop for Modal / Drawer Mode inside Live Preview */
+.ashna-prev-site-skeleton {
+	display: flex;
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	padding: 16px;
+	box-sizing: border-box;
+	flex-direction: column;
+	gap: 12px;
+	pointer-events: none;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* ==========================================================
+   LIVE PREVIEW STAGE · MODAL / DRAWER / BOTTOM SHEET
+   One stage element is reused; the backdrop and the fake site
+   fade in/out instead of popping, and the shell slides in with a
+   single smooth ease-out curve (no overshoot).
+   ========================================================== */
+#ashna-app-shell #ashna-preview-canvas {
+	transition: background 0.4s ease, padding 0.45s cubic-bezier(0.22, 1, 0.36, 1), min-height 0.45s ease !important;
+}
+
+#ashna-app-shell .ashna-prev-modal-backdrop {
+	display: block;
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: rgba(15, 23, 42, 0.56);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode {
+	position: relative;
+	min-height: 460px !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode .ashna-prev-site-skeleton {
+	opacity: 0.45;
+	visibility: visible;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode .ashna-prev-modal-backdrop {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Center modal: stays in normal flow, grows with the card */
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-center #ashna-preview-viewport {
+	position: relative;
+	z-index: 2;
+	width: 100% !important;
+	max-width: 100% !important;
+	min-height: 460px !important;
+	height: auto !important;
+	padding: 32px 20px !important;
+	box-sizing: border-box !important;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
+/* Drawers: the viewport covers the whole stage so the panel runs top to bottom */
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-preview-viewport,
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-preview-viewport {
+	position: absolute !important;
+	inset: 0 !important;
+	z-index: 2;
+	width: 100% !important;
+	max-width: 100% !important;
+	height: 100% !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-preview-viewport {
+	align-items: flex-end !important;
+	justify-content: stretch !important;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-preview-viewport {
+	align-items: flex-start !important;
+	justify-content: stretch !important;
+}
+
+/* Bottom sheet: the viewport is only the overlay layer; the sheet itself sits at the bottom at content height */
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-preview-viewport {
+	position: absolute !important;
+	inset: 0 !important;
+	z-index: 2;
+	width: 100% !important;
+	max-width: 100% !important;
+	height: 100% !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 10px 10px !important;
+	box-sizing: border-box !important;
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: stretch !important;
+	justify-content: flex-end !important;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-live-preview-shell,
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-live-preview-shell {
+	width: 280px !important;
+	max-width: 280px !important;
+	height: 100% !important;
+	margin: 0 !important;
+}
+
+/* Bottom sheet card: content height, all corners rounded, capped at 70% of the stage */
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell {
+	position: relative !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	height: auto !important;
+	max-height: 70% !important;
+	flex: 0 1 auto !important;
+	align-self: stretch !important;
+	overflow-y: auto !important;
+	margin: 0 !important;
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell::before {
+	content: '';
+	position: absolute;
+	top: 8px;
+	left: 50%;
+	width: 40px;
+	height: 4px;
+	margin-left: -20px;
+	border-radius: 99px;
+	background: rgba(100, 116, 139, 0.45);
+	pointer-events: none;
+	z-index: 5;
+}
+
+/* Entrance curves: one ease-out, no bounce */
+@keyframes ashnaSimModalCenter {
+	0% { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.97); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes ashnaSimDrawerLeft {
+	0% { transform: translate3d(-100%, 0, 0); }
+	100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes ashnaSimDrawerRight {
+	0% { transform: translate3d(100%, 0, 0); }
+	100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes ashnaSimBottomSheet {
+	0% { transform: translate3d(0, 100%, 0); }
+	100% { transform: translate3d(0, 0, 0); }
+}
+
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-center #ashna-live-preview-shell {
+	animation: ashnaSimModalCenter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_left #ashna-live-preview-shell {
+	animation: ashnaSimDrawerLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-drawer_right #ashna-live-preview-shell {
+	animation: ashnaSimDrawerRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#ashna-app-shell #ashna-preview-canvas.is-modal-mode.sim-bottom_sheet #ashna-live-preview-shell {
+	animation: ashnaSimBottomSheet 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stage type changed: page mode fades in; modal/drawer/sheet keep their own entrance (higher specificity) */
+#ashna-app-shell #ashna-live-preview-shell.is-switch-in {
+	animation: ashnaSwitchFadeIn 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes ashnaSwitchFadeIn {
+	0% { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.985); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* ==========================================
+   MINI-VIDEO MOTION PREVIEWS INSIDE CHOICE CARDS (.ashna-mini-video)
+   ========================================== */
+.ashna-mini-video {
+	width: 100%;
+	height: 78px;
+	border-radius: 10px;
+	background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+	border: 1px solid rgba(148, 163, 184, 0.22);
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 4px;
+	box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.ashna-mini-video-badge {
+	position: absolute;
+	top: 6px;
+	left: 7px;
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 6px;
+	border-radius: 99px;
+	background: rgba(15, 23, 42, 0.72);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	color: #93c5fd;
+	font-size: 9.5px;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+}
+
+.ashna-mini-video-badge::before {
+	content: "";
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: #38bdf8;
+	box-shadow: 0 0 6px #38bdf8;
+	animation: ashnaPulseDot 1.6s infinite ease-in-out;
+}
+
+@keyframes ashnaPulseDot {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+/* Mini Card & Split-Screen Motion Elements */
+.ashna-mv-card {
+	width: 54px;
+	height: 54px;
+	border-radius: 7px;
+	background: #ffffff;
+	padding: 6px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4px;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+	animation: ashnaMvFloat 3s ease-in-out infinite;
+}
+
+.ashna-mv-line {
+	height: 4px;
+	border-radius: 3px;
+	background: #cbd5e1;
+	width: 75%;
+	margin: 0 auto;
+}
+
+.ashna-mv-input {
+	height: 8px;
+	border-radius: 3px;
+	background: #f1f5f9;
+	border: 1px solid #94a3b8;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+}
+
+.ashna-mv-input::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	right: 3px;
+	height: 2px;
+	background: #2563eb;
+	border-radius: 2px;
+	animation: ashnaMvTyping 2.6s infinite ease-in-out;
+}
+
+.ashna-mv-btn {
+	height: 8px;
+	border-radius: 3px;
+	background: linear-gradient(90deg, #2563eb, #4f46e5);
+	width: 100%;
+	animation: ashnaMvBtnPulse 2.6s infinite ease-in-out;
+}
+
+.ashna-mv-split {
+	width: 108px;
+	height: 54px;
+	border-radius: 7px;
+	overflow: hidden;
+	display: flex;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+	animation: ashnaMvFloat 3s ease-in-out infinite;
+}
+
+.ashna-mv-split.is-reverse {
+	flex-direction: row-reverse;
+}
+
+.ashna-mv-split .ashna-mv-card {
+	width: 54px;
+	border-radius: 0;
+	box-shadow: none;
+	animation: none;
+}
+
+.ashna-mv-banner {
+	width: 54px;
+	height: 54px;
+	background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+	padding: 6px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4px;
+}
+
+.ashna-mv-banner span {
+	display: block;
+	height: 3.5px;
+	border-radius: 2px;
+	background: rgba(255, 255, 255, 0.78);
+}
+
+/* Position Alignment Motion */
+.ashna-mv-pos-track {
+	width: 124px;
+	height: 54px;
+	border-radius: 7px;
+	border: 1px dashed rgba(148, 163, 184, 0.35);
+	padding: 4px;
+	display: flex;
+	align-items: center;
+}
+
+.ashna-mv-pos-track.is-center { justify-content: center; }
+.ashna-mv-pos-track.is-right { justify-content: flex-start; }
+.ashna-mv-pos-track.is-left { justify-content: flex-end; }
+
+.ashna-mv-pos-track.is-right .ashna-mv-card {
+	animation: ashnaMvSlideRight 2.8s infinite ease-in-out;
+}
+.ashna-mv-pos-track.is-left .ashna-mv-card {
+	animation: ashnaMvSlideLeft 2.8s infinite ease-in-out;
+}
+
+/* Modal & Drawer Motion Previews */
+.ashna-mv-screen {
+	width: 126px;
+	height: 60px;
+	border-radius: 7px;
+	background: #1e293b;
+	border: 1px solid rgba(148, 163, 184, 0.32);
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ashna-mv-screen-bg {
+	position: absolute;
+	inset: 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	opacity: 0.25;
+}
+
+.ashna-mv-screen-bg i {
+	display: block;
+	height: 5px;
+	border-radius: 3px;
+	background: #94a3b8;
+}
+
+.ashna-mv-modal-center {
+	width: 48px;
+	height: 40px;
+	border-radius: 6px;
+	background: #ffffff;
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+	animation: ashnaMvPopupLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ashna-mv-drawer-left {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 44px;
+	background: #ffffff;
+	border-radius: 0 6px 6px 0;
+	padding: 6px 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+	box-shadow: 4px 0 14px rgba(0, 0, 0, 0.45);
+	animation: ashnaMvDrawerLeftLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ashna-mv-drawer-right {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 44px;
+	background: #ffffff;
+	border-radius: 6px 0 0 6px;
+	padding: 6px 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+	box-shadow: -4px 0 14px rgba(0, 0, 0, 0.45);
+	animation: ashnaMvDrawerRightLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ashna-mv-bottom-sheet {
+	position: absolute;
+	left: 14px;
+	right: 14px;
+	bottom: 0;
+	height: 38px;
+	background: #ffffff;
+	border-radius: 8px 8px 0 0;
+	padding: 5px 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+	box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.45);
+	animation: ashnaMvBottomSheetLoop 2.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Auth Flow & OTP Channel Motion Previews */
+.ashna-mv-flow-stage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	padding: 0 12px;
+}
+
+.ashna-mv-track {
+	width: 44px;
+	height: 3px;
+	background: rgba(148, 163, 184, 0.28);
+	border-radius: 99px;
+	position: relative;
+	overflow: hidden;
+}
+
+.ashna-mv-packet {
+	position: absolute;
+	top: 0;
+	right: -14px;
+	width: 16px;
+	height: 3px;
+	border-radius: 99px;
+	background: #38bdf8;
+	box-shadow: 0 0 8px #38bdf8;
+	animation: ashnaMvPacketFlow 1.8s infinite linear;
+}
+
+.ashna-mv-packet.is-green {
+	background: #10b981;
+	box-shadow: 0 0 8px #10b981;
+}
+
+.ashna-mv-packet.is-delay {
+	animation-delay: 0.85s;
+}
+
+@keyframes ashnaMvFloat {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-2px); }
+}
+@keyframes ashnaMvTyping {
+	0%, 15% { width: 0%; }
+	55%, 85% { width: 72%; }
+	100% { width: 0%; }
+}
+@keyframes ashnaMvBtnPulse {
+	0%, 55%, 100% { transform: scale(1); filter: brightness(1); }
+	70% { transform: scale(0.95); filter: brightness(1.25); }
+}
+@keyframes ashnaMvSlideRight {
+	0%, 100% { transform: translateX(0); }
+	50% { transform: translateX(-8px); }
+}
+@keyframes ashnaMvSlideLeft {
+	0%, 100% { transform: translateX(0); }
+	50% { transform: translateX(8px); }
+}
+@keyframes ashnaMvPopupLoop {
+	0%, 12% { opacity: 0; transform: scale(0.68) translateY(8px); }
+	28%, 80% { opacity: 1; transform: scale(1) translateY(0); }
+	92%, 100% { opacity: 0; transform: scale(0.85); }
+}
+@keyframes ashnaMvDrawerLeftLoop {
+	0%, 12% { transform: translateX(-100%); }
+	28%, 80% { transform: translateX(0); }
+	92%, 100% { transform: translateX(-100%); }
+}
+@keyframes ashnaMvDrawerRightLoop {
+	0%, 12% { transform: translateX(100%); }
+	28%, 80% { transform: translateX(0); }
+	92%, 100% { transform: translateX(100%); }
+}
+@keyframes ashnaMvBottomSheetLoop {
+	0%, 12% { transform: translateY(100%); }
+	28%, 80% { transform: translateY(0); }
+	92%, 100% { transform: translateY(100%); }
+}
+@keyframes ashnaMvPacketFlow {
+	0% { right: -16px; }
+	100% { right: 100%; }
+}
+
+/* Polished Category 4 Micro-Animations in Admin Live Preview & Mini-Videos */
+@keyframes ashnaAnimFadeUp {
+	0% { opacity: 0; transform: translate3d(0, 22px, 0) scale(0.98); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes ashnaAnimZoomSpring {
+	0% { opacity: 0; transform: scale(0.82) translate3d(0, 10px, 0); }
+	65% { opacity: 1; transform: scale(1.035) translate3d(0, -2px, 0); }
+	85% { transform: scale(0.99) translate3d(0, 0, 0); }
+	100% { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
+}
+@keyframes ashnaAnimSlideRtl {
+	0% { opacity: 0; transform: translate3d(34px, 0, 0); }
+	70% { opacity: 1; transform: translate3d(-4px, 0, 0); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes ashnaStaggerChildIn {
+	0% { opacity: 0; transform: translate3d(0, 12px, 0); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes ashnaShakeKeyframes {
+	0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+	12% { transform: translate3d(-11px, 0, 0) rotate(-0.8deg); }
+	24% { transform: translate3d(10px, 0, 0) rotate(0.8deg); }
+	36% { transform: translate3d(-8px, 0, 0) rotate(-0.5deg); }
+	48% { transform: translate3d(7px, 0, 0) rotate(0.5deg); }
+	60% { transform: translate3d(-5px, 0, 0) rotate(-0.3deg); }
+	72% { transform: translate3d(4px, 0, 0) rotate(0.2deg); }
+	84% { transform: translate3d(-2px, 0, 0) rotate(0deg); }
+	100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+#ashna-app-shell .ashna-anim-fade_up { animation: ashnaAnimFadeUp 0.54s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-anim-zoom_spring { animation: ashnaAnimZoomSpring 0.62s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+#ashna-app-shell .ashna-anim-slide_rtl { animation: ashnaAnimSlideRtl 0.52s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-stagger-run { animation: ashnaStaggerChildIn 0.46s cubic-bezier(0.22, 1, 0.36, 1) both; }
+#ashna-app-shell .ashna-shake-anim { animation: ashnaShakeKeyframes 0.64s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+#ashna-app-shell .ashna-prev-digit.is-error-digit {
+	border-color: #ef4444 !important;
+	color: #ef4444 !important;
+	background-color: rgba(239, 68, 68, 0.14) !important;
+	box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.22), 0 6px 16px -4px rgba(239, 68, 68, 0.35) !important;
+	transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (max-width: 1024px) {
+	/* Keep the shell inside the viewport: a 1fr grid track must be allowed to
+	   shrink below its content, otherwise the wide nav row forces the whole
+	   app (and every panel) to overflow and get clipped on tablets/phones. */
+	.ashna-app-body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-app-body > * {
+		min-width: 0;
+	}
+
+	#ashna-app-shell .ashna-sidebar {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	#ashna-app-shell .ashna-main {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.ashna-checklist-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.ashna-checklist-actions {
+		width: 100%;
+		justify-content: flex-end;
+	}
+	.ashna-app-body {
+		grid-template-columns: 1fr;
+	}
+	#ashna-app-shell .ashna-sidebar {
+		border-left: none;
+		border-bottom: 1px solid var(--s-border-input);
+	}
+	.ashna-nav {
+		flex-direction: row;
+		overflow-x: auto;
+		max-width: 100%;
+		padding-bottom: 4px;
+		scrollbar-width: thin;
+	}
+
+	#ashna-app-shell .ashna-nav-item {
+		flex: 0 0 auto;
+		width: auto;
+		white-space: nowrap;
+	}
+
+	.ashna-sidebar-group-title,
+	.ashna-sidebar-footer {
+		display: none;
+	}
+	.ashna-studio-layout,
+	.ashna-bento-row {
+		grid-template-columns: 1fr;
+	}
+	.ashna-col-8,
+	.ashna-col-7,
+	.ashna-col-6,
+	.ashna-col-5,
+	.ashna-col-4 {
+		grid-column: span 12;
+	}
+	.ashna-kpi-grid,
+	.ashna-quick-setup-grid,
+	.ashna-cols-4,
+	.ashna-cols-3,
+	.ashna-cols-2 {
+		grid-template-columns: 1fr;
+	}
+	.ashna-span-2 {
+		grid-column: span 1;
+	}
+}
+
+/* ==========================================
+   FAST FAILOVER CARD & GATEWAY HEALTH
+   ========================================== */
+#ashna-app-shell .ashna-failover-card {
+	margin-top: 20px;
+}
+
+#ashna-app-shell .ashna-failover-note {
+	margin: 16px 0 0;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	line-height: 1.9;
+}
+
+#ashna-app-shell .ashna-failover-note strong {
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-failover-health-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 22px 0 10px;
+}
+
+#ashna-app-shell .ashna-failover-health-head .ashna-section-label {
+	margin: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-scroll {
+	overflow-x: auto;
+	border: 1px solid var(--s-border-input);
+	border-radius: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-table td {
+	vertical-align: middle;
+}
+
+#ashna-app-shell .ashna-gw-health-table tr:last-child td {
+	border-bottom: 0;
+}
+
+#ashna-app-shell .ashna-gw-health-num {
+	white-space: nowrap;
+}
+
+#ashna-app-shell .ashna-gw-health-error small {
+	display: block;
+	margin-top: 2px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-failover-foot {
+	display: block;
+	margin-top: 10px;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}
+
+/* Primary gateway sidelined by the circuit breaker */
+.ashna-status-dot.is-offline {
+	background: #ef4444;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.22);
+}
+
+/* ==========================================
+   PARSENA CREDIT
+   ========================================== */
+#ashna-app-shell .ashna-credit a {
+	color: inherit;
+	font-weight: 700;
+	text-decoration: none;
+	border-bottom: 1px dashed currentColor;
+}
+
+#ashna-app-shell .ashna-credit a:hover,
+#ashna-app-shell .ashna-credit a:focus {
+	color: var(--s-primary);
+}
+
+#ashna-app-shell .ashna-page-credit {
+	margin: 20px 0 4px;
+	text-align: center;
+	color: var(--s-text-muted);
+	font-size: 12px;
+}
+
+.ashna-info-note.is-warning {
+	background: rgba(245, 158, 11, 0.1);
+	border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ashna-gw-logo.is-msgway {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+}
+
+/* Collapsible legacy credentials (e.g. Melipayamak username/password) */
+#ashna-app-shell .ashna-legacy-details {
+	margin-top: 14px;
+	border: 1px dashed var(--s-border-input);
+	border-radius: 10px;
+	padding: 10px 14px;
+}
+
+#ashna-app-shell .ashna-legacy-details summary {
+	cursor: pointer;
+	color: var(--s-text-muted);
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+#ashna-app-shell .ashna-legacy-details[open] summary {
+	margin-bottom: 12px;
+}
+
+#ashna-app-shell .ashna-gw-health-state small.ashna-gw-probe {
+	display: block;
+	margin-top: 4px;
+	color: var(--s-text-muted);
+	font-size: 11px;
+}
+
+#ashna-app-shell .ashna-gw-health-slot {
+	white-space: nowrap;
+	color: var(--s-text-secondary);
+}
+
+.ashna-flow-node.is-messenger {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+	border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* QC 2 — SMS-bombing protection */
+.ashna-info-note.is-danger {
+	background: rgba(239, 68, 68, 0.09);
+	border-color: rgba(239, 68, 68, 0.3);
+	color: var(--s-text-primary);
+}
+
+#ashna-app-shell #ashna-attack-mode-note,
+#ashna-app-shell #ashna-proxy-hint {
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-top: 0;
+}
+
+#ashna-app-shell #ashna-proxy-hint {
+	margin-top: 14px;
+}
+
+#ashna-app-shell #ashna-attack-mode-note .ashna-btn-secondary,
+#ashna-app-shell #ashna-proxy-hint .ashna-btn-secondary {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+#ashna-app-shell #ashna-real-ip-card .ashna-modern-table td:first-child {
+	color: var(--s-text-muted);
+	white-space: nowrap;
+	width: 42%;
+}
+
+/* QC 4 — integrations */
+#ashna-app-shell .ashna-check-list {
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: 12.5px;
+	line-height: 1.7;
+	color: var(--s-text-secondary);
+}
+
+#ashna-app-shell .ashna-check-list li {
+	position: relative;
+	padding-right: 20px;
+}
+
+#ashna-app-shell .ashna-check-list li::before {
+	content: "✓";
+	position: absolute;
+	right: 0;
+	color: #10b981;
+	font-weight: 800;
+}
+
+#ashna-app-shell .ashna-integrations-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+#ashna-app-shell .ashna-integrations-table td {
+	font-size: 12.5px;
+	line-height: 1.7;
+	vertical-align: top;
+	overflow-wrap: anywhere;
+}
+
+#ashna-app-shell .ashna-integrations-table td:first-child {
+	width: 32%;
+}
+
+#ashna-app-shell .ashna-integrations-table code,
+#ashna-app-shell .ashna-check-list code {
+	white-space: normal;
+	word-break: break-all;
+}
+
+#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+	#ashna-app-shell .ashna-fields-grid.ashna-cols-3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.ashna-col-12 {
+	grid-column: span 12;
+}
+
+/* ==========================================================
+   SECURITY TAB — shield hero + split bento (QC redesign)
+   ========================================================== */
+#ashna-app-shell .ashna-sec-hero {
+	padding: 26px 28px 24px;
+	border-radius: 18px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.10), transparent 58%),
+		var(--s-bg-surface);
+	border: 1px solid rgba(59, 130, 246, 0.22);
+}
+
+#ashna-app-shell.is-dark .ashna-sec-hero {
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(59, 130, 246, 0.16), transparent 58%),
+		var(--s-bg-surface);
+	border-color: rgba(59, 130, 246, 0.3);
+}
+
+.ashna-sec-hero-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.ashna-sec-hero-title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sec-hero-title h2 {
+	margin: 0 0 4px;
+	font-size: 17px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-hero-title p {
+	margin: 0;
+	max-width: 640px;
+	font-size: 12.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-hero-icon {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 14px;
+	color: #3b82f6;
+	background: rgba(59, 130, 246, 0.14);
+	border: 1px solid rgba(59, 130, 246, 0.26);
+}
+
+.ashna-sec-hero-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* The four headline limits, as input tiles */
+.ashna-sec-limit-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.ashna-sec-limit {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 16px 15px;
+	border-radius: 13px;
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border-input);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ashna-sec-limit:focus-within {
+	border-color: rgba(59, 130, 246, 0.55);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.ashna-sec-limit-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.ashna-sec-limit-head span {
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sec-limit-head em {
+	font-style: normal;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--s-text-muted);
+}
+
+.ashna-sec-limit-input {
+	width: 100%;
+	height: 40px;
+	padding: 0 12px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text);
+	font-size: 17px;
+	font-weight: 800;
+	text-align: center;
+	letter-spacing: 0.02em;
+}
+
+.ashna-sec-limit-input:focus {
+	outline: none;
+	border-color: #3b82f6;
+}
+
+.ashna-sec-limit small {
+	font-size: 11px;
+	line-height: 1.65;
+	color: var(--s-text-muted);
+}
+
+/* Advanced settings, folded away */
+.ashna-sec-more {
+	margin-top: 18px;
+	border-top: 1px dashed var(--s-border-input);
+	padding-top: 14px;
+}
+
+.ashna-sec-more > summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	cursor: pointer;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	list-style: none;
+	padding: 4px 2px;
+}
+
+.ashna-sec-more > summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sec-more > summary svg {
+	transition: transform 0.18s ease;
+}
+
+.ashna-sec-more[open] > summary svg {
+	transform: rotate(180deg);
+}
+
+.ashna-sec-more > summary:hover {
+	color: #3b82f6;
+}
+
+.ashna-sec-advanced-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px 18px;
+	margin-top: 16px;
+}
+
+.ashna-sec-unit {
+	font-weight: 500;
+	color: var(--s-text-muted);
+	font-size: 11.5px;
+}
+
+/* Split rows */
+.ashna-sec-split {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: 20px;
+	align-items: stretch;
+	margin-top: 20px;
+}
+
+/* The narrower column can be shorter than the stack beside it; let its card
+   fill the row instead of leaving a naked gap under the border. */
+.ashna-sec-split > .ashna-card {
+	height: 100%;
+}
+
+.ashna-sec-split-bottom {
+	grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+}
+
+.ashna-sec-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sec-ip-table {
+	margin-top: 16px;
+}
+
+.ashna-sec-reason-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+@media (max-width: 1280px) {
+	.ashna-sec-limit-row {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1100px) {
+	.ashna-sec-split,
+	.ashna-sec-split-bottom {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ashna-sec-advanced-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 782px) {
+	#ashna-app-shell .ashna-topbar {
+		padding: 14px 16px;
+	}
+
+	.ashna-topbar-brand p {
+		display: none;
+	}
+
+	.ashna-sec-limit-row,
+	.ashna-sec-advanced-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	#ashna-app-shell .ashna-sec-hero {
+		padding: 20px;
+	}
+}
+
+/* ==========================================
+   SOCIAL SIGN-IN (Google / Telegram) — guided setup
+   ========================================== */
+
+.ashna-sso-hero {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px 16px;
+	padding: 11px 16px;
+	margin-bottom: 14px;
+	border: 1px solid var(--s-border);
+	border-radius: 13px;
+	background: var(--s-bg-surface);
+}
+
+.ashna-sso-hero-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.ashna-sso-hero-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 9px;
+	flex-shrink: 0;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+}
+
+.ashna-sso-hero-copy {
+	min-width: 0;
+}
+
+#ashna-app-shell .ashna-sso-hero-copy h2 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.5;
+	color: var(--s-text);
+}
+
+#ashna-app-shell .ashna-sso-hero-copy p {
+	margin: 1px 0 0;
+	font-size: 11.5px;
+	line-height: 1.6;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hero-pills {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.ashna-sso-hero-pills .ashna-pill {
+	font-size: 11px;
+	padding: 3px 9px;
+}
+
+.ashna-sso-hero-note {
+	flex: 1 0 100%;
+	margin: 2px 0 0;
+	padding: 8px 10px;
+	border-radius: 9px;
+	background: rgba(245, 158, 11, 0.12);
+	border: 1px solid rgba(245, 158, 11, 0.28);
+	color: #92400e;
+	font-size: 12px;
+	line-height: 1.8;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hero-note {
+	color: #fcd34d;
+}
+
+.ashna-sso-card {
+	margin-bottom: 16px;
+}
+
+.ashna-panel.active .ashna-sso-card {
+	animation: ashnaSsoRise 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ashna-panel.active .ashna-sso-card:nth-of-type(2) {
+	animation-delay: 0.07s;
+}
+
+.ashna-sso-head {
+	border-bottom: 1px dashed var(--s-border);
+	padding-bottom: 16px;
+	margin-bottom: 18px;
+}
+
+.ashna-sso-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ashna-sso-columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+	gap: 22px;
+	align-items: stretch;
+}
+
+.ashna-sso-guide {
+	background: var(--s-bg-subtle);
+	border: 1px solid var(--s-border);
+	border-radius: 14px;
+	padding: 18px 18px 16px;
+}
+
+.ashna-sso-col-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 14px;
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-col-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 23px;
+	height: 23px;
+	border-radius: 7px;
+	background: var(--s-primary-soft);
+	color: var(--s-primary);
+	font-size: 12px;
+	font-weight: 800;
+	flex-shrink: 0;
+}
+
+.ashna-sso-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ashna-sso-step {
+	position: relative;
+	display: grid;
+	grid-template-columns: 26px minmax(0, 1fr);
+	gap: 11px;
+	padding-bottom: 16px;
+}
+
+.ashna-sso-step:last-child {
+	padding-bottom: 0;
+}
+
+.ashna-sso-step:not(:last-child)::after {
+	content: '';
+	position: absolute;
+	top: 28px;
+	bottom: 2px;
+	right: 12.5px;
+	width: 1.5px;
+	background: linear-gradient(180deg, var(--s-primary-soft), var(--s-border));
+}
+
+.ashna-sso-step-num {
+	position: relative;
+	z-index: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: var(--s-bg-surface);
+	border: 1.5px solid var(--s-border-input);
+	color: var(--s-text-secondary);
+	font-size: 11.5px;
+	font-weight: 800;
+}
+
+.ashna-sso-step-body strong {
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--s-text);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-step-body p {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-step-body code,
+.ashna-sso-urlbox code,
+.ashna-sso-help code,
+.ashna-sso-hint code {
+	direction: ltr;
+	unicode-bidi: embed;
+	display: inline-block;
+	padding: 1px 5px;
+	border-radius: 5px;
+	background: var(--s-bg-hover);
+	color: var(--s-text-secondary);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 11px;
+	line-height: 1.7;
+	vertical-align: middle;
+}
+
+.ashna-sso-console-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	margin-top: 15px;
+	text-decoration: none;
+}
+
+.ashna-sso-config {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	min-width: 0;
+}
+
+.ashna-sso-urlbox {
+	border: 1.5px dashed var(--s-primary);
+	border-radius: 12px;
+	background: var(--s-primary-soft);
+	padding: 13px 14px;
+}
+
+.ashna-sso-urlbox-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 9px;
+	font-size: 12.5px;
+	font-weight: 700;
+	color: var(--s-text);
+}
+
+.ashna-sso-required {
+	font-size: 10.5px;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 99px;
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-required {
+	color: #fca5a5;
+}
+
+.ashna-sso-url-row {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+}
+
+.ashna-sso-url-row code {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 9px 11px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-input);
+	color: var(--s-text);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	overflow-x: auto;
+	white-space: nowrap;
+	direction: ltr;
+	text-align: left;
+	user-select: all;
+}
+
+.ashna-sso-copy {
+	position: relative;
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	min-height: 38px;
+	border-radius: 8px;
+	border: 1px solid var(--s-border-input);
+	background: var(--s-bg-surface);
+	color: var(--s-text-secondary);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ashna-sso-copy:hover {
+	border-color: var(--s-primary);
+	color: var(--s-primary);
+	background: var(--s-bg-hover);
+}
+
+.ashna-sso-copy:active {
+	transform: scale(0.94);
+}
+
+.ashna-sso-copy-ok,
+.ashna-sso-copy.is-copied .ashna-sso-copy-icon {
+	display: none;
+}
+
+.ashna-sso-copy.is-copied {
+	border-color: #10b981;
+	background: rgba(16, 185, 129, 0.14);
+	color: #059669;
+	animation: ashnaSsoPop 0.32s ease;
+}
+
+.ashna-sso-copy.is-copied .ashna-sso-copy-ok {
+	display: block;
+}
+
+.ashna-sso-urlbox > p {
+	margin: 9px 0 0;
+	font-size: 11.5px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint {
+	margin: 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-hint.is-warn {
+	color: #b45309;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-warn {
+	color: #fbbf24;
+}
+
+.ashna-sso-hint.is-ok {
+	color: #047857;
+}
+
+#ashna-app-shell.is-dark .ashna-sso-hint.is-ok {
+	color: #34d399;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-invalid {
+	border-color: #ef4444 !important;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+#ashna-app-shell .ashna-sso-card input.is-valid {
+	border-color: rgba(16, 185, 129, 0.65) !important;
+}
+
+.ashna-sso-secret {
+	position: relative;
+}
+
+#ashna-app-shell .ashna-sso-secret input {
+	padding-left: 44px !important;
+}
+
+.ashna-sso-eye {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--s-text-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ashna-sso-eye:hover {
+	background: var(--s-bg-hover);
+	color: var(--s-primary);
+}
+
+.ashna-sso-eye-hide {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-show {
+	display: none;
+}
+
+.ashna-sso-eye.is-visible .ashna-sso-eye-hide {
+	display: block;
+}
+
+.ashna-sso-tools {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-top: 2px;
+}
+
+.ashna-sso-check {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ashna-sso-spinner {
+	display: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid var(--s-border-input);
+	border-top-color: var(--s-primary);
+	border-radius: 50%;
+	animation: ashnaSsoSpin 0.7s linear infinite;
+}
+
+.ashna-sso-check.is-loading .ashna-sso-spinner {
+	display: inline-block;
+}
+
+.ashna-sso-check-hint {
+	font-size: 11px;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-result {
+	margin-top: 4px;
+	padding: 12px 14px;
+	border-radius: 10px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+	animation: ashnaSsoResultIn 0.3s ease both;
+}
+
+.ashna-sso-result[hidden] {
+	display: none;
+}
+
+.ashna-sso-result-title {
+	margin: 0 0 9px;
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--s-text);
+}
+
+.ashna-sso-check-row {
+	display: grid;
+	grid-template-columns: 17px minmax(0, 1fr);
+	gap: 8px;
+	align-items: start;
+	padding: 5px 0;
+	font-size: 11.5px;
+	line-height: 1.8;
+	color: var(--s-text-muted);
+}
+
+.ashna-sso-check-row svg {
+	width: 15px;
+	height: 15px;
+	margin-top: 3px;
+}
+
+.ashna-sso-check-row.is-ok svg {
+	color: #10b981;
+}
+
+.ashna-sso-check-row.is-warn svg {
+	color: #f59e0b;
+}
+
+.ashna-sso-check-row.is-error svg {
+	color: #ef4444;
+}
+
+.ashna-sso-check-row strong {
+	color: var(--s-text);
+	font-weight: 700;
+}
+
+.ashna-sso-result.is-ok {
+	border-color: rgba(16, 185, 129, 0.4);
+	background: rgba(16, 185, 129, 0.08);
+}
+
+.ashna-sso-result.is-warn {
+	border-color: rgba(245, 158, 11, 0.4);
+	background: rgba(245, 158, 11, 0.08);
+}
+
+.ashna-sso-result.is-error {
+	border-color: rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.07);
+}
+
+.ashna-sso-scope {
+	margin-top: 2px;
+	padding: 12px 14px;
+	border-radius: 11px;
+	border: 1px solid var(--s-border);
+	background: var(--s-bg-subtle);
+}
+
+.ashna-sso-scope-title {
+	display: block;
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--s-text);
+	margin-bottom: 7px;
+}
+
+.ashna-sso-scope ul {
+	margin: 0;
+	padding: 0 15px 0 0;
+}
+
+.ashna-sso-scope li {
+	font-size: 11.5px;
+	line-height: 1.9;
+	color: var(--s-text-muted);
+	margin-bottom: 3px;
+}
+
+.ashna-sso-scope li::marker {
+	color: var(--s-primary);
+}
+
+/* bullet colour alone reads as a stray dash in RTL lists */
+.ashna-sso-scope ul {
+	list-style: none;
+}
+
+.ashna-sso-scope li {
+	position: relative;
+	padding-right: 15px;
+}
+
+.ashna-sso-scope li::before {
+	content: '';
+	position: absolute;
+	top: 8px;
+	right: 2px;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--s-primary);
+	opacity: 0.75;
+}
+
+.ashna-sso-scope p {
+	margin: 8px 0 0;
+	padding-top: 8px;
+	border-top: 1px dashed var(--s-border);
+	font-size: 11px;
+	line-height: 1.85;
+	color: var(--s-text-muted);
+}
+
+/* Pinned to the bottom of the column so a shorter settings column does not
+   leave a hole beside the (taller) step-by-step guide. */
+.ashna-sso-help {
+	margin-top: auto;
+	border-top: 1px solid var(--s-border);
+	padding-top: 10px;
+}
+
+.ashna-sso-help summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	cursor: pointer;
+	list-style: none;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--s-text-secondary);
+	padding: 4px 0;
+}
+
+.ashna-sso-help summary::-webkit-details-marker {
+	display: none;
+}
+
+.ashna-sso-chevron {
+	transition: transform 0.22s ease;
+	flex-shrink: 0;
+}
+
+.ashna-sso-help[open] .ashna-sso-chevron {
+	transform: rotate(180deg);
+}
+
+.ashna-sso-help ul {
+	margin: 8px 0 2px;
+	padding: 0 16px 0 0;
+}
+
+.ashna-sso-help li {
+	font-size: 11.5px;
+	line-height: 1.95;
+	color: var(--s-text-muted);
+	margin-bottom: 6px;
+}
+
+.ashna-sso-switches {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+@keyframes ashnaSsoRise {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes ashnaSsoPop {
+	50% {
+		transform: scale(1.09);
+	}
+}
+
+@keyframes ashnaSsoSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes ashnaSsoResultIn {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.ashna-sso-hero-pills .ashna-pill,
+.ashna-sso-card .ashna-pill {
+	transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.ashna-sso-card .ashna-pill.is-updated,
+.ashna-sso-hero-pills .ashna-pill.is-updated {
+	animation: ashnaSsoPillPop 0.55s ease;
+}
+
+.ashna-sso-help[open] ul {
+	animation: ashnaSsoResultIn 0.22s ease both;
+}
+
+@keyframes ashnaSsoPillPop {
+	0%, 100% { transform: scale(1); }
+	40% { transform: scale(1.07); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ashna-panel.active .ashna-sso-card,
+	.ashna-sso-copy.is-copied,
+	.ashna-sso-result,
+	.ashna-sso-card .ashna-pill.is-updated,
+	.ashna-sso-hero-pills .ashna-pill.is-updated,
+	.ashna-sso-help[open] ul {
+		animation: none !important;
+	}
+}
+
+@media (max-width: 1280px) {
+	.ashna-sso-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 782px) {
+	.ashna-sso-hero {
+		padding: 10px 12px;
+	}
+
+	.ashna-sso-hero-pills {
+		width: 100%;
+	}
+
+	.ashna-sso-head-actions {
+		gap: 10px;
+	}
+
+	.ashna-sso-url-row {
+		flex-direction: column;
+	}
+
+	.ashna-sso-copy {
+		width: 100%;
+	}
+
+	.ashna-sso-guide {
+		padding: 15px;
+	}
+}

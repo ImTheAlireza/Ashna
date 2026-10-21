@@ -12,20 +12,21 @@
     "files": 88
   },
   {
-    "file": "signa-website-source.zip",
-    "bytes": 2080231,
-    "sha256": "fcd6899377731ff0883592ae88f7842815bad87b34803a90ace848008d6aa22c",
-    "files": 32
-  },
-  {
-    "file": "Signa-Help-FA.pdf",
-    "bytes": 236971,
-    "sha256": "2c0929bd3a4b36fdde8885eea3a15b34bca91e9c0f7abf8d5076d75caae5eaf0"
-  },
-  {
     "file": "ashna-activation-diagnostics.zip",
     "bytes": 9988,
     "sha256": "909a8a2353f77591772faa96cb5158f848f9982b0fa0b88090eaa7f07d5ea535",
     "files": 3
+  },
+  {
+    "file": "ashna-landing.zip",
+    "bytes": 1002623,
+    "sha256": "812ce54e71bb881622ee115fa8cf2200ebc8161091e419be11a6197652eb00f1",
+    "files": 39
+  },
+  {
+    "file": "parsena-landing.zip",
+    "bytes": 125312,
+    "sha256": "ec07c48df2e30b7f020096c1f1696f4c969c1a5b2c239055bae7a17715119a9e",
+    "files": 7
   }
 ]
