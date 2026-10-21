@@ -33,6 +33,11 @@
   <link rel="preload" href="assets/fonts/vazirmatn/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/estedad/estedad-900.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
+  <!-- The panel below is the plugin's own UI: these two files are copies of
+       assets/css/admin.css and the inline <style> of
+       includes/admin/views/settings-page.php, so it renders exactly like the product. -->
+  <link rel="stylesheet" href="assets/css/admin-panel.css">
+  <link rel="stylesheet" href="assets/css/admin-panel-inline.css">
 
   <script type="application/ld+json">
   {
@@ -112,14 +117,13 @@
       </a>
       <nav class="nav" id="main-nav" aria-label="منوی اصلی">
         <a href="#why">چرا آشنا</a>
-        <a href="#lab">آزمایشگاه</a>
         <a href="#admin">پیشخوان</a>
         <a href="#features">امکانات</a>
         <a href="#integrations">یکپارچگی‌ها</a>
         <a href="#faq">سؤالات</a>
       </nav>
       <div class="header-actions">
-        <a class="btn btn-ghost header-demo" href="#lab"><svg class="icon icon-16"><use href="#i-play"/></svg> دموی تعاملی</a>
+        <a class="btn btn-ghost header-demo" href="#admin"><svg class="icon icon-16"><use href="#i-grid"/></svg> دیدن پنل</a>
         <a class="btn btn-primary btn-sm buy-link" href="#" data-buy>خرید از راست‌چین</a>
         <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="باز کردن منو">
           <svg class="icon icon-24 nav-toggle-open"><use href="#i-menu"/></svg>
@@ -414,7 +418,7 @@
         <div class="section-head reveal">
           <span class="kicker">سه ستون آشنا</span>
           <h2>آنچه در اسکرین‌شات دیده نمی‌شود.</h2>
-          <p>تفاوت آشنا در فهرست امکانات نیست؛ در کاری است که موقع خطا می‌کند. همین‌جا می‌توانی ببینی.</p>
+          <p>تفاوت آشنا در فهرست امکانات نیست؛ در کاری است که موقع خطا می‌کند. تنظیماتش را در همان پنل می‌بینی.</p>
         </div>
         <div class="pillar-grid">
           <article class="pillar reveal">
@@ -429,7 +433,7 @@
               <li><svg class="icon icon-14"><use href="#i-check"/></svg> یادگیری زمان پاسخ هر درگاه</li>
               <li><svg class="icon icon-14"><use href="#i-check"/></svg> لاگ کامل مسیر هر ارسال</li>
             </ul>
-            <a class="text-link" href="#lab" data-lab-tab="failover">قطعی را شبیه‌سازی کن <svg class="icon icon-16"><use href="#i-arrow"/></svg></a>
+            <a class="text-link" href="#admin">در پنل ببین <svg class="icon icon-16"><use href="#i-arrow"/></svg></a>
           </article>
           <article class="pillar reveal">
             <div class="pillar-top">
@@ -443,7 +447,7 @@
               <li><svg class="icon icon-14"><use href="#i-check"/></svg> ذخیرهٔ فقط هش کد در دیتابیس</li>
               <li><svg class="icon icon-14"><use href="#i-check"/></svg> قفل و رفع مسدودی آنی</li>
             </ul>
-            <a class="text-link" href="#lab" data-lab-tab="bomb">محاسبهٔ حمله را ببین <svg class="icon icon-16"><use href="#i-arrow"/></svg></a>
+            <a class="text-link" href="#admin">سقف‌ها در پنل <svg class="icon icon-16"><use href="#i-arrow"/></svg></a>
           </article>
           <article class="pillar reveal">
             <div class="pillar-top">
@@ -463,450 +467,404 @@
       </div>
     </section>
 
-    <!-- LAB -->
-    <section class="section section-lab" id="lab">
-      <div class="lab-bg" aria-hidden="true"><div class="lab-glow"></div><div class="lab-grid"></div></div>
-      <div class="container">
-        <div class="section-head section-head-light reveal">
-          <span class="kicker kicker-light">آزمایشگاه تعاملی</span>
-          <h2>به جای ادعا،<br>خودت رفتارش را ببین.</h2>
-          <p>دو سناریو که در عمل زیاد پیش می‌آید. با دادهٔ نمایشی اجرا می‌شود و هیچ پیامکی نمی‌رود.</p>
-        </div>
-
-        <div class="lab-shell reveal">
-          <div class="lab-tabs" role="tablist" aria-label="سناریوهای آزمایشگاه">
-            <button type="button" class="lab-tab is-active" id="tab-failover" role="tab" aria-selected="true" aria-controls="panel-failover" data-lab-tab="failover">
-              <span class="lab-tab-no">۰۱</span>
-              <span><b>پنل اصلی قطع شد</b><small>مسیر پشتیبان و Circuit Breaker</small></span>
-            </button>
-            <button type="button" class="lab-tab" id="tab-bomb" role="tab" aria-selected="false" aria-controls="panel-bomb" data-lab-tab="bomb" tabindex="-1">
-              <span class="lab-tab-no">۰۲</span>
-              <span><b>ربات حمله کرد</b><small>سقف‌ها و حالت حمله</small></span>
-            </button>
-            <span class="lab-live"><span class="pulse-dot"></span> شبیه‌سازی زنده</span>
-          </div>
-
-          <div class="lab-panel is-active" id="panel-failover" role="tabpanel" aria-labelledby="tab-failover">
-            <div class="lab-grid-2">
-              <div class="flow-card">
-                <div class="flow-head">
-                  <div>
-                    <h3>زنجیرهٔ ارسال کد</h3>
-                    <p>درگاه اصلی، سپس دو پشتیبان به ترتیب اولویت.</p>
-                  </div>
-                  <span class="status-pill" id="flow-status"><span class="pulse-dot"></span> همه‌چیز سالم</span>
-                </div>
-
-                <div class="flow">
-                  <div class="flow-origin">
-                    <span class="flow-origin-icon"><svg class="icon icon-18"><use href="#i-phone"/></svg></span>
-                    <span><b>درخواست کد</b><small>فرم ورود کاربر</small></span>
-                  </div>
-
-                  <div class="flow-rows">
-                    <div class="flow-row" data-gw="primary">
-                      <div class="flow-wire"><i></i></div>
-                      <div class="flow-gw">
-                        <span class="gw-logo">SMS.ir</span>
-                        <span class="gw-info"><b>درگاه اصلی</b><small>اولویت ۱ · sms.ir</small></span>
-                        <span class="gw-state" data-gw-state>سالم · ۰.۴ ثانیه</span>
-                      </div>
-                    </div>
-                    <div class="flow-row" data-gw="backup1">
-                      <div class="flow-wire"><i></i></div>
-                      <div class="flow-gw">
-                        <span class="gw-logo">کـاوه</span>
-                        <span class="gw-info"><b>پشتیبان ۱</b><small>اولویت ۲ · کاوه‌نگار</small></span>
-                        <span class="gw-state" data-gw-state>آماده</span>
-                      </div>
-                    </div>
-                    <div class="flow-row" data-gw="backup2">
-                      <div class="flow-wire"><i></i></div>
-                      <div class="flow-gw">
-                        <span class="gw-logo">ملی</span>
-                        <span class="gw-info"><b>پشتیبان ۲</b><small>اولویت ۳ · ملی‌پیامک</small></span>
-                        <span class="gw-state" data-gw-state>آماده</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="flow-result" id="flow-result">
-                    <span class="result-icon"><svg class="icon icon-18"><use href="#i-check-circle"/></svg></span>
-                    <span><b>کد به کاربر رسید</b><small id="flow-result-sub">مسیر: درگاه اصلی · ۰.۴ ثانیه</small></span>
-                    <span class="result-time" id="flow-result-time">۰.۴s</span>
-                  </div>
-                </div>
-
-                <div class="flow-actions">
-                  <button class="btn btn-danger" type="button" id="break-gateway">
-                    <svg class="icon icon-18"><use href="#i-bolt"/></svg>
-                    قطعی پنل اصلی را شبیه‌سازی کن
-                  </button>
-                  <button class="btn btn-ghost-dark" type="button" id="reset-flow">بازنشانی</button>
-                  <span class="flow-hint">در قطعی واقعی، کاربر فقط «در حال ارسال از مسیر پشتیبان…» را می‌بیند.</span>
-                </div>
-              </div>
-
-              <div class="log-card" aria-live="polite">
-                <div class="log-head">
-                  <span><span class="log-dot red"></span><span class="log-dot amber"></span><span class="log-dot green"></span></span>
-                  <span class="log-title">گزارش زندهٔ ارسال</span>
-                  <span class="log-tag">نمایشی</span>
-                </div>
-                <div class="log-body" id="flow-log">
-                  <div class="log-line"><time>۱۲:۰۴:۰۰</time><span class="log-info">درخواست کد ثبت شد</span></div>
-                  <div class="log-line"><time>۱۲:۰۴:۰۰</time><span class="log-ok">SMS.ir پاسخ داد (۰.۴s)</span></div>
-                  <div class="log-line"><time>۱۲:۰۴:۰۰</time><span class="log-ok">کد به کاربر تحویل شد</span></div>
-                </div>
-                <div class="breaker-card" id="breaker-card" hidden>
-                  <div class="breaker-top">
-                    <span><svg class="icon icon-18"><use href="#i-shield"/></svg> Circuit Breaker</span>
-                    <span class="breaker-state">باز</span>
-                  </div>
-                  <p>درگاه اصلی از مسیر ارسال کنار گذاشته شد. بررسی دوباره پس از پایان پنجرهٔ خنک‌شدن.</p>
-                  <div class="breaker-bar"><i></i></div>
-                </div>
-                <div class="log-foot">
-                  <span><svg class="icon icon-14"><use href="#i-lock"/></svg> دادهٔ نمایشی</span>
-                  <span>نسخهٔ ۳.۱.۳</span>
-                </div>
-              </div>
-            </div>
-            <p class="lab-note"><svg class="icon icon-14"><use href="#i-check-circle"/></svg> همان رویدادهایی که نسخهٔ واقعی در لاگ ثبت می‌کند؛ اینجا با دادهٔ نمایشی اجرا می‌شوند.</p>
-          </div>
-
-          <div class="lab-panel" id="panel-bomb" role="tabpanel" aria-labelledby="tab-bomb" hidden>
-            <div class="lab-grid-2">
-              <div class="calc-card">
-                <div class="flow-head">
-                  <div>
-                    <h3>ماشین‌حساب ضد پیامک‌بمب</h3>
-                    <p>ببین سقف‌های پیش‌فرض آشنا یک حمله را چطور مهار می‌کنند.</p>
-                  </div>
-                  <span class="status-pill" id="bomb-status"><span class="pulse-dot"></span> عادی</span>
-                </div>
-
-                <div class="calc-row">
-                  <div class="calc-label">
-                    <span>درخواست کد در ۶۰ ثانیه</span>
-                    <b id="bomb-count">۲۴</b>
-                  </div>
-                  <input class="range" id="bomb-range" type="range" min="1" max="60" value="24" step="1" aria-label="تعداد درخواست کد در ۶۰ ثانیه">
-                  <div class="range-scale"><span>۱</span><span>۳۰</span><span>۶۰</span></div>
-                </div>
-
-                <div class="calc-row">
-                  <span class="calc-label"><span>منبع درخواست‌ها</span></span>
-                  <div class="segmented" role="group" aria-label="منبع درخواست‌ها">
-                    <button class="seg is-active" type="button" data-source="ip" data-limit="5">یک IP</button>
-                    <button class="seg" type="button" data-source="subnet" data-limit="20">یک شبکهٔ /24</button>
-                  </div>
-                </div>
-
-                <div class="calc-row calc-switch-row">
-                  <div>
-                    <span class="calc-label"><span>حالت حمله</span></span>
-                    <p class="calc-help">وقتی درخواست‌ها از حد عبور کنند، کپچا برای همه اجباری می‌شود.</p>
-                  </div>
-                  <button class="switch" id="attack-switch" type="button" role="switch" aria-checked="false" aria-label="حالت حمله"><span></span></button>
-                </div>
-
-                <div class="limit-chips">
-                  <span><b>۵</b> در دقیقه / IP</span>
-                  <span><b>۱۵</b> در ساعت / IP</span>
-                  <span><b>۲۰</b> در دقیقه / شبکه</span>
-                  <span><b>۵</b> در ساعت / شماره</span>
-                </div>
-              </div>
-
-              <div class="result-card">
-                <div class="result-head">
-                  <h3>نتیجهٔ محاسبه</h3>
-                  <span class="result-badge" id="bomb-badge">در محدودهٔ مجاز</span>
-                </div>
-                <div class="bomb-stats">
-                  <div class="bomb-stat">
-                    <span class="bomb-stat-label">پذیرفته‌شده</span>
-                    <b id="bomb-allowed">۵</b>
-                    <small>درخواست</small>
-                  </div>
-                  <div class="bomb-stat bad">
-                    <span class="bomb-stat-label">ردشده</span>
-                    <b id="bomb-blocked">۱۹</b>
-                    <small>درخواست</small>
-                  </div>
-                  <div class="bomb-stat">
-                    <span class="bomb-stat-label">وضعیت</span>
-                    <b class="bomb-state" id="bomb-state">محدود</b>
-                    <small id="bomb-state-sub">تا پایان پنجره</small>
-                  </div>
-                </div>
-                <div class="bomb-bar" aria-hidden="true">
-                  <span class="bomb-bar-ok" id="bomb-bar-ok"></span>
-                  <span class="bomb-bar-bad" id="bomb-bar-bad"></span>
-                </div>
-                <div class="bomb-meter"><span>۰</span><span>۶۰ درخواست</span></div>
-                <div class="attack-banner" id="attack-banner" hidden>
-                  <svg class="icon icon-18"><use href="#i-shield"/></svg>
-                  <div><b>حالت حمله فعال شد</b><span>کپچا برای همهٔ بازدیدکنندگان اجباری است و مدیر سایت باخبر می‌شود.</span></div>
-                </div>
-                <div class="result-actions">
-                  <a class="btn btn-primary btn-sm" href="#admin" data-admin-view="security">همین تنظیمات در پنل <svg class="icon icon-16"><use href="#i-arrow"/></svg></a>
-                  <span class="result-note">پیش‌فرض‌های افزونه؛ قابل تغییر در تب «امنیت و فایروال».</span>
-                </div>
-              </div>
-            </div>
-            <p class="lab-note"><svg class="icon icon-14"><use href="#i-check-circle"/></svg> سقف‌ها از پیش‌فرض‌های واقعی افزونه خوانده شده‌اند: ۵ در دقیقه برای هر IP، ۱۵ در ساعت، ۲۰ در دقیقه برای هر شبکه و ۵ در ساعت برای هر شماره.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- LOGIN METHODS -->
-    <section class="section section-methods">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="kicker">چهار راه ورود</span>
-          <h2>هر کاربر، با روشی که راحت است.</h2>
-          <p>یک حساب، چند مسیر. اگر پیامک نرسید یا کاربر گوشی‌اش را در دست نداشت، راه ورود بسته نمی‌شود.</p>
-        </div>
-        <div class="methods-grid">
-          <article class="method-card reveal">
-            <span class="method-icon blue"><svg class="icon icon-24"><use href="#i-message"/></svg></span>
-            <h3>کد یک‌بارمصرف</h3>
-            <p>پیامک از ۹ درایور، بله (سفیر v3) یا ایمیل HTML. کد فقط به‌صورت هش در دیتابیس ذخیره می‌شود.</p>
-            <span class="method-foot">۴ کانال تحویل</span>
-          </article>
-          <article class="method-card reveal">
-            <span class="method-icon mint"><svg class="icon icon-24"><use href="#i-fingerprint"/></svg></span>
-            <h3>Passkey / WebAuthn</h3>
-            <p>ورود با اثر انگشت یا چهره، بدون شماره و بدون هزینهٔ پیامک؛ مناسب دستگاه‌های شخصی.</p>
-            <span class="method-foot">مقاوم به فیشینگ</span>
-          </article>
-          <article class="method-card reveal">
-            <span class="method-icon amber"><span class="gmark gmark-lg" aria-hidden="true">G</span></span>
-            <h3>ورود با گوگل</h3>
-            <p>OIDC استاندارد با PKCE، nonce و بازگشت به مسیر ثابت. اتصال حساب فقط با ایمیل تأییدشده.</p>
-            <span class="method-foot">OIDC + PKCE</span>
-          </article>
-          <article class="method-card reveal">
-            <span class="method-icon sky"><svg class="icon icon-24"><use href="#i-telegram"/></svg></span>
-            <h3>ورود با تلگرام</h3>
-            <p>ورود رسمی تلگرام با اسکوپ شماره؛ اتصال به حساب فقط با شمارهٔ تأییدشده و بدون ادغام خودکار.</p>
-            <span class="method-foot">بدون رمز عبور</span>
-          </article>
-        </div>
-        <div class="security-strip reveal">
-          <span><svg class="icon icon-18"><use href="#i-lock"/></svg> هش کد، نه متن ساده</span>
-          <span><svg class="icon icon-18"><use href="#i-shield"/></svg> محدودیت تلاش و قفل امنیتی</span>
-          <span><svg class="icon icon-18"><use href="#i-refresh"/></svg> پاک‌سازی خودکار لاگ‌ها</span>
-          <span><svg class="icon icon-18"><use href="#i-globe"/></svg> فونت‌ها و دارایی‌ها محلی</span>
-        </div>
-      </div>
-    </section>
-
     <!-- ADMIN -->
     <section class="section section-admin" id="admin">
       <div class="container">
         <div class="section-head reveal">
           <span class="kicker">پیشخوان</span>
-          <h2>مدیریتش ساده‌تر از نصبش است.</h2>
-          <p>چهار تب اصلی، همان چیدمان آشنای وردپرس. چیزی که پایین می‌بینی بازسازی رابط است؛ داده‌ها نمایشی‌اند.</p>
+          <h2>این ماکت دست‌ساز نیست؛<br>خودِ پنل آشناست.</h2>
+          <p>همان چیدمان، همان فایل‌ها و همان CSS افزونه، با دادهٔ نمایشی. کلید ماه بالای پنل، حالت تاریک واقعی را روشن می‌کند.</p>
         </div>
+      </div>
 
+      <div class="container-wide">
         <div class="admin-tour reveal">
           <div class="browser">
             <div class="browser-bar">
               <span class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="browser-url" dir="ltr"><svg class="icon icon-12"><use href="#i-lock"/></svg> example.com/wp-admin/admin.php?page=ashna</span>
-              <span class="browser-tag">بازسازی</span>
+              <span class="browser-url" dir="ltr"><svg class="icon icon-12"><use href="#i-lock"/></svg> example.com/wp-admin/admin.php?page=ashna-otp</span>
+              <span class="browser-tag">از خود افزونه</span>
             </div>
 
             <div class="wpadmin">
               <div class="wpbar" aria-hidden="true">
                 <span class="wpbar-item"><svg class="icon icon-14"><use href="#i-globe"/></svg> پیشخوان</span>
                 <span class="wpbar-item"><svg class="icon icon-14"><use href="#i-refresh"/></svg> تازه‌سازی</span>
+                <span class="wpbar-item wpbar-new">+ جدید</span>
                 <span class="wpbar-me">سلام، مدیر</span>
               </div>
 
               <div class="wpbody">
-                <aside class="wpmenu" aria-label="منوی نمایشی وردپرس">
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-grid"/></svg> پیشخوان</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-message"/></svg> نوشته‌ها</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-layers"/></svg> رسانه</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-code"/></svg> برگه‌ها</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-cart"/></svg> محصولات</span>
-                  <span class="wpmenu-sep"></span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-palette"/></svg> نمایش</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-grid"/></svg> افزونه‌ها</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-users"/></svg> کاربران</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-key"/></svg> ابزارها</span>
-                  <span class="wpmenu-item"><svg class="icon icon-16"><use href="#i-shield"/></svg> تنظیمات</span>
-                  <span class="wpmenu-sep"></span>
-                  <button class="wpmenu-item is-open" type="button" data-view="dashboard"><img src="assets/images/ashna-icon.svg" alt="" width="16" height="16"> آشنا</button>
-                  <div class="wpsubmenu" role="tablist" aria-label="صفحه‌های آشنا">
-                    <button class="wpsub is-active" type="button" role="tab" aria-selected="true" data-view="dashboard">داشبورد</button>
-                    <button class="wpsub" type="button" role="tab" aria-selected="false" data-view="gateways">درگاه‌های ارسال</button>
-                    <button class="wpsub" type="button" role="tab" aria-selected="false" data-view="security">امنیت و فایروال</button>
-                    <button class="wpsub" type="button" role="tab" aria-selected="false" data-view="studio">استودیوی طراحی</button>
-                  </div>
-                </aside>
+                <div class="wpcontent">
+                  <div class="panel-frame">
+                    <div class="panel-scroll" id="panel-scroll" tabindex="0" role="region" aria-label="پیشخوان افزونهٔ آشنا (قابل اسکرول)">
+                      <div class="panel-inner">
+                        <div class="ashna-app-shell is-embed" id="ashna-app-shell" dir="rtl">
 
-                <main class="wpcontent">
-                  <div class="wptitle">
-                    <h3>آشنا</h3>
-                    <span class="wpver">۳.۱.۳</span>
-                    <span class="wpdemo"><span class="pulse-dot"></span> دادهٔ نمایشی</span>
-                  </div>
+                          <header class="ashna-topbar">
+                            <div class="ashna-topbar-brand">
+                              <div class="ashna-brand-logo">
+                                <img src="assets/images/ashna-icon.svg" width="40" height="40" alt="">
+                              </div>
+                              <div>
+                                <div class="ashna-brand-title-row">
+                                  <h1>آشنا</h1>
+                                  <span class="ashna-badge-ver">v۳.۱.۳ Pro</span>
+                                </div>
+                                <p>ورود و عضویت سریع با پیامک، بله و ایمیل</p>
+                              </div>
+                            </div>
 
-                  <nav class="wptabs" role="tablist" aria-label="تب‌های افزونه">
-                    <button class="wptab is-active" type="button" role="tab" aria-selected="true" data-view="dashboard">داشبورد</button>
-                    <button class="wptab" type="button" role="tab" aria-selected="false" data-view="gateways">درگاه‌های ارسال</button>
-                    <button class="wptab" type="button" role="tab" aria-selected="false" data-view="security">امنیت و فایروال</button>
-                    <button class="wptab" type="button" role="tab" aria-selected="false" data-view="studio">استودیوی طراحی</button>
-                    <span class="wptab-more">۵ تب دیگر</span>
-                  </nav>
+                            <div class="ashna-topbar-actions">
+                              <div class="ashna-gateway-status-pill" title="درگاه پیامک فعال فعلی">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;display:block;opacity:.8"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                                <span class="ashna-status-dot is-online"></span>
+                                <span>درگاه فعال: <strong>SMS.ir</strong></span>
+                              </div>
 
-                <!-- dashboard view -->
-                <div class="admin-view is-active" data-view="dashboard">
-                  <div class="view-head">
-                    <div><h3>داشبورد</h3><p>نمای کلی ۷ روز گذشته</p></div>
-                    <span class="btn btn-primary btn-xs">ذخیرهٔ تغییرات</span>
-                  </div>
-                  <div class="kpi-grid">
-                    <div class="kpi"><span>ورود موفق</span><b>۱٬۲۴۸</b><small class="up">↑ ۱۲٪ نسبت به هفتهٔ قبل</small></div>
-                    <div class="kpi"><span>نرخ تبدیل فرم</span><b>۷۳٪</b><small class="up">↑ ۴٪</small></div>
-                    <div class="kpi"><span>سلامت درگاه‌ها</span><b>۳ / ۳</b><small class="ok">همه سالم</small></div>
-                  </div>
-                  <div class="dash-grid">
-                    <div class="chart-card">
-                      <div class="chart-head"><b>ورودهای روزانه</b><span class="chart-legend"><i></i> موفق</span></div>
-                      <div class="bars" aria-hidden="true">
-                        <span style="--h:42%"><i></i></span><span style="--h:58%"><i></i></span><span style="--h:47%"><i></i></span><span style="--h:72%"><i></i></span><span style="--h:63%"><i></i></span><span style="--h:86%"><i></i></span><span style="--h:74%"><i></i></span>
+                              <button type="button" id="ashna-theme-toggle" class="ashna-icon-btn" aria-pressed="false" title="تغییر حالت روشن / تاریک (Dark Mode)" style="padding:0!important;width:40px!important;height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;">
+                                <span class="ashna-theme-linear-icon">
+                                  <svg class="ashna-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                                  <svg class="ashna-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                                </span>
+                              </button>
+
+                              <a href="#" class="ashna-btn-secondary" onclick="return false">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex-shrink:0;display:block"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                <span>گزارش کدها (۱٬۲۸۴)</span>
+                              </a>
+
+                              <button type="button" class="ashna-btn-save" onclick="return false">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex-shrink:0;display:block"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                <span class="ashna-save-label">ذخیره تغییرات</span>
+                                <kbd class="ashna-kbd">Ctrl+S</kbd>
+                              </button>
+                            </div>
+                          </header>
+
+                          <div class="ashna-app-body">
+                            <aside class="ashna-sidebar">
+                              <nav class="ashna-nav" aria-label="بخش‌های پنل آشنا">
+                                <div class="ashna-sidebar-group-title">گزارش و وضعیت</div>
+                                <button type="button" class="ashna-nav-item active" aria-current="page">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                                  <span class="ashna-nav-label">پیشخوان</span>
+                                </button>
+
+                                <div class="ashna-sidebar-group-title">مسیر ورود و ارسال</div>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+                                  <span class="ashna-nav-label">روش و مسیر ورود</span>
+                                </button>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                  <span class="ashna-nav-label">درگاه پیامک</span>
+                                </button>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
+                                  <span class="ashna-nav-label">پیام‌رسان‌ها و ایمیل</span>
+                                </button>
+
+                                <div class="ashna-sidebar-group-title">ظاهر و اتصال به قالب</div>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                                  <span class="ashna-nav-label">طراحی ظاهر فرم</span>
+                                </button>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                  <span class="ashna-nav-label">ورود با گوگل و تلگرام</span>
+                                </button>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                                  <span class="ashna-nav-label">ووکامرس و یکپارچگی‌ها</span>
+                                </button>
+
+                                <div class="ashna-sidebar-group-title">امنیت و ابزارها</div>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+                                  <span class="ashna-nav-label">امنیت و ضد اسپم</span>
+                                  <span class="ashna-nav-counter">۱</span>
+                                </button>
+                                <button type="button" class="ashna-nav-item">
+                                  <svg class="ashna-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                  <span class="ashna-nav-label">تست و پشتیبان‌گیری</span>
+                                </button>
+                              </nav>
+
+                              <div class="ashna-sidebar-footer">
+                                <p>آشنا v۳.۱.۳</p>
+                                <small class="ashna-credit">محصولی از <a href="#" onclick="return false">پارسنا</a></small>
+                              </div>
+                            </aside>
+
+                            <main class="ashna-main">
+                              <section class="ashna-panel active" id="ashna-tab-dashboard">
+                                <div class="ashna-quick-setup-grid">
+                                  <div class="ashna-quick-item">
+                                    <div class="ashna-quick-head">
+                                      <span class="ashna-pill is-ok">درگاه عملیاتی فعال</span>
+                                      <span class="ashna-jump-tab">تنظیم درگاه &larr;</span>
+                                    </div>
+                                    <div class="ashna-quick-body">
+                                      <span class="ashna-quick-icon is-blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
+                                      <div class="ashna-quick-text">
+                                        <strong>SMS.ir</strong>
+                                        <small>۲ پشتیبان فعال (کاوه‌نگار، ملی‌پیامک)</small>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="ashna-quick-item">
+                                    <div class="ashna-quick-head">
+                                      <span class="ashna-pill is-info">مسیر ارسال کد</span>
+                                      <span class="ashna-jump-tab">تغییر مسیر &larr;</span>
+                                    </div>
+                                    <div class="ashna-quick-body">
+                                      <div class="ashna-flow-icons" style="flex-shrink:0">
+                                        <span class="ashna-flow-node is-sms" title="پیامک"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg></span>
+                                        <span class="ashna-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                        <span class="ashna-flow-node is-bale" title="بله"><img src="assets/images/brands/bale.png" alt="" width="20" height="20"></span>
+                                      </div>
+                                      <div class="ashna-quick-text">
+                                        <strong>اول پیامک ← سپس بله</strong>
+                                        <small>ورود بیومتریک Passkey: فعال • کد ۵ رقمی</small>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="ashna-quick-item">
+                                    <div class="ashna-quick-head">
+                                      <span class="ashna-pill is-ok">محافظت فعال</span>
+                                      <span class="ashna-jump-tab">تنظیمات امنیت &larr;</span>
+                                    </div>
+                                    <div class="ashna-quick-body">
+                                      <span class="ashna-quick-icon is-amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                                      <div class="ashna-quick-text">
+                                        <strong>کپچا: کپچای ریاضی داخلی</strong>
+                                        <small>سقف مجاز: ۵ بار در ساعت برای هر شماره</small>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="ashna-quick-item">
+                                    <div class="ashna-quick-head">
+                                      <span class="ashna-pill is-ok">المنتور و شورت‌کد</span>
+                                      <span class="ashna-jump-tab">مشاهده ابزارها &larr;</span>
+                                    </div>
+                                    <div class="ashna-quick-body">
+                                      <span class="ashna-quick-icon is-green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                                      <div class="ashna-quick-text">
+                                        <strong>یکپارچگی قالب و صفحه‌ساز</strong>
+                                        <small>۲ ویجت بومی المنتور + سازگار با دیجیتز</small>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="ashna-kpi-grid">
+                                  <div class="ashna-kpi-card">
+                                    <div class="ashna-kpi-main">
+                                      <div class="ashna-kpi-icon is-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></div>
+                                      <div class="ashna-kpi-info"><span>کل کدهای ارسال‌شده</span><small>۳۴۲ ارسال در امروز</small></div>
+                                    </div>
+                                    <div class="ashna-kpi-number-box is-blue"><strong>۱۲٬۸۴۶</strong></div>
+                                  </div>
+                                  <div class="ashna-kpi-card">
+                                    <div class="ashna-kpi-main">
+                                      <div class="ashna-kpi-icon is-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                                      <div class="ashna-kpi-info"><span>ورودهای موفق (Verified)</span><small>نرخ تبدیل: %۷۵٫۷</small></div>
+                                    </div>
+                                    <div class="ashna-kpi-number-box is-green"><strong>۹٬۷۳۱</strong></div>
+                                  </div>
+                                  <div class="ashna-kpi-card">
+                                    <div class="ashna-kpi-main">
+                                      <div class="ashna-kpi-icon is-purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                                      <div class="ashna-kpi-info"><span>کاربران ثبت‌نامی با OTP</span><small>ثبت‌نام خودکار یکپارچه</small></div>
+                                    </div>
+                                    <div class="ashna-kpi-number-box is-purple"><strong>۴٬۲۸۶</strong></div>
+                                  </div>
+                                  <div class="ashna-kpi-card">
+                                    <div class="ashna-kpi-main">
+                                      <div class="ashna-kpi-icon is-red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                                      <div class="ashna-kpi-info"><span>ارسال‌های ناموفق / خطا</span><small>۱ مسدودی امنیتی فعال</small></div>
+                                    </div>
+                                    <div class="ashna-kpi-number-box is-red"><strong>۳۱۲</strong></div>
+                                  </div>
+                                </div>
+
+                                <div class="ashna-card ashna-setup-checklist-card" style="margin-bottom:20px">
+                                  <div class="ashna-card-head">
+                                    <div class="ashna-card-head-title">
+                                      <span class="ashna-card-icon is-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+                                      <div>
+                                        <h2>چک‌لیست راه‌اندازی سریع افزونه</h2>
+                                        <p>راهنمای گام‌به‌گام برای اتصال درگاه، شخصی‌سازی و فعال‌سازی ورود پیامکی و بیومتریک در سایت</p>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-checklist-progress-wrap">
+                                      <div class="ashna-checklist-progress-meta">
+                                        <span class="ashna-checklist-progress-label">۵ از ۵ گام تکمیل شده</span>
+                                        <strong class="ashna-checklist-progress-pct">%۱۰۰</strong>
+                                      </div>
+                                      <div class="ashna-checklist-progress-bar"><div class="ashna-checklist-progress-fill" style="width:100%"></div></div>
+                                    </div>
+                                  </div>
+
+                                  <div class="ashna-checklist-list">
+                                    <div class="ashna-checklist-row is-done">
+                                      <div class="ashna-checklist-main">
+                                        <span class="ashna-checklist-check is-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                                        <div class="ashna-checklist-text"><strong>۱. اتصال درگاه پیامک یا پیام‌رسان بله</strong><p>درگاه «SMS.ir» متصل و آماده ارسال کد به کاربران است.</p></div>
+                                      </div>
+                                      <div class="ashna-checklist-actions">
+                                        <span class="ashna-pill is-ok">متصل و فعال</span>
+                                        <span class="ashna-checklist-jump"><span>تنظیم درگاه پیامک</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-checklist-row is-done">
+                                      <div class="ashna-checklist-main">
+                                        <span class="ashna-checklist-check is-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                                        <div class="ashna-checklist-text"><strong>۲. انتخاب مسیر ارسال کد و عضویت خودکار</strong><p>استراتژی فعلی: «اول پیامک ← سپس بله» با کد ۵ رقمی.</p></div>
+                                      </div>
+                                      <div class="ashna-checklist-actions">
+                                        <span class="ashna-pill is-ok">پیکربندی شده</span>
+                                        <span class="ashna-checklist-jump"><span>سناریوی ورود</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-checklist-row is-done">
+                                      <div class="ashna-checklist-main">
+                                        <span class="ashna-checklist-check is-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                                        <div class="ashna-checklist-text"><strong>۳. فعال‌سازی ورود بیومتریک بدون رمز (Passkey)</strong><p>ورود سریع با اثر انگشت و تشخیص چهره (FaceID / TouchID) برای مشتریان فعال است.</p></div>
+                                      </div>
+                                      <div class="ashna-checklist-actions">
+                                        <span class="ashna-pill is-ok">فعال شده</span>
+                                        <span class="ashna-checklist-jump"><span>تنظیم Passkey</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-checklist-row is-done">
+                                      <div class="ashna-checklist-main">
+                                        <span class="ashna-checklist-check is-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                                        <div class="ashna-checklist-text"><strong>۴. ایمن‌سازی فرم در برابر ربات‌ها (کپچا و فایروال)</strong><p>سپر امنیتی «کپچای ریاضی داخلی» به همراه محدودیت ۵ درخواست در ساعت فعال است.</p></div>
+                                      </div>
+                                      <div class="ashna-checklist-actions">
+                                        <span class="ashna-pill is-ok">محافظت فعال</span>
+                                        <span class="ashna-checklist-jump"><span>امنیت و فایروال</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-checklist-row is-done">
+                                      <div class="ashna-checklist-main">
+                                        <span class="ashna-checklist-check is-done"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                                        <div class="ashna-checklist-text"><strong>۵. نمایش فرم ورود در سایت (ووکامرس / المنتور / شورت‌کد)</strong><p>جایگزینی خودکار فرم حساب کاربری ووکامرس، ویجت اختصاصی المنتور یا شورت‌کد [ashna_otp_login].</p></div>
+                                      </div>
+                                      <div class="ashna-checklist-actions">
+                                        <button type="button" class="ashna-copy-btn" id="ashna-copy-shortcode" data-copy="[ashna_otp_login]" title="کپی شورت‌کد فرم ورود">کپی <code>[ashna_otp_login]</code></button>
+                                        <span class="ashna-pill is-ok">متصل به سایت</span>
+                                        <span class="ashna-checklist-jump"><span>ووکامرس و المنتور</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="ashna-bento-row">
+                                  <div class="ashna-card ashna-col-8">
+                                    <div class="ashna-card-head">
+                                      <div class="ashna-card-head-title">
+                                        <span class="ashna-card-icon is-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                                        <div><h2>نمودار ارسال کد در ۷ روز گذشته</h2><p>مقایسه تعداد کل درخواست‌ها و ورودهای موفق روزانه</p></div>
+                                      </div>
+                                      <div class="ashna-chart-legend">
+                                        <span><i style="background:#3b82f6"></i> کل ارسالی</span>
+                                        <span><i style="background:#10b981"></i> تایید شده</span>
+                                      </div>
+                                    </div>
+                                    <div class="ashna-bar-chart">
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="شنبه: ۲۱۴ ارسال (۱۶۲ موفق)"><div class="ashna-bar-fill-total" style="height:44%"><span class="ashna-bar-num">۲۱۴</span></div></div><span class="ashna-bar-label">شنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="یکشنبه: ۳۸۶ ارسال (۲۹۴ موفق)"><div class="ashna-bar-fill-total" style="height:71%"><span class="ashna-bar-num">۳۸۶</span></div></div><span class="ashna-bar-label">یکشنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="دوشنبه: ۲۶۸ ارسال (۲۰۱ موفق)"><div class="ashna-bar-fill-total" style="height:55%"><span class="ashna-bar-num">۲۶۸</span></div></div><span class="ashna-bar-label">دوشنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="سه‌شنبه: ۴۱۲ ارسال (۳۱۸ موفق)"><div class="ashna-bar-fill-total" style="height:78%"><span class="ashna-bar-num">۴۱۲</span></div></div><span class="ashna-bar-label">سه‌شنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="چهارشنبه: ۳۴۵ ارسال (۲۶۱ موفق)"><div class="ashna-bar-fill-total" style="height:64%"><span class="ashna-bar-num">۳۴۵</span></div></div><span class="ashna-bar-label">چهارشنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="پنجشنبه: ۵۱۸ ارسال (۳۹۷ موفق)"><div class="ashna-bar-fill-total" style="height:100%"><span class="ashna-bar-num">۵۱۸</span></div></div><span class="ashna-bar-label">پنجشنبه</span></div>
+                                      <div class="ashna-bar-col"><div class="ashna-bar-track" title="جمعه: ۲۹۷ ارسال (۲۲۸ موفق)"><div class="ashna-bar-fill-total" style="height:58%"><span class="ashna-bar-num">۲۹۷</span></div></div><span class="ashna-bar-label">جمعه</span></div>
+                                    </div>
+                                  </div>
+
+                                  <div class="ashna-card ashna-col-4">
+                                    <div class="ashna-card-head">
+                                      <div class="ashna-card-head-title">
+                                        <span class="ashna-card-icon is-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+                                        <div><h2>وضعیت سلامت سیستم</h2><p>پیش‌نیازها و یکپارچگی‌ها</p></div>
+                                      </div>
+                                    </div>
+                                    <ul class="ashna-health-list">
+                                      <li><span>ماژول cURL و ارتباط وب‌سرویس</span><span class="ashna-pill is-ok">فعال</span></li>
+                                      <li><span>ماژول رمزنگاری OpenSSL</span><span class="ashna-pill is-ok">فعال</span></li>
+                                      <li><span>افزونه فروشگاه‌ساز ووکامرس</span><span class="ashna-pill is-ok">نصب و فعال</span></li>
+                                      <li><span>ویجت‌های صفحه‌ساز المنتور</span><span class="ashna-pill is-ok">فعال (۲ ویجت)</span></li>
+                                      <li><span>سازگاری متای دیجیتز (Digits)</span><span class="ashna-pill is-ok">فعال (دوطرفه)</span></li>
+                                    </ul>
+                                  </div>
+                                </div>
+
+                                <div class="ashna-card" style="margin-top:20px">
+                                  <div class="ashna-card-head">
+                                    <div class="ashna-card-head-title">
+                                      <span class="ashna-card-icon is-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+                                      <div><h2>آخرین کدهای ارسال‌شده</h2><p>۶ درخواست اخیر ثبت‌شده در سیستم (مفید برای مشاهده سریع کد در حالت تست)</p></div>
+                                    </div>
+                                    <a href="#" class="ashna-btn-secondary" onclick="return false">مشاهده تمام لاگ‌ها</a>
+                                  </div>
+                                  <table class="ashna-modern-table">
+                                    <thead>
+                                      <tr><th>گیرنده</th><th>کانال / درگاه</th><th>کد OTP</th><th>وضعیت</th><th>پاسخ سرور</th><th>زمان</th></tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr><td><strong dir="ltr">0912***6789</strong></td><td><span class="ashna-pill is-muted">sms / smsir</span></td><td><code class="ashna-otp-code-pill" dir="ltr">58492</code></td><td><span class="ashna-pill is-ok">تایید شده</span></td><td>ارسال موفق</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۴۰:۰۴</td></tr>
+                                      <tr><td><strong dir="ltr">0935***1124</strong></td><td><span class="ashna-pill is-muted">sms / kavenegar</span></td><td><code class="ashna-otp-code-pill" dir="ltr">21307</code></td><td><span class="ashna-pill is-info">ارسال شده</span></td><td>ارسال موفق</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۳۸:۲۲</td></tr>
+                                      <tr><td><strong dir="ltr">0919***4471</strong></td><td><span class="ashna-pill is-muted">bale / bale</span></td><td><code class="ashna-otp-code-pill" dir="ltr">90318</code></td><td><span class="ashna-pill is-ok">تایید شده</span></td><td>ارسال موفق</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۳۵:۱۰</td></tr>
+                                      <tr><td><strong dir="ltr">0902***8830</strong></td><td><span class="ashna-pill is-muted">sms / melipayamak</span></td><td><code class="ashna-otp-code-pill" dir="ltr">44729</code></td><td><span class="ashna-pill is-err">خطا</span></td><td>اعتبار پنل کافی نیست</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۳۱:۵۷</td></tr>
+                                      <tr><td><strong dir="ltr">0912***2093</strong></td><td><span class="ashna-pill is-muted">sms / smsir</span></td><td><code class="ashna-otp-code-pill" dir="ltr">67104</code></td><td><span class="ashna-pill is-ok">تایید شده</span></td><td>ارسال موفق</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۲۹:۴۱</td></tr>
+                                      <tr><td><strong dir="ltr">0938***5566</strong></td><td><span class="ashna-pill is-muted">sms / farazsms</span></td><td><code class="ashna-otp-code-pill" dir="ltr">15832</code></td><td><span class="ashna-pill is-muted">منقضی</span></td><td>کد منقضی شد</td><td dir="ltr">۱۴۰۴/۰۷/۲۸ ۱۲:۲۵:۰۳</td></tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+
+                                <div class="ashna-bottom-save-bar" style="margin-top:22px;padding:16px 22px;border-radius:14px;background:var(--s-bg-surface);border:1px solid var(--s-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                                  <div style="display:flex;align-items:center;gap:10px;color:var(--s-text-muted);font-size:13px">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span>پس از تغییر هر بخش، دکمه تایید و ذخیره تنظیمات را بزنید (یا کلید میانبر <code>Ctrl + S</code>).</span>
+                                  </div>
+                                  <button type="button" class="ashna-btn-save" onclick="return false">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex-shrink:0;display:block"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                    <span class="ashna-save-label">تایید و ذخیره تنظیمات</span>
+                                  </button>
+                                </div>
+                              </section>
+                            </main>
+                          </div>
+                        </div>
                       </div>
-                      <div class="chart-days"><span>شنبه</span><span>یک‌شنبه</span><span>دوشنبه</span><span>سه‌شنبه</span><span>چهارشنبه</span><span>پنج‌شنبه</span><span>جمعه</span></div>
                     </div>
-                    <div class="health-card">
-                      <div class="chart-head"><b>وضعیت درگاه‌ها</b><span class="chart-legend mint"><i></i> سالم</span></div>
-                      <div class="health-row"><span class="hdot"></span><span>SMS.ir</span><small>۰.۴s</small><em>اصلی</em></div>
-                      <div class="health-row"><span class="hdot"></span><span>کاوه‌نگار</span><small>۰.۷s</small><em>پشتیبان ۱</em></div>
-                      <div class="health-row"><span class="hdot"></span><span>ملی‌پیامک</span><small>۱.۱s</small><em>پشتیبان ۲</em></div>
-                      <div class="health-foot"><svg class="icon icon-14"><use href="#i-check-circle"/></svg> آخرین بررسی خودکار: ۲ دقیقه پیش</div>
+
+                    <div class="panel-hint" id="panel-hint">
+                      <svg class="icon icon-16"><use href="#i-chevron"/></svg>
+                      <span>برای دیدن ادامهٔ پنل، داخل کادر اسکرول کن</span>
                     </div>
                   </div>
-                  <div class="log-table">
-                    <div class="log-table-head"><b>آخرین رویدادها</b><span>۷ روز</span></div>
-                    <div class="log-tr"><span class="log-time">۱۲:۰۴</span><span class="log-badge ok">موفق</span><span>ورود با کد، مسیر اصلی</span><span class="log-ip" dir="ltr">0912•••6789</span></div>
-                    <div class="log-tr"><span class="log-time">۱۱:۵۸</span><span class="log-badge warn">پشتیبان</span><span>ارسال از پشتیبان ۱</span><span class="log-ip" dir="ltr">0935•••1120</span></div>
-                    <div class="log-tr"><span class="log-time">۱۱:۵۲</span><span class="log-badge bad">مسدود</span><span>درخواست بیش از سقف IP</span><span class="log-ip" dir="ltr">185.51.•.•</span></div>
+
+                  <div class="panel-shot">
+                    <img src="assets/images/dashboard-preview.jpg" alt="تب پیشخوان افزونهٔ آشنا با دادهٔ نمایشی" width="1520" height="870" loading="lazy" decoding="async">
+                    <p class="panel-shot-note">تصویر ثابت از همان تب پیشخوان؛ برای کار با پنل، صفحه را روی نمایشگر بزرگ‌تر باز کنید.</p>
                   </div>
                 </div>
-
-                <!-- gateways view -->
-                <div class="admin-view" data-view="gateways" hidden>
-                  <div class="view-head">
-                    <div><h3>درگاه‌های ارسال</h3><p>۹ درایور، یک زنجیرهٔ اولویت‌دار</p></div>
-                    <span class="btn btn-primary btn-xs">افزودن درگاه</span>
-                  </div>
-                  <div class="chain">
-                    <div class="chain-item primary"><span class="chain-no">۱</span><span><b>SMS.ir</b><small>درگاه اصلی</small></span><span class="chip ok">سالم</span></div>
-                    <svg class="chain-arrow icon icon-16"><use href="#i-arrow"/></svg>
-                    <div class="chain-item"><span class="chain-no">۲</span><span><b>کاوه‌نگار</b><small>پشتیبان ۱</small></span><span class="chip">آماده</span></div>
-                    <svg class="chain-arrow icon icon-16"><use href="#i-arrow"/></svg>
-                    <div class="chain-item"><span class="chain-no">۳</span><span><b>ملی‌پیامک</b><small>پشتیبان ۲</small></span><span class="chip">آماده</span></div>
-                  </div>
-                  <div class="driver-grid">
-                    <span class="driver is-on"><i></i>SMS.ir</span>
-                    <span class="driver is-on"><i></i>فراز اس‌ام‌اس</span>
-                    <span class="driver is-on"><i></i>ملی‌پیامک</span>
-                    <span class="driver is-on"><i></i>کاوه‌نگار</span>
-                    <span class="driver is-on"><i></i>آی‌پی‌پنل</span>
-                    <span class="driver is-on"><i></i>راه‌پیام</span>
-                    <span class="driver is-on"><i></i>بله (سفیر)</span>
-                    <span class="driver is-on"><i></i>ایمیل</span>
-                    <span class="driver is-off"><i></i>Sandbox</span>
-                  </div>
-                  <div class="admin-tip"><svg class="icon icon-16"><use href="#i-bolt"/></svg> هر درگاه تا ۳ ثانیه برای اتصال و تا پیش‌فرض ۵ ثانیه برای پاسخ فرصت دارد؛ بعد از ۵ ارسال موفق، مهلت با زمان پاسخ واقعی تنظیم می‌شود.</div>
-                </div>
-
-                <!-- security view -->
-                <div class="admin-view" data-view="security" hidden>
-                  <div class="view-head">
-                    <div><h3>امنیت و فایروال</h3><p>سقف‌ها، کپچا و قفل‌های فعال</p></div>
-                    <span class="chip ok">محافظت فعال</span>
-                  </div>
-                  <div class="limit-grid">
-                    <div class="limit-box"><span>هر IP / دقیقه</span><b>۵</b></div>
-                    <div class="limit-box"><span>هر IP / ساعت</span><b>۱۵</b></div>
-                    <div class="limit-box"><span>هر شبکه / دقیقه</span><b>۲۰</b></div>
-                    <div class="limit-box"><span>هر شماره / ساعت</span><b>۵</b></div>
-                  </div>
-                  <div class="sec-columns">
-                    <div>
-                      <b class="sec-title">کپچا</b>
-                      <div class="toggle-row"><span>کپچای ریاضی داخلی</span><span class="mini-switch on"></span></div>
-                      <div class="toggle-row"><span>آرکپچا</span><span class="mini-switch on"></span></div>
-                      <div class="toggle-row"><span>Cloudflare Turnstile</span><span class="mini-switch"></span></div>
-                      <div class="toggle-row"><span>Google reCAPTCHA v3</span><span class="mini-switch"></span></div>
-                    </div>
-                    <div>
-                      <b class="sec-title">قفل‌های امنیتی</b>
-                      <div class="lock-row"><span><b dir="ltr">0912•••4412</b><small>۹ تلاش ناموفق</small></span><span class="mini-btn">رفع مسدودی</span></div>
-                      <div class="lock-row"><span><b dir="ltr">185.51.•.•</b><small>عبور از سقف دقیقه</small></span><span class="mini-btn">رفع مسدودی</span></div>
-                      <div class="attack-line"><span>حالت حمله</span><span class="mini-switch"></span></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- studio view -->
-                <div class="admin-view" data-view="studio" hidden>
-                  <div class="view-head">
-                    <div><h3>استودیوی طراحی</h3><p>پیش‌نمایش زنده، ۴ قالب آماده</p></div>
-                    <span class="chip">ذخیرهٔ آنی</span>
-                  </div>
-                  <div class="studio-grid">
-                    <div class="studio-preview" id="studio-preview">
-                      <div class="sp-card">
-                        <img src="assets/images/ashna-icon.svg" alt="" width="28" height="28">
-                        <b>ورود به حساب</b>
-                        <small>شمارهٔ موبایل خود را وارد کنید</small>
-                        <span class="sp-field">۰۹۱۲ ۳۴۵ ۶۷۸۹</span>
-                        <span class="sp-btn">دریافت کد</span>
-                        <span class="sp-foot">ورود با Passkey، گوگل، تلگرام</span>
-                      </div>
-                    </div>
-                    <div class="studio-controls">
-                      <b class="sec-title">قالب آماده</b>
-                      <div class="template-row">
-                        <button class="tpl is-active" type="button" data-tpl="classic"><span class="tpl-a"></span>کلاسیک</button>
-                        <button class="tpl" type="button" data-tpl="soft"><span class="tpl-b"></span>نرم</button>
-                        <button class="tpl" type="button" data-tpl="sharp"><span class="tpl-c"></span>مینیمال</button>
-                        <button class="tpl" type="button" data-tpl="dark"><span class="tpl-d"></span>تیره</button>
-                      </div>
-                      <b class="sec-title">رنگ اصلی</b>
-                      <div class="swatch-row" role="group" aria-label="انتخاب رنگ اصلی">
-                        <button class="swatch is-active" type="button" data-color="#2563EB" style="--sw:#2563EB" aria-label="آبی"></button>
-                        <button class="swatch" type="button" data-color="#4F46E5" style="--sw:#4F46E5" aria-label="نیلی"></button>
-                        <button class="swatch" type="button" data-color="#0F766E" style="--sw:#0F766E" aria-label="سبز آبی"></button>
-                        <button class="swatch" type="button" data-color="#BE123C" style="--sw:#BE123C" aria-label="سرخ"></button>
-                        <button class="swatch" type="button" data-color="#B45309" style="--sw:#B45309" aria-label="کهربایی"></button>
-                      </div>
-                      <div class="toggle-row"><span>حالت تاریک فرم</span><span class="mini-switch" data-studio-dark></span></div>
-                      <div class="toggle-row"><span>ورود با رمز عبور</span><span class="mini-switch on"></span></div>
-                      <div class="toggle-row"><span>نمایش دکمه‌های گوگل و تلگرام</span><span class="mini-switch on"></span></div>
-                    </div>
-                  </div>
-                </div>
-                </main>
               </div>
             </div>
           </div>
 
           <div class="tour-caption">
-            <span><svg class="icon icon-18"><use href="#i-check"/></svg> ۹ تب مدیریتی</span>
-            <span><svg class="icon icon-18"><use href="#i-check"/></svg> ذخیرهٔ آنی با AJAX</span>
-            <span><svg class="icon icon-18"><use href="#i-check"/></svg> دارک‌مود پنل</span>
-            <span><svg class="icon icon-18"><use href="#i-check"/></svg> پیش‌نمایش ایزولهٔ فرم</span>
+            <span><svg class="icon icon-18"><use href="#i-check-circle"/></svg> همان تب پیشخوان واقعی</span>
+            <span><svg class="icon icon-18"><use href="#i-check-circle"/></svg> ۹ بخش در نوار کنار</span>
+            <span><svg class="icon icon-18"><use href="#i-check-circle"/></svg> حالت تاریک پنل</span>
+            <span><svg class="icon icon-18"><use href="#i-check-circle"/></svg> لاگ کدهای ارسالی</span>
           </div>
         </div>
       </div>
@@ -1191,7 +1149,7 @@
           <p>آشنا همان‌جا کار می‌کند: مسیر پشتیبان دارد، جلوی ربات‌ها را می‌گیرد و کاربر را از فرم بیرون نمی‌اندازد.</p>
           <div class="final-actions">
             <a class="btn btn-primary btn-lg buy-link" href="#" data-buy>خرید آشنا از راست‌چین <svg class="icon icon-20"><use href="#i-external"/></svg></a>
-            <a class="btn btn-outline-light btn-lg" href="#lab">اول امتحان کن</a>
+            <a class="btn btn-outline-light btn-lg" href="#admin">یک نگاه به پنل</a>
           </div>
           <div class="final-trust">
             <span><svg class="icon icon-16"><use href="#i-check"/></svg> نسخهٔ ۳.۱.۳</span>
@@ -1223,7 +1181,6 @@
       <div class="footer-col">
         <b>محصول</b>
         <a href="#features">امکانات</a>
-        <a href="#lab">آزمایشگاه تعاملی</a>
         <a href="#admin">پیشخوان</a>
         <a href="#integrations">یکپارچگی‌ها</a>
       </div>
@@ -1251,14 +1208,14 @@
 
   <!-- Mobile sticky -->
   <div class="mobile-bar" aria-label="اقدام سریع">
-    <a class="btn btn-outline btn-sm" href="#lab"><svg class="icon icon-16"><use href="#i-play"/></svg> امتحان کن</a>
+    <a class="btn btn-outline btn-sm" href="#admin"><svg class="icon icon-16"><use href="#i-grid"/></svg> دیدن پنل</a>
     <a class="btn btn-primary btn-sm buy-link" href="#" data-buy>خرید از راست‌چین</a>
   </div>
 
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
   <noscript>
-    <div class="noscript">برای اجرای شبیه‌سازها به JavaScript نیاز است؛ متن و تصاویر صفحه بدون آن هم کامل نمایش داده می‌شوند.</div>
+    <div class="noscript">برای اجرای دموی ورود به JavaScript نیاز است؛ متن و تصاویر صفحه بدون آن هم کامل نمایش داده می‌شوند.</div>
   </noscript>
 
   <script src="assets/js/main.js"></script>

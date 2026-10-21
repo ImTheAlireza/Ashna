@@ -11,7 +11,7 @@
   var ASHNA_CONFIG = {
     // Replace with the final Rightchin product URL when published.
     purchaseUrl: "https://www.rtl-theme.com/?s=%D8%A2%D8%B4%D9%86%D8%A7",
-    // Leave empty until demo.parsena.ir is live; buttons then point to #lab.
+    // Leave empty until demo.parsena.ir is live; buttons then point to the hero demo.
     demoUrl: "",
     // Optional: support / ticket URL, e.g. the Rightchin Q&A tab.
     supportUrl: ""
@@ -48,9 +48,9 @@
   });
   if (!ASHNA_CONFIG.demoUrl) {
     $$("[data-demo-link]").forEach(function (el) {
-      el.href = "#lab";
+      el.href = "#top";
       el.addEventListener("click", function () {
-        toast("دموی زندهٔ وردپرس در حال آماده‌سازی است؛ فعلاً شبیه‌ساز همین صفحه را امتحان کن.");
+        toast("دموی زندهٔ وردپرس در حال آماده‌سازی است؛ فعلاً همان دموی ورود بالای صفحه را ببین.");
       });
     });
   }
@@ -546,281 +546,70 @@
     showScene("form");
   }
 
-  /* ---------------- Lab tabs ---------------- */
-  var labTabs = $$("[data-lab-tab]");
-  var labPanels = $$(".lab-panel");
-  function activateLab(name) {
-    $$(".lab-tab[data-lab-tab]").forEach(function (tab) {
-      var active = tab.getAttribute("data-lab-tab") === name;
-      tab.classList.toggle("is-active", active);
-      tab.setAttribute("aria-selected", active ? "true" : "false");
-      tab.tabIndex = active ? 0 : -1;
-    });
-    labPanels.forEach(function (panel) {
-      var active = panel.id === "panel-" + name;
-      panel.classList.toggle("is-active", active);
-      panel.hidden = !active;
-    });
-    if (name === "bomb") updateBomb();
+  /* ---------------- Admin panel (the real dashboard, in a scroll window) ----------------
+     The panel is laid out at the width the plugin's dashboard is designed for
+     (1520px, the shell of a 1920px WordPress screen) and then zoomed down to the
+     space the frame has. Below 1200px of frame width we stop zooming and let the
+     plugin's own responsive rules take over. */
+  var panelScroll = $("#panel-scroll");
+  var panelShell = $("#ashna-app-shell");
+  var PANEL_DESIGN_W = 1520;
+  function fitPanel() {
+    if (!panelScroll || !panelShell) return;
+    var w = panelScroll.clientWidth;
+    if (!w) return;
+    if (w >= 1100 && typeof panelShell.style.zoom !== "undefined") {
+      var z = Math.min(1, w / PANEL_DESIGN_W);
+      panelShell.style.width = PANEL_DESIGN_W + "px";
+      panelShell.style.zoom = z.toFixed(4);
+    } else {
+      panelShell.style.width = "";
+      panelShell.style.zoom = "";
+    }
   }
-  labTabs.forEach(function (el) {
-    el.addEventListener("click", function (e) {
-      var name = el.getAttribute("data-lab-tab");
-      if (el.classList.contains("lab-tab")) {
-        e.preventDefault();
-        activateLab(name);
+  fitPanel();
+  var fitTimer = null;
+  window.addEventListener("resize", function () {
+    window.clearTimeout(fitTimer);
+    fitTimer = window.setTimeout(fitPanel, 120);
+  });
+  if (window.ResizeObserver) {
+    new ResizeObserver(fitPanel).observe(panelScroll);
+  }
+  var panelHint = $("#panel-hint");
+  if (panelScroll && panelHint) {
+    var hidePanelHint = function () { panelHint.classList.add("is-hidden"); };
+    panelScroll.addEventListener("scroll", function () {
+      if (panelScroll.scrollTop > 24 || panelScroll.scrollLeft > 24) hidePanelHint();
+    }, { passive: true });
+    window.setTimeout(hidePanelHint, 9000);
+  }
+
+  var themeToggle = $("#ashna-theme-toggle");
+  if (panelShell && themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var isDark = panelShell.classList.toggle("is-dark");
+      themeToggle.setAttribute("aria-pressed", isDark ? "true" : "false");
+      themeToggle.setAttribute("title", isDark ? "برگشت به حالت روشن" : "تغییر حالت روشن / تاریک (Dark Mode)");
+    });
+  }
+
+  var copyShortcode = $("#ashna-copy-shortcode");
+  if (copyShortcode) {
+    var copyLabel = copyShortcode.innerHTML;
+    var copyTimer = null;
+    copyShortcode.addEventListener("click", function () {
+      var code = copyShortcode.getAttribute("data-copy") || "";
+      var done = function () {
+        copyShortcode.textContent = "کپی شد";
+        window.clearTimeout(copyTimer);
+        copyTimer = window.setTimeout(function () { copyShortcode.innerHTML = copyLabel; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done, done);
       } else {
-        activateLab(name);
+        done();
       }
-    });
-    el.addEventListener("keydown", function (e) {
-      if (!el.classList.contains("lab-tab")) return;
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-      e.preventDefault();
-      var tabs = $$(".lab-tab[data-lab-tab]");
-      var idx = tabs.indexOf(el);
-      var next = e.key === "ArrowLeft" ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
-      tabs[next].focus();
-      activateLab(tabs[next].getAttribute("data-lab-tab"));
-    });
-  });
-
-  /* ---------------- Failover simulator ---------------- */
-  var breakBtn = $("#break-gateway");
-  var resetFlowBtn = $("#reset-flow");
-  var flowStatus = $("#flow-status");
-  var flowLog = $("#flow-log");
-  var flowResult = $("#flow-result");
-  var flowResultSub = $("#flow-result-sub");
-  var flowResultTime = $("#flow-result-time");
-  var breakerCard = $("#breaker-card");
-  var flowTimers = [];
-  var flowRunning = false;
-  var flowBroken = false;
-
-  function nowFa() {
-    return new Date().toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  }
-  function clearFlowTimers() {
-    flowTimers.forEach(function (t) { window.clearTimeout(t); });
-    flowTimers = [];
-  }
-  function addLog(type, text) {
-    if (!flowLog) return;
-    var line = document.createElement("div");
-    line.className = "log-line";
-    line.innerHTML = "<time>" + nowFa() + "</time><span class=\"log-" + type + "\">" + text + "</span>";
-    flowLog.appendChild(line);
-    flowLog.scrollTop = flowLog.scrollHeight;
-  }
-  function setGwState(name, cls, label) {
-    var row = $(".flow-row[data-gw=\"" + name + "\"]");
-    if (!row) return;
-    row.classList.remove("is-active", "is-failed", "is-trying");
-    if (cls) row.classList.add(cls);
-    var state = $("[data-gw-state]", row);
-    if (state) state.textContent = label;
-  }
-  function resetFlow() {
-    clearFlowTimers();
-    flowRunning = false;
-    flowBroken = false;
-    if (breakBtn) {
-      breakBtn.disabled = false;
-      breakBtn.innerHTML = '<svg class="icon icon-18"><use href="#i-bolt"/></svg> قطعی پنل اصلی را شبیه‌سازی کن';
-    }
-    setGwState("primary", "", "سالم · ۰.۴ ثانیه");
-    setGwState("backup1", "", "آماده");
-    setGwState("backup2", "", "آماده");
-    if (flowStatus) {
-      flowStatus.className = "status-pill";
-      flowStatus.innerHTML = '<span class="pulse-dot"></span> همه‌چیز سالم';
-    }
-    if (breakerCard) breakerCard.hidden = true;
-    if (flowResult) {
-      flowResult.classList.remove("is-pending");
-      var t = $("b", flowResult);
-      if (t) t.textContent = "کد به کاربر رسید";
-    }
-    if (flowResultSub) flowResultSub.textContent = "مسیر: درگاه اصلی · ۰.۴ ثانیه";
-    if (flowResultTime) flowResultTime.textContent = "۰.۴s";
-    if (flowLog) {
-      flowLog.innerHTML = "";
-    }
-    addLog("info", "درخواست کد ثبت شد");
-    addLog("ok", "SMS.ir پاسخ داد (۰.۴s)");
-    addLog("ok", "کد به کاربر تحویل شد");
-  }
-  function breakGateway() {
-    if (flowRunning) return;
-    if (flowBroken) { resetFlow(); return; }
-    flowRunning = true;
-    flowBroken = true;
-    if (breakBtn) {
-      breakBtn.disabled = true;
-      breakBtn.innerHTML = "قطعی فعال است — برای شروع دوباره بازنشانی کن";
-    }
-    if (flowStatus) {
-      flowStatus.className = "status-pill is-danger";
-      flowStatus.innerHTML = '<span class="pulse-dot" style="background:#F87171"></span> قطعی شبیه‌سازی شد';
-    }
-    setGwState("primary", "is-failed", "خطا ۵۰۰ · قطع");
-    if (flowResult) {
-      flowResult.classList.add("is-pending");
-      var title = $("b", flowResult);
-      if (title) title.textContent = "در حال ارسال از مسیر پشتیبان…";
-    }
-    if (flowResultSub) flowResultSub.textContent = "کاربر منتظر است؛ مسیر جایگزین انتخاب می‌شود";
-    if (flowResultTime) flowResultTime.textContent = "…";
-    addLog("bad", "SMS.ir: خطای ۵۰۰ — ارسال ناموفق (۰.۵s)");
-
-    flowTimers.push(window.setTimeout(function () {
-      addLog("warn", "Circuit Breaker برای SMS.ir فعال شد");
-      setGwState("primary", "is-failed", "Circuit Breaker · کنار گذاشته شد");
-      if (breakerCard) breakerCard.hidden = false;
-      if (flowStatus) {
-        flowStatus.className = "status-pill is-warn";
-        flowStatus.innerHTML = '<span class="pulse-dot" style="background:#FCD34D"></span> انتقال به پشتیبان';
-      }
-    }, 700));
-
-    flowTimers.push(window.setTimeout(function () {
-      addLog("info", "تلاش با پشتیبان ۱: کاوه‌نگار");
-      setGwState("backup1", "is-trying", "در حال ارسال…");
-    }, 1300));
-
-    flowTimers.push(window.setTimeout(function () {
-      setGwState("backup1", "is-active", "تحویل شد · ۱.۸ ثانیه");
-      addLog("ok", "کاوه‌نگار پاسخ داد (۱.۸s)");
-      if (flowResult) {
-        flowResult.classList.remove("is-pending");
-        var t = $("b", flowResult);
-        if (t) t.textContent = "کد از مسیر پشتیبان رسید";
-      }
-      if (flowResultSub) flowResultSub.textContent = "مسیر: پشتیبان ۱ (کاوه‌نگار) · بدون دخالت کاربر";
-      if (flowResultTime) flowResultTime.textContent = "۱.۸s";
-      addLog("ok", "کد به کاربر تحویل شد · مسیر پشتیبان ۱");
-      if (flowStatus) {
-        flowStatus.className = "status-pill";
-        flowStatus.innerHTML = '<span class="pulse-dot"></span> کاربر وارد شد';
-      }
-      flowRunning = false;
-    }, 2700));
-  }
-  if (breakBtn) breakBtn.addEventListener("click", breakGateway);
-  if (resetFlowBtn) resetFlowBtn.addEventListener("click", resetFlow);
-
-  /* ---------------- Anti-SMS-bomb calculator ---------------- */
-  var bombRange = $("#bomb-range");
-  var bombCount = $("#bomb-count");
-  var bombAllowed = $("#bomb-allowed");
-  var bombBlocked = $("#bomb-blocked");
-  var bombState = $("#bomb-state");
-  var bombStateSub = $("#bomb-state-sub");
-  var bombBadge = $("#bomb-badge");
-  var bombStatus = $("#bomb-status");
-  var bombBarOk = $("#bomb-bar-ok");
-  var bombBarBad = $("#bomb-bar-bad");
-  var attackBanner = $("#attack-banner");
-  var attackSwitch = $("#attack-switch");
-  var segs = $$(".seg[data-limit]");
-  var bombLimit = 5;
-  var attackMode = false;
-
-  function updateBomb() {
-    if (!bombRange) return;
-    var requests = parseInt(bombRange.value, 10);
-    var allowed = Math.min(requests, bombLimit);
-    var blocked = Math.max(0, requests - bombLimit);
-    var limitHit = blocked > 0;
-
-    if (bombCount) bombCount.textContent = faNum(requests);
-    if (bombAllowed) bombAllowed.textContent = faNum(allowed);
-    if (bombBlocked) bombBlocked.textContent = faNum(blocked);
-    if (bombState) bombState.textContent = attackMode ? "کپچا اجباری" : (limitHit ? "محدود" : "مجاز");
-    if (bombStateSub) bombStateSub.textContent = attackMode ? "حالت حمله" : (limitHit ? "تا پایان پنجره" : "بدون قفل");
-    if (bombBarOk) bombBarOk.style.width = ((allowed / 60) * 100) + "%";
-    if (bombBarBad) bombBarBad.style.width = ((blocked / 60) * 100) + "%";
-
-    if (bombBadge) {
-      bombBadge.className = "result-badge" + (attackMode ? " is-danger" : (limitHit ? " is-warn" : ""));
-      bombBadge.textContent = attackMode ? "حالت حمله فعال" : (limitHit ? "خارج از سقف" : "در محدودهٔ مجاز");
-    }
-    if (bombStatus) {
-      bombStatus.className = "status-pill" + (attackMode ? " is-danger" : (limitHit ? " is-warn" : ""));
-      bombStatus.innerHTML = '<span class="pulse-dot"' + (attackMode ? ' style="background:#F87171"' : (limitHit ? ' style="background:#FCD34D"' : "")) + "></span> " +
-        (attackMode ? "حمله" : (limitHit ? "محدودسازی" : "عادی"));
-    }
-    if (attackBanner) attackBanner.hidden = !attackMode;
-    if (attackSwitch) attackSwitch.setAttribute("aria-checked", attackMode ? "true" : "false");
-
-    var pct = ((requests - 1) / 59) * 100;
-    bombRange.style.setProperty("--fill", pct + "%");
-  }
-  if (bombRange) {
-    bombRange.addEventListener("input", updateBomb);
-    updateBomb();
-  }
-  segs.forEach(function (seg) {
-    seg.addEventListener("click", function () {
-      segs.forEach(function (s) { s.classList.toggle("is-active", s === seg); });
-      bombLimit = parseInt(seg.getAttribute("data-limit"), 10) || 5;
-      updateBomb();
-    });
-  });
-  if (attackSwitch) {
-    attackSwitch.addEventListener("click", function () {
-      attackMode = !attackMode;
-      updateBomb();
-    });
-  }
-
-  /* ---------------- Admin tour ---------------- */
-  var viewButtons = $$(".wptab[data-view], .wpsub[data-view], .wpmenu-item[data-view]");
-  var views = $$(".admin-view");
-
-  function showView(name) {
-    views.forEach(function (v) {
-      var active = v.getAttribute("data-view") === name;
-      v.classList.toggle("is-active", active);
-      v.hidden = !active;
-    });
-    viewButtons.forEach(function (b) {
-      var active = b.getAttribute("data-view") === name;
-      b.classList.toggle("is-active", active);
-      if (b.classList.contains("wptab") || b.classList.contains("wpsub")) b.setAttribute("aria-selected", active ? "true" : "false");
-    });
-  }
-  viewButtons.forEach(function (btn) {
-    btn.addEventListener("click", function () { showView(btn.getAttribute("data-view")); });
-  });
-  $$("[data-admin-view]").forEach(function (link) {
-    link.addEventListener("click", function () { showView(link.getAttribute("data-admin-view")); });
-  });
-
-  /* Studio controls */
-  var studioPreview = $("#studio-preview");
-  if (studioPreview) {
-    $$(".swatch[data-color]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        $$(".swatch[data-color]").forEach(function (s) { s.classList.toggle("is-active", s === btn); });
-        studioPreview.style.setProperty("--sp-accent", btn.getAttribute("data-color"));
-      });
-    });
-    $$(".tpl[data-tpl]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        $$(".tpl[data-tpl]").forEach(function (t) { t.classList.toggle("is-active", t === btn); });
-        studioPreview.setAttribute("data-tpl", btn.getAttribute("data-tpl"));
-        if (btn.getAttribute("data-tpl") === "dark") studioPreview.classList.add("is-dark");
-        else if (!studioPreview.classList.contains("is-dark-forced")) studioPreview.classList.remove("is-dark");
-      });
-    });
-    $$("[data-studio-dark]").forEach(function (toggle) {
-      toggle.addEventListener("click", function () {
-        var isDark = studioPreview.classList.toggle("is-dark");
-        toggle.classList.toggle("on", isDark);
-        studioPreview.classList.toggle("is-dark-forced", isDark);
-      });
     });
   }
 
@@ -833,7 +622,7 @@
   var scoreMessages = {
     0: "اولین نیازت را انتخاب کن تا ببینیم آشنا کجای کارت می‌آید.",
     1: "آشنا یکی از این نیازها را پوشش می‌دهد؛ بقیهٔ امکانات هم در نسخهٔ ۳.۱.۳ فعال‌اند.",
-    2: "آشنا برای این ترکیب مناسب است؛ در آزمایشگاه بالای صفحه رفتارش را ببین.",
+    2: "آشنا برای این ترکیب مناسب است؛ تب پیشخوانش را پایین‌تر ببین.",
     3: "نیمی از مسیر؛ زنجیرهٔ پشتیبان، فایروال و یکپارچگی‌ها دقیقاً برای همین‌ها ساخته شده‌اند.",
     4: "تقریباً همهٔ موارد با آشنا پوشش داده می‌شود؛ فقط پیش‌نیازهای PHP و ionCube را بررسی کن.",
     5: "آشنا برای سایت تو طراحی شده است. پیش‌نیازها را ببین، بعد از راست‌چین خرید کن."
