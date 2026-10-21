@@ -2,20 +2,14 @@
   {
     "file": "ashna.zip",
     "bytes": 591701,
-    "sha256": "e8f188288a64d68e08033be3b09ba939c0ba136142200da698d75cce67c3ad19",
+    "sha256": "955d941a7758a08d43f538ce3f9289da736e00de89bcd96a1bf17660678f6151",
     "files": 89
   },
   {
     "file": "ashna-no-license.zip",
     "bytes": 557919,
-    "sha256": "b489def83824ef529eb8f19327f068b117015df2d6fe5fc8c2b9659e7f103d27",
+    "sha256": "2fbe3144a7e4bea86b5a81790aa26a8ba1bcc8593f318043623931bc57ed8409",
     "files": 88
-  },
-  {
-    "file": "signa-website-source.zip",
-    "bytes": 2080231,
-    "sha256": "fcd6899377731ff0883592ae88f7842815bad87b34803a90ace848008d6aa22c",
-    "files": 32
   },
   {
     "file": "ashna-activation-diagnostics.zip",
@@ -27,5 +21,17 @@
     "file": "help.pdf",
     "bytes": 2704649,
     "sha256": "58b2a4ffca9341e1dcbb1331a56c37bdac62ca38312e36c76583cdec6bf1797f"
+  },
+  {
+    "file": "ashna-landing.zip",
+    "bytes": 1002623,
+    "sha256": "fcf9c68441521ed8b7892495a62ad2883bafa8d290d291596dd3f46592511b9e",
+    "files": 39
+  },
+  {
+    "file": "parsena-landing.zip",
+    "bytes": 125312,
+    "sha256": "ec07c48df2e30b7f020096c1f1696f4c969c1a5b2c239055bae7a17715119a9e",
+    "files": 7
   }
 ]

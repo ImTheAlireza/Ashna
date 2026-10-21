@@ -1,5 +1,5 @@
-"""Package the current Ashna plugin (and, optionally, the legacy gallery website).
-Run from any directory: python scripts/package-deliverables.py --plugin-only
+"""Package the current Ashna plugin ZIPs.
+Run from any directory: python scripts/package-deliverables.py
 """
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -9,14 +9,13 @@ import argparse
 import re
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--plugin-only", action="store_true", help="Rebuild only the plugin ZIP, preserving the website archive.")
-parser.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP; leave the licensed ZIP and website unchanged.")
+parser.add_argument("--plugin-only", action="store_true", help="Accepted for backward compatibility; only plugin ZIPs are built now.")
+parser.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP.")
 args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
-DESIGN = ROOT / 'product-images/gallery-design'
 
 LICENSE_MISSING_NOTE = 'فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار ashna.php قرار بگیرد.'
 LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
@@ -51,48 +50,6 @@ if args.without_license:
 حداقل وردپرس ۵.۸ و PHP ۷.۴ مطابق سربرگ همین بسته.
 این نسخه برای جداکردن احتمال خطای Loader/لایسنس از سایر خطاهای هاست مناسب است؛ رفع قطعی خطای گزارش‌شدهٔ سایت، بدون گزارش خطا قابل تأیید نیست.
 '''
-website_readme = '''# کد وب‌سایت گالری سیگنا
-
-این بسته، صفحهٔ وب گالری ساخته‌شده در این گفتگو است، نه کد یک سایت دموی خارجی. همهٔ فونت‌ها، لوگوها، تصاویر و طرح‌های HTML/CSS داخل بسته‌اند و مسیرها نسبی هستند. به وردپرس یا CDN نیازی ندارد.
-
-## استفاده
-
-پوشهٔ signa-website را استخراج کنید و محتویاتش را روی هاست استاتیک قرار دهید.
-صفحهٔ شروع: index.html
-طرح‌های HTML قابل ویرایش: render.html?slide=1 تا render.html?slide=8
-متن‌ها و طرح‌ها: slides.js
-فونت، رنگ، ابعاد و چیدمان: styles.css
-خروجی‌ها: gallery/*.webp
-دانلود گروهی: signa-gallery-8-images.zip
-منابع نشان‌ها و توضیح آیکون IPPanel: logos/SOURCES.md
-
-برای پیش‌نمایش محلی، از داخل همین پوشه اجرا کنید:
-
-    python -m http.server 8000 --bind 0.0.0.0
-
-سپس http://localhost:8000 را در همان دستگاه باز کنید.
-
-این رابط‌ها تصویرسازی معرفی محصول هستند؛ ورود، ارسال پیامک و احراز هویت واقعی در این وب‌سایت استاتیک انجام نمی‌شود.
-تصاویر ۲، ۳ و ۵ نسخهٔ بازطراحی‌شده هستند و ۵ سامانه‌های ارسال را معرفی می‌کند.
-هر هشت تصویر ۱۶۰۰ × ۱۸۰۰ پیکسل و کمتر از یک مگابایت هستند.
-
-## بازسازی اختیاری خروجی تصاویر
-
-Node.js 22.17+ و Python 3.9+ توصیه می‌شود. سرور بالا را در ترمینال جداگانه فعال نگه دارید، سپس:
-
-    npm ci
-    node export.mjs
-    python -m venv .venv
-    .venv/bin/pip install Pillow
-    .venv/bin/python package_images.py
-
-در لینوکس حداقلی در صورت نبود کتابخانه‌های NSS/NSPR:
-
-    SIGNA_BUNDLED_LIBS=1 node export.mjs
-
-وابستگی‌ها و مرورگر از قبل داخل ZIP قرار نگرفته‌اند. این ابزارها فقط برای تولید مجدد خروجی‌ها لازم‌اند، نه برای نمایش صفحه.
-'''
-
 def add_bytes(bundle, name, content):
     bundle.writestr(name, content.encode('utf-8'))
 
@@ -145,45 +102,21 @@ with ZipFile(plugin) as bundle:
         if hits:
             raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))
 
-website = OUT / 'signa-website-source.zip'
-if not args.plugin_only and not args.without_license:
-    # Legacy Signa gallery: its logo files left the plugin with the Ashna rename.
-    legacy_logos = [name for name in ['assets/images/signa-icon.png', 'assets/images/signa-logo.png'] if not (ROOT / name).is_file()]
-    if legacy_logos:
-        raise SystemExit('Legacy Signa website packaging needs ' + ', '.join(legacy_logos) + ' (removed in the Ashna rename). The plugin ZIP was built; use --plugin-only.')
-    with ZipFile(website, 'w', ZIP_DEFLATED) as bundle:
-        for name in ['index.html', 'render.html', 'styles.css', 'slides.js', 'package.json', 'package-lock.json']:
-            text = (DESIGN / name).read_text()
-            text = text.replace('../../assets/', 'assets/').replace('../gallery/', 'gallery/').replace('../signa-gallery-8-images.zip', 'signa-gallery-8-images.zip')
-            add_bytes(bundle, 'signa-website/' + name, text)
-        export = (DESIGN / 'export.mjs').read_text().replace("path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')", "path.dirname(fileURLToPath(import.meta.url))").replace('http://127.0.0.1:8000/product-images/gallery-design/', 'http://127.0.0.1:8000/')
-        add_bytes(bundle, 'signa-website/export.mjs', export)
-        pack = (DESIGN / 'package_images.py').read_text().replace('Path(__file__).resolve().parents[2]', 'Path(__file__).resolve().parent').replace("'product-images/gallery'", "'gallery'").replace("'product-images/signa-gallery-8-images.zip'", "'signa-gallery-8-images.zip'")
-        add_bytes(bundle, 'signa-website/package_images.py', pack)
-        add_bytes(bundle, 'signa-website/README-FA.md', website_readme)
-        for source in sorted((DESIGN / 'logos').glob('*')):
-            if source.is_file(): bundle.write(source, 'signa-website/logos/' + source.name)
-        for weight in [400, 500, 700, 900]:
-            name = f'assets/fonts/estedad/estedad-{weight}.woff2'
-            bundle.write(ROOT / name, 'signa-website/' + name)
-        for name in ['assets/fonts/estedad/LICENSE.txt', 'assets/images/signa-icon.png', 'assets/images/signa-logo.png']:
-            bundle.write(ROOT / name, 'signa-website/' + name)
-        report = json.loads((ROOT / 'product-images/gallery/manifest.json').read_text())
-        assert len(report) == 8
-        for entry in report:
-            name = entry['file'] + '.webp'
-            bundle.write(ROOT / 'product-images/gallery' / name, 'signa-website/gallery/' + name)
-        bundle.write(ROOT / 'product-images/signa-gallery-8-images.zip', 'signa-website/signa-gallery-8-images.zip')
-
 report = [archive_check(OUT / name, SLUG) for name in [SLUG + '.zip', SLUG + '-no-license.zip'] if (OUT / name).exists()]
-if website.exists():
-    report.append(archive_check(website, 'signa-website'))
 diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
     report.append(archive_check(diagnostics, 'ashna-activation-diagnostics'))
-for guide in [OUT / 'help.pdf', OUT / 'Signa-Help-FA.pdf']:
+for guide in [OUT / 'help.pdf']:
     if guide.exists():
         report.append({'file': guide.name, 'bytes': guide.stat().st_size,
                        'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
-(OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
+# checksums.json is shared with scripts/package-landing.py: keep the entries this
+# script does not produce, as long as the file is still on disk.
+checksums = OUT / 'checksums.json'
+produced = {entry['file'] for entry in report}
+if checksums.exists():
+    for entry in json.loads(checksums.read_text()):
+        if entry['file'] not in produced and (OUT / entry['file']).exists():
+            report.append(entry)
+checksums.write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

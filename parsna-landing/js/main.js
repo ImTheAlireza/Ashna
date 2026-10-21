@@ -124,39 +124,6 @@
   }
 
   /* ═══════════════════════════════════════
-     Demo Input — Safe event handling
-     ═══════════════════════════════════════ */
-
-  var demoInput = document.querySelector('.demo-input');
-  var demoBtn = document.querySelector('.demo-btn');
-
-  if (demoBtn && demoInput) {
-    demoBtn.addEventListener('click', function () {
-      var val = demoInput.value.trim();
-      if (val && isValidPhone(val)) {
-        // In production: send to API with CSRF token
-        // For demo: just show sanitized feedback
-        demoBtn.textContent = '✓ ارسال شد';
-        demoBtn.style.color = '#86efac';
-        demoBtn.style.borderColor = 'rgba(134,239,172,.3)';
-        setTimeout(function () {
-          demoBtn.textContent = 'دریافت کد';
-          demoBtn.style.color = '';
-          demoBtn.style.borderColor = '';
-        }, 2000);
-      }
-    });
-
-    // Prevent form submission if wrapped in form
-    demoInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        demoBtn.click();
-      }
-    });
-  }
-
-  /* ═══════════════════════════════════════
      Security: External links — noopener
      ═══════════════════════════════════════ */
 
@@ -170,7 +137,7 @@
      Security: Disable drag on sensitive elements
      ═══════════════════════════════════════ */
 
-  document.querySelectorAll('.signa-logo-img').forEach(function (img) {
+  document.querySelectorAll('.ashna-icon-img').forEach(function (img) {
     img.setAttribute('draggable', 'false');
   });
 
