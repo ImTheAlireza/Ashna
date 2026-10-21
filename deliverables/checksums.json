@@ -27,5 +27,11 @@
     "file": "Signa-Help-FA.pdf",
     "bytes": 236971,
     "sha256": "2c0929bd3a4b36fdde8885eea3a15b34bca91e9c0f7abf8d5076d75caae5eaf0"
+  },
+  {
+    "file": "ashna-gallery-v3.zip",
+    "bytes": 840097,
+    "sha256": "59f1fd48430db30f7c85e505456bc8d929eaffaa424d5dae1427c4e4e7e13c5d",
+    "files": 10
   }
 ]
