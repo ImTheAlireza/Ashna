@@ -290,16 +290,16 @@ const run = async () => {
 		'templates/login-form.php',
 	];
 	for ( const f of exposed ) {
-		const r = await raw( '/wp-content/plugins/ashna-otp/' + f );
+		const r = await raw( '/wp-content/plugins/ashna/' + f );
 		// PHP source, or our own symbols/table names rendered as text, would be a leak.
 		const leak = /<\?php|<\?=|Ashna_[A-Z][A-Za-z_]+|\$wpdb|api[_-]?key\s*=>/i.test( r.text );
 		check( 'direct hit on ' + f + ' does not leak source or internals', ! leak, r.status + ' ' + r.text.replace( /\s+/g, ' ' ).slice( 0, 70 ) );
 	}
-	const dirList = await raw( '/wp-content/plugins/ashna-otp/' );
+	const dirList = await raw( '/wp-content/plugins/ashna/' );
 	check( 'the plugin directory cannot be listed', ! /Index of|Directory listing|parent directory/i.test( dirList.text ) && ! dirList.text.includes( 'class-ashna' ), dirList.status + ' ' + dirList.text.replace( /\s+/g, ' ' ).slice( 0, 70 ) );
 
 	// uninstall.php must be a no-op unless WordPress itself runs it with the right constant.
-	const uninstall = await raw( '/wp-content/plugins/ashna-otp/uninstall.php' );
+	const uninstall = await raw( '/wp-content/plugins/ashna/uninstall.php' );
 	const stillThere = await raw( '/wp-login.php' );
 	check( 'hitting uninstall.php directly changes nothing', ! /deleted|removed|done/i.test( uninstall.text ) && /ashna/i.test( stillThere.text ), uninstall.status + ' → login page still carries Ashna: ' + /ashna/i.test( stillThere.text ) );
 

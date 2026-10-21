@@ -27,7 +27,7 @@ if ( ! $ashna_full_wp ) {
 	$plugin_dir = rtrim( $argv[1], '/' ) . '/';
 	define( 'ABSPATH', rtrim( $argv[2], '/' ) . '/' );
 	define( 'ASHNA_OTP_PATH', $plugin_dir );
-	define( 'ASHNA_OTP_URL', 'https://example.test/wp-content/plugins/ashna-otp/' );
+	define( 'ASHNA_OTP_URL', 'https://example.test/wp-content/plugins/ashna/' );
 	define( 'ASHNA_OTP_VERSION', '3.0.0' );
 	define( 'MINUTE_IN_SECONDS', 60 );
 	define( 'HOUR_IN_SECONDS', 3600 );

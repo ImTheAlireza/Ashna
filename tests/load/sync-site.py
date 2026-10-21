@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def sync(site: Path) -> None:
-    dest = site / 'wp-content/plugins/ashna-otp'
+    dest = site / 'wp-content/plugins/ashna'
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True)

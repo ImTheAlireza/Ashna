@@ -26,7 +26,7 @@ mkdir -p "$OUT"
 
 SLUG="$(basename "$SITE")"
 BOOT="$SITE/_golden.php"
-PLUGIN="$SITE/wp-content/plugins/ashna-otp"
+PLUGIN="$SITE/wp-content/plugins/ashna"
 HEAD_SRC="$ROOT/.cache/load/golden-head-src"
 
 # The shipped build of the current commit, laid out like the no-license package.

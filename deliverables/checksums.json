@@ -1,14 +1,14 @@
 [
   {
-    "file": "ashna-otp.zip",
-    "bytes": 592598,
-    "sha256": "2a8b94b9e64f499978d653353b89cbb1edd7e79ce35dae72d80e3c1c91cb375e",
+    "file": "ashna.zip",
+    "bytes": 591701,
+    "sha256": "e8f188288a64d68e08033be3b09ba939c0ba136142200da698d75cce67c3ad19",
     "files": 89
   },
   {
-    "file": "ashna-otp-no-license.zip",
-    "bytes": 558926,
-    "sha256": "73e4c8c2303eb6ffc92bc3d4355d50c496d7d9f443b885d241010bd68c26f371",
+    "file": "ashna-no-license.zip",
+    "bytes": 557919,
+    "sha256": "b489def83824ef529eb8f19327f068b117015df2d6fe5fc8c2b9659e7f103d27",
     "files": 88
   },
   {
@@ -24,14 +24,8 @@
     "files": 3
   },
   {
-    "file": "Signa-Help-FA.pdf",
-    "bytes": 236971,
-    "sha256": "2c0929bd3a4b36fdde8885eea3a15b34bca91e9c0f7abf8d5076d75caae5eaf0"
-  },
-  {
-    "file": "ashna-gallery-v3.zip",
-    "bytes": 837882,
-    "sha256": "7370960eef5a48f4d9657cc3e51948764315ece88b9ca5cd2edbfc0d03766093",
-    "files": 10
+    "file": "help.pdf",
+    "bytes": 2704649,
+    "sha256": "58b2a4ffca9341e1dcbb1331a56c37bdac62ca38312e36c76583cdec6bf1797f"
   }
 ]

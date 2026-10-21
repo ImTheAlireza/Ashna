@@ -41,10 +41,10 @@ if args.without_license:
     plugin_readme = '''نسخهٔ بدون لایسنس و بدون کدگذاری آشنا — ۳.۱.۴
 محصولی از پارسنا — https://parsena.ir/ashna
 
-این بستهٔ جداگانه فقط برای تست و عیب‌یابی است و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. نسخهٔ قابل ارسال به راست‌چین، بستهٔ لایسنس‌دار ashna-otp.zip است.
+این بستهٔ جداگانه فقط برای تست و عیب‌یابی است و بررسی لایسنس راست‌چین در فایل ashna.php ندارد. به فایل RTL_License، ionCube یا SourceGuardian برای کد خود افزونه نیاز ندارد. نسخهٔ قابل ارسال به راست‌چین، بستهٔ لایسنس‌دار ashna.zip است.
 
 ابتدا از سایت و دیتابیس بکاپ بگیرید؛ ترجیحاً روی سایت آزمایشی تست کنید.
-اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna-otp جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
+اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
 برای حفظ تنظیمات، لازم نیست افزونه را از طریق دکمهٔ «حذف» وردپرس پاک کنید.
 پس از استخراج دستی، فایل ashna.php کدگذاری‌شدهٔ قبلی را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
 
@@ -117,19 +117,13 @@ if include_license:
 if not args.without_license:
     plugin_readme = plugin_readme.format(license_note=LICENSE_INCLUDED_NOTE if include_license else LICENSE_MISSING_NOTE)
 
-SLUG = 'ashna-otp'
+SLUG = 'ashna'
 plugin = OUT / (SLUG + '-no-license.zip' if args.without_license else SLUG + '.zip')
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
-    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md']:
+    for name in ['ashna.php', 'index.php', 'uninstall.php', 'README.md']:
         if args.without_license and name == 'ashna.php':
+            # Header and bootstrap live in the same unencoded file for this edition.
             bundle.write(ROOT / 'scripts/templates/ashna-no-license.php', SLUG + '/ashna.php')
-        elif args.without_license and name == 'index.php':
-            index = (ROOT / name).read_text()
-            assert index.count('آشنا | ورود') == 1, 'Plugin Name header changed; update the no-license label'
-            index = index.replace('آشنا | ورود', 'آشنا (بدون لایسنس) | ورود', 1)
-            # The separate unencoded edition does not share the licensed file's PHP floor.
-            index = re.sub(r'(Requires PHP:\s*)[0-9.]+', r'\g<1>7.4', index, count=1)
-            add_bytes(bundle, SLUG + '/index.php', index)
         else:
             bundle.write(ROOT / name, SLUG + '/' + name)
     for folder in ['assets', 'includes', 'languages', 'templates']:
@@ -187,9 +181,9 @@ if website.exists():
 diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
     report.append(archive_check(diagnostics, 'ashna-activation-diagnostics'))
-guide = OUT / 'Signa-Help-FA.pdf'
-if guide.exists():
-    report.append({'file': guide.name, 'bytes': guide.stat().st_size,
-                   'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
+for guide in [OUT / 'help.pdf', OUT / 'Signa-Help-FA.pdf']:
+    if guide.exists():
+        report.append({'file': guide.name, 'bytes': guide.stat().st_size,
+                       'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
 (OUT / 'checksums.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))
