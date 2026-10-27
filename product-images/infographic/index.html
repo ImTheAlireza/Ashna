@@ -15,8 +15,9 @@
        login-card.webp · methods.webp · sso.webp · gateways.webp
        failover.webp · security.webp · appearance.webp · shop.webp
        messengers.webp · dashboard.webp
+   • کارت‌های درگاه و سقف‌ها برای متن درشت‌تر از روی پنل با HTML بازچینی شده‌اند.
    • هر بخش ساختار خودش را دارد: هدر تیره، نوار سه‌قدمی، دو ستون، باند تیره،
-     نوار راه‌دور، دیاگرام سپر، پنل روشن، باند تیرهٔ ظاهر و فهرست سه‌ستونه.
+     نوار راه‌دور، دیاگرام سپر، پنل روشن، باند تیرهٔ ظاهر و فهرست دو‌ستونه.
    • آیکون‌ها SVG دست‌سازند؛ هیچ تصویر استوک یا هوش مصنوعی در طرح نیست.
    • خروجی: node export.mjs  →  python3 stitch.py
   ══════════════════════════════════════════════════════════════════════════════
@@ -44,19 +45,19 @@
   p{margin:0}
 
   /* ───────── shared ───────── */
-  .sec{position:relative;padding:62px 56px}
+  .sec{position:relative;padding:68px 56px}
   .cols,.hero-in,.foot .in{min-width:0}
   .cols>*,.hero-in>*,.foot .in>*{min-width:0}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.2px}
-  .eyebrow .num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;border-radius:7px;background:var(--blue);color:#fff;font-size:11.5px;font-weight:800}
-  .h2{font-size:31px;line-height:1.32;margin:12px 0 0}
-  .lead{font-size:14.6px;line-height:2.02;color:var(--dim);margin-top:12px;max-width:640px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--blue);letter-spacing:.2px}
+  .eyebrow .num{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;padding:0 6px;border-radius:7px;background:var(--blue);color:#fff;font-size:13px;font-weight:800}
+  .h2{font-size:33px;line-height:1.35;margin:12px 0 0}
+  .lead{font-size:18.5px;font-weight:400;line-height:1.9;color:#385270;margin-top:14px;max-width:710px}
   .rule{width:54px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--sky));margin-top:16px}
   .shot{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:9px;box-shadow:0 26px 50px -34px rgba(7,22,51,.5),0 2px 6px rgba(7,22,51,.05)}
   .shot img{width:100%;border-radius:11px;-webkit-mask-image:linear-gradient(to bottom,#000 94%,rgba(0,0,0,.15) 100%);mask-image:linear-gradient(to bottom,#000 94%,rgba(0,0,0,.15) 100%)}
-  .shot .cap{position:absolute;bottom:-13px;right:18px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:10.5px;font-weight:700;color:var(--dim);box-shadow:0 6px 14px -8px rgba(7,22,51,.4)}
+  .shot .cap{position:absolute;bottom:-16px;right:18px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:700;color:#3D5879;box-shadow:0 6px 14px -8px rgba(7,22,51,.4)}
   .chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 12px;font-size:11.5px;font-weight:700;background:#EFF5FF;border:1px solid #D7E6FD;color:#1E4C8F}
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:700;background:#EFF5FF;border:1px solid #D7E6FD;color:#1E4C8F}
   .chip svg{width:13px;height:13px;flex:none}
 
   /* ───────── hero ───────── */
@@ -74,11 +75,11 @@
   .topbar .brandlogo{height:30px;width:auto;filter:drop-shadow(0 6px 16px rgba(0,0,0,.35))}
   .topbar .meta{display:flex;align-items:center;gap:8px;font-size:11px;color:#9FC2EE;font-weight:600}
   .vpill{background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.34);color:#CFE4FF;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:700}
-  .hero-in{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 432px;gap:28px;align-items:center;padding:34px 56px 0}
+  .hero-in{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 392px;gap:34px;align-items:center;padding:34px 56px 0}
   .hero h1{font-size:44px;line-height:1.26;letter-spacing:-.6px}
   .hero h1 em{font-style:normal;color:#7EC2FF;position:relative}
   .hero h1 em{position:relative;z-index:1}.hero h1 em::after{content:"";position:absolute;right:-2px;left:-2px;bottom:1px;height:11px;border-radius:5px;background:linear-gradient(90deg,rgba(56,189,248,.5),rgba(37,99,235,.1));z-index:-1}
-  .hero .sub{margin-top:16px;font-size:14.6px;line-height:2.05;color:#BFD5F2;max-width:430px}
+  .hero .sub{margin-top:16px;font-size:18.5px;font-weight:400;line-height:1.9;color:#EAF3FF;max-width:465px}
   .hero .kicker{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(150,197,255,.26);border-radius:999px;padding:7px 13px;font-size:11.5px;font-weight:700;color:#D8E9FF}
   .hero .kicker i{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
   .hero-shot{position:relative}
@@ -96,7 +97,7 @@
   .hs{padding:0 16px;border-left:1px solid rgba(150,197,255,.14)}
   .hs:first-child{border-left:0;padding-right:0}
   .hs b{display:block;font-family:'Estedad',sans-serif;font-size:22px;font-weight:900;color:#fff}
-  .hs span{display:block;margin-top:3px;font-size:11px;color:#9FBDE2;font-weight:600}
+  .hs span{display:block;margin-top:4px;font-size:13px;line-height:1.7;color:#DDEBFF;font-weight:600}
 
   /* ───────── steps ───────── */
   .steps{position:relative;background:#fff;padding:0 56px 44px;margin-top:-2px}
@@ -105,20 +106,20 @@
   .st{position:relative;display:flex;align-items:flex-start;gap:12px;padding:4px 6px;background:#fff;z-index:1}
   .st .n{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:linear-gradient(160deg,#2F6EF0,#1D4ED8);color:#fff;box-shadow:0 10px 18px -12px rgba(29,78,216,.9)}
   .st .n svg{width:19px;height:19px}
-  .st b{display:block;font-size:13.5px;font-weight:800;color:#0B2344}
-  .st span{display:block;margin-top:4px;font-size:11.5px;line-height:1.8;color:var(--dim)}
+  .st b{display:block;font-size:15px;font-weight:800;color:#0B2344;line-height:1.6}
+  .st span{display:block;margin-top:5px;font-size:13.5px;font-weight:400;line-height:1.8;color:#3F5978}
 
   /* ───────── section 01 ───────── */
   .s1{background:linear-gradient(180deg,#FFFFFF 0%,#FBFDFF 100%);overflow:hidden}
   .s1 .ghost{position:absolute;top:34px;left:22px;font-family:'Estedad',sans-serif;font-size:170px;font-weight:900;color:#F1F7FF;letter-spacing:-6px;line-height:1;opacity:.9}
-  .s1 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:36px;align-items:center}
+  .s1 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:38px;align-items:center}
   .s1 .shot{transform:rotate(-1.2deg);order:2}
-  .s1 .bullets{display:grid;gap:10px;margin-top:20px}
+  .s1 .bullets{display:grid;gap:14px;margin-top:22px}
   .b{display:flex;gap:10px;align-items:flex-start}
   .b .tick{width:20px;height:20px;flex:none;border-radius:7px;background:#E8F2FF;display:grid;place-items:center;margin-top:2px}
   .b .tick svg{width:12px;height:12px;color:var(--blue)}
-  .b b{font-size:13.2px;font-weight:800;color:#132C4E;line-height:1.7}
-  .b p{font-size:11.5px;color:var(--dim);line-height:1.8;margin-top:1px}
+  .b b{font-size:15.5px;font-weight:800;color:#132C4E;line-height:1.7}
+  .b p{font-size:14.5px;font-weight:400;color:#3F5978;line-height:1.85;margin-top:3px}
 
   /* ───────── section 02 (dark) ───────── */
   .s2{background:
@@ -128,17 +129,17 @@
     color:#fff}
   .s2 .eyebrow{color:#8CC4FF}
   .s2 .eyebrow .num{background:#1D4ED8}
-  .s2 .lead{color:#B6CDEB}
+  .s2 .lead{color:#ECF4FF}
   .s2 .rule{background:linear-gradient(90deg,#60A5FA,#38BDF8)}
-  .s2 .cols{display:grid;grid-template-columns:392px minmax(0,1fr);gap:30px;align-items:center;margin-top:26px}
-  .provider{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.055);border:1px solid rgba(150,197,255,.22);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+  .s2 .cols{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:36px;align-items:center;margin-top:30px}
+  .provider{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.07);border:1px solid rgba(150,197,255,.28);border-radius:16px;padding:16px;margin-bottom:12px}
   .provider .logo{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;background:#fff}
   .provider .logo svg{width:24px;height:24px}
-  .provider b{display:block;font-size:13.5px;font-weight:800}
-  .provider span{display:block;font-size:11px;color:#A8C4E6;margin-top:3px;line-height:1.7}
-  .provider .tag{margin-right:auto;font-size:10px;font-weight:800;color:#0E9F6E;background:#DCFCE7;border-radius:999px;padding:4px 9px}
+  .provider b{display:block;font-size:16px;font-weight:800}
+  .provider span{display:block;font-size:14px;font-weight:500;color:#E2EEFF;margin-top:4px;line-height:1.75}
+  .provider .tag{margin-right:auto;font-size:12px;font-weight:800;color:#08794E;background:#DCFCE7;border-radius:999px;padding:5px 10px}
   .s2 .shot{transform:rotate(1deg);background:#fff}
-  .s2 .note{display:flex;gap:9px;align-items:center;margin-top:16px;font-size:11.5px;color:#A9C5E8;line-height:1.9}
+  .s2 .note{display:flex;gap:9px;align-items:center;margin-top:18px;font-size:14px;font-weight:400;color:#E2EEFF;line-height:1.9}
   .s2 .note svg{width:15px;height:15px;color:#60A5FA;flex:none}
 
   /* ───────── section 03 (rail) ───────── */
@@ -147,43 +148,67 @@
   .s3 > *{position:relative}
   .rail{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px}
   .node{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px 13px;box-shadow:0 16px 30px -26px rgba(7,22,51,.7)}
-  .node .k{font-size:10px;font-weight:800;color:var(--dim2)}
-  .node .v{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13.5px;font-weight:800;color:#0D2A52}
+  .node .k{font-size:13px;font-weight:700;color:#526B8A}
+  .node .v{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:15.5px;font-weight:800;color:#0D2A52}
   .node .dot{width:9px;height:9px;border-radius:50%;flex:none}
   .node.primary{border-color:#BBD3F7;background:linear-gradient(180deg,#F6FAFF,#fff);box-shadow:0 22px 36px -26px rgba(29,78,216,.55)}
   .node.primary .k{color:var(--blue)}
   .node::after{content:"";position:absolute;top:50%;left:-16px;width:16px;height:2px;background:repeating-linear-gradient(90deg,#BCD3F2 0 4px,transparent 4px 8px)}
   .node:last-child::after{display:none}
-  .rail-foot{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:11.5px;color:var(--dim)}
-  .rail-foot .pill{display:inline-flex;align-items:center;gap:6px;background:#FFF7E8;border:1px solid #FBE3B4;color:#9A6108;border-radius:999px;padding:5px 10px;font-weight:700;font-size:11px}
-  .gwlog{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
-  .gwlog span{font-size:11px;font-weight:700;color:#27496F;background:#F3F8FF;border:1px solid #DEEAFB;border-radius:8px;padding:6px 10px}
-  .s3 .strip{margin-top:24px}
+  .rail-foot{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:16px;font-size:13.5px;font-weight:500;line-height:1.8;color:#3F5978}
+  .rail-foot .pill{display:inline-flex;align-items:center;gap:6px;background:#FFF7E8;border:1px solid #FBE3B4;color:#825000;border-radius:999px;padding:6px 11px;font-weight:700;font-size:13px}
+  .gwlog{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .gwlog span{font-size:13.5px;font-weight:700;color:#234467;background:#F3F8FF;border:1px solid #D8E6F8;border-radius:9px;padding:8px 11px}
 
   /* ───────── section 04 (security) ───────── */
   .s4{background:linear-gradient(170deg,#F3F8FF 0%,#EAF3FF 58%,#F6FAFF 100%);overflow:hidden}
   .s4 .rings{position:absolute;top:120px;left:-130px;width:420px;height:420px;border-radius:50%;border:1px solid #CFE2FA;box-shadow:0 0 0 40px rgba(207,226,250,.28),0 0 0 82px rgba(207,226,250,.18)}
-  .s4 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:34px;align-items:center}
+  .s4 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 212px;gap:34px;align-items:center}
   .shield{position:relative;display:grid;place-items:center;padding:14px 10px 40px}
   .shield .halo{position:absolute;width:210px;height:210px;border-radius:50%;background:radial-gradient(closest-side,rgba(37,99,235,.16),transparent 72%)}
   .shield svg{position:relative;width:168px;height:auto}
-  .shield .badge{position:absolute;left:-6px;bottom:2px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 10px;box-shadow:0 14px 26px -18px rgba(7,22,51,.6);font-size:10.5px;font-weight:800;color:#12406F;text-align:center;line-height:1.5}
-  .shield .badge b{display:block;font-size:15px;color:var(--blue)}
-  .deflist{display:grid;grid-template-rows:repeat(4,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:9px 20px;margin-top:16px}
-  .d{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.75;color:#254769;font-weight:600}
-  .d .n{width:18px;height:18px;flex:none;border-radius:6px;background:#fff;border:1px solid #CFE2FA;color:var(--blue);display:grid;place-items:center;font-size:10px;font-weight:800;margin-top:1px}
-  .s4 .strip{margin-top:26px}
+  .shield .badge{position:absolute;left:-6px;bottom:2px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 11px;box-shadow:0 14px 26px -18px rgba(7,22,51,.6);font-size:12.5px;font-weight:800;color:#12406F;text-align:center;line-height:1.6}
+  .shield .badge b{display:block;font-size:19px;color:var(--blue)}
+  .deflist{display:grid;grid-template-rows:repeat(4,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:12px 20px;margin-top:22px}
+  .d{display:flex;gap:9px;align-items:flex-start;font-size:14.2px;line-height:1.8;color:#234362;font-weight:600}
+  .d .n{width:21px;height:21px;flex:none;border-radius:6px;background:#fff;border:1px solid #CFE2FA;color:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:2px}
+
+  /* ───────── readable examples of panel options and default limits ───────── */
+  .sample-panel{position:relative;margin-top:30px;padding:22px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 44px -36px rgba(7,22,51,.6)}
+  .sample-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .sample-title{display:flex;align-items:center;gap:12px}
+  .sample-icon{width:42px;height:42px;display:grid;place-items:center;flex:none;border-radius:12px;background:#EAF3FF;color:var(--blue)}
+  .sample-icon svg{width:22px;height:22px}
+  .sample-title h3{font-size:17px;font-weight:700;line-height:1.55;color:#132C4E}
+  .sample-title p{font-size:13.5px;font-weight:500;line-height:1.7;color:#506A88;margin-top:3px}
+  .sample-badge{flex:none;font-size:12.5px;font-weight:700;line-height:1.6;color:#176E58;background:#E0F8EF;border:1px solid #C1EEDB;border-radius:999px;padding:6px 11px}
+  .gateway-grid,.limit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+  .gateway-item{min-width:0;display:flex;align-items:center;gap:11px;padding:12px 13px;border:1px solid #DAE6F5;border-radius:12px;background:#F8FBFF}
+  .gateway-item.active{border-color:#91B8F4;background:#EDF5FF}
+  .gateway-icon{width:36px;height:36px;display:grid;place-items:center;flex:none;border-radius:10px;background:#E4EEFF;color:#245CC1;font-family:Arial,sans-serif;font-size:16px;font-weight:700}
+  .gateway-item b{display:block;font-size:15px;font-weight:700;line-height:1.65;color:#183657}
+  .gateway-item small{display:block;margin-top:1px;font-size:12.5px;font-weight:600;line-height:1.5;color:#526D8D;text-align:right}
+  .gateway-status{margin-right:auto;flex:none;border-radius:999px;background:#DCEBFF;color:#1852AA;padding:4px 9px;font-size:12px;font-weight:700}
+  .limit-card{border:1px solid #D8E5F4;border-radius:13px;background:#F8FBFF;padding:15px 17px}
+  .limit-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .limit-top b{font-size:15.5px;font-weight:800;color:#173655}
+  .limit-top span{font-size:13.5px;font-weight:700;color:#4A6686}
+  .limit-value{display:flex;align-items:baseline;gap:7px;margin-top:8px;color:#255FCE}
+  .limit-value strong{font-family:'Estedad',Vazirmatn,sans-serif;font-size:25px;font-weight:900;line-height:1.35}
+  .limit-value span{font-size:13px;font-weight:700}
+  .limit-card p{font-size:13.5px;font-weight:500;line-height:1.8;color:#3D5877;margin-top:5px}
+  .sample-note{font-size:13px;font-weight:600;line-height:1.8;color:#526B88;margin-top:14px}
 
   /* ───────── section 05 (shop) ───────── */
   .s5{background:#fff;position:relative;overflow:hidden}
   .s5 .blob{position:absolute;left:-140px;bottom:-160px;width:420px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(56,189,248,.16),transparent 70%)}
-  .s5 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:34px;align-items:center}
+  .s5 .cols{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:38px;align-items:center}
   .s5 .shot{transform:rotate(1.1deg);order:2}
   .integ{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
-  .ig{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:12px;padding:9px 11px;background:#FBFDFF}
+  .ig{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#FBFDFF}
   .ig .sq{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;background:#EAF3FF;color:var(--blue);font-size:11px;font-weight:900}
-  .ig b{font-size:12px;font-weight:800;color:#14335A;display:block}
-  .ig span{font-size:10px;color:var(--dim);display:block;margin-top:2px}
+  .ig b{font-size:14.5px;font-weight:800;color:#14335A;display:block}
+  .ig span{font-size:12.5px;font-weight:500;line-height:1.7;color:#45607F;display:block;margin-top:3px}
 
   /* ───────── section 06 (dark) ───────── */
   .s6{background:
@@ -191,43 +216,43 @@
       linear-gradient(155deg,#071A3B,#0B2551 62%,#071932);color:#fff;overflow:hidden}
   .s6 .eyebrow{color:#8CC4FF}
   .s6 .eyebrow .num{background:#1D4ED8}
-  .s6 .lead{color:#B6CDEB}
+  .s6 .lead{color:#ECF4FF}
   .s6 .rule{background:linear-gradient(90deg,#60A5FA,#38BDF8)}
-  .s6 .cols{display:grid;grid-template-columns:minmax(0,1fr) 442px;gap:32px;align-items:center;margin-top:24px}
+  .s6 .cols{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:38px;align-items:center;margin-top:24px}
   .s6 .shot{transform:rotate(-1deg);box-shadow:0 50px 90px -50px rgba(0,0,0,.9)}
   .swatches{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
-  .sw{background:rgba(255,255,255,.06);border:1px solid rgba(150,197,255,.2);border-radius:12px;padding:9px 10px;display:flex;align-items:center;gap:8px}
+  .sw{background:rgba(255,255,255,.07);border:1px solid rgba(150,197,255,.25);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:9px}
   .sw i{width:16px;height:16px;border-radius:5px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
-  .sw b{font-size:11px;font-weight:700;color:#DCEBFF}
+  .sw b{font-size:14px;font-weight:700;color:#F0F6FF}
 
   /* ───────── full list ───────── */
   .fl{background:linear-gradient(180deg,#F7FAFF,#EFF6FF)}
   .fl .head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
-  .fl .h2{font-size:27px}
-  .fl .hint{font-size:11px;color:var(--dim2);font-weight:600}
-  .flgrid{columns:3;column-gap:26px;margin-top:24px}
-  .fg{break-inside:avoid;margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:0 14px 26px -26px rgba(7,22,51,.6)}
-  .fg h4{font-size:12px;font-weight:900;color:var(--blue);display:flex;align-items:center;gap:7px;margin-bottom:8px}
-  .fg h4 .k{width:20px;height:20px;border-radius:6px;background:#EAF3FF;display:grid;place-items:center;flex:none}
-  .fg h4 .k svg{width:12px;height:12px}
-  .fg ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
-  .fg li{position:relative;padding-right:12px;font-size:10.8px;line-height:1.65;color:#31506F}
-  .fg li::before{content:"";position:absolute;right:0;top:7px;width:5px;height:5px;border-radius:2px;background:#BBD4F4}
+  .fl .h2{font-size:31px}
+  .fl .hint{font-size:13px;color:#536E8F;font-weight:600}
+  .flgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}
+  .fg{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:0 14px 28px -26px rgba(7,22,51,.6)}
+  .fg h4{font-size:17px;font-weight:900;color:var(--blue);display:flex;align-items:center;gap:10px;margin-bottom:13px;line-height:1.6}
+  .fg h4 .k{width:28px;height:28px;border-radius:8px;background:#EAF3FF;display:grid;place-items:center;flex:none}
+  .fg h4 .k svg{width:16px;height:16px}
+  .fg ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+  .fg li{position:relative;padding-right:16px;font-size:15px;font-weight:500;line-height:1.8;color:#284665}
+  .fg li::before{content:"";position:absolute;right:1px;top:11px;width:6px;height:6px;border-radius:2px;background:#8FB8ED}
 
   /* ───────── footer ───────── */
   .foot{position:relative;background:linear-gradient(160deg,#061633,#0A2450 60%,#071A3B);color:#fff;padding:44px 56px 34px;overflow:hidden}
   .foot .wave{position:absolute;top:-1px;left:0;right:0;height:56px;background:#EFF6FF;clip-path:ellipse(78% 100% at 50% 0%)}
   .foot .in{position:relative;display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:center;margin-top:16px}
   .foot h3{font-size:23px}
-  .foot .sub{font-size:12px;color:#A9C5E8;margin-top:8px;line-height:1.9}
+  .foot .sub{font-size:15px;font-weight:400;color:#E8F1FF;margin-top:10px;line-height:1.9}
   .badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-  .badges span{font-size:10.5px;font-weight:700;color:#CFE4FF;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.3);border-radius:8px;padding:6px 10px}
+  .badges span{font-size:12.5px;font-weight:700;color:#E5F0FF;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.3);border-radius:8px;padding:7px 10px}
   .foot .brand{display:flex;align-items:center;gap:12px;justify-content:flex-end}
   .foot .brand .txt{text-align:right}
-  .foot .brand b{display:block;font-size:12.5px}
-  .foot .brand span{display:block;font-size:10.5px;color:#9FBDE2;margin-top:2px}
+  .foot .brand b{display:block;font-size:14px}
+  .foot .brand span{display:block;font-size:12.5px;color:#DDEBFF;margin-top:3px}
   .foot .brand svg{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);padding:6px}
-  .foot .fine{margin-top:22px;padding-top:14px;border-top:1px solid rgba(150,197,255,.16);display:flex;justify-content:space-between;font-size:10px;color:#89A8D0}
+  .foot .fine{margin-top:22px;padding-top:14px;border-top:1px solid rgba(150,197,255,.2);display:flex;justify-content:space-between;font-size:12px;color:#D2E4FB}
 </style>
 </head>
 <body>
@@ -249,7 +274,7 @@
     <div>
       <span class="kicker"><i></i> افزونهٔ ورود و ثبت‌نام وردپرس</span>
       <h1 style="margin-top:16px">ورود بدون رمز،<br><em>با یک کد</em></h1>
-      <p class="sub">کاربر شماره را می‌زند، کد می‌گیرد و وارد می‌شود. حساب تازه همان لحظه ساخته می‌شود؛ بی‌رمزی هم لازم نیست.</p>
+      <p class="sub">کاربر شماره را وارد می‌کند، کد می‌گیرد و وارد می‌شود. حساب تازه همان لحظه ساخته می‌شود؛ بدون نیاز به حفظ رمز.</p>
     </div>
 
     <div class="hero-shot">
@@ -305,7 +330,7 @@
       <p class="lead">کاربر همان یک فرم را پر می‌کند و بقیه‌اش با آشنا. رمز عبور اگر بخواهید هست، اگر نخواهید کاملاً خاموش می‌شود.</p>
       <div class="bullets">
         <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>ثبت‌نام خودکار در اولین ورود</b><p>نقش کاربر و مسیر برگشت بعد از ورود را جداگانه تعیین می‌کنید.</p></div></div>
-        <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>شماره اضافه‌شدن به حساب‌های قبلی</b><p>کاربرانی که از قبل حساب دارند، شماره‌شان را وصل می‌کنند.</p></div></div>
+        <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>اضافه‌شدن شماره به حساب‌های قبلی</b><p>کاربرانی که از قبل حساب دارند، شماره‌شان را وصل می‌کنند.</p></div></div>
         <div class="b"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>فرم شناور یا صفحهٔ کامل</b><p>با شورت‌کد روی هر صفحه‌ای، یا جایگزین صفحهٔ ورود وردپرس.</p></div></div>
       </div>
     </div>
@@ -379,12 +404,25 @@
   </div>
 
   <div class="gwlog">
-    <span>کاوه‌نگار</span><span>ملی‌پیامک</span><span>فراز اس‌ام‌اس</span><span>آی‌پی‌پنل</span><span>ره‌پیام</span><span>بله — سفیر ۳ و ربات</span><span>ایمیل با قالب فارسی</span><span>حالت آزمایشی</span>
+    <span>کاوه‌نگار</span><span>ملی‌پیامک</span><span>فراز اس‌ام‌اس</span><span>آی‌پی‌پنل</span><span>راه‌پیام</span><span>بله — سفیر ۳ و ربات</span><span>ایمیل با قالب فارسی</span><span>حالت آزمایشی</span>
   </div>
 
-  <div class="strip shot">
-    <img src="img/gateways.webp" alt="انتخاب درگاه پیامک">
-    <span class="cap">انتخاب درگاه در پنل</span>
+  <div class="sample-panel" aria-label="نمای خوانای درگاه‌های پیامکی در پنل">
+    <div class="sample-head">
+      <div class="sample-title">
+        <span class="sample-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v11H9l-4 3z"/><path d="M8 9h8M8 12h5"/></svg></span>
+        <div><h3>درگاه‌های پیامکی در پنل</h3><p>شش انتخاب با امکان تعیین پشتیبان</p></div>
+      </div>
+      <span class="sample-badge">حالت آزمایشی و ثبت در لاگ</span>
+    </div>
+    <div class="gateway-grid">
+      <div class="gateway-item active"><span class="gateway-icon">S</span><div><b>اس‌ام‌اس دات آی‌آر</b><small dir="ltr">SMS.ir</small></div><span class="gateway-status">فعال</span></div>
+      <div class="gateway-item"><span class="gateway-icon" style="background:#EEE9FF;color:#7554C4">K</span><div><b>کاوه‌نگار</b><small dir="ltr">Kavenegar</small></div></div>
+      <div class="gateway-item"><span class="gateway-icon" style="background:#E4EEFF;color:#3172C6">M</span><div><b>ملی‌پیامک</b><small dir="ltr">Melipayamak</small></div></div>
+      <div class="gateway-item"><span class="gateway-icon" style="background:#FFECEF;color:#D45B68">F</span><div><b>فراز اس‌ام‌اس</b><small dir="ltr">FarazSMS</small></div></div>
+      <div class="gateway-item"><span class="gateway-icon" style="background:#DFF7EE;color:#168B69">I</span><div><b>آی‌پی‌پنل</b><small dir="ltr">IPPanel</small></div></div>
+      <div class="gateway-item"><span class="gateway-icon" style="background:#E2F7F0;color:#22896C">R</span><div><b>راه‌پیام</b><small dir="ltr">MsgWay</small></div></div>
+    </div>
   </div>
 </section>
 
@@ -419,9 +457,21 @@
     </div>
   </div>
 
-  <div class="strip shot">
-    <img src="img/security.webp" alt="سقف درخواست‌ها">
-    <span class="cap">سقف‌های پیش‌فرض — قابل تغییر</span>
+  <div class="sample-panel" aria-label="نمای خوانای سقف‌های پیش‌فرض ارسال">
+    <div class="sample-head">
+      <div class="sample-title">
+        <span class="sample-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4.5 5v6.4c0 4.7 3.2 8 7.5 9.3 4.3-1.3 7.5-4.6 7.5-9.3V5z"/><path d="m9 11.5 2 2 4-4"/></svg></span>
+        <div><h3>سقف‌های پیش‌فرض ارسال</h3><p>محافظت از شارژ پنل و ضد پیامک‌بمب</p></div>
+      </div>
+      <span class="sample-badge">قابل تغییر</span>
+    </div>
+    <div class="limit-grid">
+      <div class="limit-card"><div class="limit-top"><b>هر شماره</b><span>در ساعت</span></div><div class="limit-value"><strong>۵</strong><span>درخواست</span></div><p>فاصلهٔ ارسال مجدد به‌صورت پیش‌فرض ۶۰ ثانیه است.</p></div>
+      <div class="limit-card"><div class="limit-top"><b>هر شماره</b><span>در ۲۴ ساعت</span></div><div class="limit-value"><strong>۱۰</strong><span>درخواست</span></div><p>برای جلوگیری از مزاحمت طولانی برای یک شماره.</p></div>
+      <div class="limit-card"><div class="limit-top"><b>هر آی‌پی</b><span>در دقیقه</span></div><div class="limit-value"><strong>۵</strong><span>درخواست</span></div><p>برای کنترل ارسال رگباری به شماره‌های مختلف.</p></div>
+      <div class="limit-card"><div class="limit-top"><b>هر آی‌پی</b><span>در ساعت</span></div><div class="limit-value"><strong>۱۵</strong><span>درخواست</span></div><p>برای جلوگیری از تست شماره‌های متعدد با یک دستگاه.</p></div>
+    </div>
+    <p class="sample-note">مقدار ۰ یعنی بدون محدودیت.</p>
   </div>
 </section>
 
@@ -573,7 +623,7 @@
   </div>
   <div class="fine">
     <span>اینفوگرافیک آشنا — نسخهٔ ۳.۱.۳</span>
-    <span>تصاویر: پنل واقعی افزونه</span>
+    <span>تصاویر پنل و بازچینی خوانای تنظیمات</span>
   </div>
 </footer>
 
