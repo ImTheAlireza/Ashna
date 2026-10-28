@@ -14,6 +14,8 @@ import os
 import shutil
 import subprocess
 import sys
+import hashlib
+from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = Path(os.environ.get('ASHNA_TEST_WP_SITE', ROOT / '.cache/wp-cli-site')).resolve()
@@ -25,8 +27,32 @@ if not (SITE / 'wp-load.php').is_file():
 
 def sync_plugin():
     dest = SITE / 'wp-content/plugins/ashna'
+    package = os.environ.get('ASHNA_TEST_PACKAGE')
+    # Refuse before touching the destination, whether using a package or sources.
+    if not SITE.is_relative_to(ROOT / '.cache'):
+        raise SystemExit('Full WordPress tests require an isolated site inside .cache')
     if dest.exists():
         shutil.rmtree(dest)
+    if package:
+        # The fake license and hash substitutions are confined to this disposable
+        # site; never put them in production or alter the real package.
+        with ZipFile(package) as archive:
+            archive.extractall(dest.parent)
+        license_name = 'RTL_License_c1595a7238d64f3a'
+        fake = ('<?php class ' + license_name + ' { public function isActive() { return true; } }\n').encode()
+        (dest / (license_name + '.php')).write_bytes(fake)
+        expected = '3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc'
+        fake_hash = hashlib.sha1(fake).hexdigest()
+        for relative in ['ashna.php', 'includes/class-ashna-license-guard.php',
+                         'includes/class-ashna-protected-core.php',
+                         'includes/integrations/elementor/class-ashna-elementor-login-widget.php',
+                         'includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php']:
+            file = dest / relative
+            text = file.read_text()
+            if text.count(expected) != 1:
+                raise SystemExit('Expected one real license hash in ' + relative)
+            file.write_text(text.replace(expected, fake_hash))
+        return
     dest.mkdir(parents=True)
     for folder in ['assets', 'includes', 'languages', 'templates']:
         shutil.copytree(ROOT / folder, dest / folder)

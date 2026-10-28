@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ashna Activation Diagnostics (Temporary)
  * Description: گزارش خصوصی و موقت محیط PHP و مراحل فعال‌سازی آشنا؛ بدون تغییر لایسنس.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later
@@ -71,7 +71,7 @@ final class Ashna_Activation_Diagnostics {
 		}
 		self::$reserve = str_repeat( 'x', 65536 );
 		self::$report = array(
-			'tool_version' => '1.2.0',
+			'tool_version' => '1.2.1',
 			'attempt_id' => wp_generate_uuid4(),
 			'time_utc' => gmdate( 'c' ),
 			'request_kind' => $action,
@@ -92,7 +92,7 @@ final class Ashna_Activation_Diagnostics {
 
 	public static function is_target( $plugin ) {
 		// Deliberately limited to the distributed Ashna entry points, no traversal.
-		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/index\.php\z~i', $plugin );
+		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/(?:ashna|index)\.php\z~i', $plugin );
 	}
 
 	private static function files( $plugin ) {
@@ -102,7 +102,7 @@ final class Ashna_Activation_Diagnostics {
 		$result = array(
 			'license_present' => is_file( $license ),
 			'license_readable' => $readable,
-			'license_matches_expected_sha1' => $readable ? ( '321791ab0231890e4569d17c52e64ed93d2eb42d' === @sha1_file( $license ) ) : null,
+			'license_matches_expected_sha1' => $readable ? ( '3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc' === @sha1_file( $license ) ) : null,
 		);
 		foreach ( array( 'index.php', 'ashna.php' ) as $name ) {
 			$file = $dir . '/' . $name;

@@ -18,15 +18,34 @@ Python 3.9+ and PHP 7.4+ are required. Set `PHP_BINARY` to an alternate PHP CLI.
 For the npm PHP-WASM CLI, set `PHP=7.4`, `PHP=8.2` or `PHP=8.3` as appropriate.
 
 All license stubs and their matching fixture hashes are generated **only in
-temporary plugin copies**. The production verifier hash is never altered.
-Coverage includes normal early loading, late activation from function scope,
-strict true/false results, missing/bad files, runtime/parse/constructor errors,
-preloaded/conflicting classes, inaccessible methods, service initialization,
-activation/deactivation, idempotency, non-admin notices and the no-license build.
-One scenario feeds an ionCube-encoded stub without the Loader and expects
-`license_loader_missing`: the gate must refuse before `require`, because the
-encoded stub itself would print a raw error and `exit(199)` the request.
+temporary plugin copies**, including the loader, guard, generated runtime and
+widgets. The production verifier hash is never altered. To test the actual
+licensed archive (including direct loader-bypass and fake-guard scenarios):
+
+```sh
+python scripts/package-deliverables.py --without-license-file --output-dir .cache/license-release
+ASHNA_TEST_PACKAGE=$PWD/.cache/license-release/ashna.zip PHP_BINARY=/path/to/php python tests/run-license-bootstrap.py
+ASHNA_TEST_PACKAGE=$PWD/.cache/license-release/ashna.zip PHP_BINARY=/path/to/php python tests/run-protected-boundaries.py
+```
+
+The normal source/no-license layout remains testable without `ASHNA_TEST_PACKAGE`. Coverage includes normal early loading,
+late activation from function scope, strict true/false results, missing/bad files,
+runtime/parse/constructor errors, preloaded/conflicting/delegated classes,
+inaccessible methods, missing or corrupt guard, a mismatched guard hash, service
+initialization, activation/deactivation, idempotency, non-admin notices and the
+no-license build. The guard is instrumented in fixtures to prove it is included
+only after the license class is loaded.
+Two scenarios feed an ionCube-encoded license or guard stub without the Loader
+and expect `license_loader_missing`: the gate must refuse before `require`,
+because an encoded stub can print a raw error and `exit(199)` the request.
 Executing a real encoded license still requires a hosting PHP with ionCube.
+
+`python3 tests/package-license.py` checks license mismatch, the four-file size
+and path constraints, omission of raw runtime classes, exact equality of initial
+protection inputs, separate no-license packaging, stale-source rejection and
+byte-for-byte assembly of simulated encoded files. This cannot verify actual
+vendor encoding. Fixtures are isolated under `.cache`; existing deliverables are
+not overwritten.
 
 ## Temporary activation diagnostic tool
 
@@ -108,8 +127,16 @@ PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/ru
 PHP=8.2 PHP_BINARY=.cache/phpwasm/node_modules/.bin/php-wasm-cli python tests/run-full-wp.py   # all six suites
 ```
 
-`ASHNA_TEST_WP_SITE` selects the site (default `.cache/wp-cli-site`, WordPress 6.8.3
-on SQLite with Ashna active). `tests/lib/wp-harness.php` turns `wp_send_json()` into
+`ASHNA_TEST_WP_SITE` selects an isolated site inside `.cache` (default `.cache/wp-cli-site`, WordPress 6.8.3
+on SQLite with Ashna active). Set `ASHNA_TEST_PACKAGE=/path/to/ashna.zip` to run
+against the generated licensed layout with a fake local license and matching test
+hashes; without it, the source/no-license layout is used. The encoded product and
+real license are not exercised. `tests/run-wp-activation.py` additionally runs
+WordPress's real activation sandbox for missing, inactive and active simulated
+licenses, then checks the next normal request. It overwrites the plugin directory
+and activation state of a site inside `.cache` only. WordPress can mark the plugin
+active while an inactive/missing license prevents its features from booting.
+`tests/lib/wp-harness.php` turns `wp_send_json()` into
 captured responses and replays captured auth cookies as the next "browser request";
 everything it changes is rolled back at the end.
 

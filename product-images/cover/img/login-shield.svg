@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 860" role="img" aria-label="نشان ورود امن با کد یک‌بارمصرف">
+  <defs>
+    <linearGradient id="outer" x1="150" y1="110" x2="710" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A8E6FF"/><stop offset=".34" stop-color="#5ABAF8"/><stop offset=".74" stop-color="#1A69E7"/><stop offset="1" stop-color="#133D9D"/>
+    </linearGradient>
+    <linearGradient id="face" x1="205" y1="130" x2="612" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5AD5FF"/><stop offset=".38" stop-color="#258BF1"/><stop offset="1" stop-color="#1351C8"/>
+    </linearGradient>
+    <linearGradient id="person" x1="321" y1="217" x2="525" y2="453" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FCFF"/><stop offset="1" stop-color="#C7E8FF"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="562" y1="499" x2="687" y2="642" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#83F1D3"/><stop offset="1" stop-color="#12B990"/>
+    </linearGradient>
+    <radialGradient id="aura"><stop stop-color="#258CFF" stop-opacity=".30"/><stop offset="1" stop-color="#258CFF" stop-opacity="0"/></radialGradient>
+    <filter id="shadow" x="-35%" y="-25%" width="170%" height="170%"><feGaussianBlur stdDeviation="24"/></filter>
+    <filter id="badgeShadow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <circle cx="423" cy="421" r="400" fill="url(#aura)"/>
+  <circle cx="423" cy="410" r="328" fill="none" stroke="#6DCBFF" stroke-opacity=".16" stroke-width="2"/>
+  <circle cx="423" cy="410" r="365" fill="none" stroke="#6DCBFF" stroke-opacity=".08" stroke-width="2"/>
+  <path d="M423 91C518 140 608 170 705 195v205c0 179-94 302-282 369C235 702 141 579 141 400V195c97-25 187-55 282-104Z" fill="#020B1E" opacity=".62" filter="url(#shadow)" transform="translate(0 33)"/>
+  <path d="M423 83C519 133 609 163 705 188v205c0 179-94 302-282 369C235 695 141 572 141 393V188c96-25 186-55 282-105Z" fill="#0A3186" transform="translate(0 17)"/>
+  <path d="M423 83C519 133 609 163 705 188v205c0 179-94 302-282 369C235 695 141 572 141 393V188c96-25 186-55 282-105Z" fill="url(#outer)"/>
+  <path d="M423 112C509 156 590 184 675 206v187c0 161-83 272-252 335C254 665 171 554 171 393V206c85-22 166-50 252-94Z" fill="url(#face)" stroke="#DAF6FF" stroke-opacity=".46" stroke-width="3"/>
+  <path d="M423 129c81 41 157 66 235 87v174c0 147-75 248-235 309-160-61-235-162-235-309V216c78-21 154-46 235-87Z" fill="none" stroke="#B4EBFF" stroke-opacity=".27" stroke-width="3"/>
+  <circle cx="423" cy="336" r="119" fill="#0C4FBE" fill-opacity=".32" stroke="#D4F6FF" stroke-opacity=".24" stroke-width="3"/>
+  <circle cx="423" cy="297" r="47" fill="url(#person)"/>
+  <path d="M332 407c8-49 42-78 91-78s83 29 91 78a115 115 0 0 1-182 0Z" fill="url(#person)"/>
+  <rect x="261" y="492" width="324" height="78" rx="39" fill="#063486" fill-opacity=".57" stroke="#C6F2FF" stroke-opacity=".38" stroke-width="3"/>
+  <g fill="#F4FCFF"><circle cx="319" cy="531" r="11"/><circle cx="371" cy="531" r="11"/><circle cx="423" cy="531" r="11"/><circle cx="475" cy="531" r="11"/><circle cx="527" cy="531" r="11"/></g>
+  <circle cx="628" cy="606" r="72" fill="#03112E" opacity=".42" filter="url(#badgeShadow)" transform="translate(0 12)"/>
+  <circle cx="628" cy="596" r="68" fill="url(#badge)" stroke="#D0FFF1" stroke-width="5"/>
+  <path d="m597 596 22 22 40-45" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

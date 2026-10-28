@@ -50,10 +50,20 @@ p{margin:0 0 4px;font-size:8.9pt;line-height:1.8;color:#46536C}
 .lead{color:#4A5872;font-size:8.9pt;margin-bottom:5px}
 .step{display:block;margin:0 0 9px}
 .step .txt{margin-bottom:6px}
-.step figure{margin:0;width:auto}
+.step figure{width:100%;max-width:145mm;margin:0 auto}
+.step figure.img-upload{max-width:140mm}
+.step figure.img-install{max-width:115mm}
+.step figure.img-row{max-width:85mm}
+.step figure.img-menu{max-width:65mm}
+.step figure.img-portrait{max-width:80mm}
+.step figure.img-form{max-width:80mm}
+.step.side{display:flex;gap:4mm;align-items:flex-start}
+.step.side .txt{flex:1;min-width:0;margin-bottom:0}
+.step.side figure{width:85mm;max-width:48%;flex:none;margin:0}
+.step.side figure.img-menu{width:65mm}
+.step.side figure.img-form{width:80mm}
 h4{margin:0 0 3px;font-size:10pt;font-weight:700;color:#1B2B55;line-height:1.6;display:flex;gap:5px;align-items:center}
 figure{margin:0;border:1px solid #E2E8F3;border-radius:10px;overflow:hidden;background:#FAFBFD}
-.step.result figure{width:76%;margin-inline:auto}
 figure img{display:block;width:100%;height:auto}
 
 figcaption{display:block;padding:4px 9px;font-size:7.2pt;color:#68758F;background:#FBFCFE;border-top:1px solid #EDF1F7;line-height:1.55}
@@ -97,54 +107,56 @@ tbody tr:last-child td{border-bottom:0}
   <div class="requirements" data-page="1">
     <div class="req"><span>حداقل نسخهٔ PHP</span><strong><bdi>۸.۲</bdi></strong></div>
     <div class="req"><span>حداقل نسخهٔ وردپرس</span><strong>۵.۸</strong></div>
-    <div class="req"><span>ionCube Loader</span><strong style="font-size:9pt">الزامی</strong></div>
+    <div class="req"><span>ionCube Loader</span><strong style="font-size:9pt">در صورت نیاز</strong></div>
   </div>
 
   <div class="chapter" data-page="1"><span class="no">۰۱</span><div><small>فصل اول</small><h2>نصب افزونه</h2></div></div>
-  <p class="lead" data-page="1">فقط فایل <code>ashna.zip</code> در وردپرس بارگذاری می‌شود؛ بستهٔ راهنما و فایل لایسنس جدا می‌مانند. نصب کمتر از دو دقیقه طول می‌کشد.</p>
+  <p class="lead" data-page="1">بستهٔ افزونه <code>ashna.zip</code> را در وردپرس بارگذاری کنید. فایل رسمی لایسنس در ZIP فعلی نیست و باید جداگانه، بدون تغییر، کنار فایل اصلی افزونه قرار گیرد.</p>
 
   <div class="step">
     <div class="txt">
       <h4><span class="num">۱</span>پشتیبان بگیرید و صفحهٔ بارگذاری را باز کنید</h4>
-      <p>پیش از هر تغییری از فایل‌ها و دیتابیس سایت پشتیبان بگیرید. سپس در پیشخوان وردپرس مسیر <strong>افزونه‌ها</strong> ← <strong>افزودن افزونه</strong> ← <strong>بارگذاری افزونه</strong> را باز کنید، روی <strong>Choose File</strong> بزنید و فایل <code>ashna.zip</code> را از رایانه انتخاب کنید. نام فایل باید دقیقاً همین باشد.</p>
+      <p>پیش از هر تغییری از فایل‌ها و دیتابیس سایت پشتیبان بگیرید. در پیشخوان وردپرس مسیر <strong>افزونه‌ها</strong> ← <strong>افزودن افزونه</strong> ← <strong>بارگذاری افزونه</strong> را باز کنید. دکمهٔ انتخاب فایل را بزنید و <code>ashna.zip</code> را از رایانه انتخاب کنید؛ نام دکمه ممکن است با زبان مرورگر تفاوت داشته باشد.</p>
     </div>
-    <figure><img src="help/img/install-2-file.webp" alt="صفحهٔ بارگذاری افزونه با فایل ashna.zip انتخاب‌شده">
+    <figure class="img-upload"><img src="help/img/install-2-file.webp" alt="صفحهٔ فارسی بارگذاری افزونه با فایل ashna.zip انتخاب‌شده">
       <figcaption><b>گام ۱</b> · صفحهٔ بارگذاری افزونه با فایل انتخاب‌شده.</figcaption></figure>
   </div>
 
   <div class="step">
     <div class="txt">
       <h4><span class="num">۲</span>نصب را تأیید کنید</h4>
-      <p>وردپرس بسته را باز می‌کند و پیام «Plugin installed successfully» را نشان می‌دهد. اگر خطای «فایل معتبر نیست» دیدید، ZIP اشتباهی انتخاب شده است.</p>
+      <p>روی <strong>هم‌اکنون نصب نمایید</strong> بزنید. پس از بازشدن بسته، وردپرس پیام «افزونه با موفقیت نصب شد.» را نشان می‌دهد. اگر نصب خطا داد، فایل ZIP و محدودیت بارگذاری هاست را بررسی کنید.</p>
     </div>
-    <figure><img src="help/img/install-3-done.webp" alt="پیام نصب موفق افزونه">
-      <figcaption><b>گام ۲</b> · نصب موفق.</figcaption></figure>
+    <figure class="img-install"><img src="help/img/install-3-done.webp" alt="پیام فارسی نصب موفق و دکمهٔ فعال‌کردن افزونه">
+      <figcaption><b>گام ۲</b> · پیام نصب موفق در وردپرس فارسی.</figcaption></figure>
   </div>
 
   <div class="step">
     <div class="txt">
       <h4><span class="num">۳</span>افزونه را فعال کنید</h4>
-      <p>پس از نصب، دکمهٔ <strong>Activate Plugin</strong> را بزنید. پیام سبز «Plugin activated» بالای صفحه ظاهر می‌شود و ردیف «آشنا» در فهرست افزونه‌ها با دکمهٔ <strong>Deactivate</strong> فعال می‌ماند. پیوند <strong>تنظیمات</strong> پس از فعال‌سازی لایسنس کنار همین دکمه اضافه می‌شود.</p>
+      <p>فایل رسمی لایسنس را مطابق بخش بعدی کنار <code>ashna.php</code> بگذارید، سپس <strong>فعال‌کردن افزونه</strong> را بزنید. وردپرس پیام «افزونه فعال شد.» را نشان می‌دهد. پس از تأیید لایسنس، پیوند <strong>تنظیمات</strong> در ردیف آشنا ظاهر می‌شود.</p>
     </div>
-    <figure><img src="help/img/install-4-table.webp" alt="پیام فعال‌سازی موفق و ردیف فعال افزونه آشنا">
-      <figcaption><b>گام ۳</b> · پیام فعال‌سازی و ردیف فعال آشنا در فهرست افزونه‌ها.</figcaption></figure>
+    <figure class="img-row"><img src="help/img/install-4-table.webp" alt="ردیف فعال آشنا با پیوند تنظیمات در فهرست افزونه‌ها">
+      <figcaption><b>گام ۳</b> · ردیف آشنا پس از فعال‌شدن امکانات.</figcaption></figure>
   </div>
 
-  <div class="note" data-page="1">اگر افزونهٔ <strong>مدیریت هوشمند راست‌چین</strong> روی سایت نصب نیست، ابتدا آن را نصب و فعال کنید؛ آشنا برای فعال‌سازی لایسنس به آن نیاز دارد.</div>
+  <div class="note" data-page="1">فعال‌بودن افزونه در فهرست وردپرس به‌تنهایی تأیید لایسنس نیست؛ تا فایل و لایسنس معتبر نباشند، امکانات آشنا اجرا نمی‌شوند. تصاویر این راهنما از وردپرس فارسی آزمایشی با لایسنس شبیه‌سازی‌شده ثبت شده‌اند، نه آزمون لایسنس واقعی.</div>
 
   <div class="chapter"><span class="no">۰۲</span><div><small>ادامهٔ نصب</small><h2>فعال‌سازی لایسنس</h2></div></div>
-  <p class="lead">فایل <code>RTL_License_c1595a7238d64f3a.php</code> نسخهٔ ionCube همراه بستهٔ محصول است. فعال‌سازی سه گام دارد.</p>
+  <p class="lead">آشنا برای اجرا به فایل رسمیِ متناظر با این نسخه و لایسنس فعال نیاز دارد.</p>
 
-  <div class="step">
+  <div class="step side">
     <div class="txt">
-      <h4><span class="num">۱</span>لودر ionCube</h4>
-      <p>لودر باید روی همان نسخهٔ PHP وب فعال باشد؛ نسخهٔ ۱۲.۰.۳ یا جدیدتر. بدون لودر، دروازهٔ لایسنس با <code>license_loader_missing</code> بسته می‌شود و سایت صفحهٔ سفید نمی‌دهد.</p>
-      <h4 style="margin-top:6px"><span class="num">۲</span>ثبت دامنه و همگام‌سازی</h4>
-      <p>در حساب کاربری خود در راست‌چین دامنهٔ سایت را ثبت کنید تا کلید لایسنس برای همین دامنه صادر شود. سپس در پیشخوان سایت، بخش <strong>مدیریت لایسنس راست‌چین</strong> (نشانی <code>admin.php?page=RTL-RSM&amp;tab=license</code>) را باز کنید و دکمهٔ همگام‌سازی را بزنید.</p>
-      <div class="warn note">پیام <code>license_hash_mismatch</code> یعنی فایل لایسنس با این نسخهٔ افزونه هم‌خوان نیست؛ از فایل رسمی همراه همین بسته استفاده کنید.</div>
+      <h4><span class="num">۱</span>فایل رسمی لایسنس</h4>
+      <p>فایل معتبر <code>RTL_License_c1595a7238d64f3a.php</code> در ZIP فعلی وجود ندارد. آن را بدون تغییر نام یا محتوا در پوشهٔ <code>wp-content/plugins/ashna/</code> و کنار <code>ashna.php</code> قرار دهید. نبود فایل با <code>license_file_missing</code> گزارش می‌شود.</p>
+      <h4 style="margin-top:6px"><span class="num">۲</span>لودر ionCube در صورت نیاز</h4>
+      <p>اگر فایل لایسنس یا فایل محافظت‌شده ionCube است، Loader سازگار باید روی نسخهٔ PHP وب فعال باشد. نبود لودر موردنیاز با <code>license_loader_missing</code> گزارش می‌شود.</p>
+      <h4 style="margin-top:6px"><span class="num">۳</span>ثبت دامنه و همگام‌سازی</h4>
+      <p>افزونهٔ <strong>مدیریت هوشمند راست‌چین</strong> را نصب و فعال کنید. دامنه را در حساب راست‌چین ثبت کنید؛ سپس در بخش <strong>مدیریت لایسنس راست‌چین</strong> همگام‌سازی را انجام دهید.</p>
+      <div class="warn note">پیام <code>license_hash_mismatch</code> یعنی فایل لایسنس با این نسخه هم‌خوان نیست. فایل رسمیِ متناظر را جایگزین کنید؛ فایل قدیمی یا ویرایش‌شده معتبر نیست.</div>
     </div>
-    <figure><img src="help/img/setup-1-panel.webp" alt="منوی آشنا در پیشخوان وردپرس و پیشخوان افزونه">
-      <figcaption><b>پس از لایسنس</b> · منوی آشنا و پیشخوان افزونه.</figcaption></figure>
+    <figure class="img-menu"><img src="help/img/setup-1-panel.webp" alt="منوی آشنا در وردپرس فارسی و فهرست بخش‌های افزونه">
+      <figcaption><b>پس از لایسنس</b> · منوی آشنا در وردپرس فارسی.</figcaption></figure>
   </div>
 
   <div class="chapter"><span class="no">۰۳</span><div><small>فصل دوم</small><h2>راه‌اندازی، گام‌به‌گام</h2></div></div>
@@ -155,29 +167,29 @@ tbody tr:last-child td{border-bottom:0}
     <div class="txt">
       <h4><span class="num">۱</span>درگاه پیامک را وصل کنید</h4>
       <p>تب <strong>درگاه پیامک</strong> را باز کنید. یکی از سامانه‌های SMS.ir، کاوه‌نگار، ملی‌پیامک، فراز SMS، آی‌پی‌پنل یا راه‌پیام را به‌عنوان درگاه اصلی انتخاب کنید و کلید API و شناسهٔ قالب همان سامانه را وارد کنید.</p>
-      <p>پایین‌تر، سه درگاه پشتیبان تعریف می‌شود. تا وقتی کلیدها خالی‌اند، افزونه روی «حالت تست» می‌ماند و پیامکی ارسال نمی‌شود.</p>
+      <p>پایین‌تر، سه درگاه پشتیبان تعریف می‌شود. در «حالت تست» پیامک واقعی ارسال نمی‌شود؛ پس از انتخاب درگاه واقعی و ذخیرهٔ اطلاعات، ارسال را آزمایش کنید.</p>
     </div>
-    <figure><img src="help/img/setup-2-gateway.webp" alt="تب درگاه پیامک؛ انتخاب درگاه اصلی، زنجیرهٔ نجات و کلید API">
-      <figcaption><b>گام ۱</b> · درگاه اصلی، سه درگاه پشتیبان و کلید API هر سامانه.</figcaption></figure>
+    <figure><img src="help/img/setup-2-gateway.webp" alt="تب درگاه پیامک؛ انتخاب درگاه اصلی و زنجیرهٔ نجات">
+      <figcaption><b>گام ۱</b> · درگاه اصلی و سه درگاه پشتیبان.</figcaption></figure>
   </div>
 
-  <div class="step">
+  <div class="step side">
     <div class="txt">
       <h4><span class="num">۲</span>مسیر ارسال کد را انتخاب کنید</h4>
       <p>در تب <strong>روش و مسیر ورود</strong> تعیین کنید کاربر با شماره موبایل، ایمیل یا هر دو وارد شود و کد از چه مسیری برسد.</p>
       <p>برای شروع، «فقط پیامک» ساده‌ترین انتخاب است. بعداً «اول بله، بعد پیامک» را برای کاهش هزینه اضافه کنید.</p>
     </div>
-    <figure><img src="help/img/setup-3-route.webp" alt="انتخاب روش ارسال کد تایید: پیامک، بله، همزمان یا پیام‌رسان‌های ایرانی">
-      <figcaption><b>گام ۲</b> · هفت مسیر آماده، از پیامک تنها تا ترکیب پیام‌رسان و پیامک.</figcaption></figure>
+    <figure class="img-portrait"><img src="help/img/setup-3-route.webp" alt="نمونه‌ای از انتخاب روش ارسال کد تایید با پیامک و بله">
+      <figcaption><b>گام ۲</b> · نمونه‌ای از مسیرهای ارسال؛ گزینه‌های بیشتر پایین‌تر قرار دارند.</figcaption></figure>
   </div>
 
-  <div class="step">
+  <div class="step side">
     <div class="txt">
       <h4><span class="num">۳</span>بله و ایمیل را تنظیم کنید</h4>
       <p>در تب <strong>پیام‌رسان‌ها و ایمیل</strong> روش اتصال به بله را انتخاب کنید: «سفیر بله» با کلید دسترسی و شناسهٔ بازو، یا «ربات بله» با توکن بازوی اختصاصی. کلید و شناسه را بعد از ساخت سفیر در <code>business.bale.ai</code> می‌گیرید.</p>
       <p>متن پیام و قالب ایمیل هم در همین تب تنظیم می‌شود.</p>
     </div>
-    <figure><img src="help/img/setup-4-bale.webp" alt="انتخاب روش اتصال به پیام‌رسان بله؛ سفیر بله یا ربات اختصاصی">
+    <figure class="img-portrait"><img src="help/img/setup-4-bale.webp" alt="انتخاب روش اتصال به پیام‌رسان بله؛ سفیر بله یا ربات اختصاصی">
       <figcaption><b>گام ۳</b> · سفیر بله یا ربات اختصاصی، با فیلدهای هر روش.</figcaption></figure>
   </div>
 
@@ -191,29 +203,29 @@ tbody tr:last-child td{border-bottom:0}
       <figcaption><b>گام ۴</b> · پیش‌نمایش زندهٔ فرم در کنار گزینه‌ها.</figcaption></figure>
   </div>
 
-  <div class="step">
+  <div class="step side">
     <div class="txt">
       <h4><span class="num">۵</span>ورود با گوگل و تلگرام (اختیاری)</h4>
       <p>آدرس بازگشتی اختصاصی هر سرویس را از پنل کپی کنید و در Authorized redirect URIs گوگل یا Allowed URLs تلگرام بچسبانید؛ سپس Client ID و Secret را وارد کنید و «بررسی اتصال» را بزنید.</p>
       <p>این دو سرویس فقط روی دامنهٔ HTTPS کار می‌کنند؛ روی دامنهٔ بدون SSL، خود پنل هشدار می‌دهد.</p>
     </div>
-    <figure><img src="help/img/setup-6-google.webp" alt="تنظیمات ورود با گوگل؛ آدرس بازگشتی، Client ID و Secret">
-      <figcaption><b>گام ۵</b> · آدرس بازگشتی و کلیدهای گوگل.</figcaption></figure>
+    <figure class="img-portrait"><img src="help/img/setup-6-google.webp" alt="تنظیمات ورود با گوگل؛ آدرس بازگشتی، Client ID و Secret">
+      <figcaption><b>گام ۵</b> · آدرس در تصویر نمونهٔ سایت آزمایشی است؛ آدرس اختصاصی سایت خودتان را کپی کنید.</figcaption></figure>
   </div>
 
-  <div class="step">
+  <div class="step side">
     <div class="txt">
       <h4><span class="num">۶</span>ووکامرس را هماهنگ کنید</h4>
       <p>در تب <strong>ووکامرس و یکپارچگی‌ها</strong> مشخص کنید فرم ورود و عضویت پیش‌فرض ووکامرس، نوار ورود سریع صفحهٔ تسویه‌حساب و مودال سراسری از آشنا استفاده کنند. اگر ووکامرس نصب نباشد، این گزینه‌ها بی‌اثرند و خطایی ایجاد نمی‌کنند.</p>
     </div>
-    <figure><img src="help/img/setup-7-wc.webp" alt="تب ووکامرس؛ جایگزینی فرم حساب کاربری، نوار تسویه‌حساب و مودال سراسری">
+    <figure class="img-portrait"><img src="help/img/setup-7-wc.webp" alt="تب ووکامرس؛ جایگزینی فرم حساب کاربری، نوار تسویه‌حساب و مودال سراسری">
       <figcaption><b>گام ۶</b> · جایگزینی فرم‌های پیش‌فرض ووکامرس.</figcaption></figure>
   </div>
 
   <div class="step">
     <div class="txt">
       <h4><span class="num">۷</span>سقف ارسال و امنیت را ببندید</h4>
-      <p>تب <strong>امنیت و ضد اسپم</strong> از قبل تنظیم شده است: برای هر شماره و هر آی‌پی، هم سقف دقیقه‌ای و هم سقفی در ساعت و ۲۴ ساعت. خطای مجاز در وارد کردن کد ۵ بار است و بعد از آن، ورود ۱۵ دقیقه قفل می‌شود.</p>
+      <p>تب <strong>امنیت و ضد اسپم</strong> برای هر شماره سقف ساعتی و ۲۴ ساعته و برای هر آی‌پی سقف دقیقه‌ای و ساعتی دارد. مقدار پیش‌فرضِ تلاش ناموفق برای واردکردن کد ۵ بار و مدت قفل ۱۵ دقیقه است.</p>
       <p>تا وقتی دلیل مشخصی ندارید این اعداد را بالا نبرید؛ همین سقف‌ها جلوی پیامک‌بمب و هزینهٔ ناخواسته را می‌گیرد. اگر سایت شلوغ است، سقف هر آی‌پی را کمی بالا ببرید، نه سقف هر شماره.</p>
     </div>
     <figure><img src="help/img/setup-8-limits.webp" alt="کارت محافظت از شارژ پنل؛ سقف ارسال برای هر شماره، IP و شبکه">
@@ -223,7 +235,7 @@ tbody tr:last-child td{border-bottom:0}
   <div class="step">
     <div class="txt">
       <h4><span class="num">۸</span>یک کد آزمایشی بفرستید</h4>
-      <p>در تب <strong>تست و پشتیبان‌گیری</strong> شمارهٔ موبایل خود را وارد کنید و «ارسال کد آزمایشی همین الان» را بزنید. اگر پیامک رسید، مسیر ارسال سالم است؛ اگر خطا آمد، متن خطا همان‌جا نمایش داده می‌شود.</p>
+      <p>در تب <strong>تست و پشتیبان‌گیری</strong> شمارهٔ موبایل خود را وارد کنید و «ارسال کد آزمایشی همین الان» را بزنید. در حالت تست، کد فقط در لاگ ثبت می‌شود؛ برای دریافت پیامک، ابتدا یک درگاه واقعی را تنظیم و انتخاب کنید.</p>
     </div>
     <figure><img src="help/img/setup-9-tester.webp" alt="آزمایشگاه تست زندهٔ ارسال کد">
       <figcaption><b>گام ۸</b> · آزمایش ارسال روی هر کانال.</figcaption></figure>
@@ -240,13 +252,13 @@ tbody tr:last-child td{border-bottom:0}
       <figcaption><b>گام ۹</b> · چک‌لیست پنج‌گامی پیشخوان.</figcaption></figure>
   </div>
 
-  <div class="step result">
+  <div class="step side result">
     <div class="txt">
       <h4>نتیجه روی سایت</h4>
       <p>همان ظاهری که در «طراحی ظاهر» تنظیم شد، روی برگهٔ سایت نمایش داده می‌شود.</p>
       <div class="ok note">پیش از انتشار نهایی، یک بار در پنجرهٔ ناشناس سایت را باز کنید و با شمارهٔ واقعی وارد شوید: پیامک، ورود و ساخت خودکار حساب کاربر باید بدون خطا انجام شود.</div>
     </div>
-    <figure><img src="help/img/setup-10-form.webp" alt="فرم ورود آشنا در برگهٔ سایت">
+    <figure class="img-form"><img src="help/img/setup-10-form.webp" alt="فرم ورود آشنا در برگهٔ سایت">
       <figcaption><b>نتیجه</b> · فرم ورود روی سایت.</figcaption></figure>
   </div>
 
@@ -285,7 +297,13 @@ tbody tr:last-child td{border-bottom:0}
   const GAP = 2;
   const TARGET = Math.round(0.93 * 970);
   const PAGE_INNER = Math.round(1122 - (10 + 13) * 3.7795 - 31 - 30 - 4);
-  // هدف پرکردن: ۸۸٪ صفحه در هر صفحه، مگر در صفحهٔ آخر هر بخش
+  // بلوکی که در هیچ صفحه‌ای جا نمی‌شود نباید حلقهٔ صفحه‌بندی را بی‌پایان کند.
+  const oversized = heights.findIndex(h => h > PAGE_INNER);
+  if (oversized !== -1) {
+    document.body.dataset.paginationError = `Block ${oversized + 1} is too tall (${Math.round(heights[oversized])}px > ${PAGE_INNER}px)`;
+    return;
+  }
+  // هدف پرکردن: صفحه‌ها تا حد امکان متعادل و بدون بریدگی باشند.
 
   // فصل‌ها برای برچسب‌گذاری
   const chapterOf = blocks.map(b => {
@@ -324,8 +342,13 @@ tbody tr:last-child td{border-bottom:0}
 
     // با k صفحه، تقسیم را طوری انتخاب کن که ارتفاع صفحه‌ها یکدست باشد.
     const cost = (from, to) => hs.slice(from, to).reduce((x, y) => x + y, 0) + GAP * (to - from - 1);
-    // صفحه نباید با تیتر فصل (یا تیتر + خطِ زیرش) تمام شود؛ سرِ فصل باید با محتوایش بماند
-    const orphan = i => blocks[segment[i - 1]].classList.contains('chapter');
+    // عنوان فصل و مقدمه‌اش باید همراه نخستین بلوک محتوایی بمانند.
+    const orphan = i => {
+      const last = blocks[segment[i - 1]];
+      const previous = i > 1 ? blocks[segment[i - 2]] : null;
+      return last.classList.contains('chapter') ||
+        (last.classList.contains('lead') && previous?.classList.contains('chapter'));
+    };
     const INF = Number.MAX_SAFE_INTEGER;
     let dp, cutAt;
     // اگر قیدِ «سردرِ فصل تنها نماند» صفحهٔ بیشتری خواست، همان‌قدر بالا برو تا مسیر ممکن پیدا شود
@@ -349,6 +372,10 @@ tbody tr:last-child td{border-bottom:0}
       }
       if (dp[need][nSeg] !== INF) break;
       need++;
+      if (need > nSeg) {
+        document.body.dataset.paginationError = 'Could not paginate the document without an orphaned chapter.';
+        return;
+      }
     }
     let end = nSeg;
     const local = [];
@@ -384,8 +411,8 @@ tbody tr:last-child td{border-bottom:0}
       }
     });
     const dots = Array.from({ length: pages.length }, (_, k) => `<i class="${k <= n ? 'on' : ''}"></i>`).join('');
-    const fa = '۰۱۲۳۴۵۶۷۸۹';
-    sec.insertAdjacentHTML('beforeend', `<div class="footer"><span>آشنا · ${label}</span><span class="page-no"><span class="progress">${dots}</span><bdi dir="ltr">${fa[n + 1]} / ${fa[pages.length]}</bdi></span></div>`);
+    const toFa = value => String(value).replace(/\d/g, digit => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
+    sec.insertAdjacentHTML('beforeend', `<div class="footer"><span>آشنا · ${label}</span><span class="page-no"><span class="progress">${dots}</span><bdi dir="ltr">${toFa(n + 1)} / ${toFa(pages.length)}</bdi></span></div>`);
     document.body.appendChild(sec);
   });
   flow.remove();

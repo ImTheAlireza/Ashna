@@ -59,7 +59,9 @@ if ($scenario === 'scrape') {
 }
 check($GLOBALS['reports'][$key]['phase'] === 'before_plugin_include', 'Bad first phase');
 check($GLOBALS['reports'][$key]['files']['license_present'] === false, 'Unexpected fixture license');
-check(Ashna_Activation_Diagnostics::is_target('Ashna/index.php'), 'Windows folder variation rejected');
+check(Ashna_Activation_Diagnostics::is_target('ashna/ashna.php'), 'Current plugin entry rejected');
+check(Ashna_Activation_Diagnostics::is_target('Ashna/index.php'), 'Legacy entry/folder variation rejected');
+check(!Ashna_Activation_Diagnostics::is_target('ashna/uninstall.php'), 'Unrelated PHP file accepted');
 check(!Ashna_Activation_Diagnostics::is_target('ashna/../index.php'), 'Traversal accepted');
 class Ashna_License_Bootstrap {
     public static $status = 'checking';

@@ -1,440 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>کاور آشنا — ۲۱۰۰×۱۰۴۰</title>
+<title>کاور محصول آشنا — ورود و ثبت‌نام وردپرس</title>
+<!-- کاور اصلی: ۲۱۰۰×۱۰۴۰ پیکسل، با یک وکتور و چهار ویژگی کوتاه. -->
 <style>
-  @font-face{font-family:'Vazirmatn';src:url('../../assets/fonts/vazirmatn/Vazirmatn-Variable.woff2') format('woff2');font-weight:100 900;font-display:block}
-  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-500.woff2') format('woff2');font-weight:500;font-display:block}
-  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-700.woff2') format('woff2');font-weight:700;font-display:block}
-  @font-face{font-family:'Estedad';src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
-
-  :root{
-    --blue:#2563EB; --blue-d:#1D4ED8; --sky:#38BDF8; --mint:#22C58B;
-    --ink:#F2F7FF; --muted:#8FAFD8;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:#020814}
-  body{display:flex;justify-content:center;align-items:flex-start;-webkit-font-smoothing:antialiased}
-
-  .cover{
-    position:relative;width:2100px;height:1040px;overflow:hidden;direction:rtl;
-    font-family:'Vazirmatn',sans-serif;color:var(--ink);
-    background:
-      radial-gradient(980px 780px at 27% 50%, rgba(37,99,235,.46) 0%, rgba(37,99,235,0) 64%),
-      radial-gradient(720px 520px at 6% 2%, rgba(56,189,248,.22) 0%, rgba(56,189,248,0) 66%),
-      radial-gradient(880px 600px at 97% 4%, rgba(59,130,246,.14) 0%, rgba(59,130,246,0) 68%),
-      radial-gradient(760px 520px at 88% 106%, rgba(34,197,139,.06) 0%, rgba(34,197,139,0) 72%),
-      linear-gradient(152deg,#04122C 0%,#061A3E 44%,#030B20 100%);
-  }
-
-  /* ---------------- texture ---------------- */
-  .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.55'/></svg>")}
-  .dots{position:absolute;inset:0;
-    background-image:radial-gradient(rgba(140,185,240,.30) 1.1px, transparent 1.2px);
-    background-size:36px 36px;
-    mask-image:radial-gradient(820px 680px at 32% 54%, #000 8%, rgba(0,0,0,.34) 54%, transparent 78%);
-    -webkit-mask-image:radial-gradient(820px 680px at 32% 54%, #000 8%, rgba(0,0,0,.34) 54%, transparent 78%)}
-  .halo{position:absolute;left:-210px;top:-250px;width:1260px;height:1260px;border-radius:50%;
-    border:1px solid rgba(96,165,250,.11)}
-  .halo::before,.halo::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(96,165,250,.085)}
-  .halo::before{inset:150px}
-  .halo::after{inset:300px}
-  .streak{position:absolute;width:1560px;height:1.4px;transform:rotate(-19deg);
-    background:linear-gradient(90deg,rgba(120,180,255,0),rgba(120,180,255,.28) 32%,rgba(120,180,255,0) 74%)}
-  .streak.s1{left:-280px;top:186px}
-  .streak.s2{left:-200px;top:806px;opacity:.5}
-  .edge{position:absolute;left:0;right:0;top:0;height:3px;
-    background:linear-gradient(90deg,rgba(56,189,248,0),#38BDF8 26%,#2563EB 62%,rgba(37,99,235,0))}
-  .trust{position:absolute;left:170px;top:872px;width:660px;display:flex;align-items:center;gap:14px;
-    font-size:17px;color:#7FA5D6;z-index:4}
-  .trust b{font-weight:600;color:#A8C8EA}
-  .trust .sep{width:4px;height:4px;border-radius:50%;background:#4E7BB4;flex:none}
-  .trust .live{display:inline-flex;align-items:center;gap:7px;margin-left:4px;color:#7BEBC0;font-weight:600}
-  .trust .live i{width:7px;height:7px;border-radius:50%;background:#22C58B;
-    box-shadow:0 0 10px 2px rgba(34,197,139,.65)}
-
-  .floor{position:absolute;left:120px;top:842px;width:560px;height:120px;border-radius:50%;
-    background:radial-gradient(closest-side,rgba(56,189,248,.16),rgba(56,189,248,0));filter:blur(6px)}
-
-  /* ---------------- art (left) ---------------- */
-  .art{position:absolute;left:0;top:0;width:1010px;height:1040px}
-
-  /* phone */
-  .phone{position:absolute;left:150px;top:118px;width:378px;height:706px;border-radius:56px;
-    background:linear-gradient(160deg,#F4F8FF 0%,#ADC6E9 24%,#6E8EC0 50%,#DCE8FB 72%,#97B2DA 100%);
-    padding:5px;z-index:3;
-    box-shadow:0 62px 120px -40px rgba(1,8,24,.98), 0 0 0 1px rgba(255,255,255,.10),
-               0 0 120px -16px rgba(56,160,255,.5)}
-  .phone-in{position:relative;width:100%;height:100%;border-radius:52px;overflow:hidden;background:#F6F9FF;
-    box-shadow:inset 0 0 0 1.5px rgba(3,16,42,.5)}
-  .notch{position:absolute;left:50%;top:11px;transform:translateX(-50%);width:92px;height:25px;
-    border-radius:999px;background:#081226;z-index:5}
-  .notch::after{content:"";position:absolute;right:11px;top:8.5px;width:7px;height:7px;border-radius:50%;background:#1B2C4C}
-
-  .screen{position:absolute;inset:0;padding:40px 22px 14px;color:#0F1F3D;
-    display:flex;flex-direction:column;justify-content:center;
-    background:
-      radial-gradient(240px 180px at 76% 0%, rgba(37,99,235,.12), transparent 72%),
-      linear-gradient(180deg,#FFFFFF 0%,#F6FAFF 56%,#ECF3FF 100%)}
-  .s-logo{width:54px;height:54px;border-radius:16px;margin:0 auto 10px;display:grid;place-items:center;
-    background:linear-gradient(150deg,#EAF1FF,#DBE7FF);box-shadow:0 10px 22px -14px rgba(37,99,235,.75)}
-  .s-logo img{width:31px;height:31px}
-  .s-title{text-align:center;font-family:'Estedad';font-weight:900;font-size:30px;color:#0B1B36;letter-spacing:-.4px}
-  .s-sub{text-align:center;font-size:14.5px;color:#5D6E86;margin-top:6px;line-height:1.8}
-  .s-sub b{color:#1E3A8A;font-weight:700;direction:ltr;display:inline-block}
-  .boxes{display:flex;gap:8px;justify-content:center;margin-top:20px;direction:ltr}
-  .boxes b{width:50px;height:64px;border-radius:13px;display:grid;place-items:center;
-    font-family:'Estedad';font-weight:900;font-size:27px;color:#0F1F3D;
-    background:#F7FAFF;border:1.6px solid #D7E3F6;box-shadow:inset 0 1px 0 #fff}
-  .boxes b.on{border-color:#3B82F6;background:#EFF5FF;box-shadow:0 0 0 4px rgba(59,130,246,.16)}
-  .boxes b .caret{width:2px;height:30px;background:#2563EB;border-radius:2px}
-  .s-btn{height:52px;border-radius:13px;margin-top:18px;display:grid;place-items:center;
-    font-size:17px;font-weight:800;color:#fff;background:linear-gradient(180deg,#2F73F1,#1D4ED8);
-    box-shadow:0 18px 28px -16px rgba(29,78,216,.95)}
-  .s-meta{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;
-    font-size:13.5px;color:#7386A0}
-  .s-meta svg{width:13px;height:13px}
-  .s-meta b{color:#1E3A8A;font-weight:700}
-  .s-sep{display:flex;align-items:center;gap:9px;margin:16px 0 12px;color:#94A3B8;font-size:12px}
-  .s-sep::before,.s-sep::after{content:"";height:1px;background:#E2E9F5;flex:1}
-  .s-bio{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:13px;
-    background:#ECFBF3;border:1.4px solid #BFEBD6;color:#0E8F63;font-size:14.5px;font-weight:700}
-  .s-bio svg{width:17px;height:17px}
-  .s-link{text-align:center;font-size:13px;font-weight:700;color:#2563EB;margin-top:12px}
-  .s-home{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:108px;height:4px;
-    border-radius:4px;background:#0F1F3D;opacity:.2}
-
-  /* sms notification */
-  .notif{position:absolute;left:556px;top:146px;width:434px;padding:17px 19px;border-radius:22px;z-index:5;
-    display:flex;gap:13px;align-items:flex-start;transform:rotate(-2.2deg);
-    background:linear-gradient(150deg,rgba(14,34,70,.97),rgba(7,20,44,.97));
-    border:1px solid rgba(130,180,250,.38);
-    box-shadow:0 40px 80px -30px rgba(0,6,18,.98), inset 0 1px 0 rgba(255,255,255,.10)}
-  .notif-av{width:44px;height:44px;border-radius:14px;flex:none;display:grid;place-items:center;
-    background:linear-gradient(150deg,#3B82F6,#1D4ED8);box-shadow:0 10px 20px -12px rgba(37,99,235,.9)}
-  .notif-av img{width:25px;height:25px;filter:brightness(0) invert(1)}
-  .notif-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .notif-head b{font-size:17px;color:#EAF3FF;font-weight:800}
-  .notif-head span{font-size:13px;color:#7C9DC9}
-  .notif-head .ok{display:inline-flex;align-items:center;gap:4px;color:#7BEBC0;font-weight:700;font-size:13px}
-  .notif-head .ok svg{width:11px;height:11px}
-  .notif-text{margin-top:7px;font-size:16px;line-height:1.7;color:#C6DAF2}
-  .notif-text .num{font-family:'Estedad';font-weight:900;font-size:20px;color:#FFFFFF;
-    letter-spacing:3px;direction:ltr;display:inline-block;margin:0 4px}
-
-  /* designed micro-cards */
-  .mini{position:absolute;width:414px;padding:20px 22px 22px;border-radius:22px;z-index:4;
-    background:linear-gradient(155deg,rgba(13,32,66,.95),rgba(7,19,42,.95));
-    border:1px solid rgba(130,180,250,.32);
-    box-shadow:0 40px 84px -32px rgba(0,6,18,.98), inset 0 1px 0 rgba(255,255,255,.09)}
-  .card-a{left:532px;top:318px;transform:rotate(-1.2deg)}
-  .card-b{left:566px;top:522px;transform:rotate(1.1deg)}
-  .mini-head{display:flex;align-items:center;gap:13px}
-  .mi{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
-  .mi svg{width:20px;height:20px}
-  .mi.mint{background:linear-gradient(150deg,rgba(34,197,139,.34),rgba(6,95,70,.20));color:#9DF0CC;
-    border:1px solid rgba(34,197,139,.42)}
-  .mi.blue{background:linear-gradient(150deg,rgba(59,130,246,.34),rgba(29,78,216,.18));color:#BAD9FF;
-    border:1px solid rgba(96,165,250,.42)}
-  .mi-txt b{display:block;font-size:19px;font-weight:800;color:#EAF3FF}
-  .mi-txt span{display:block;font-size:15px;color:#8FB0D6;margin-top:2px}
-
-  .q-grid{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);
-    border-top:1px solid rgba(130,180,250,.16);padding-top:15px}
-  .q-grid div{display:flex;flex-direction:column;gap:5px;padding:0 16px;
-    border-left:1px solid rgba(130,180,250,.14)}
-  .q-grid div:last-child{border-left:0;padding-left:0}
-  .q-grid div:first-child{padding-right:0}
-  .q-grid b{font-family:'Estedad';font-weight:900;font-size:30px;line-height:.95;color:#FFFFFF}
-  .q-grid u{text-decoration:none;font-size:13.5px;color:#B9D2EC;font-weight:600}
-  .q-grid span{font-size:12.5px;color:#7C9EC7}
-
-  .gw{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .gw span{height:36px;border-radius:10px;display:grid;place-items:center;font-size:15px;font-weight:600;
-    color:#C3D9F2;background:rgba(120,170,245,.10);border:1px solid rgba(130,180,250,.22)}
-  .gw span.act{background:rgba(34,197,139,.14);border-color:rgba(34,197,139,.45);color:#9DF0CC}
-
-  .floor{position:absolute;left:96px;top:790px;width:600px;height:150px;border-radius:50%;
-    background:radial-gradient(closest-side,rgba(56,189,248,.14),rgba(56,189,248,0));filter:blur(8px)}
-
-  /* ---------------- identity (right) ---------------- */
-  .identity{position:absolute;right:84px;top:56px;width:1010px}
-
-  .pills{display:flex;align-items:center;gap:12px;height:44px}
-  .pill{display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 18px;border-radius:999px;
-    font-size:20px;font-weight:700;color:#C9DEFA;
-    background:rgba(120,170,235,.09);border:1px solid rgba(120,170,235,.28)}
-  .pill svg{width:19px;height:19px;flex:none;color:#8FC0FF}
-  .pill.iran{background:rgba(34,197,139,.10);border-color:rgba(34,197,139,.30);color:#BDF3DC}
-  .flag{width:28px;height:28px;border-radius:50%;overflow:hidden;flex:none;
-    box-shadow:0 0 0 1px rgba(255,255,255,.25), 0 6px 14px -6px rgba(0,0,0,.7)}
-  .flag svg{display:block;width:100%;height:100%}
-
-  /* ---- wordmark: enlarged, gradient face, layered depth shadow ---- */
-  .brand{margin-top:0;height:284px;display:flex;align-items:center;position:relative;isolation:isolate}
-  .wordmark{position:relative;height:270px;width:932px;flex:none}
-  .wordmark span{position:absolute;inset:0;
-    -webkit-mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat;
-    mask:url('../infographic/img/ashna-logo-white.svg') center/100% 100% no-repeat}
-  /* ambient blue halo hugging the letterforms */
-  .w-glow{background:radial-gradient(58% 112% at 48% 54%,rgba(96,163,255,.98),rgba(46,107,230,.46) 56%,rgba(46,107,230,0) 84%);
-    filter:blur(34px);transform:translateY(6px) scale(1.03);opacity:.9;z-index:-1}
-  /* one long soft cast shadow, then a three-band extrusion = clean 3D, no banding */
-  .w-shadow{background:#01091C;filter:blur(44px);transform:translate(3px,40px) scale(1.015);opacity:.72}
-  .w-shadow2{background:#01091C;filter:blur(14px);transform:translate(2px,14px);opacity:.5}
-  .w-depth-1{background:#184D93;transform:translate(2.4px,2.4px)}
-  .w-depth-2{background:#0B2A57;transform:translate(4.6px,4.6px)}
-  .w-depth-3{background:#03102A;transform:translate(6.8px,6.8px)}
-  /* face: polished metal — white crown, icy mid, deep blue foot */
-  .w-face{background:linear-gradient(178deg,#FFFFFF 0%,#FFFFFF 20%,#F4F9FF 34%,#D6E7FC 52%,#A8C8F2 70%,#7FA8E3 86%,#6E97D8 100%)}
-  /* specular sweep across the upper third + soft lower bounce light */
-  .w-gloss{background:linear-gradient(177deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.72) 16%,rgba(255,255,255,.18) 30%,rgba(255,255,255,0) 40%);
-    mix-blend-mode:screen;opacity:1}
-  .w-bounce{background:linear-gradient(0deg,rgba(122,178,247,.85) 0%,rgba(122,178,247,.28) 14%,rgba(122,178,247,0) 30%);
-    mix-blend-mode:screen;opacity:.55}
-  /* thin bright rim on the upper-left edges */
-  .w-rim{background:linear-gradient(203deg,rgba(196,230,255,1) 0%,rgba(120,180,250,0) 50%);
-    transform:translate(-2px,-2px);opacity:.34;mix-blend-mode:screen}
-  /* inner shade so the lower half does not wash out against the haze */
-  .w-shade{background:linear-gradient(0deg,rgba(10,34,78,.34) 0%,rgba(10,34,78,0) 42%);opacity:.9}
-  /* lit floor under the wordmark */
-  /* the generic `.wordmark span` rule sets inset/mask, so the pool must opt out explicitly */
-  .wordmark .w-pool{inset:auto;top:auto;left:auto;bottom:-62px;right:40px;width:880px;height:150px;
-    -webkit-mask:none;mask:none;border-radius:50%;z-index:-1;
-    background:radial-gradient(closest-side,rgba(96,168,255,.42),rgba(96,168,255,0) 76%);filter:blur(24px)}
-
-  .subline{display:flex;align-items:center;gap:16px;margin-top:16px}
-  .subline h1{font-family:'Estedad';font-weight:700;font-size:50px;letter-spacing:-1px;color:#F4F9FF;
-    text-shadow:0 12px 30px rgba(3,16,42,.6)}
-  .nopass{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 17px;border-radius:12px;
-    font-family:'Estedad';font-weight:700;font-size:26px;color:#fff;
-    background:linear-gradient(135deg,#3B82F6,#1D4ED8);
-    box-shadow:0 18px 34px -16px rgba(37,99,235,.95)}
-  .nopass svg{width:18px;height:18px}
-
-  .english{margin-top:14px;font-size:21px;letter-spacing:.30em;color:#7FA5D6;font-weight:600;
-    direction:ltr;text-align:right;white-space:nowrap}
-
-  .rule{height:1px;margin-top:18px;
-    background:linear-gradient(90deg,rgba(130,180,250,.42),rgba(130,180,250,.10) 62%,rgba(130,180,250,0))}
-
-  .features{margin-top:12px;display:flex;flex-direction:column}
-  .feat{display:flex;align-items:center;gap:18px;height:76px}
-  .fico{width:52px;height:52px;border-radius:15px;flex:none;display:grid;place-items:center;
-    border:1px solid rgba(140,185,250,.32);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 16px 30px -22px rgba(2,10,28,.9)}
-  .fico svg{width:25px;height:25px}
-  .fico.a{background:linear-gradient(150deg,rgba(59,130,246,.32),rgba(29,78,216,.16));color:#BAD9FF}
-  .fico.b{background:linear-gradient(150deg,rgba(56,189,248,.28),rgba(14,116,144,.14));color:#A8E7FF}
-  .fico.c{background:linear-gradient(150deg,rgba(34,197,139,.28),rgba(6,95,70,.16));color:#9DF0CC}
-  .fico.d{background:linear-gradient(150deg,rgba(129,140,248,.30),rgba(67,56,202,.16));color:#C7CBFF}
-  .fico.e{background:linear-gradient(150deg,rgba(45,212,191,.26),rgba(13,148,136,.14));color:#A6F0E6}
-  .feat p{font-size:30px;font-weight:600;color:#E4EEFC;letter-spacing:-.2px;
-    white-space:nowrap;text-shadow:0 8px 22px rgba(2,10,28,.55)}
-  .feat p b{font-weight:800;color:#FFFFFF}
-
-  .footer{position:absolute;right:84px;bottom:46px;display:flex;align-items:center;gap:10px;
-    font-size:17px;color:#6E93C4}
-  .footer .dot{width:7px;height:7px;border-radius:50%;background:#38BDF8;
-    box-shadow:0 0 12px 2px rgba(56,189,248,.65)}
-  .footer b{color:#A7C6EC;font-weight:700}
+@font-face{font-family:Vazirmatn;src:url('../../assets/fonts/vazirmatn/Vazirmatn-Variable.woff2') format('woff2');font-weight:100 900;font-display:block}
+@font-face{font-family:Estedad;src:url('../../assets/fonts/estedad/estedad-700.woff2') format('woff2');font-weight:700;font-display:block}
+@font-face{font-family:Estedad;src:url('../../assets/fonts/estedad/estedad-900.woff2') format('woff2');font-weight:900;font-display:block}
+*{box-sizing:border-box}
+html,body{margin:0;background:#071326}
+body{font-family:Vazirmatn,Tahoma,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:'ss01'}
+#cover{position:relative;overflow:hidden;width:2100px;height:1040px;color:#fff;direction:rtl;background:radial-gradient(900px 760px at 23% 53%,rgba(26,102,184,.31),transparent 70%),radial-gradient(900px 700px at 96% -12%,rgba(31,79,151,.22),transparent 68%),linear-gradient(132deg,#07172c,#081629 58%,#050f21)}
+#cover::before{content:'';position:absolute;inset:30px;border:2px solid rgba(177,213,248,.13);border-radius:34px;pointer-events:none}
+#cover::after{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#3fc4f4 28%,#2e66db 67%,transparent);opacity:.65}
+.art{position:absolute;left:70px;top:67px;width:940px;height:900px;display:flex;align-items:center;justify-content:center}
+.art img{display:block;width:1020px;height:1020px;object-fit:contain;flex:none}
+.identity{position:absolute;right:103px;top:76px;width:965px}
+.meta{display:flex;align-items:center;gap:13px;font-size:28px;font-weight:700;color:#D9E9FF}
+.flag{display:block;width:43px;height:43px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.3)}
+.flag svg{display:block;width:100%;height:100%}
+.brand{height:234px;margin-top:21px;display:flex;align-items:center}
+.brand img{display:block;width:850px;height:auto;filter:drop-shadow(0 12px 18px rgba(0,0,0,.28))}
+.subtitle{display:inline-flex;align-items:center;min-height:82px;margin:9px 0 0;padding:9px 24px;border-right:8px solid #7CE1FF;border-radius:10px 4px 4px 10px;background:linear-gradient(90deg,rgba(34,95,215,.65),#2D69D9);box-shadow:0 12px 30px rgba(1,10,34,.24)}
+.subtitle h1{margin:0;font-family:Estedad,Vazirmatn,sans-serif;font-size:49px;line-height:1.45;font-weight:700;white-space:nowrap}
+.english{margin-top:17px;color:#96BDE9;font-size:25px;font-weight:700;letter-spacing:.18em;direction:ltr;text-align:right;white-space:nowrap}
+.rule{width:100%;height:2px;margin-top:23px;background:linear-gradient(90deg,transparent,rgba(160,204,245,.32))}
+.features{display:grid;gap:14px;margin:26px 0 0;padding:0;list-style:none}
+.features li{display:flex;align-items:center;gap:17px;min-height:58px;font-size:39px;font-weight:600;line-height:1.5;color:#EDF5FF;white-space:nowrap}
+.features li::before{content:'';flex:none;width:13px;height:13px;border-radius:3px;background:#3BDCC4;box-shadow:0 0 0 7px rgba(59,220,196,.11)}
+.features b{font-weight:800;color:#fff}
+.footer{position:absolute;right:103px;bottom:66px;display:flex;gap:16px;align-items:center;font-size:25px;font-weight:600;color:#8FAFD2}
+.footer .sep{opacity:.4}.footer .site{direction:ltr}
 </style>
 </head>
 <body>
-<div class="cover" id="cover">
-
-  <div class="grain"></div>
-  <div class="dots"></div>
-  <div class="halo"></div>
-  <div class="streak s1"></div>
-  <div class="streak s2"></div>
-  <div class="floor"></div>
-  <div class="edge"></div>
-
-  <!-- ================= art ================= -->
-  <div class="art">
-
-    <div class="floor"></div>
-
-    <div class="phone">
-      <div class="phone-in">
-        <div class="notch"></div>
-        <div class="screen">
-          <div class="s-logo"><img src="../infographic/img/ashna-icon.svg" alt=""></div>
-          <div class="s-title">کد تأیید</div>
-          <div class="s-sub">کد ۶ رقمی به <b>۰۹۱۲ ۳۴۵ ۶۷۸۹</b> پیامک شد.</div>
-
-          <div class="boxes">
-            <b>۴</b><b>۹</b><b>۲</b><b>۸</b><b>۱</b><b class="on"><span class="caret"></span></b>
-          </div>
-
-          <div class="s-btn">تأیید و ورود</div>
-          <div class="s-meta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
-            ارسال دوباره تا <b>۰۰:۴۵</b>
-          </div>
-
-          <div class="s-sep">یا ورود بدون پیامک</div>
-          <div class="s-bio">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3.6 0 6.2 2.7 6.2 6.3 0 4.3-3 8-4.6 10.1-.7.9-2.5.9-3.2 0C8.8 17.3 5.8 13.6 5.8 9.3 5.8 5.7 8.4 3 12 3Z"/><path d="M12 7.4c1.5 0 2.6 1.2 2.6 2.8"/></svg>
-            ورود با اثر انگشت / چهره
-          </div>
-          <div class="s-link">ویرایش شماره · ورود با رمز عبور</div>
-          <div class="s-home"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="notif">
-      <div class="notif-av"><img src="../infographic/img/ashna-icon.svg" alt=""></div>
-      <div style="flex:1">
-        <div class="notif-head">
-          <b>آشنا</b>
-          <span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m4 12.5 5 5L20 6"/></svg>تحویل شد</span>
-        </div>
-        <div class="notif-text">کد ورود شما <span class="num">۴۹۲۸۱۳</span> است؛ به کسی ندهید.</div>
-      </div>
-    </div>
-
-    <div class="mini card-a">
-      <div class="mini-head">
-        <span class="mi mint">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2.6 20 6v6c0 4.8-3.3 7.9-8 10.2-4.7-2.3-8-5.4-8-10.2V6l8-3.4Z"/><path d="m8.6 12.2 2.4 2.4 4.4-4.6"/></svg>
-        </span>
-        <span class="mi-txt"><b>ضد اسپم و بمبر</b><span>سقف دقیقه‌ای، برای هر شماره و هر IP</span></span>
-      </div>
-      <div class="q-grid">
-        <div><b>۵</b><u>در دقیقه</u><span>برای هر IP</span></div>
-        <div><b>۱۰</b><u>در ۲۴ ساعت</u><span>برای هر شماره</span></div>
-        <div><b>۶۰</b><u>ثانیه</u><span>فاصله ارسال دوباره</span></div>
-      </div>
-    </div>
-
-    <div class="mini card-b">
-      <div class="mini-head">
-        <span class="mi blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5Z"/><path d="M3 13.2 12 17.7l9-4.5"/><path d="M3 17.9 12 22.4l9-4.5"/></svg>
-        </span>
-        <span class="mi-txt"><b>شش درگاه پیامکی</b><span>ایرانی و پیام‌رسان‌های داخلی</span></span>
-      </div>
-      <div class="gw">
-        <span class="act">SMS.ir</span><span>کاوه‌نگار</span><span>ملی‌پیامک</span>
-        <span>فراز اس‌ام‌اس</span><span>آی‌پی‌پنل</span><span>راه پیام</span>
-      </div>
-    </div>
-
-
-    <div class="trust">
-      <span class="live"><i></i>آمادهٔ نصب</span>
-      <span class="sep"></span>
-      <span>بدون رمز عبور</span>
-      <span class="sep"></span>
-      <span>ورود بیومتریک</span>
-      <span class="sep"></span>
-      <span>ضد اسپم و بمبر</span>
-    </div>
-
-  </div>
-
-  <!-- ================= identity ================= -->
+<main id="cover" aria-label="کاور آشنا، افزونه ورود و ثبت‌نام وردپرس">
+  <div class="art"><img src="img/login-shield.svg" alt=""></div>
   <div class="identity">
-
-    <div class="pills">
-      <span class="pill">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/><path d="M12 17v4"/></svg>
-        افزونهٔ وردپرس
-      </span>
-      <span class="pill iran">
-        <span class="flag">
-          <svg viewBox="0 0 60 60">
-            <rect width="60" height="20" fill="#239F40"/>
-            <rect y="20" width="60" height="20" fill="#FFFFFF"/>
-            <rect y="40" width="60" height="20" fill="#DA0000"/>
-            <path d="M30 24.6c2.2 1.7 3.3 3.6 3.3 5.4S32.2 33.7 30 35.4c-2.2-1.7-3.3-3.6-3.3-5.4s1.1-3.7 3.3-5.4Z" fill="#DA0000"/>
-            <path d="M22.6 26.4c1.4 2.3 1.4 5.3 0 7.6M37.4 26.4c-1.4 2.3-1.4 5.3 0 7.6" stroke="#DA0000" stroke-width="1.1" fill="none" opacity=".85"/>
-          </svg>
-        </span>
-        محصول ایرانی
-      </span>
+    <div class="meta">
+      <span class="flag" aria-hidden="true"><svg viewBox="0 0 60 60"><rect width="60" height="20" fill="#239F40"/><rect y="20" width="60" height="20" fill="#fff"/><rect y="40" width="60" height="20" fill="#DA0000"/><path d="M30 24.6c2.2 1.7 3.3 3.6 3.3 5.4S32.2 33.7 30 35.4c-2.2-1.7-3.3-3.6-3.3-5.4s1.1-3.7 3.3-5.4Z" fill="#DA0000"/><path d="M22.6 26.4c1.4 2.3 1.4 5.3 0 7.6M37.4 26.4c-1.4 2.3-1.4 5.3 0 7.6" stroke="#DA0000" stroke-width="1.1" fill="none"/></svg></span>
+      <span>محصول ایرانی</span>
     </div>
-
-    <div class="brand" aria-label="آشنا">
-      <div class="wordmark" role="img" aria-label="آشنا">
-        <span class="w-pool"></span>
-        <span class="w-glow"></span>
-        <span class="w-shadow"></span>
-        <span class="w-shadow2"></span>
-        <span class="w-depth-1"></span>
-        <span class="w-depth-2"></span>
-        <span class="w-depth-3"></span>
-        <span class="w-face"></span>
-        <span class="w-shade"></span>
-        <span class="w-bounce"></span>
-        <span class="w-gloss"></span>
-        <span class="w-rim"></span>
-      </div>
-    </div>
-
-    <div class="subline">
-      <h1>ورود و ثبت‌نام پیامکی وردپرس</h1>
-      <span class="nopass">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="5" y="10.5" width="14" height="10" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/></svg>
-        بدون رمز عبور
-      </span>
-    </div>
-
-    <div class="english">ASHNA — OTP LOGIN WORDPRESS PLUGIN</div>
+    <div class="brand"><img src="../infographic/img/ashna-logo-white.svg" alt="آشنا"></div>
+    <div class="subtitle"><h1>ورود و ثبت‌نام پیامکی وردپرس</h1></div>
+    <div class="english">ASHNA · WORDPRESS LOGIN</div>
     <div class="rule"></div>
-
-    <div class="features">
-      <div class="feat">
-        <span class="fico a">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2.3" width="10" height="19.4" rx="2.6"/><path d="M9.6 5.6h4.8"/><path d="M9.9 11.2h4.2M9.9 14.4h2.6"/></svg>
-        </span>
-        <p>ورود با <b>کد پیامکی</b>، بدون رمز عبور و بدون فرم‌های طولانی</p>
-      </div>
-
-      <div class="feat">
-        <span class="fico b">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5 12 4l9 4.5-9 4.5-9-4.5Z"/><path d="M3 13.5 12 18l9-4.5"/><path d="M3 18.2 12 22.7l9-4.5"/></svg>
-        </span>
-        <p>پشتیبانی از <b>شش درگاه پیامکی ایرانی</b> و پیام‌رسان‌های داخلی</p>
-      </div>
-
-      <div class="feat">
-        <span class="fico c">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.6 20 6v6c0 4.8-3.3 7.9-8 10.2-4.7-2.3-8-5.4-8-10.2V6l8-3.4Z"/><path d="m8.6 12.2 2.4 2.4 4.4-4.6"/></svg>
-        </span>
-        <p>ضد اسپم و بمبر با <b>سقف دقیقه‌ای</b>، از هر شماره و هر IP</p>
-      </div>
-
-      <div class="feat">
-        <span class="fico d">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="9" r="3.4"/><path d="M2.8 20c.5-3.4 3-5.4 6.2-5.4 1.6 0 3 .5 4.1 1.4"/><path d="M15.2 20.2v-4.1l3-3a2.2 2.2 0 0 1 3.1 3.1l-3 3h-3.1Z"/></svg>
-        </span>
-        <p>ورود با <b>گوگل و تلگرام</b>، و Passkey برای ورود بیومتریک و بدون پسورد</p>
-      </div>
-
-      <div class="feat">
-        <span class="fico e">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4.5h2.4l2.3 9.6h9.7l2.1-7.2H6.4"/><circle cx="9.4" cy="18.4" r="1.6"/><circle cx="16.6" cy="18.4" r="1.6"/><circle cx="18.5" cy="6.6" r="2.6" stroke-width="1.5"/></svg>
-        </span>
-        <p>ورود و ثبت‌نام در <b>ووکامرس، دکان، المنتور</b> و افزونه‌های عضویت</p>
-      </div>
-    </div>
-
+    <ul class="features">
+      <li>پیامک، بله و ایمیل</li>
+      <li>گوگل، تلگرام و <b dir="ltr">Passkey</b></li>
+      <li>۶ درگاه، ۳ پشتیبان و امنیت ضد اسپم</li>
+      <li>ووکامرس، دکان و المنتور</li>
+    </ul>
   </div>
-
-  <div class="footer">
-    <span class="dot"></span>
-    <span>محصولی از <b>پارسنا</b></span>
-    <span style="opacity:.45">·</span>
-    <span style="direction:ltr">parsena.ir/ashna</span>
-  </div>
-
-</div>
+  <div class="footer"><span>محصولی از پارسنا</span><span class="sep">·</span><span class="site">parsena.ir/ashna</span></div>
+</main>
 </body>
 </html>

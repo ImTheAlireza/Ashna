@@ -11,8 +11,14 @@ import os
 import shutil
 import subprocess
 import tempfile
+from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
+PACKAGE = os.environ.get('ASHNA_TEST_PACKAGE')
+if PACKAGE:
+    PACKAGE = Path(PACKAGE).resolve()
+    if not PACKAGE.is_file():
+        raise SystemExit('ASHNA_TEST_PACKAGE must point to an existing licensed plugin ZIP')
 WP = Path(os.environ.get('ASHNA_TEST_WP_PATH', ROOT / '.cache/license-tests/wp')).resolve()
 PHP = os.environ.get('PHP_BINARY', 'php')
 for file in ['plugin.php', 'class-wp-hook.php']:
@@ -29,7 +35,7 @@ active = "public function isActive() { ++$GLOBALS['license_calls']; return wp_ge
 fixtures = {
     'active': (active, 'active'),
     'activation': (active, 'active'),
-    'direct_then_index': (active, 'active'),
+    'direct_then_entry': (active, 'active'),
     'preloaded': (active, 'active'),
     'inactive': ('public function isActive() { return false; }', 'license_inactive'),
     'truthy': ('public function isActive() { return 1; }', 'license_inactive'),
@@ -45,37 +51,90 @@ fixtures = {
     'parse_error': ('', 'license_runtime_error'),
     'encoded_no_loader': (active, 'license_loader_missing'),
     'conflict': (active, 'license_class_conflict'),
+    'delegated_class': (active, 'license_class_conflict'),
+    'guard_missing': (active, 'license_runtime_error'),
+    'guard_encoded_no_loader': (active, 'license_loader_missing'),
+    'guard_parse_error': (active, 'license_runtime_error'),
+    'guard_bad_hash': (active, 'license_inactive'),
     'core_error': (active, 'propagate_core_error'),
     'no_license': ('', 'active'),
     'no_license_activation': ('', 'active'),
 }
+if PACKAGE:
+    fixtures.update({
+        'second_check_inactive': ('public function isActive() { return ++$GLOBALS["license_calls"] === 1; }', 'license_inactive'),
+        'protected_core_bad_hash': (active, 'license_inactive'),
+        'protected_core_missing': (active, 'license_inactive'),
+    })
 original = (ROOT / 'ashna.php').read_bytes()
+guard_original = (ROOT / 'includes/class-ashna-license-guard.php').read_bytes()
+expected_hash = '3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc'
+assert original.decode().count(expected_hash) == 1
+assert guard_original.decode().count(expected_hash) == 1
+assert b"require_once __DIR__ . '/class-ashna-autoloader.php';" in guard_original
 for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
-        plugin = Path(temp) / 'ashna-otp'
-        plugin.mkdir()
-        for name in ['index.php', 'ashna.php']:
-            shutil.copyfile(ROOT / name, plugin / name)
-        shutil.copytree(ROOT / 'includes', plugin / 'includes')
+        packaged = bool(PACKAGE and not scenario.startswith('no_license'))
+        if packaged:
+            with ZipFile(PACKAGE) as archive:
+                archive.extractall(temp)
+            plugin = Path(temp) / 'ashna'
+        else:
+            plugin = Path(temp) / 'ashna-otp'
+            plugin.mkdir()
+            for name in ['index.php', 'ashna.php']:
+                shutil.copyfile(ROOT / name, plugin / name)
+            shutil.copytree(ROOT / 'includes', plugin / 'includes')
         fixture = '<?php class ' + license_name + ' { ' + body + ' }'
         if scenario == 'missing_class': fixture = '<?php // No class.'
         if scenario == 'require_error': fixture = '<?php throw new RuntimeException("fixture-secret");'
         if scenario == 'parse_error': fixture = '<?php class !!! INVALID !!!'
         if scenario == 'encoded_no_loader': fixture = '<?php //ICB0 81:0 82:503b ?><?php class ' + license_name + ' { ' + body + ' }'
+        if scenario == 'delegated_class':
+            (plugin / 'delegated-class.php').write_text(fixture)
+            fixture = "<?php require __DIR__ . '/delegated-class.php';"
         license_file = plugin / (license_name + '.php')
         if 'missing' not in [scenario, scenario.removeprefix('activation_')]:
             license_file.write_text(fixture)
         if scenario == 'conflict':
             (plugin / 'conflicting-class.php').write_text('<?php class ' + license_name + ' { }')
+        fixture_hash = hashlib.sha1(fixture.encode()).hexdigest()
         source = (plugin / 'ashna.php').read_text()
         if scenario != 'bad_hash':
-            source = source.replace('321791ab0231890e4569d17c52e64ed93d2eb42d', hashlib.sha1(fixture.encode()).hexdigest())
+            source = source.replace(expected_hash, fixture_hash)
         (plugin / 'ashna.php').write_text(source)
+        guard_file = plugin / 'includes/class-ashna-license-guard.php'
+        guard_source = guard_file.read_text()
+        if scenario != 'guard_bad_hash':
+            guard_source = guard_source.replace(expected_hash, fixture_hash)
+        # An encoded guard may need the vendor class as soon as it is included.
+        # Simulate that condition in the isolated copy, for every scenario.
+        marker = "if ( ! defined( 'ABSPATH' ) ) {"
+        assert marker in guard_source
+        guard_source = guard_source.replace(marker,
+            "if (!class_exists('" + license_name + "', false)) { throw new RuntimeException('guard-loaded-before-license'); }\n" + marker, 1)
+        guard_file.write_text(guard_source)
+        if packaged:
+            protected = [
+                plugin / 'includes/class-ashna-protected-core.php',
+                plugin / 'includes/integrations/elementor/class-ashna-elementor-login-widget.php',
+                plugin / 'includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php',
+            ]
+            for path in protected:
+                raw = path.read_text()
+                assert raw.count(expected_hash) == 1
+                if not (scenario == 'protected_core_bad_hash' and path == protected[0]):
+                    path.write_text(raw.replace(expected_hash, fixture_hash))
+            if scenario == 'protected_core_missing':
+                protected[0].unlink()
+        if scenario == 'guard_encoded_no_loader': guard_file.write_text('<?php //ICB0 81:0 82:503b ?>' + guard_source)
+        if scenario == 'guard_missing': guard_file.unlink()
+        if scenario == 'guard_parse_error': guard_file.write_text('<?php INVALID !!!')
         if scenario.startswith('no_license'):
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')
         if scenario == 'core_error':
             (plugin / 'includes/class-ashna-autoloader.php').write_text('<?php throw new RuntimeException("core-fixture-failure");')
-        result = subprocess.run([PHP, str(ROOT / 'tests/license-bootstrap.php'), str(plugin), scenario, expected, str(WP)], capture_output=True, text=True, cwd=ROOT)
+        result = subprocess.run([PHP, str(ROOT / 'tests/license-bootstrap.php'), str(plugin), scenario, expected, str(WP), 'packaged' if packaged else 'source'], capture_output=True, text=True, cwd=ROOT)
         output = result.stdout + result.stderr
         # Some WASM CLI versions return exit code 0 even for PHP fatal errors.
         # Assert the PHP success marker as well as the process status.
@@ -87,4 +146,5 @@ for scenario, (body, expected) in fixtures.items():
             assert result.returncode == 0 and ('PASS ' + scenario + ' / PHP ') in output and 'Fatal error' not in output, output
             print(result.stdout.strip(), flush=True)
 assert (ROOT / 'ashna.php').read_bytes() == original
+assert (ROOT / 'includes/class-ashna-license-guard.php').read_bytes() == guard_original
 print(f'PASS {len(fixtures)} scenarios; production license hash and source unchanged by tests.')
