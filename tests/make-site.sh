@@ -35,12 +35,14 @@ require_once ABSPATH . 'wp-settings.php';
 EOF
 # Ashna (no-license layout, same as tests/run-full-wp.py), header lowered for PHP 7.4 activation.
 python3 - "$SITE" "$ROOT" <<'PY'
-import shutil, sys
+import shutil, sys, os, hashlib
 from pathlib import Path
+from zipfile import ZipFile
 SITE = Path(sys.argv[1]); ROOT = Path(sys.argv[2])
 src = open(ROOT / 'tests/run-full-wp.py').read()
 start = src.index('def sync_plugin'); end = src.index('\ndef ', start + 5)
-ns = {'shutil': shutil, 'Path': Path, 'ROOT': ROOT, 'SITE': SITE}
+ns = {'shutil': shutil, 'Path': Path, 'ROOT': ROOT, 'SITE': SITE,
+      'os': os, 'hashlib': hashlib, 'ZipFile': ZipFile}
 exec(src[start:end], ns); ns['sync_plugin']()
 PY
 sed -i -E '0,/(Requires PHP:\s*)[0-9.]+/s//\17.4/' "$SITE/wp-content/plugins/ashna/ashna.php"

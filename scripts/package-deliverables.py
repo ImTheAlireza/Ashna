@@ -7,6 +7,7 @@ import hashlib
 import json
 import argparse
 import re
+from license_protection import AUTOLOADER, CORE, CORE_SOURCES, PROTECT, licensed_files
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--plugin-only", action="store_true", help="Accepted for backward compatibility; only plugin ZIPs are built now.")
@@ -14,7 +15,13 @@ variants = parser.add_mutually_exclusive_group()
 variants.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP.")
 variants.add_argument("--without-license-file", action="store_true", help="Build the licensed plugin without bundling its vendor license file.")
 parser.add_argument("--output-dir", type=Path, help="Optional directory for the generated ZIP and manifest.")
+parser.add_argument("--protected-dir", type=Path, help="Directory containing all four encoded files at their plugin-relative paths; copy byte-for-byte.")
+parser.add_argument("--protection-input", type=Path, help="Original raw ashna-protection.zip sent to the encoder; verifies the source has not changed.")
 args = parser.parse_args()
+if args.without_license and args.protected_dir:
+    parser.error('--protected-dir cannot be used with --without-license')
+if bool(args.protected_dir) != bool(args.protection_input):
+    parser.error('--protected-dir and --protection-input must be supplied together')
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = args.output_dir.resolve() if args.output_dir else ROOT / 'deliverables'
@@ -34,6 +41,7 @@ plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارم
 قبل از نصب یا جایگزینی، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
 مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc و تأیید isActive() نیاز دارد. {license_note}
+در خروجی اولیهٔ بسته‌ساز، فایل‌های قابل‌محافظت خام هستند و پیش از فروش باید محافظت شوند. چهار فایل داخل ashna-protection.zip را مطابق راهنمای جداگانه محافظت کنید و خروجی‌ها را بدون بازکردن یا تغییر، در مسیرهای اصلی داخل این بسته جایگزین کنید. فایل ashna.php و فایل رسمی لایسنس را برای محافظت ارسال نکنید.
 وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. اگر فایل لایسنس یا فایل محافظت‌شده ionCube باشد، Loader باید در PHP وب فعال و سازگار با همان فایل و PHP باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
 بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر فایل لایسنس ionCube باشد و Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و فایل لایسنس اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
 
@@ -79,6 +87,28 @@ if not args.without_license:
 
 SLUG = 'ashna'
 plugin = OUT / (SLUG + '-no-license.zip' if args.without_license else SLUG + '.zip')
+# Generate before opening the archive: a classification/build error must not
+# leave an apparently valid partial release behind.
+licensed = {} if args.without_license else licensed_files()
+shipped = dict(licensed)
+if args.protected_dir:
+    # Ensure the current source is exactly the input sent for protection. This
+    # cannot prove what the vendor encoded; the operator must use the matching
+    # outputs. The four encoded files are never opened as text or modified.
+    with ZipFile(args.protection_input) as original_input:
+        if set(original_input.namelist()) != set(PROTECT) or len(original_input.namelist()) != len(PROTECT):
+            raise SystemExit('Protection input ZIP does not contain the exact four expected files')
+        if any(original_input.read(relative) != licensed[relative] for relative in PROTECT):
+            raise SystemExit('Source changed since the input ZIP was created; protect the new sources again')
+    encoded_root = args.protected_dir.resolve()
+    for relative in PROTECT:
+        encoded = (encoded_root / relative).resolve()
+        if not encoded.is_relative_to(encoded_root) or not encoded.is_file():
+            raise SystemExit('Missing encoded file at its exact plugin-relative path: ' + relative)
+        content = encoded.read_bytes()
+        if not content or content == licensed[relative]:
+            raise SystemExit('Encoded file is empty or identical to the raw input: ' + relative)
+        shipped[relative] = content
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     for name in ['ashna.php', 'index.php', 'uninstall.php', 'README.md']:
         if args.without_license and name == 'ashna.php':
@@ -89,10 +119,19 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file():
-                # The diagnostic no-license build does not need the licensed gate.
-                if args.without_license and source == ROOT / 'includes/class-ashna-license-guard.php':
+                relative = source.relative_to(ROOT).as_posix()
+                # Never ship the unguarded originals in the licensed edition.
+                if not args.without_license and (relative in CORE_SOURCES or relative == CORE):
                     continue
-                bundle.write(source, SLUG + '/' + source.relative_to(ROOT).as_posix())
+                # The diagnostic no-license build does not need the licensed gate.
+                if args.without_license and relative == 'includes/class-ashna-license-guard.php':
+                    continue
+                if relative in shipped:
+                    bundle.writestr(SLUG + '/' + relative, shipped[relative])
+                else:
+                    bundle.write(source, SLUG + '/' + relative)
+    if not args.without_license:
+        bundle.writestr(SLUG + '/' + CORE, shipped[CORE])
     if include_license:
         bundle.write(license_file, SLUG + '/' + license_file.name)
     add_bytes(bundle, SLUG + '/README-INSTALL-FA.txt', plugin_readme)
@@ -108,11 +147,32 @@ with ZipFile(plugin) as bundle:
         if hits:
             raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))
 
+protection = OUT / 'ashna-protection.zip'
+if not args.without_license:
+    # The guide stays outside the encoder input ZIP.
+    (OUT / 'ashna-protection-guide-fa.md').write_bytes((ROOT / 'docs/license-protection-fa.md').read_bytes())
+    # Only the inner four PHP files go to the encoder; the full plugin ZIP,
+    # main loader and the official vendor license must never be submitted.
+    with ZipFile(protection, 'w', ZIP_DEFLATED) as target:
+        for relative in PROTECT:
+            # Always supply the original prepared input, never re-encode output.
+            content = licensed[relative]
+            if not content or len(content) >= 1_000_000:
+                raise SystemExit('Protectable PHP must be nonempty and smaller than 1 MB: ' + relative)
+            target.writestr(relative, content)
+    with ZipFile(protection) as source:
+        if source.testzip() is not None or len(source.namelist()) != 4 or sum(x.file_size for x in source.infolist()) > 5_000_000:
+            raise SystemExit('Invalid protection ZIP contents')
+    if protection.stat().st_size > 6_000_000:
+        raise SystemExit('Protection ZIP exceeds 6 MB')
+
 report = [archive_check(OUT / name, SLUG) for name in [SLUG + '.zip', SLUG + '-no-license.zip'] if (OUT / name).exists()]
+if protection.exists():
+    report.append(archive_check(protection, 'includes'))
 diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
     report.append(archive_check(diagnostics, 'ashna-activation-diagnostics'))
-for guide in [OUT / 'help.pdf']:
+for guide in [OUT / 'help.pdf', OUT / 'ashna-protection-guide-fa.md']:
     if guide.exists():
         report.append({'file': guide.name, 'bytes': guide.stat().st_size,
                        'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})

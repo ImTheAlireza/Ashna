@@ -2,7 +2,8 @@
 /**
  * License-bound entry to Ashna's services.
  *
- * Submit this file (not ashna.php or the RTL license file) for protection.
+ * Submit this file together with the generated protected core and widgets,
+ * not ashna.php or the RTL license file, for vendor protection.
  * The callback is invoked after the license-check catch has finished so that
  * unrelated errors from plugin services are not reported as license failures.
  *
@@ -47,6 +48,12 @@ final class Ashna_License_Guard {
 							return static function () {
 								require_once __DIR__ . '/class-ashna-autoloader.php';
 								Ashna_Autoloader::register();
+
+								// The distribution core independently checks the vendor license.
+								// Its classes do not exist if that second check fails.
+								if ( ! class_exists( 'Ashna_Plugin' ) ) {
+									return false;
+								}
 
 								if ( ! function_exists( 'ashna_otp' ) ) {
 									/** @return Ashna_Plugin */

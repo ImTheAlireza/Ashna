@@ -1,15 +1,21 @@
 [
   {
     "file": "ashna.zip",
-    "bytes": 562524,
-    "sha256": "46d851ac24432810ce1ab2e45e9e74a2f8a6397a09598759e4e0d205fbdb4fd3",
-    "files": 89
+    "bytes": 538665,
+    "sha256": "22aaedfcc4d3261222f75cf7ee15d545b6da058bae530fb30ddb5bdbeda02875",
+    "files": 57
   },
   {
     "file": "ashna-no-license.zip",
     "bytes": 557919,
     "sha256": "2fbe3144a7e4bea86b5a81790aa26a8ba1bcc8593f318043623931bc57ed8409",
     "files": 88
+  },
+  {
+    "file": "ashna-protection.zip",
+    "bytes": 116761,
+    "sha256": "09d97b0acdc2a647bc23c628b61a5e9d11a715e7deae90dcc78d0617b8e16c97",
+    "files": 4
   },
   {
     "file": "ashna-activation-diagnostics.zip",
@@ -21,6 +27,11 @@
     "file": "help.pdf",
     "bytes": 2704649,
     "sha256": "58b2a4ffca9341e1dcbb1331a56c37bdac62ca38312e36c76583cdec6bf1797f"
+  },
+  {
+    "file": "ashna-protection-guide-fa.md",
+    "bytes": 10016,
+    "sha256": "09c210853ea4b22eb0bfd9cd50e9e37f2cf5a4c9a35f9f41a2c92e76c3463daf"
   },
   {
     "file": "ashna-landing.zip",

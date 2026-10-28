@@ -1473,9 +1473,23 @@ scenario(
 		check( 'no outbound request is built from request data (' . count( $remote ) . ' wp_remote_* calls audited)', empty( $bad_remote ), array_slice( $bad_remote, 0, 5 ) );
 
 		// Codes are hashed, never stored in the clear; the sandbox gateway is the only exception.
-		$gateway = (string) file_get_contents( ASHNA_OTP_PATH . 'includes/gateways/class-ashna-gateway-manager.php' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$packed_core = ASHNA_OTP_PATH . 'includes/class-ashna-protected-core.php';
+		$source_for = static function ( $relative ) use ( $packed_core ) {
+			if ( ! is_file( $packed_core ) ) {
+				return (string) file_get_contents( ASHNA_OTP_PATH . $relative ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			}
+			$core = (string) file_get_contents( $packed_core ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			$marker = '// ---- Source: ' . $relative . ' ----';
+			$start = strpos( $core, $marker );
+			if ( false === $start ) {
+				return '';
+			}
+			$next = strpos( $core, '// ---- Source: ', $start + strlen( $marker ) );
+			return false === $next ? substr( $core, $start ) : substr( $core, $start, $next - $start );
+		};
+		$gateway = $source_for( 'includes/gateways/class-ashna-gateway-manager.php' );
 		check( 'codes are stored as a WordPress password hash', false !== strpos( $gateway, 'wp_hash_password' ) );
-		$logger = (string) file_get_contents( ASHNA_OTP_PATH . 'includes/core/class-ashna-logger.php' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$logger = $source_for( 'includes/core/class-ashna-logger.php' );
 		check( 'the logger keeps a readable code only for the sandbox gateway', false !== strpos( $logger, 'sandbox' ) );
 
 		// Uninstalling only deletes when the owner asked for it.
@@ -1486,7 +1500,11 @@ scenario(
 		// Every AJAX handler opens with a nonce or a capability check — refresh-session excepted.
 		$handlers = 0;
 		$ungated  = array();
-		foreach ( glob( ASHNA_OTP_PATH . 'includes/*/class-ashna-*.php' ) as $file ) {
+		$handler_files = glob( ASHNA_OTP_PATH . 'includes/*/class-ashna-*.php' );
+		if ( is_file( $packed_core ) ) {
+			$handler_files[] = $packed_core;
+		}
+		foreach ( $handler_files as $file ) {
 			$src = (string) file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 			if ( preg_match_all( '/function\s+((?:ajax)_[a-z_]+)\s*\(\s*\)\s*\{(.{0,400})/s', $src, $m, PREG_SET_ORDER ) ) {
 				foreach ( $m as $match ) {
@@ -1498,7 +1516,8 @@ scenario(
 				}
 			}
 		}
-		check( $handlers . ' AJAX handlers all open with a nonce or capability check', array( 'class-ashna-session.php::ajax_refresh' ) === $ungated, $ungated );
+		$refresh_file = is_file( $packed_core ) ? 'class-ashna-protected-core.php' : 'class-ashna-session.php';
+		check( $handlers . ' AJAX handlers all open with a nonce or capability check', array( $refresh_file . '::ajax_refresh' ) === $ungated, $ungated );
 		check( 'the audit found the expected number of handlers', $handlers >= 18, $handlers );
 	}
 );

@@ -14,6 +14,7 @@ set_error_handler(function ($level, $message, $file, $line) {
 $plugin_dir = $argv[1];
 $scenario = $argv[2];
 $expected = $argv[3];
+$packaged = isset($argv[5]) && $argv[5] === 'packaged';
 define('ABSPATH', rtrim($argv[4], '/') . '/');
 define('WP_PLUGIN_DIR', dirname($plugin_dir));
 define('WPMU_PLUGIN_DIR', dirname($plugin_dir) . '/mu-plugins');
@@ -79,8 +80,12 @@ if (!$late) {
 }
 if (!$unlicensed) {
 	check(Ashna_License_Bootstrap::get_status() === $expected, 'Unexpected status: ' . Ashna_License_Bootstrap::get_status());
+	$calls_before_rerun = $GLOBALS['license_calls'];
 	Ashna_License_Bootstrap::run();
-	check($GLOBALS['license_calls'] <= 1, 'License check ran twice');
+	check($GLOBALS['license_calls'] === $calls_before_rerun, 'Bootstrap re-ran a license check');
+	check($GLOBALS['license_calls'] <= ($packaged ? 2 : 1), 'Unexpected number of license checks');
+	if ($packaged && $expected === 'active') { check($GLOBALS['license_calls'] === 2, 'Guard and core must independently check the license once'); }
+	if ($scenario === 'second_check_inactive') { check($GLOBALS['license_calls'] === 2, 'Independent core check was not run'); }
 	if (in_array($scenario, array('missing', 'activation_missing', 'bad_hash', 'missing_class', 'missing_method', 'private_method', 'require_error', 'parse_error', 'encoded_no_loader', 'conflict', 'delegated_class', 'guard_missing', 'guard_encoded_no_loader'), true)) {
 		check(!class_exists('Ashna_License_Guard', false), 'Protectable file loaded before the license was accepted');
 	}

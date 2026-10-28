@@ -154,7 +154,10 @@ final class Ashna_License_Bootstrap {
 
 		// Execute the protected boot callback outside the license catch so errors in
 		// plugin services are never hidden or mislabeled as licensing failures.
-		$licensed_boot();
+		if ( false === $licensed_boot() ) {
+			self::fail( 'license_inactive', 'بررسی مستقل هستهٔ محافظت‌شده ناموفق بود؛ فعال‌بودن لایسنس و فایل‌های همین نسخه را بررسی کنید.' );
+			return;
+		}
 		self::$status = 'active';
 	}
 
