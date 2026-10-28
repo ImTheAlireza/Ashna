@@ -29,7 +29,7 @@ active = "public function isActive() { ++$GLOBALS['license_calls']; return wp_ge
 fixtures = {
     'active': (active, 'active'),
     'activation': (active, 'active'),
-    'direct_then_index': (active, 'active'),
+    'direct_then_entry': (active, 'active'),
     'preloaded': (active, 'active'),
     'inactive': ('public function isActive() { return false; }', 'license_inactive'),
     'truthy': ('public function isActive() { return 1; }', 'license_inactive'),
@@ -45,11 +45,20 @@ fixtures = {
     'parse_error': ('', 'license_runtime_error'),
     'encoded_no_loader': (active, 'license_loader_missing'),
     'conflict': (active, 'license_class_conflict'),
+    'delegated_class': (active, 'license_class_conflict'),
+    'guard_missing': (active, 'license_runtime_error'),
+    'guard_encoded_no_loader': (active, 'license_loader_missing'),
+    'guard_parse_error': (active, 'license_runtime_error'),
+    'guard_bad_hash': (active, 'license_inactive'),
     'core_error': (active, 'propagate_core_error'),
     'no_license': ('', 'active'),
     'no_license_activation': ('', 'active'),
 }
 original = (ROOT / 'ashna.php').read_bytes()
+guard_original = (ROOT / 'includes/class-ashna-license-guard.php').read_bytes()
+expected_hash = '3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc'
+assert original.decode().count(expected_hash) == 1
+assert guard_original.decode().count(expected_hash) == 1
 for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
         plugin = Path(temp) / 'ashna-otp'
@@ -62,15 +71,33 @@ for scenario, (body, expected) in fixtures.items():
         if scenario == 'require_error': fixture = '<?php throw new RuntimeException("fixture-secret");'
         if scenario == 'parse_error': fixture = '<?php class !!! INVALID !!!'
         if scenario == 'encoded_no_loader': fixture = '<?php //ICB0 81:0 82:503b ?><?php class ' + license_name + ' { ' + body + ' }'
+        if scenario == 'delegated_class':
+            (plugin / 'delegated-class.php').write_text(fixture)
+            fixture = "<?php require __DIR__ . '/delegated-class.php';"
         license_file = plugin / (license_name + '.php')
         if 'missing' not in [scenario, scenario.removeprefix('activation_')]:
             license_file.write_text(fixture)
         if scenario == 'conflict':
             (plugin / 'conflicting-class.php').write_text('<?php class ' + license_name + ' { }')
+        fixture_hash = hashlib.sha1(fixture.encode()).hexdigest()
         source = (plugin / 'ashna.php').read_text()
         if scenario != 'bad_hash':
-            source = source.replace('321791ab0231890e4569d17c52e64ed93d2eb42d', hashlib.sha1(fixture.encode()).hexdigest())
+            source = source.replace(expected_hash, fixture_hash)
         (plugin / 'ashna.php').write_text(source)
+        guard_file = plugin / 'includes/class-ashna-license-guard.php'
+        guard_source = guard_file.read_text()
+        if scenario != 'guard_bad_hash':
+            guard_source = guard_source.replace(expected_hash, fixture_hash)
+        # An encoded guard may need the vendor class as soon as it is included.
+        # Simulate that condition in the isolated copy, for every scenario.
+        marker = "if ( ! defined( 'ABSPATH' ) ) {"
+        assert marker in guard_source
+        guard_source = guard_source.replace(marker,
+            "if (!class_exists('" + license_name + "', false)) { throw new RuntimeException('guard-loaded-before-license'); }\n" + marker, 1)
+        guard_file.write_text(guard_source)
+        if scenario == 'guard_encoded_no_loader': guard_file.write_text('<?php //ICB0 81:0 82:503b ?>' + guard_source)
+        if scenario == 'guard_missing': guard_file.unlink()
+        if scenario == 'guard_parse_error': guard_file.write_text('<?php INVALID !!!')
         if scenario.startswith('no_license'):
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')
         if scenario == 'core_error':
@@ -87,4 +114,5 @@ for scenario, (body, expected) in fixtures.items():
             assert result.returncode == 0 and ('PASS ' + scenario + ' / PHP ') in output and 'Fatal error' not in output, output
             print(result.stdout.strip(), flush=True)
 assert (ROOT / 'ashna.php').read_bytes() == original
+assert (ROOT / 'includes/class-ashna-license-guard.php').read_bytes() == guard_original
 print(f'PASS {len(fixtures)} scenarios; production license hash and source unchanged by tests.')

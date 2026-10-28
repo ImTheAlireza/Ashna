@@ -10,14 +10,17 @@ import re
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--plugin-only", action="store_true", help="Accepted for backward compatibility; only plugin ZIPs are built now.")
-parser.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP.")
+variants = parser.add_mutually_exclusive_group()
+variants.add_argument("--without-license", action="store_true", help="Build a separate, unencoded license-free plugin ZIP.")
+variants.add_argument("--without-license-file", action="store_true", help="Build the licensed plugin without bundling its vendor license file.")
+parser.add_argument("--output-dir", type=Path, help="Optional directory for the generated ZIP and manifest.")
 args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'deliverables'
-OUT.mkdir(exist_ok=True)
+OUT = args.output_dir.resolve() if args.output_dir else ROOT / 'deliverables'
+OUT.mkdir(parents=True, exist_ok=True)
 
-LICENSE_MISSING_NOTE = 'فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار ashna.php قرار بگیرد.'
+LICENSE_MISSING_NOTE = 'این بسته فایل لایسنس ندارد؛ فایل اصلی صادرشده توسط راست‌چین باید بدون تغییر کنار ashna.php قرار بگیرد.'
 LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
 
 plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۴
@@ -30,9 +33,9 @@ plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارم
 نصب: پیشخوان وردپرس ← افزونه‌ها ← افزودن ← بارگذاری افزونه.
 قبل از نصب یا جایگزینی، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
-مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 321791ab0231890e4569d17c52e64ed93d2eb42d و تأیید isActive() نیاز دارد. {license_note}
-وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. ionCube Loader باید در PHP وب فعال و با همان PHP و فایل لایسنس سازگار باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
-بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر ionCube Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و هیچ فایلی اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
+مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc و تأیید isActive() نیاز دارد. {license_note}
+وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. اگر فایل لایسنس یا فایل محافظت‌شده ionCube باشد، Loader باید در PHP وب فعال و سازگار با همان فایل و PHP باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
+بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر فایل لایسنس ionCube باشد و Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و فایل لایسنس اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
 
 فایل‌های تبلیغاتی، Git، تست‌ها، کش‌ها و node_modules داخل بستهٔ افزونه قرار نگرفته‌اند.
 '''
@@ -65,7 +68,7 @@ def archive_check(path, prefix):
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'files': len(names)}
 
 license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
-include_license = not args.without_license and license_file.is_file()
+include_license = not args.without_license and not args.without_license_file and license_file.is_file()
 if include_license:
     expected_hash = re.search(r"'([0-9a-f]{40})'\s*!==\s*\$rtlLicenseFileHash", (ROOT / 'ashna.php').read_text())
     if not expected_hash or hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_hash.group(1):
@@ -86,6 +89,9 @@ with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
     for folder in ['assets', 'includes', 'languages', 'templates']:
         for source in sorted((ROOT / folder).rglob('*')):
             if source.is_file():
+                # The diagnostic no-license build does not need the licensed gate.
+                if args.without_license and source == ROOT / 'includes/class-ashna-license-guard.php':
+                    continue
                 bundle.write(source, SLUG + '/' + source.relative_to(ROOT).as_posix())
     if include_license:
         bundle.write(license_file, SLUG + '/' + license_file.name)
@@ -97,7 +103,7 @@ with ZipFile(plugin) as bundle:
     for name in bundle.namelist():
         content = bundle.read(name)
         hits = [name] if LEGACY_NAME.search(name) else []
-        if not name.endswith(('.png', '.woff2')) and LEGACY_NAME.search(content.decode('utf-8')):
+        if not name.endswith(('.png', '.woff2')) and LEGACY_NAME.search(content.decode('utf-8', errors='ignore')):
             hits.append(name + ' (content)')
         if hits:
             raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))

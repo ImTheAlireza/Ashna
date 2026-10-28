@@ -18,15 +18,23 @@ Python 3.9+ and PHP 7.4+ are required. Set `PHP_BINARY` to an alternate PHP CLI.
 For the npm PHP-WASM CLI, set `PHP=7.4`, `PHP=8.2` or `PHP=8.3` as appropriate.
 
 All license stubs and their matching fixture hashes are generated **only in
-temporary plugin copies**. The production verifier hash is never altered.
-Coverage includes normal early loading, late activation from function scope,
-strict true/false results, missing/bad files, runtime/parse/constructor errors,
-preloaded/conflicting classes, inaccessible methods, service initialization,
-activation/deactivation, idempotency, non-admin notices and the no-license build.
-One scenario feeds an ionCube-encoded stub without the Loader and expects
-`license_loader_missing`: the gate must refuse before `require`, because the
-encoded stub itself would print a raw error and `exit(199)` the request.
+temporary plugin copies**, in both the loader and the separate guard. The
+production verifier hash is never altered. Coverage includes normal early loading,
+late activation from function scope, strict true/false results, missing/bad files,
+runtime/parse/constructor errors, preloaded/conflicting/delegated classes,
+inaccessible methods, missing or corrupt guard, a mismatched guard hash, service
+initialization, activation/deactivation, idempotency, non-admin notices and the
+no-license build. The guard is instrumented in fixtures to prove it is included
+only after the license class is loaded.
+Two scenarios feed an ionCube-encoded license or guard stub without the Loader
+and expect `license_loader_missing`: the gate must refuse before `require`,
+because an encoded stub can print a raw error and `exit(199)` the request.
 Executing a real encoded license still requires a hosting PHP with ionCube.
+
+`python3 tests/package-license.py` checks that packaging refuses a mismatched
+license, distinguishes a licensed package without the license file from the
+no-license edition, and copies simulated protected bytes unchanged. Fixtures are
+isolated under `.cache`; existing deliverables are not overwritten.
 
 ## Temporary activation diagnostic tool
 
