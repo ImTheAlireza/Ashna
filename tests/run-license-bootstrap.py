@@ -59,6 +59,7 @@ guard_original = (ROOT / 'includes/class-ashna-license-guard.php').read_bytes()
 expected_hash = '3fac0395eb82fa65036a1e9aabcf0aac9c2bcedc'
 assert original.decode().count(expected_hash) == 1
 assert guard_original.decode().count(expected_hash) == 1
+assert b"require_once __DIR__ . '/class-ashna-autoloader.php';" in guard_original
 for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
         plugin = Path(temp) / 'ashna-otp'

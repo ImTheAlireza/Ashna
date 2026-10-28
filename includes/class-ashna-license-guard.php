@@ -45,7 +45,7 @@ final class Ashna_License_Guard {
 						if ($rtlLicenseClass->{'isActive'}() === true) {
 							// لایسنس فعال است؛ کد امکانات لایسنس‌دار را اینجا قرار دهید.
 							return static function () {
-								require_once ASHNA_OTP_PATH . 'includes/class-ashna-autoloader.php';
+								require_once __DIR__ . '/class-ashna-autoloader.php';
 								Ashna_Autoloader::register();
 
 								if ( ! function_exists( 'ashna_otp' ) ) {

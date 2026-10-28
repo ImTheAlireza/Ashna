@@ -48,7 +48,9 @@ with TemporaryDirectory(prefix='ashna-packaging-', dir=CACHE) as temp:
         assert 'ashna/' + LICENSE not in bundle.namelist()
         assert 'ashna/' + GUARD in bundle.namelist()
         assert EXPECTED in bundle.read('ashna/ashna.php').decode()
-        assert EXPECTED in bundle.read('ashna/' + GUARD).decode()
+        guard = bundle.read('ashna/' + GUARD).decode()
+        assert EXPECTED in guard
+        assert "require_once __DIR__ . '/class-ashna-autoloader.php';" in guard
         assert 'این بسته فایل لایسنس ندارد' in bundle.read('ashna/README-INSTALL-FA.txt').decode()
     print('PASS licensed package can be built without the license file')
 
