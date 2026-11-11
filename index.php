@@ -36,34 +36,35 @@ if ( ! defined( 'ASHNA_OTP_BASENAME' ) ) {
 $ashna_license_class = 'RTL_License_c1595a7238d64f3a';
 $ashna_license_file  = __DIR__ . DIRECTORY_SEPARATOR . $ashna_license_class . '.php';
 
-$ashna_license_notice = static function ( $code, $message ) {
-	$render = static function () use ( $code, $message ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
+if ( is_file( $ashna_license_file ) && is_readable( $ashna_license_file ) ) {
+	$ashna_license_head = @file_get_contents( $ashna_license_file, false, null, 0, 512 );
+
+	if ( is_string( $ashna_license_head ) && preg_match( '/<\?php\s*\/\/(?:ICB0|[0-9A-F]{5})\b/i', $ashna_license_head ) && ! extension_loaded( 'ionCube Loader' ) ) {
+		$ashna_license_notice = static function () {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+			echo '<div class="notice notice-error" dir="rtl"><p><strong>افزونهٔ آشنا فعال نیست:</strong> فایل لایسنس ionCube است و ionCube Loader روی این نسخه از PHP وب فعال نیست. لودر را روی همان PHP وب فعال کنید.</p><p><code dir="ltr">license_loader_missing</code></p></div>';
+		};
+		add_action( 'admin_notices', $ashna_license_notice );
+		add_action( 'network_admin_notices', $ashna_license_notice );
+		return;
+	}
+
+	if ( ! class_exists( $ashna_license_class, false ) ) {
+		try {
+			require_once $ashna_license_file;
+		} catch ( Throwable $ashna_license_error ) {
+			$ashna_license_notice = static function () {
+				if ( ! current_user_can( 'manage_options' ) ) {
+					return;
+				}
+				echo '<div class="notice notice-error" dir="rtl"><p><strong>افزونهٔ آشنا فعال نیست:</strong> اجرای فایل لایسنس با خطا مواجه شد. سازگاری فایل لایسنس و افزونهٔ مدیریت راست‌چین را بررسی کنید.</p><p><code dir="ltr">license_runtime_error</code></p></div>';
+			};
+			add_action( 'admin_notices', $ashna_license_notice );
+			add_action( 'network_admin_notices', $ashna_license_notice );
 			return;
 		}
-		echo '<div class="notice notice-error" dir="rtl"><p><strong>افزونهٔ آشنا فعال نیست:</strong> ' . esc_html( $message ) . '</p><p><code dir="ltr">' . esc_html( $code ) . '</code></p></div>';
-	};
-	add_action( 'admin_notices', $render );
-	add_action( 'network_admin_notices', $render );
-};
-
-if ( ! is_file( $ashna_license_file ) || ! is_readable( $ashna_license_file ) ) {
-	$ashna_license_notice( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
-	return;
-}
-
-$ashna_license_head = @file_get_contents( $ashna_license_file, false, null, 0, 512 );
-if ( is_string( $ashna_license_head ) && preg_match( '/<\?php\s*\/\/(?:ICB0|[0-9A-F]{5})\b/i', $ashna_license_head ) && ! extension_loaded( 'ionCube Loader' ) ) {
-	$ashna_license_notice( 'license_loader_missing', 'فایل لایسنس ionCube است و ionCube Loader روی این نسخه از PHP وب فعال نیست. لودر را روی همان PHP وب فعال کنید و صفحه را دوباره بارگذاری کنید.' );
-	return;
-}
-
-if ( ! class_exists( $ashna_license_class, false ) ) {
-	try {
-		require_once $ashna_license_file;
-	} catch ( Throwable $ashna_license_error ) {
-		$ashna_license_notice( 'license_runtime_error', 'اجرای فایل یا بررسی لایسنس با خطا مواجه شد. سازگاری فایل لایسنس، PHP و افزونهٔ مدیریت راست‌چین را بررسی کنید.' );
-		return;
 	}
 }
 

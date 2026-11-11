@@ -23,9 +23,6 @@ python3 scripts/package-deliverables.py --without-license  # ashna-no-license.zi
 اسکریپت قبل از بسته‌بندی، SHA-1 فایل لایسنس را با ثابت `LICENSE_SHA1` در `ashna.php` تطبیق می‌دهد و در صورت نخواندن هش، بسته‌سازی را متوقف می‌کند؛ بعد
 از بسته‌بندی، نبود نام برند قبلی را داخل ZIP بررسی می‌کند.
 
-برای ارسال فایل‌ها به راست‌چین، `python3 scripts/package-protect-batches.py` را اجرا کنید؛
-بسته‌های ۲ تا ۵ فایلی در `deliverables/protect/` ساخته می‌شوند.
-
 ## لندینگ
 
 لندینگ آشنا در `ashna-landing/` است و راهنمای استقرار و ویرایش آن در

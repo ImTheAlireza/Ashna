@@ -95,7 +95,12 @@ if (
 	}
 
 	private static function diagnose() {
-		$ashna_license_class = 'RTL_License_c1595a7238d64f3a';
+		$ashna_license_class    = 'RTL_License_c1595a7238d64f3a';
+		$ashna_license_expected = __DIR__ . DIRECTORY_SEPARATOR . $ashna_license_class . '.php';
+
+		if ( ! is_file( $ashna_license_expected ) || ! is_readable( $ashna_license_expected ) ) {
+			return array( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
+		}
 
 		if ( ! class_exists( $ashna_license_class, false ) ) {
 			return array( 'license_class_missing', 'فایل لایسنس، کلاس مورد انتظار را تعریف نکرده است. نسخهٔ فایل لایسنس را بررسی کنید.' );
@@ -107,8 +112,6 @@ if (
 		} catch ( \ReflectionException $ashna_license_error ) {
 			return array( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
 		}
-
-		$ashna_license_expected = __DIR__ . DIRECTORY_SEPARATOR . $ashna_license_class . '.php';
 
 		if ( ! is_string( $ashna_license_file ) || ! is_file( $ashna_license_file ) ) {
 			return array( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
