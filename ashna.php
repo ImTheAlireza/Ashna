@@ -1,162 +1,88 @@
 <?php
-/**
- * Plugin Name:       آشنا | ورود و ثبت‌نام با کد یکبارمصرف
- * Plugin URI:        https://parsena.ir/ashna
- * Description:       پلاگین جامع ورود و ثبت‌نام یکپارچه با کد یکبارمصرف (OTP)، ورود با گوگل و تلگرام و ورود بیومتریک بدون رمز (Passkey / WebAuthn) از طریق پیامک، پیام‌رسان بله و ایمیل همراه با یکپارچگی کامل ووکامرس و ویجت اختصاصی المنتور.
- * Version:           3.1.4
- * Requires at least: 5.8
- * Requires PHP:      8.2
- * Author:            پارسنا
- * Author URI:        https://parsena.ir
- * Text Domain:       ashna-otp
- * Domain Path:       /languages
- * License:           GPL v2 or later
- */
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! defined( 'ASHNA_OTP_VERSION' ) ) {
-	define( 'ASHNA_OTP_VERSION', '3.1.4' );
-}
-if ( ! defined( 'ASHNA_OTP_FILE' ) ) {
-	define( 'ASHNA_OTP_FILE', __FILE__ );
-}
-if ( ! defined( 'ASHNA_OTP_PATH' ) ) {
-	define( 'ASHNA_OTP_PATH', plugin_dir_path( __FILE__ ) );
-}
-if ( ! defined( 'ASHNA_OTP_URL' ) ) {
-	define( 'ASHNA_OTP_URL', plugin_dir_url( __FILE__ ) );
-}
-if ( ! defined( 'ASHNA_OTP_BASENAME' ) ) {
-	define( 'ASHNA_OTP_BASENAME', plugin_basename( __FILE__ ) );
-}
-
-// WooCommerce feature compatibility: Ashna never reads or writes orders (safe with HPOS), and its
-// checkout sign-in box is rendered on the block checkout as well as the classic one.
-add_action(
-	'before_woocommerce_init',
-	static function () {
-		if ( class_exists( '\\Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ASHNA_OTP_FILE, true );
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', ASHNA_OTP_FILE, true );
-		}
-	}
-);
-
 final class Ashna_License_Bootstrap {
 
-	/**
-	 * SHA-1 of the RTL license file issued by the vendor for this product build.
-	 *
-	 * The file name and contents are fixed by the vendor and must never be
-	 * edited. Every ionCube-protected build is bound to exactly this hash, so a
-	 * re-issued file (even with the same name) or an edited copy is rejected
-	 * here before any of its code runs. When the vendor issues a new license,
-	 * update this value and tools/ashna-activation-diagnostics.
-	 */
 	const LICENSE_SHA1 = 'a425656c5fe2bfe0aee0122e3f6fab35badcfa8e';
 
-	/** No service is booted unless the verifier explicitly returns true. */
 	private static $status = 'pending';
 
-	/** Read-only diagnostic status; does not re-run the verifier. */
 	public static function get_status() {
 		return self::$status;
 	}
 
-	/**
-	 * Run after plugin files and WordPress pluggable functions are available.
-	 * During the activation sandbox plugins_loaded has already fired, so this
-	 * method is called immediately to register activation hooks in time.
-	 */
 	public static function run() {
 		if ( 'pending' !== self::$status ) {
 			return;
 		}
 		self::$status = 'checking';
 
-		// --------------------------------------------------------------------------------------------------- Start RTL License
-		// RTL loader + gate. ashna.php holds the loader, so this file is never
-		// submitted for ionCube protection; the encoded product files are bound
-		// to the license hash declared in LICENSE_SHA1. Keep this block intact:
-		// the license file itself, its name and its path are fixed by the vendor.
-		$rtlLicenseClassName = 'RTL_License_c1595a7238d64f3a';
-		$rtlLicenseFilePath  = __DIR__ . DIRECTORY_SEPARATOR . $rtlLicenseClassName . '.php';
+		$rtl_license_class = 'RTL_License_c1595a7238d64f3a';
 
-		if ( ! is_file( $rtlLicenseFilePath ) || ! is_readable( $rtlLicenseFilePath ) ) {
-			self::fail( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار ashna.php قرار دهید.' );
+		if ( ! class_exists( $rtl_license_class, false ) ) {
+			self::fail( 'license_class_missing', 'فایل لایسنس، کلاس مورد انتظار را تعریف نکرده است. نسخهٔ فایل لایسنس را بررسی کنید.' );
 			return;
 		}
 
 		try {
-			$rtlLicenseFileHash = @sha1_file( $rtlLicenseFilePath );
-			if ( ! is_string( $rtlLicenseFileHash ) || ! hash_equals( self::LICENSE_SHA1, $rtlLicenseFileHash ) ) {
+			$rtl_license_reflection = new ReflectionClass( $rtl_license_class );
+			$rtl_license_file       = $rtl_license_reflection->getFileName();
+			$rtl_expected_file      = __DIR__ . DIRECTORY_SEPARATOR . $rtl_license_class . '.php';
+
+			if ( ! is_string( $rtl_license_file ) || ! is_file( $rtl_license_file ) ) {
+				self::fail( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
+				return;
+			}
+
+			if ( realpath( $rtl_license_file ) !== realpath( $rtl_expected_file ) ) {
+				self::fail( 'license_class_conflict', 'کلاس هم‌نام لایسنس از فایل دیگری بارگذاری شده است. فعال‌بودن هم‌زمان نسخه‌های دیگر آشنا را بررسی کنید.' );
+				return;
+			}
+
+			$rtl_license_hash = @sha1_file( $rtl_license_file );
+			if ( ! is_string( $rtl_license_hash ) || ! hash_equals( self::LICENSE_SHA1, $rtl_license_hash ) ) {
 				self::fail(
 					'license_hash_mismatch',
 					'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی صادرشده برای همین محصول و همین نسخه استفاده کنید.',
-					sprintf( 'expected %s, got %s', self::LICENSE_SHA1, is_string( $rtlLicenseFileHash ) ? $rtlLicenseFileHash : 'unreadable' )
+					sprintf( 'expected %s, got %s', self::LICENSE_SHA1, is_string( $rtl_license_hash ) ? $rtl_license_hash : 'unreadable' )
 				);
 				return;
 			}
 
-			// An ionCube-encoded license cannot be parsed without the Loader: its
-			// plain-text stub prints a raw error and exit(199)s the whole request.
-			// Detect that here so a missing Loader is an explained, contained failure.
-			$rtlLicenseHead = @file_get_contents( $rtlLicenseFilePath, false, null, 0, 512 );
-			if ( is_string( $rtlLicenseHead )
-				&& preg_match( '/<\?php\s*\/\/(?:ICB0|[0-9A-F]{5})\b/i', $rtlLicenseHead )
-				&& ! extension_loaded( 'ionCube Loader' ) ) {
-				self::fail( 'license_loader_missing', 'فایل لایسنس ionCube است و ionCube Loader روی این نسخه از PHP وب فعال نیست. لودر را روی همان PHP وب فعال کنید و صفحه را دوباره بارگذاری کنید.' );
-				return;
-			}
+			$rtl_license = new $rtl_license_class();
 
-			// Check before require: the same class may already have been loaded.
-			// Accept only a class originating from this exact verified file.
-			if ( class_exists( $rtlLicenseClassName, false ) ) {
-				$reflection = new ReflectionClass( $rtlLicenseClassName );
-				$class_file = $reflection->getFileName();
-				if ( ! $class_file || realpath( $class_file ) !== realpath( $rtlLicenseFilePath ) ) {
-					self::fail( 'license_class_conflict', 'کلاس هم‌نام لایسنس از فایل دیگری بارگذاری شده است. فعال‌بودن هم‌زمان نسخه‌های دیگر آشنا را بررسی کنید.' );
-					return;
-				}
-			} else {
-				require_once $rtlLicenseFilePath;
-			}
-
-			if ( ! class_exists( $rtlLicenseClassName, false ) ) {
-				self::fail( 'license_class_missing', 'فایل لایسنس، کلاس مورد انتظار را تعریف نکرده است. نسخهٔ فایل لایسنس را بررسی کنید.' );
-				return;
-			}
-
-			$rtlLicenseClass = new $rtlLicenseClassName();
-			if ( ! method_exists( $rtlLicenseClass, 'isActive' ) || ! is_callable( array( $rtlLicenseClass, 'isActive' ) ) ) {
+			if ( ! method_exists( $rtl_license, 'isActive' ) || ! is_callable( array( $rtl_license, 'isActive' ) ) ) {
 				self::fail( 'license_method_invalid', 'متد عمومی isActive در کلاس لایسنس در دسترس نیست. فایل لایسنس با این نسخه سازگار نیست.' );
 				return;
 			}
 
-			if ( true !== $rtlLicenseClass->{'isActive'}() ) {
+			if ( true !== $rtl_license->{'isActive'}() ) {
 				self::fail( 'license_inactive', 'لایسنس محصول فعال نیست. آن را از طریق افزونهٔ مدیریت راست‌چین فعال کنید.' );
 				return;
 			}
-		} catch ( Throwable $error ) {
-			// Do not print an exception message or trace: it may contain license
-			// secrets. The type, filename and line are enough to locate the failure.
-			$diagnostic = sprintf( '%s @ %s:%d', get_class( $error ), basename( $error->getFile() ), $error->getLine() );
-			self::fail( 'license_runtime_error', 'اجرای فایل یا بررسی لایسنس با خطا مواجه شد. سازگاری فایل لایسنس، PHP و افزونهٔ مدیریت راست‌چین را بررسی کنید.', $diagnostic );
+		} catch ( Throwable $rtl_license_error ) {
+			$rtl_license_diagnostic = sprintf( '%s @ %s:%d', get_class( $rtl_license_error ), basename( $rtl_license_error->getFile() ), $rtl_license_error->getLine() );
+			self::fail( 'license_runtime_error', 'اجرای فایل یا بررسی لایسنس با خطا مواجه شد. سازگاری فایل لایسنس، PHP و افزونهٔ مدیریت راست‌چین را بررسی کنید.', $rtl_license_diagnostic );
 			return;
 		}
-		// ----------------------------------------------------------------------------------------------------- End RTL License
 
-		// Keep core errors outside the license catch: do not mislabel failures
-		// in plugin services as licensing errors or silently swallow them.
+		add_action(
+			'before_woocommerce_init',
+			static function () {
+				if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+					\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ASHNA_OTP_FILE, true );
+					\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', ASHNA_OTP_FILE, true );
+				}
+			}
+		);
+
 		require_once ASHNA_OTP_PATH . 'includes/class-ashna-autoloader.php';
 		Ashna_Autoloader::register();
 
 		if ( ! function_exists( 'ashna_otp' ) ) {
-			/** @return Ashna_Plugin */
 			function ashna_otp() {
 				return Ashna_Plugin::instance();
 			}
@@ -166,11 +92,11 @@ final class Ashna_License_Bootstrap {
 		self::$status = 'active';
 	}
 
-	/** Fail closed with a capability-restricted, escaped diagnostic notice. */
 	private static function fail( $code, $message, $diagnostic = '' ) {
 		self::$status = $code;
+
 		if ( $diagnostic && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( '[Ashna] ' . $code . ': ' . $diagnostic ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Ashna] ' . $code . ': ' . $diagnostic );
 		}
 
 		$notice = static function () use ( $code, $message, $diagnostic ) {

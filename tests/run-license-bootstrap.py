@@ -51,6 +51,7 @@ fixtures = {
     'no_license_activation': ('', 'active'),
 }
 original = (ROOT / 'ashna.php').read_bytes()
+original_entry = (ROOT / 'index.php').read_bytes()
 # Read the production hash from the verifier itself: a re-issued license file
 # changes one constant in ashna.php and this suite keeps working unchanged.
 match = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", original.decode('utf-8'))
@@ -85,6 +86,7 @@ for scenario, (body, expected) in fixtures.items():
             source = source.replace(production_hash, hashlib.sha1(fixture.encode()).hexdigest())
         (plugin / 'ashna.php').write_text(source)
         if scenario.startswith('no_license'):
+            shutil.copyfile(ROOT / 'scripts/templates/index-no-license.php', plugin / 'index.php')
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')
         if scenario == 'core_error':
             (plugin / 'includes/class-ashna-autoloader.php').write_text('<?php throw new RuntimeException("core-fixture-failure");')
@@ -100,4 +102,5 @@ for scenario, (body, expected) in fixtures.items():
             assert result.returncode == 0 and ('PASS ' + scenario + ' / PHP ') in output and 'Fatal error' not in output, output
             print(result.stdout.strip(), flush=True)
 assert (ROOT / 'ashna.php').read_bytes() == original
+assert (ROOT / 'index.php').read_bytes() == original_entry
 print(f'PASS {len(fixtures)} scenarios; production license hash and source unchanged by tests.')

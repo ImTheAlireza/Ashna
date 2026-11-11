@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
 
-LICENSE_MISSING_NOTE = 'این فایل باید با همین نام و بدون هیچ تغییری داخل پوشهٔ افزونه، کنار ashna.php، باشد؛ اگر فایل لایسنس در بسته نیست، فایل صادرشده توسط راست‌چین را در همان مسیر اضافه کنید.'
+LICENSE_MISSING_NOTE = 'این فایل باید با همین نام و بدون هیچ تغییری داخل پوشهٔ افزونه، کنار index.php، باشد؛ اگر فایل لایسنس در بسته نیست، فایل صادرشده توسط راست‌چین را در همان مسیر اضافه کنید.'
 LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
 
 plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۴
@@ -45,7 +45,7 @@ if args.without_license:
 ابتدا از سایت و دیتابیس بکاپ بگیرید؛ ترجیحاً روی سایت آزمایشی تست کنید.
 اگر نسخهٔ لایسنس‌دار آشنا نصب است، آن را غیرفعال کنید و این ZIP را از بخش بارگذاری افزونه روی همان پوشهٔ ashna جایگزین و سپس فعال کنید. دو نسخه را هم‌زمان فعال نکنید.
 برای حفظ تنظیمات، لازم نیست افزونه را از طریق دکمهٔ «حذف» وردپرس پاک کنید.
-پس از استخراج دستی، فایل ashna.php کدگذاری‌شدهٔ قبلی را نگه ندارید؛ باید با فایل متنی همین بسته جایگزین شود.
+پس از استخراج دستی، فایل‌های index.php و ashna.php نسخهٔ لایسنس‌دار قبلی را نگه ندارید؛ باید با فایل‌های متنی همین بسته جایگزین شوند.
 
 حداقل وردپرس ۵.۸ و PHP ۷.۴ مطابق سربرگ همین بسته.
 این نسخه برای جداکردن احتمال خطای Loader/لایسنس از سایر خطاهای هاست مناسب است؛ رفع قطعی خطای گزارش‌شدهٔ سایت، بدون گزارش خطا قابل تأیید نیست.
@@ -67,7 +67,7 @@ def archive_check(path, prefix):
 license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
 expected_hash = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", (ROOT / 'ashna.php').read_text())
 if not expected_hash:
-    raise SystemExit('LICENSE_SHA1 constant not found in ashna.php.')
+    raise SystemExit('LICENSE_SHA1 constant not found in ashna.php; package the protected build outside this script.')
 expected_sha1 = expected_hash.group(1)
 include_license = not args.without_license and license_file.is_file()
 if include_license and hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_sha1:
@@ -78,11 +78,14 @@ if not args.without_license:
 
 SLUG = 'ashna'
 plugin = OUT / (SLUG + '-no-license.zip' if args.without_license else SLUG + '.zip')
+# The license-free edition keeps the same two-file entry layout: an unencoded
+# index.php with the header and constants, and an ashna.php without any
+# license check.
+TEMPLATES = {'index.php': 'index-no-license.php', 'ashna.php': 'ashna-no-license.php'}
 with ZipFile(plugin, 'w', ZIP_DEFLATED) as bundle:
-    for name in ['ashna.php', 'index.php', 'uninstall.php', 'README.md']:
-        if args.without_license and name == 'ashna.php':
-            # Header and bootstrap live in the same unencoded file for this edition.
-            bundle.write(ROOT / 'scripts/templates/ashna-no-license.php', SLUG + '/ashna.php')
+    for name in ['index.php', 'ashna.php', 'uninstall.php', 'README.md']:
+        if args.without_license and name in TEMPLATES:
+            bundle.write(ROOT / 'scripts/templates' / TEMPLATES[name], SLUG + '/' + name)
         else:
             bundle.write(ROOT / name, SLUG + '/' + name)
     for folder in ['assets', 'includes', 'languages', 'templates']:
@@ -99,7 +102,13 @@ with ZipFile(plugin) as bundle:
     for name in bundle.namelist():
         content = bundle.read(name)
         hits = [name] if LEGACY_NAME.search(name) else []
-        if not name.endswith(('.png', '.woff2')) and LEGACY_NAME.search(content.decode('utf-8')):
+        text = ''
+        if not name.endswith(('.png', '.woff2')):
+            try:
+                text = content.decode('utf-8')
+            except UnicodeDecodeError:
+                text = ''
+        if LEGACY_NAME.search(text):
             hits.append(name + ' (content)')
         if hits:
             raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))
@@ -114,7 +123,7 @@ if not args.without_license and plugin.is_file() and guide.is_file():
                          'تأیید فعال‌بودن آن در سایت مقصد انجام می‌شود.')
     else:
         license_state = ('فایل لایسنس همراه بستهٔ افزونه نیست؛ فایل صادرشده توسط راست‌چین را '
-                         'با همین نام و بدون تغییر، در مسیر ashna/ کنار ashna.php اضافه کنید.')
+                         'با همین نام و بدون تغییر، در مسیر ashna/ کنار index.php اضافه کنید.')
     bundle_readme = f'''بستهٔ محصول آشنا — نسخهٔ ۳.۱.۴
 محصولی از پارسنا — https://parsena.ir/ashna
 
@@ -137,7 +146,7 @@ if not args.without_license and plugin.is_file() and guide.is_file():
 نصب:
 ۱) از سایت و دیتابیس پشتیبان بگیرید.
 ۲) ashna.zip را نصب و فعال کنید.
-۳) اگر فایل لایسنس همراه بسته نیست، آن را داخل پوشهٔ افزونه (کنار ashna.php) قرار دهید.
+۳) اگر فایل لایسنس همراه بسته نیست، آن را داخل پوشهٔ افزونه (کنار index.php) قرار دهید.
 ۴) لایسنس را در افزونهٔ مدیریت راست‌چین فعال کنید؛ تا فعال‌نشدن لایسنس، امکانات آشنا بارگذاری نمی‌شود.
 '''
     with ZipFile(bundle_path, 'w', ZIP_DEFLATED) as archive:

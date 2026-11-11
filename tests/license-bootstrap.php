@@ -70,9 +70,7 @@ if ('preloaded' === $scenario) { require $plugin_dir . '/RTL_License_c1595a7238d
 ob_start();
 if ('direct_then_index' === $scenario) { require_once $plugin_dir . '/ashna.php'; }
 // WordPress's activation sandbox includes the plugin entry file — the one that
-// carries the plugin header, ashna.php — from function scope.
-(function ($entry) { include_once $entry; })($plugin_dir . '/ashna.php');
-// The silence file ships in the plugin root and must never emit output.
+// carries the plugin header, index.php — from function scope.
 (function ($entry) { include_once $entry; })($plugin_dir . '/index.php');
 check(ob_get_clean() === '', 'Unexpected output during inclusion');
 if (!$late) {
@@ -81,9 +79,15 @@ if (!$late) {
 	do_action('plugins_loaded');
 }
 if (!$unlicensed) {
-	check(Ashna_License_Bootstrap::get_status() === $expected, 'Unexpected status: ' . Ashna_License_Bootstrap::get_status());
-	Ashna_License_Bootstrap::run();
-	check($GLOBALS['license_calls'] <= 1, 'License check ran twice');
+	if (class_exists('Ashna_License_Bootstrap', false)) {
+		check(Ashna_License_Bootstrap::get_status() === $expected, 'Unexpected status: ' . Ashna_License_Bootstrap::get_status());
+		Ashna_License_Bootstrap::run();
+		check($GLOBALS['license_calls'] <= 1, 'License check ran twice');
+	} else {
+		// index.php refuses before ashna.php is included: missing file, an
+		// encoded file without the Loader, or a file that fails to include.
+		check(in_array($expected, array('license_file_missing', 'license_loader_missing', 'license_runtime_error'), true), 'Verifier never loaded for ' . $expected);
+	}
 }
 if ('active' === $expected) {
 	check(ashna_otp() instanceof Ashna_Plugin, 'Kernel not booted');
