@@ -17,7 +17,9 @@ python3 scripts/package-deliverables.py                 # ashna.zip (لایسن�
 python3 scripts/package-deliverables.py --without-license  # ashna-no-license.zip
 ```
 
-خروجی در `deliverables/` نوشته می‌شود و `checksums.json` بازسازی می‌شود.
+خروجی در `deliverables/` نوشته می‌شود و `checksums.json` بازسازی می‌شود. در ساخت
+لایسنس‌دار، بستهٔ تحویل `deliverables/ashna-package-fa.zip` هم از همان `ashna.zip`
+به‌همراه `help.pdf` (با نام `Ashna-Guide-FA.pdf`) و یک `README-FA.txt` ساخته می‌شود.
 اسکریپت قبل از بسته‌بندی، SHA-1 فایل لایسنس را با ثابت `LICENSE_SHA1` در `ashna.php` تطبیق می‌دهد و در صورت نخواندن هش، بسته‌سازی را متوقف می‌کند؛ بعد
 از بسته‌بندی، نبود نام برند قبلی را داخل ZIP بررسی می‌کند.
 

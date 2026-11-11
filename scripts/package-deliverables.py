@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
 
-LICENSE_MISSING_NOTE = 'فایل واقعی لایسنس در کد فعلی مخزن موجود نیست و این بسته آن را ایجاد نمی‌کند؛ فایل صادرشده توسط راست‌چین باید کنار ashna.php قرار بگیرد.'
+LICENSE_MISSING_NOTE = 'این فایل باید با همین نام و بدون هیچ تغییری داخل پوشهٔ افزونه، کنار ashna.php، باشد؛ اگر فایل لایسنس در بسته نیست، فایل صادرشده توسط راست‌چین را در همان مسیر اضافه کنید.'
 LICENSE_INCLUDED_NOTE = 'فایل لایسنسِ موجود در مخزن با هش مورد انتظار بررسی شده و داخل بسته قرار گرفته است؛ تأیید فعال‌بودن آن همچنان در سایت مقصد انجام می‌شود.'
 
 plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارمصرف — نسخهٔ ۳.۱.۴
@@ -65,11 +65,13 @@ def archive_check(path, prefix):
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'files': len(names)}
 
 license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
+expected_hash = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", (ROOT / 'ashna.php').read_text())
+if not expected_hash:
+    raise SystemExit('LICENSE_SHA1 constant not found in ashna.php.')
+expected_sha1 = expected_hash.group(1)
 include_license = not args.without_license and license_file.is_file()
-if include_license:
-    expected_hash = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", (ROOT / 'ashna.php').read_text())
-    if not expected_hash or hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_hash.group(1):
-        raise SystemExit('License file does not match LICENSE_SHA1 in ashna.php; refusing to package a mismatched license.')
+if include_license and hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_sha1:
+    raise SystemExit('License file does not match LICENSE_SHA1 in ashna.php; refusing to package a mismatched license.')
 
 if not args.without_license:
     plugin_readme = plugin_readme.format(license_note=LICENSE_INCLUDED_NOTE if include_license else LICENSE_MISSING_NOTE)
@@ -102,6 +104,51 @@ with ZipFile(plugin) as bundle:
         if hits:
             raise SystemExit('Legacy product name found in plugin package: ' + ', '.join(hits))
 
+# Buyer package: the installable plugin ZIP plus the Persian guide. Regenerated
+# on every licensed build so the guide and the plugin never drift apart.
+bundle_path = OUT / 'ashna-package-fa.zip'
+guide = OUT / 'help.pdf'
+if not args.without_license and plugin.is_file() and guide.is_file():
+    if include_license:
+        license_state = ('فایل لایسنس بررسی شد و همراه بستهٔ افزونه است؛ '
+                         'تأیید فعال‌بودن آن در سایت مقصد انجام می‌شود.')
+    else:
+        license_state = ('فایل لایسنس همراه بستهٔ افزونه نیست؛ فایل صادرشده توسط راست‌چین را '
+                         'با همین نام و بدون تغییر، در مسیر ashna/ کنار ashna.php اضافه کنید.')
+    bundle_readme = f'''بستهٔ محصول آشنا — نسخهٔ ۳.۱.۴
+محصولی از پارسنا — https://parsena.ir/ashna
+
+محتوای این بسته:
+۱) ashna.zip          — افزونهٔ آمادهٔ نصب (پیشخوان ← افزونه‌ها ← افزودن ← بارگذاری افزونه)
+۲) Ashna-Guide-FA.pdf — راهنمای نصب و راه‌اندازی (۸ صفحه)
+۳) README-FA.txt      — همین فایل
+
+پیش‌نیازها:
+- وردپرس ۵.۸ یا بالاتر
+- PHP 8.2 یا بالاتر
+- ionCube Loader فعال روی همان PHP وب
+
+لایسنس:
+- نام فایل: RTL_License_c1595a7238d64f3a.php
+- SHA-1: {expected_sha1}
+- وضعیت در این بسته: {license_state}
+- فایل لایسنس را تغییر نام ندهید و محتوایش را ویرایش نکنید؛ فایل‌های محافظت‌شدهٔ محصول فقط با همین فایل اجرا می‌شوند.
+
+نصب:
+۱) از سایت و دیتابیس پشتیبان بگیرید.
+۲) ashna.zip را نصب و فعال کنید.
+۳) اگر فایل لایسنس همراه بسته نیست، آن را داخل پوشهٔ افزونه (کنار ashna.php) قرار دهید.
+۴) لایسنس را در افزونهٔ مدیریت راست‌چین فعال کنید؛ تا فعال‌نشدن لایسنس، امکانات آشنا بارگذاری نمی‌شود.
+'''
+    with ZipFile(bundle_path, 'w', ZIP_DEFLATED) as archive:
+        archive.write(plugin, 'ashna.zip')
+        archive.write(guide, 'Ashna-Guide-FA.pdf')
+        add_bytes(archive, 'README-FA.txt', bundle_readme)
+    with ZipFile(bundle_path) as archive:
+        assert archive.testzip() is None
+        assert set(archive.namelist()) == {'ashna.zip', 'Ashna-Guide-FA.pdf', 'README-FA.txt'}, \
+            'Unexpected buyer-package contents'
+
 report = [archive_check(OUT / name, SLUG) for name in [SLUG + '.zip', SLUG + '-no-license.zip'] if (OUT / name).exists()]
 diagnostics = OUT / 'ashna-activation-diagnostics.zip'
 if diagnostics.exists():
@@ -110,6 +157,9 @@ for guide in [OUT / 'help.pdf']:
     if guide.exists():
         report.append({'file': guide.name, 'bytes': guide.stat().st_size,
                        'sha256': hashlib.sha256(guide.read_bytes()).hexdigest()})
+if bundle_path.is_file():
+    report.append({'file': bundle_path.name, 'bytes': bundle_path.stat().st_size,
+                   'sha256': hashlib.sha256(bundle_path.read_bytes()).hexdigest(), 'files': 3})
 # checksums.json is shared with scripts/package-landing.py: keep the entries this
 # script does not produce, as long as the file is still on disk.
 checksums = OUT / 'checksums.json'
