@@ -24,7 +24,6 @@ $wc_active        = class_exists( 'WooCommerce' );
 $elementor_active = did_action( 'elementor/loaded' ) || class_exists( '\Elementor\Plugin' );
 $curl_active      = function_exists( 'curl_version' );
 $openssl_active   = extension_loaded( 'openssl' );
-$partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 ?>
 <div class="ashna-app-shell" id="ashna-app-shell" dir="rtl">
 	<!-- Floating Toast Notification -->
@@ -393,15 +392,15 @@ $partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
 			<main class="ashna-main">
 
 				<?php
-				require $partials_dir . 'tab-dashboard.php';
-				require $partials_dir . 'tab-auth-flow.php';
-				require $partials_dir . 'tab-sms-gateways.php';
-				require $partials_dir . 'tab-bale-email.php';
-				require $partials_dir . 'tab-appearance.php';
-				require $partials_dir . 'tab-social.php';
-				require $partials_dir . 'tab-woocommerce.php';
-				require $partials_dir . 'tab-security.php';
-				require $partials_dir . 'tab-tools.php';
+				require __DIR__ . '/partials/tab-dashboard.php';
+				require __DIR__ . '/partials/tab-auth-flow.php';
+				require __DIR__ . '/partials/tab-sms-gateways.php';
+				require __DIR__ . '/partials/tab-bale-email.php';
+				require __DIR__ . '/partials/tab-appearance.php';
+				require __DIR__ . '/partials/tab-social.php';
+				require __DIR__ . '/partials/tab-woocommerce.php';
+				require __DIR__ . '/partials/tab-security.php';
+				require __DIR__ . '/partials/tab-tools.php';
 				?>
 
 				<!-- Bottom Action Footer Bar -->

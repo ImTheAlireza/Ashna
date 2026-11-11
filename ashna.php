@@ -10,6 +10,8 @@ final class Ashna_License_Bootstrap {
 
 	private static $status = 'pending';
 
+	private static $authorized = false;
+
 	public static function get_status() {
 		return self::$status;
 	}
@@ -20,55 +22,120 @@ final class Ashna_License_Bootstrap {
 		}
 		self::$status = 'checking';
 
-		$rtl_license_class = 'RTL_License_c1595a7238d64f3a';
-
-		if ( ! class_exists( $rtl_license_class, false ) ) {
-			self::fail( 'license_class_missing', 'فایل لایسنس، کلاس مورد انتظار را تعریف نکرده است. نسخهٔ فایل لایسنس را بررسی کنید.' );
+		$ashna_license_callable = self::is_method_callable();
+		if ( false === $ashna_license_callable ) {
+			self::fail( 'license_method_invalid', 'متد عمومی isActive در کلاس لایسنس در دسترس نیست. فایل لایسنس با این نسخه سازگار نیست.' );
 			return;
 		}
 
 		try {
-			$rtl_license_reflection = new ReflectionClass( $rtl_license_class );
-			$rtl_license_file       = $rtl_license_reflection->getFileName();
-			$rtl_expected_file      = __DIR__ . DIRECTORY_SEPARATOR . $rtl_license_class . '.php';
+// --------------------------------------------------------------------------------------------------- Start RTL License
 
-			if ( ! is_string( $rtl_license_file ) || ! is_file( $rtl_license_file ) ) {
-				self::fail( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
-				return;
-			}
+$rtlLicenseClassName = 'RTL_License_c1595a7238d64f3a';
 
-			if ( realpath( $rtl_license_file ) !== realpath( $rtl_expected_file ) ) {
-				self::fail( 'license_class_conflict', 'کلاس هم‌نام لایسنس از فایل دیگری بارگذاری شده است. فعال‌بودن هم‌زمان نسخه‌های دیگر آشنا را بررسی کنید.' );
-				return;
-			}
+if (
+    class_exists($rtlLicenseClassName, false)
+    && method_exists($rtlLicenseClassName, 'isActive')
+) {
+    try {
+        $rtlLicenseReflection = new \ReflectionClass($rtlLicenseClassName);
+        $rtlLicenseFilePath   = $rtlLicenseReflection->getFileName();
 
-			$rtl_license_hash = @sha1_file( $rtl_license_file );
-			if ( ! is_string( $rtl_license_hash ) || ! hash_equals( self::LICENSE_SHA1, $rtl_license_hash ) ) {
-				self::fail(
-					'license_hash_mismatch',
-					'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی صادرشده برای همین محصول و همین نسخه استفاده کنید.',
-					sprintf( 'expected %s, got %s', self::LICENSE_SHA1, is_string( $rtl_license_hash ) ? $rtl_license_hash : 'unreadable' )
-				);
-				return;
-			}
+        if (is_string($rtlLicenseFilePath) && is_file($rtlLicenseFilePath)) {
+            $rtlLicenseFileHash = @sha1_file($rtlLicenseFilePath);
 
-			$rtl_license = new $rtl_license_class();
+            if (
+                is_string($rtlLicenseFileHash)
+                && hash_equals('a425656c5fe2bfe0aee0122e3f6fab35badcfa8e', $rtlLicenseFileHash)
+            ) {
+                $rtlLicenseClass = new $rtlLicenseClassName();
 
-			if ( ! method_exists( $rtl_license, 'isActive' ) || ! is_callable( array( $rtl_license, 'isActive' ) ) ) {
-				self::fail( 'license_method_invalid', 'متد عمومی isActive در کلاس لایسنس در دسترس نیست. فایل لایسنس با این نسخه سازگار نیست.' );
-				return;
-			}
+                if ($rtlLicenseClass->{'isActive'}() === true) {
+                    // لایسنس فعال است؛ کد امکانات لایسنس‌دار را اینجا قرار دهید.
+                    self::$authorized = true;
+                }
+            }
+        }
+    } catch (\ReflectionException $e) {
+        // بررسی لایسنس ناموفق بود.
+    }
+}
 
-			if ( true !== $rtl_license->{'isActive'}() ) {
-				self::fail( 'license_inactive', 'لایسنس محصول فعال نیست. آن را از طریق افزونهٔ مدیریت راست‌چین فعال کنید.' );
-				return;
-			}
-		} catch ( Throwable $rtl_license_error ) {
+// ----------------------------------------------------------------------------------------------------- End RTL License
+		} catch ( \Throwable $rtl_license_error ) {
 			$rtl_license_diagnostic = sprintf( '%s @ %s:%d', get_class( $rtl_license_error ), basename( $rtl_license_error->getFile() ), $rtl_license_error->getLine() );
 			self::fail( 'license_runtime_error', 'اجرای فایل یا بررسی لایسنس با خطا مواجه شد. سازگاری فایل لایسنس، PHP و افزونهٔ مدیریت راست‌چین را بررسی کنید.', $rtl_license_diagnostic );
 			return;
 		}
 
+		if ( ! self::$authorized ) {
+			$ashna_license_failure = self::diagnose();
+			self::fail( $ashna_license_failure[0], $ashna_license_failure[1], isset( $ashna_license_failure[2] ) ? $ashna_license_failure[2] : '' );
+			return;
+		}
+
+		self::boot();
+		self::$status = 'active';
+	}
+
+	private static function is_method_callable() {
+		$ashna_license_class = 'RTL_License_c1595a7238d64f3a';
+
+		if ( ! class_exists( $ashna_license_class, false ) || ! method_exists( $ashna_license_class, 'isActive' ) ) {
+			return true;
+		}
+
+		try {
+			$ashna_license_method = new \ReflectionMethod( $ashna_license_class, 'isActive' );
+		} catch ( \ReflectionException $ashna_license_error ) {
+			return false;
+		}
+
+		return $ashna_license_method->isPublic();
+	}
+
+	private static function diagnose() {
+		$ashna_license_class = 'RTL_License_c1595a7238d64f3a';
+
+		if ( ! class_exists( $ashna_license_class, false ) ) {
+			return array( 'license_class_missing', 'فایل لایسنس، کلاس مورد انتظار را تعریف نکرده است. نسخهٔ فایل لایسنس را بررسی کنید.' );
+		}
+
+		try {
+			$ashna_license_reflection = new \ReflectionClass( $ashna_license_class );
+			$ashna_license_file       = $ashna_license_reflection->getFileName();
+		} catch ( \ReflectionException $ashna_license_error ) {
+			return array( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
+		}
+
+		$ashna_license_expected = __DIR__ . DIRECTORY_SEPARATOR . $ashna_license_class . '.php';
+
+		if ( ! is_string( $ashna_license_file ) || ! is_file( $ashna_license_file ) ) {
+			return array( 'license_file_missing', 'فایل لایسنس راست‌چین موجود یا قابل خواندن نیست. فایل معتبر RTL_License_c1595a7238d64f3a.php را کنار index.php قرار دهید.' );
+		}
+
+		if ( realpath( $ashna_license_file ) !== realpath( $ashna_license_expected ) ) {
+			return array( 'license_class_conflict', 'کلاس هم‌نام لایسنس از فایل دیگری بارگذاری شده است. فعال‌بودن هم‌زمان نسخه‌های دیگر آشنا را بررسی کنید.' );
+		}
+
+		$ashna_license_hash = @sha1_file( $ashna_license_file );
+
+		if ( ! is_string( $ashna_license_hash ) || ! hash_equals( self::LICENSE_SHA1, $ashna_license_hash ) ) {
+			return array(
+				'license_hash_mismatch',
+				'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی صادرشده برای همین محصول و همین نسخه استفاده کنید.',
+				sprintf( 'expected %s, got %s', self::LICENSE_SHA1, is_string( $ashna_license_hash ) ? $ashna_license_hash : 'unreadable' ),
+			);
+		}
+
+		if ( ! method_exists( $ashna_license_class, 'isActive' ) || ! self::is_method_callable() ) {
+			return array( 'license_method_invalid', 'متد عمومی isActive در کلاس لایسنس در دسترس نیست. فایل لایسنس با این نسخه سازگار نیست.' );
+		}
+
+		return array( 'license_inactive', 'لایسنس محصول فعال نیست. آن را از طریق افزونهٔ مدیریت راست‌چین فعال کنید.' );
+	}
+
+	private static function boot() {
 		add_action(
 			'before_woocommerce_init',
 			static function () {
@@ -79,7 +146,7 @@ final class Ashna_License_Bootstrap {
 			}
 		);
 
-		require_once ASHNA_OTP_PATH . 'includes/class-ashna-autoloader.php';
+		require_once __DIR__ . '/includes/class-ashna-autoloader.php';
 		Ashna_Autoloader::register();
 
 		if ( ! function_exists( 'ashna_otp' ) ) {
@@ -89,7 +156,6 @@ final class Ashna_License_Bootstrap {
 		}
 
 		ashna_otp();
-		self::$status = 'active';
 	}
 
 	private static function fail( $code, $message, $diagnostic = '' ) {

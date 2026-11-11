@@ -64,7 +64,7 @@ class Ashna_WooCommerce {
 	public function override_myaccount_login_template( $located, $template_name ) {
 		if ( 'myaccount/form-login.php' === $template_name && ! is_user_logged_in() ) {
 			if ( Ashna_Helper::get_option( 'wc_replace_myaccount', 1 ) ) {
-				$custom_file = ASHNA_OTP_PATH . 'templates/wc-myaccount-login.php';
+				$custom_file = __DIR__ . '/../../templates/wc-myaccount-login.php';
 				if ( file_exists( $custom_file ) ) {
 					return $custom_file;
 				}

@@ -883,7 +883,7 @@ class Ashna_Admin {
 		$recent_logs     = Ashna_Logger::get_logs( array( 'per_page' => 6, 'paged' => 1 ) )['items'];
 		$active_lockouts = Ashna_Security::get_active_lockouts();
 
-		include ASHNA_OTP_PATH . 'includes/admin/views/settings-page.php';
+		include __DIR__ . '/views/settings-page.php';
 	}
 
 	/**
@@ -909,6 +909,6 @@ class Ashna_Admin {
 		);
 		$stats     = Ashna_Logger::get_stats();
 
-		include ASHNA_OTP_PATH . 'includes/admin/views/logs-page.php';
+		include __DIR__ . '/views/logs-page.php';
 	}
 }

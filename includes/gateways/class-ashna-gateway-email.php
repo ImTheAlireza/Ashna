@@ -70,7 +70,7 @@ class Ashna_Gateway_Email extends Ashna_Abstract_Gateway {
 		);
 
 		ob_start();
-		include ASHNA_OTP_PATH . 'templates/email-otp.php';
+		include __DIR__ . '/../../templates/email-otp.php';
 		$html_message = ob_get_clean();
 
 		$headers   = array( 'Content-Type: text/html; charset=UTF-8' );

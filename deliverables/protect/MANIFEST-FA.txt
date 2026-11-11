@@ -1,0 +1,82 @@
+بسته‌های ارسال به راست‌چین برای محافظت
+
+قواعد راست‌چین:
+- هر ZIP شامل ۲ تا ۵ فایل PHP؛ هر فایل حداکثر ۱ مگابایت؛ مجموع پس از استخراج حداکثر ۵ مگابایت.
+- فایل اصلی افزونه (index.php) که Loader لایسنس داخل آن است ارسال نمی‌شود.
+- فایل محافظت‌شده را باز، ویرایش یا دوباره ذخیره نکنید؛ برای هر تغییر، نسخهٔ اصلی را ویرایش و دوباره ارسال کنید.
+- پس از دریافت فایل‌ها، هر فایل را در همان مسیر نسبی خودش جایگزین کنید.
+
+ارسال تک‌فایلی (بدون ZIP):
+- ashna.php — کد بررسی لایسنس؛ پس از دریافت، کنار index.php قرار می‌گیرد.
+
+تعداد فایل‌های داخل بسته‌ها: 50 فایل در 10 بسته
+
+ashna-protect-01.zip  (5 فایل، 51807 بایت)
+    includes/admin/class-ashna-admin.php
+    includes/admin/views/logs-page.php
+    includes/admin/views/partials/tab-appearance.php
+    includes/admin/views/partials/tab-auth-flow.php
+    includes/admin/views/partials/tab-bale-email.php
+
+ashna-protect-02.zip  (5 فایل، 28746 بایت)
+    includes/admin/views/partials/tab-dashboard.php
+    includes/admin/views/partials/tab-security.php
+    includes/admin/views/partials/tab-sms-gateways.php
+    includes/admin/views/partials/tab-social.php
+    includes/admin/views/partials/tab-tools.php
+
+ashna-protect-03.zip  (5 فایل، 26667 بایت)
+    includes/admin/views/partials/tab-woocommerce.php
+    includes/admin/views/settings-page.php
+    includes/class-ashna-plugin.php
+    includes/core/class-ashna-activator.php
+    includes/core/class-ashna-helper.php
+
+ashna-protect-04.zip  (5 فایل، 23762 بایت)
+    includes/core/class-ashna-ip.php
+    includes/core/class-ashna-jwt.php
+    includes/core/class-ashna-logger.php
+    includes/core/class-ashna-passkey.php
+    includes/core/class-ashna-rate-limiter.php
+
+ashna-protect-05.zip  (5 فایل، 24723 بایت)
+    includes/core/class-ashna-security.php
+    includes/core/class-ashna-session.php
+    includes/gateways/abstract-ashna-gateway.php
+    includes/gateways/class-ashna-failover.php
+    includes/gateways/class-ashna-gateway-bale.php
+
+ashna-protect-06.zip  (5 فایل، 10988 بایت)
+    includes/gateways/class-ashna-gateway-email.php
+    includes/gateways/class-ashna-gateway-farazsms.php
+    includes/gateways/class-ashna-gateway-ippanel.php
+    includes/gateways/class-ashna-gateway-kavenegar.php
+    includes/gateways/class-ashna-gateway-manager.php
+
+ashna-protect-07.zip  (5 فایل، 6329 بایت)
+    includes/gateways/class-ashna-gateway-melipayamak.php
+    includes/gateways/class-ashna-gateway-msgway-messenger.php
+    includes/gateways/class-ashna-gateway-msgway.php
+    includes/gateways/class-ashna-gateway-sandbox.php
+    includes/gateways/class-ashna-gateway-smsir.php
+
+ashna-protect-08.zip  (5 فایل، 13491 بایت)
+    includes/gateways/interface-ashna-gateway.php
+    includes/integrations/class-ashna-integration-dokan.php
+    includes/integrations/class-ashna-integration-um.php
+    includes/integrations/class-ashna-integrations.php
+    includes/integrations/elementor/class-ashna-elementor-login-widget.php
+
+ashna-protect-09.zip  (5 فایل، 35241 بایت)
+    includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php
+    includes/integrations/elementor/class-ashna-elementor.php
+    includes/services/class-ashna-auth.php
+    includes/services/class-ashna-frontend.php
+    includes/services/class-ashna-sso.php
+
+ashna-protect-10.zip  (5 فایل، 15088 بایت)
+    includes/services/class-ashna-woocommerce.php
+    templates/email-otp.php
+    templates/login-form.php
+    templates/sso-phone-prompt.php
+    templates/wc-myaccount-login.php

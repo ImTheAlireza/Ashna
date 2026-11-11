@@ -64,6 +64,17 @@ for reference in ['README.md', 'docs/licensing-FA.md', 'scripts/package-delivera
                   'tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php']:
     if production_hash not in (ROOT / reference).read_text(encoding='utf-8'):
         raise SystemExit(f'{reference} does not carry the current LICENSE_SHA1; update it with ashna.php')
+# RTL's protection backend validates the license-check block, so its markers,
+# variable names and the inline hash must stay exactly as the vendor supplied.
+for required in [
+    '// --------------------------------------------------------------------------------------------------- Start RTL License',
+    '// ----------------------------------------------------------------------------------------------------- End RTL License',
+    f"hash_equals('{production_hash}', $rtlLicenseFileHash)",
+    "$rtlLicenseClass->{'isActive'}() === true",
+    '$rtlLicenseClassName = \'RTL_License_c1595a7238d64f3a\';',
+]:
+    if required not in original.decode('utf-8'):
+        raise SystemExit('ashna.php lost part of the RTL verification block: ' + required)
 for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
         plugin = Path(temp) / 'ashna-otp'

@@ -364,7 +364,7 @@ class Ashna_Frontend {
 		if ( $theme_template ) {
 			include $theme_template;
 		} else {
-			include ASHNA_OTP_PATH . 'templates/login-form.php';
+			include __DIR__ . '/../../templates/login-form.php';
 		}
 		return ob_get_clean();
 	}
