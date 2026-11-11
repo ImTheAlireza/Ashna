@@ -59,9 +59,19 @@ autoloader و کل قابلیت‌های افزونه باز می‌شوند. ت
 برمی‌گردد. بنابراین در `ashna.php` این موارد باید عیناً بمانند:
 
 - نشانه‌های `Start RTL License` و `End RTL License` (همراه با کامنت‌ها)
-- نام متغیرها: `$rtlLicenseClassName`، `$rtlLicenseReflection`، `$rtlLicenseFilePath`،
-  `$rtlLicenseFileHash` و `$rtlLicenseClass`
-- هش SHA-1 به‌صورت متنی داخل `hash_equals(...)` و شرط `=== true` برای `isActive()`
+- سه خط تخصیص عیناً به این شکل:
+  `$rtlLicenseClassName = 'RTL_License_c1595a7238d64f3a';`،
+  `$rtlLicenseFilePath = __DIR__ . DIRECTORY_SEPARATOR . $rtlLicenseClassName . '.php';` و
+  `$rtlLicenseFileHash = @sha1_file($rtlLicenseFilePath);`
+- شرط `if ( $rtlLicenseFileHash === '<sha1>' && file_exists($rtlLicenseFilePath) ) {`
+  با هش متنی (نه `hash_equals` و نه Reflection) و بعدش `require_once $rtlLicenseFilePath;`
+- بررسی `class_exists(...) && method_exists(..., 'isActive')` و سپس
+  `$rtlLicenseClass->{'isActive'}() === true`
+- خط `// Product is Active Now, Enable Pro Features` که کد بوت زیر آن می‌آید
+
+هر تغییری در این ساختار (مثلاً رسیدن به هش با `ReflectionClass` یا `hash_equals`) باعث
+می‌شود پنل راست‌چین همان خطای «کد بررسی لایسنس موجود در فایل ناقص یا نامعتبر است» را
+برگرداند؛ تجربهٔ عملی همین بود.
 
 تست `tests/run-license-bootstrap.py` وجود همین اجزا را بررسی می‌کند تا در ویرایش‌های
 بعدی حذف نشوند. کد امکانات لایسنس‌دار (بوت هسته) داخل همان شرط `isActive()` صدا زده

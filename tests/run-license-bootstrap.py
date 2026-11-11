@@ -69,9 +69,12 @@ for reference in ['README.md', 'docs/licensing-FA.md', 'scripts/package-delivera
 for required in [
     '// --------------------------------------------------------------------------------------------------- Start RTL License',
     '// ----------------------------------------------------------------------------------------------------- End RTL License',
-    f"hash_equals('{production_hash}', $rtlLicenseFileHash)",
+    "$rtlLicenseClassName = 'RTL_License_c1595a7238d64f3a';",
+    "$rtlLicenseFilePath = __DIR__ . DIRECTORY_SEPARATOR . $rtlLicenseClassName . '.php';",
+    '$rtlLicenseFileHash = @sha1_file($rtlLicenseFilePath);',
+    f"if ( $rtlLicenseFileHash === '{production_hash}' && file_exists($rtlLicenseFilePath) ) {{",
+    'require_once $rtlLicenseFilePath;',
     "$rtlLicenseClass->{'isActive'}() === true",
-    '$rtlLicenseClassName = \'RTL_License_c1595a7238d64f3a\';',
 ]:
     if required not in original.decode('utf-8'):
         raise SystemExit('ashna.php lost part of the RTL verification block: ' + required)
