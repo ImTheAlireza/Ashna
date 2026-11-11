@@ -48,6 +48,17 @@ add_action(
 
 final class Ashna_License_Bootstrap {
 
+	/**
+	 * SHA-1 of the RTL license file issued by the vendor for this product build.
+	 *
+	 * The file name and contents are fixed by the vendor and must never be
+	 * edited. Every ionCube-protected build is bound to exactly this hash, so a
+	 * re-issued file (even with the same name) or an edited copy is rejected
+	 * here before any of its code runs. When the vendor issues a new license,
+	 * update this value and tools/ashna-activation-diagnostics.
+	 */
+	const LICENSE_SHA1 = 'a425656c5fe2bfe0aee0122e3f6fab35badcfa8e';
+
 	/** No service is booted unless the verifier explicitly returns true. */
 	private static $status = 'pending';
 
@@ -68,6 +79,10 @@ final class Ashna_License_Bootstrap {
 		self::$status = 'checking';
 
 		// --------------------------------------------------------------------------------------------------- Start RTL License
+		// RTL loader + gate. ashna.php holds the loader, so this file is never
+		// submitted for ionCube protection; the encoded product files are bound
+		// to the license hash declared in LICENSE_SHA1. Keep this block intact:
+		// the license file itself, its name and its path are fixed by the vendor.
 		$rtlLicenseClassName = 'RTL_License_c1595a7238d64f3a';
 		$rtlLicenseFilePath  = __DIR__ . DIRECTORY_SEPARATOR . $rtlLicenseClassName . '.php';
 
@@ -78,8 +93,12 @@ final class Ashna_License_Bootstrap {
 
 		try {
 			$rtlLicenseFileHash = @sha1_file( $rtlLicenseFilePath );
-			if ( '321791ab0231890e4569d17c52e64ed93d2eb42d' !== $rtlLicenseFileHash ) {
-				self::fail( 'license_hash_mismatch', 'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی متناظر با همین نسخه استفاده کنید.' );
+			if ( ! is_string( $rtlLicenseFileHash ) || ! hash_equals( self::LICENSE_SHA1, $rtlLicenseFileHash ) ) {
+				self::fail(
+					'license_hash_mismatch',
+					'هش فایل لایسنس با نسخهٔ مورد انتظار افزونه مطابقت ندارد. از فایل اصلی صادرشده برای همین محصول و همین نسخه استفاده کنید.',
+					sprintf( 'expected %s, got %s', self::LICENSE_SHA1, is_string( $rtlLicenseFileHash ) ? $rtlLicenseFileHash : 'unreadable' )
+				);
 				return;
 			}
 

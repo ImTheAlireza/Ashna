@@ -8,6 +8,7 @@ Production hashes/files are never altered: all fixture edits use temporary copie
 from pathlib import Path
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -50,6 +51,18 @@ fixtures = {
     'no_license_activation': ('', 'active'),
 }
 original = (ROOT / 'ashna.php').read_bytes()
+# Read the production hash from the verifier itself: a re-issued license file
+# changes one constant in ashna.php and this suite keeps working unchanged.
+match = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", original.decode('utf-8'))
+if not match:
+    raise SystemExit('LICENSE_SHA1 constant not found in ashna.php')
+production_hash = match.group(1)
+# A re-issued license must not leave the docs or the diagnostic tool pointing at
+# the previous file: every reference has to carry the same hash as the verifier.
+for reference in ['README.md', 'docs/licensing-FA.md', 'scripts/package-deliverables.py',
+                  'tools/ashna-activation-diagnostics/ashna-activation-diagnostics.php']:
+    if production_hash not in (ROOT / reference).read_text(encoding='utf-8'):
+        raise SystemExit(f'{reference} does not carry the current LICENSE_SHA1; update it with ashna.php')
 for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
         plugin = Path(temp) / 'ashna-otp'
@@ -69,7 +82,7 @@ for scenario, (body, expected) in fixtures.items():
             (plugin / 'conflicting-class.php').write_text('<?php class ' + license_name + ' { }')
         source = (plugin / 'ashna.php').read_text()
         if scenario != 'bad_hash':
-            source = source.replace('321791ab0231890e4569d17c52e64ed93d2eb42d', hashlib.sha1(fixture.encode()).hexdigest())
+            source = source.replace(production_hash, hashlib.sha1(fixture.encode()).hexdigest())
         (plugin / 'ashna.php').write_text(source)
         if scenario.startswith('no_license'):
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')

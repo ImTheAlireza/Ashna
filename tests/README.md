@@ -19,6 +19,10 @@ For the npm PHP-WASM CLI, set `PHP=7.4`, `PHP=8.2` or `PHP=8.3` as appropriate.
 
 All license stubs and their matching fixture hashes are generated **only in
 temporary plugin copies**. The production verifier hash is never altered.
+The suite reads `Ashna_License_Bootstrap::LICENSE_SHA1` from `ashna.php`, so a
+re-issued license needs no test edits; it fails if `README.md`,
+`docs/licensing-FA.md`, the packaging script or the activation diagnostic tool
+still point at a previous hash.
 Coverage includes normal early loading, late activation from function scope,
 strict true/false results, missing/bad files, runtime/parse/constructor errors,
 preloaded/conflicting classes, inaccessible methods, service initialization,

@@ -69,7 +69,10 @@ if ('conflict' === $scenario) { require $plugin_dir . '/conflicting-class.php'; 
 if ('preloaded' === $scenario) { require $plugin_dir . '/RTL_License_c1595a7238d64f3a.php'; }
 ob_start();
 if ('direct_then_index' === $scenario) { require_once $plugin_dir . '/ashna.php'; }
-// WordPress's activation sandbox includes the plugin from function scope.
+// WordPress's activation sandbox includes the plugin entry file — the one that
+// carries the plugin header, ashna.php — from function scope.
+(function ($entry) { include_once $entry; })($plugin_dir . '/ashna.php');
+// The silence file ships in the plugin root and must never emit output.
 (function ($entry) { include_once $entry; })($plugin_dir . '/index.php');
 check(ob_get_clean() === '', 'Unexpected output during inclusion');
 if (!$late) {

@@ -92,17 +92,18 @@ final class Ashna_Activation_Diagnostics {
 
 	public static function is_target( $plugin ) {
 		// Deliberately limited to the distributed Ashna entry points, no traversal.
-		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/index\.php\z~i', $plugin );
+		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/(?:ashna|index)\.php\z~i', $plugin );
 	}
 
 	private static function files( $plugin ) {
 		$dir = WP_PLUGIN_DIR . '/' . dirname( $plugin );
 		$license = $dir . '/RTL_License_c1595a7238d64f3a.php';
 		$readable = is_file( $license ) && is_readable( $license );
+		// Keep this hash in sync with Ashna_License_Bootstrap::LICENSE_SHA1.
 		$result = array(
 			'license_present' => is_file( $license ),
 			'license_readable' => $readable,
-			'license_matches_expected_sha1' => $readable ? ( '321791ab0231890e4569d17c52e64ed93d2eb42d' === @sha1_file( $license ) ) : null,
+			'license_matches_expected_sha1' => $readable ? ( 'a425656c5fe2bfe0aee0122e3f6fab35badcfa8e' === @sha1_file( $license ) ) : null,
 		);
 		foreach ( array( 'index.php', 'ashna.php' ) as $name ) {
 			$file = $dir . '/' . $name;

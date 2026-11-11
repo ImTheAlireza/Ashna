@@ -30,7 +30,7 @@ plugin_readme = '''آشنا | ورود و ثبت‌نام با کد یکبارم
 نصب: پیشخوان وردپرس ← افزونه‌ها ← افزودن ← بارگذاری افزونه.
 قبل از نصب یا جایگزینی، از سایت و دیتابیس نسخهٔ پشتیبان بگیرید.
 
-مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش 321791ab0231890e4569d17c52e64ed93d2eb42d و تأیید isActive() نیاز دارد. {license_note}
+مهم: فعال‌شدن امکانات به فایل معتبر RTL_License_c1595a7238d64f3a.php با هش a425656c5fe2bfe0aee0122e3f6fab35badcfa8e و تأیید isActive() نیاز دارد. {license_note}
 وردپرس حداقل ۵.۸ و PHP حداقل ۸.۲ مطابق سربرگ افزونه لازم است؛ فعال‌سازی استاندارد وردپرس روی PHP پایین‌تر رد می‌شود. نصب این ZIP، PHP هاست را تغییر نمی‌دهد. ionCube Loader باید در PHP وب فعال و با همان PHP و فایل لایسنس سازگار باشد؛ سازگاری با همهٔ نسخه‌های جدیدتر PHP تضمین نشده است.
 بررسی مسیر لایسنس بعد از بارگذاری وردپرس انجام می‌شود. خطاهای قابل‌گرفتنِ فایل لایسنس، بدون فعال‌کردن امکانات، با کد تشخیصی در پیشخوان نمایش داده می‌شوند. هش و شرط isActive() === true همچنان اجباری هستند. اگر ionCube Loader روی PHP وب فعال نباشد، کد license_loader_missing نمایش داده می‌شود و هیچ فایلی اجرا نمی‌شود؛ این حالت را با افزونهٔ عیب‌یابی آشنا قبل از تماس با پشتیبانی بررسی کنید.
 
@@ -67,9 +67,9 @@ def archive_check(path, prefix):
 license_file = ROOT / 'RTL_License_c1595a7238d64f3a.php'
 include_license = not args.without_license and license_file.is_file()
 if include_license:
-    expected_hash = re.search(r"'([0-9a-f]{40})'\s*!==\s*\$rtlLicenseFileHash", (ROOT / 'ashna.php').read_text())
+    expected_hash = re.search(r"const LICENSE_SHA1 = '([0-9a-f]{40})';", (ROOT / 'ashna.php').read_text())
     if not expected_hash or hashlib.sha1(license_file.read_bytes()).hexdigest() != expected_hash.group(1):
-        raise SystemExit('License file does not match the verifier hash; refusing to package a mismatched license.')
+        raise SystemExit('License file does not match LICENSE_SHA1 in ashna.php; refusing to package a mismatched license.')
 
 if not args.without_license:
     plugin_readme = plugin_readme.format(license_note=LICENSE_INCLUDED_NOTE if include_license else LICENSE_MISSING_NOTE)

@@ -4,6 +4,7 @@
 |---|---|
 | `demo-report-FA.md` / `.html` | گزارش پژوهش دمو و طرح اجرای لندینگ؛ منبع تصمیم‌های فاز ۹ |
 | `changelog-FA.txt` | تاریخچهٔ تغییرات نسخهٔ فعلی (۳.۱.۳) |
+| `licensing-FA.md` | مشخصات فایل لایسنس راست‌چین، دروازهٔ لایسنس و چک‌لیست صدور مجدد |
 | `security-report-FA.md` | گزارش بررسی‌های امنیتی |
 | `load-report-FA.md` | گزارش تست بار و پایداری |
 | `optimization-*.md` | ممیزی و نتیجهٔ بهینه‌سازی کوئری‌ها |
@@ -12,13 +13,13 @@
 ## ساخت بستهٔ افزونه
 
 ```sh
-python3 scripts/package-deliverables.py                 # ashna-otp.zip (لایسنس‌دار)
-python3 scripts/package-deliverables.py --without-license  # ashna-otp-no-license.zip
+python3 scripts/package-deliverables.py                 # ashna.zip (لایسنس‌دار)
+python3 scripts/package-deliverables.py --without-license  # ashna-no-license.zip
 ```
 
 خروجی در `deliverables/` نوشته می‌شود و `checksums.json` بازسازی می‌شود.
-اسکریپت قبل از بسته‌بندی، هش فایل لایسنس را با بررسی‌کنندهٔ `ashna.php` تطبیق می‌دهد و
-بعد از بسته‌بندی، نبود نام برند قبلی را داخل ZIP بررسی می‌کند.
+اسکریپت قبل از بسته‌بندی، SHA-1 فایل لایسنس را با ثابت `LICENSE_SHA1` در `ashna.php` تطبیق می‌دهد و در صورت نخواندن هش، بسته‌سازی را متوقف می‌کند؛ بعد
+از بسته‌بندی، نبود نام برند قبلی را داخل ZIP بررسی می‌کند.
 
 ## لندینگ
 
