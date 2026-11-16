@@ -1,4 +1,6 @@
 // node scripts/render-help-pdf.mjs
+// Screenshots changed? rebuild the JPEG copies first (chromium embeds webp losslessly → huge PDF):
+//   ./.venv/bin/python scripts/optimize-help-images.py
 // Local: npm i --prefix .cache playwright-core @sparticuz/chromium
 // Bundled libs: SIGNA_BUNDLED_LIBS=1 node scripts/render-help-pdf.mjs
 import { createRequire } from 'node:module';
