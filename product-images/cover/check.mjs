@@ -11,7 +11,7 @@ const report = await page.evaluate(() => {
   for (const el of document.querySelectorAll('.cover *')) {
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height) continue;
-    const bleed = el.closest('.grain,.dots,.halo,.streak,.floor,.edge,.wordmark');
+    const bleed = el.closest('.grain,.dots,.halo,.streak,.floor,.edge,.wordmark,.pattern,.vig,[data-bleed]');
     if (bleed) continue;
     if (r.left < cover.left - 1 || r.top < cover.top - 1 || r.right > cover.right + 1 || r.bottom > cover.bottom + 1)
       out.push(['outside', el.className || el.tagName, Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]);
@@ -19,7 +19,7 @@ const report = await page.evaluate(() => {
       out.push(['h-overflow', el.className || el.tagName, el.scrollWidth, el.clientWidth]);
   }
   const feats = [...document.querySelectorAll('.feat p')].map(p => [p.textContent.trim().slice(0, 18), Math.round(p.getBoundingClientRect().left)]);
-  const cards = [...document.querySelectorAll('.notif,.mini,.phone,.trust')].map(e => [e.className, Math.round(e.getBoundingClientRect().left), Math.round(e.getBoundingClientRect().right)]);
+  const cards = [...document.querySelectorAll('.window,.stage')].map(e => [e.className, Math.round(e.getBoundingClientRect().left), Math.round(e.getBoundingClientRect().right)]);
   return { out, feats, cards, minFeatLeft: Math.min(...feats.map(f => f[1])) };
 });
 console.log(JSON.stringify(report, null, 1));
