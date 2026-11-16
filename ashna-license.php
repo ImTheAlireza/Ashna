@@ -44,9 +44,23 @@ final class Ashna_License_Bootstrap {
 	/** License object, only kept when isActive() returned true. */
 	private static $license = null;
 
+	/** True only after the license passed, for the protected product files. */
+	private static $granted = false;
+
 	/** Read-only diagnostic status; does not re-run the verifier. */
 	public static function get_status() {
 		return self::$status;
+	}
+
+	/**
+	 * Did the license pass on this request?
+	 *
+	 * Every protected file (ashna-core.php and includes/**) starts with a guard
+	 * that returns early unless this is true, so requiring an encoded file
+	 * directly — without going through the gate — boots nothing.
+	 */
+	public static function granted() {
+		return self::$granted;
 	}
 
 	/**
@@ -148,6 +162,10 @@ final class Ashna_License_Bootstrap {
 			self::fail( 'license_core_missing' );
 			return;
 		}
+
+		// From here on the protected files are allowed to run. Set before the
+		// require: the autoloader inside ashna-core.php is already protected.
+		self::$granted = true;
 
 		// Keep core errors outside the license catch: do not mislabel failures
 		// in plugin services as licensing errors or silently swallow them.

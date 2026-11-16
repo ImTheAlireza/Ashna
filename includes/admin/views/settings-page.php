@@ -24,7 +24,7 @@ $wc_active        = class_exists( 'WooCommerce' );
 $elementor_active = did_action( 'elementor/loaded' ) || class_exists( '\Elementor\Plugin' );
 $curl_active      = function_exists( 'curl_version' );
 $openssl_active   = extension_loaded( 'openssl' );
-$partials_dir     = ASHNA_OTP_PATH . 'includes/admin/views/partials/';
+$partials_dir     = __DIR__ . '/partials/';
 ?>
 <div class="ashna-app-shell" id="ashna-app-shell" dir="rtl">
 	<!-- Floating Toast Notification -->

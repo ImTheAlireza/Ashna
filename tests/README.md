@@ -33,11 +33,14 @@ see `docs/RTL-LICENSE-FA.md`.
 
 ## Protection readiness
 
-`python3 tests/run-protection-readiness.py` pins RTL-Theme's submission rules:
-`ashna-core.php` must stay under 1 MB, use no short tags and no
-`__halt_compiler()`, reach other files only through an explicit path base, and
-must not carry the plugin header or the license Loader. `ashna.php` and
-`ashna-license.php` must stay readable — the service does not accept them.
+`python3 tests/run-protection-readiness.py` pins RTL-Theme's submission rules
+for all 48 files that get protected (`ashna-core.php` plus `includes/**`): under
+1 MB each, no short tags, no `__halt_compiler()`, every include/require with an
+explicit path base, and never the plugin header or the license Loader.
+`ashna.php` and `ashna-license.php` must stay readable — the service does not
+accept them — and the entry guard (`Ashna_License_Bootstrap::granted()`) must be
+in place so a direct `require` of `ashna-core.php` boots nothing (scenario
+`direct_bypass`).
 One scenario feeds an ionCube-encoded stub without the Loader and expects
 `license_loader_missing`: the gate must refuse before `require`, because the
 encoded stub itself would print a raw error and `exit(199)` the request.

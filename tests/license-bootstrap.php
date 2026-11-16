@@ -76,6 +76,17 @@ if ($late) {
 }
 if ('conflict' === $scenario) { require $plugin_dir . '/conflicting-class.php'; }
 if ('preloaded' === $scenario) { require $plugin_dir . '/RTL_License_c1595a7238d64f3a.php'; }
+if ('direct_bypass' === $scenario) {
+	// Requiring the protected entry file without the gate must boot nothing.
+	// (Class files cannot be guarded this way: PHP binds class declarations at
+	// compile time, so an early `return` above them is too late.)
+	require $plugin_dir . '/ashna-core.php';
+	check(!function_exists('ashna_otp'), 'Direct require booted the kernel');
+	check(!class_exists('Ashna_Plugin', false), 'Direct require loaded the kernel class');
+	check(!did_action('plugins_loaded'), 'Direct require fired plugin hooks');
+	echo 'PASS ' . $scenario . ' / PHP ' . PHP_VERSION . "\n";
+	return;
+}
 ob_start();
 if ('direct_then_index' === $scenario) { require_once $plugin_dir . '/ashna.php'; }
 // WordPress includes the plugin main file (the one with the Plugin Name header)

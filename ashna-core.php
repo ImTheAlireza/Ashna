@@ -28,6 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Licensed product: only the verified gate may start the product. This file is
+// encoded, so the guard cannot be read — and a direct `require` of it, without
+// the license gate, boots nothing. The license-free build opts out explicitly.
+if ( ! defined( 'ASHNA_NO_LICENSE_BUILD' )
+	&& ( ! class_exists( 'Ashna_License_Bootstrap', false ) || ! Ashna_License_Bootstrap::granted() ) ) {
+	return;
+}
+
 require_once __DIR__ . '/includes/class-ashna-autoloader.php';
 Ashna_Autoloader::register();
 

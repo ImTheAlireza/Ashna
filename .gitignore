@@ -3,3 +3,6 @@
 .venv/
 node_modules/
 __pycache__/
+
+# Seller-side artefact built by scripts/apply-protected-files.py
+deliverables/ashna-protected.zip

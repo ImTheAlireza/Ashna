@@ -79,8 +79,8 @@ class Ashna_Elementor {
 			return;
 		}
 
-		require_once ASHNA_OTP_PATH . 'includes/integrations/elementor/class-ashna-elementor-login-widget.php';
-		require_once ASHNA_OTP_PATH . 'includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php';
+		require_once __DIR__ . '/class-ashna-elementor-login-widget.php';
+		require_once __DIR__ . '/class-ashna-elementor-modal-button-widget.php';
 
 		$widgets_manager->register( new Ashna_Elementor_Login_Widget() );
 		$widgets_manager->register( new Ashna_Elementor_Modal_Button_Widget() );
@@ -94,8 +94,8 @@ class Ashna_Elementor {
 			return;
 		}
 
-		require_once ASHNA_OTP_PATH . 'includes/integrations/elementor/class-ashna-elementor-login-widget.php';
-		require_once ASHNA_OTP_PATH . 'includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php';
+		require_once __DIR__ . '/class-ashna-elementor-login-widget.php';
+		require_once __DIR__ . '/class-ashna-elementor-modal-button-widget.php';
 
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Ashna_Elementor_Login_Widget() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Ashna_Elementor_Modal_Button_Widget() );

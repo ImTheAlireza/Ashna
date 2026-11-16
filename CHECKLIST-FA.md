@@ -412,7 +412,7 @@
 - [ ] **فایل ۲، بروزرسان:** فقط `ashna.zip` قابل نصب
 - [ ] **فایل ۳:** فقط PDF راهنما
 - [ ] 👤 قراردادن فایل لایسنس راست‌چین (`RTL_License_*.php`) کنار فایل اصلی افزونه
-- [ ] 👤 ارسال **فقط** `ashna-core.php` به سرویس محافظت فایل راست‌چین و جای‌گذاری خروجی با همان نام (`ashna.php` و `ashna-license.php` متن ساده می‌مانند — روند در `docs/RTL-LICENSE-FA.md`)
+- [ ] 👤 ارسال `ashna-core.php` و ۱۰ بستهٔ `deliverables/protection/batch-*.zip` به سرویس محافظت فایل راست‌چین و جای‌گذاری خروجی با `scripts/apply-protected-files.py` (`ashna.php` و `ashna-license.php` متن ساده می‌مانند — روند در `docs/RTL-LICENSE-FA.md`)
 - [ ] نبود فایل‌های اضافه در زیپ افزونه: tests، scripts، deliverables، node_modules و .git
 - [ ] تست نصب زیپ نهایی روی وردپرس تمیز
 - [x] اسکریپت `scripts/package-rightchin.py` (بستهٔ برند قبلی) حذف شد؛ ساختن بسته با `scripts/package-deliverables.py` و ساختن زیپ لندینگ با `scripts/package-landing.py` انجام می‌شود.

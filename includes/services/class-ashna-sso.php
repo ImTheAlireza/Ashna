@@ -1245,7 +1245,7 @@ class Ashna_SSO {
 			)
 		);
 
-		include ASHNA_OTP_PATH . 'templates/sso-phone-prompt.php';
+		include __DIR__ . '/../../templates/sso-phone-prompt.php';
 	}
 
 	/**

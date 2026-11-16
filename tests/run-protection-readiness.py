@@ -2,90 +2,78 @@
 
 RTL-Theme (rtl-theme.com/designer → ارسال محصول) accepts plain PHP files up to
 1 MB, without short tags and without __halt_compiler(), and rejects any
-include/require that has no explicit path base. It also says the main plugin
-file and the file that holds the license Loader must NOT be sent for
-protection.
+include/require without an explicit path base. It also says the main plugin
+file and the file that holds the license Loader must NOT be sent.
 
 So this test pins the submission contract:
 
-  ashna-core.php     -> the only file that goes to the protection service
-  ashna.php          -> main file: has `Plugin Name`, never protected
-  ashna-license.php  -> holds the Loader, never protected
+  ashna-core.php + includes/**   -> the files that go to the protection service
+  ashna.php                      -> main file: has `Plugin Name`, never protected
+  ashna-license.php              -> holds the Loader, never protected
+
+It also proves the entry guard is in place: a direct `require` of ashna-core.php
+boots nothing (tests/run-license-bootstrap.py verifies the behaviour on PHP).
 
 Run: python3 tests/run-protection-readiness.py
 """
 from pathlib import Path
-import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SUBMITTED = ROOT / 'ashna-core.php'
-PLAIN = [ROOT / 'ashna.php', ROOT / 'ashna-license.php']
-
-# Bases RTL-Theme documents as portable in protected files.
-SAFE_BASES = ('__DIR__', '__FILE__', 'plugin_dir_path(', 'plugin_dir_url(', 'ABSPATH',
-              'WP_PLUGIN_DIR', 'WP_CONTENT_DIR', 'get_template_directory(',
-              'get_stylesheet_directory(')
-INCLUDE = re.compile(r'\b(?:require|include)(?:_once)?\b[ \t]*(?:\([ \t]*)?([^;]*);', re.I)
-SHORT_TAG = re.compile(r'<\?(?!php|=)', re.I)
-BLOCK_COMMENT = re.compile(r'/\*.*?\*/', re.S)
-LINE_COMMENT = re.compile(r'^[ \t]*(?://|\*|#(?!\[)).*$', re.M)
-
-
-def code_only(text):
-    """Drop comments: doc examples must not look like real includes."""
-    return LINE_COMMENT.sub('', BLOCK_COMMENT.sub('', text))
+sys.path.insert(0, str(ROOT / 'scripts'))
+import protection_rules as rules  # noqa: E402
 
 problems = []
+core = ROOT / 'ashna-core.php'
 
 
-def fail(message):
-    problems.append(message)
-
-
-def check_submitted(path):
-    if not path.is_file():
-        fail(f'{path.name}: missing')
-        return
-    raw = path.read_bytes()
-    size = len(raw)
-    if size == 0:
-        fail(f'{path.name}: empty file')
-    if size > 1024 * 1024:
-        fail(f'{path.name}: {size} bytes exceeds the 1 MB per-file limit')
-    text = raw.decode('utf-8')
-    code = code_only(text)
-    if SHORT_TAG.search(text):
-        fail(f'{path.name}: short open tag is not supported')
-    if '__halt_compiler' in code:
-        fail(f'{path.name}: __halt_compiler() cannot be protected')
-    if 'Plugin Name:' in text:
-        fail(f'{path.name}: carries the plugin header; the main file must never be submitted')
-    if 'RTL_LICENSE_CLASS' in text or 'RTL_LICENSE_HASH' in text:
-        fail(f'{path.name}: contains the license Loader; the Loader file must never be submitted')
-    for expression in INCLUDE.findall(code):
-        if not expression.lstrip().startswith(SAFE_BASES):
-            fail(f'{path.name}: pathless include/require -> {expression.strip()[:60]}')
-    print(f'  {path.name}: {size} bytes, {len(INCLUDE.findall(code))} include/require statements, all with an explicit base')
-
-
-def check_plain(path, needles):
-    text = path.read_text()
-    for needle in needles:
-        if needle not in text:
-            fail(f'{path.name}: expected {needle!r} to stay in the readable file')
-    # Only the shipped main file may carry a plugin header; the no-license
-    # template becomes that main file in its own build.
-    if path.parent == ROOT and path.name != 'ashna.php' and 'Plugin Name:' in text:
-        fail(f'{path.name}: second plugin header would be read by WordPress')
+def relative(path):
+    return path.relative_to(ROOT).as_posix()
 
 
 print('RTL-Theme protection readiness')
-check_submitted(SUBMITTED)
-check_plain(ROOT / 'ashna.php', ['Plugin Name:', 'ashna-license.php'])
-check_plain(ROOT / 'ashna-license.php', ['RTL_LICENSE_CLASS', 'RTL_LICENSE_HASH',
-                                         "require_once $ashna_core", 'ashna-core.php'])
-check_plain(ROOT / 'scripts/templates/ashna-no-license.php', ['Requires PHP:', 'ashna-core.php'])
+
+# 1. Every submitted file must satisfy the service's limits.
+submitted = [core] + [path for path in sorted((ROOT / 'includes').rglob('*.php'))
+                      if not rules.is_silence_stub(path)]
+total = 0
+for path in submitted:
+    problems += rules.check_file(path)
+    total += path.stat().st_size
+print(f'  submitted: {len(submitted)} files, {total} bytes, '
+      f'largest {max(p.stat().st_size for p in submitted)} bytes')
+if total > 5 * 1024 * 1024:
+    problems.append('submitted files exceed the 5 MB total of an extracted batch set')
+
+# 2. The entry file carries the guard the protected build relies on.
+core_text = core.read_text()
+for needle in ('Ashna_License_Bootstrap::granted()', 'ASHNA_NO_LICENSE_BUILD', 'return;'):
+    if needle not in core_text:
+        problems.append(f'ashna-core.php: guard is incomplete, missing {needle!r}')
+for expression in rules.INCLUDE.findall(rules.code_only(core_text)):
+    if not expression.lstrip().startswith(rules.SAFE_BASES):
+        problems.append(f'ashna-core.php: pathless include/require -> {expression.strip()[:60]}')
+
+# 3. The readable files must stay readable and out of the submission.
+expectations = {
+    'ashna.php': ['Plugin Name:', 'ashna-license.php'],
+    'ashna-license.php': ['RTL_LICENSE_CLASS', 'RTL_LICENSE_HASH',
+                          "require_once $ashna_core", 'public static function granted()'],
+}
+for name, needles in expectations.items():
+    text = (ROOT / name).read_text()
+    for needle in needles:
+        if needle not in text:
+            problems.append(f'{name}: expected {needle!r}')
+    if 'Plugin Name:' in text and name != 'ashna.php':
+        problems.append(f'{name}: second plugin header would be read by WordPress')
+    if 'RTL_LICENSE_CLASS' in text and name != 'ashna-license.php':
+        problems.append(f'{name}: the Loader block must live only in ashna-license.php')
+
+# 4. The license-free template opts out of the guard instead of shipping a Loader.
+template = (ROOT / 'scripts/templates/ashna-no-license.php').read_text()
+if 'ASHNA_NO_LICENSE_BUILD' not in template:
+    problems.append('ashna-no-license.php: must define ASHNA_NO_LICENSE_BUILD')
 
 if problems:
     print('\nFAIL')
@@ -93,5 +81,5 @@ if problems:
         print(' - ' + problem)
     sys.exit(1)
 
-print('PASS submission contract: only ashna-core.php is protected; ashna.php and '
-      'ashna-license.php stay readable and are never sent.')
+print(f'PASS submission contract: {len(submitted)} files may be protected; ashna.php and '
+      'ashna-license.php stay readable and are never sent; the entry guard is in place.')

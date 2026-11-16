@@ -39,6 +39,12 @@ if ( ! defined( 'ASHNA_OTP_BASENAME' ) ) {
 }
 
 // Both editions share one bootstrap file; this build simply skips the license.
+// The constant is what the guards inside ashna-core.php and includes/** look
+// for in this edition only.
+if ( ! defined( 'ASHNA_NO_LICENSE_BUILD' ) ) {
+	define( 'ASHNA_NO_LICENSE_BUILD', true );
+}
+
 $ashna_core = __DIR__ . DIRECTORY_SEPARATOR . 'ashna-core.php';
 if ( is_file( $ashna_core ) ) {
 	require_once $ashna_core;

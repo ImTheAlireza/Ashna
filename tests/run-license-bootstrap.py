@@ -93,6 +93,18 @@ for scenario, (body, expected) in fixtures.items():
         else:
             assert result.returncode == 0 and ('PASS ' + scenario + ' / PHP ') in output and 'Fatal error' not in output, output
             print(result.stdout.strip(), flush=True)
+# Protected files required directly, without the license gate: nothing boots.
+with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
+    plugin = Path(temp) / 'ashna-otp'
+    plugin.mkdir()
+    for name in ['index.php', 'ashna.php', 'ashna-license.php', 'ashna-core.php']:
+        shutil.copyfile(ROOT / name, plugin / name)
+    shutil.copytree(ROOT / 'includes', plugin / 'includes')
+    result = subprocess.run([PHP, str(ROOT / 'tests/license-bootstrap.php'), str(plugin), 'direct_bypass', 'direct_bypass', str(WP)], capture_output=True, text=True, cwd=ROOT)
+    output = result.stdout + result.stderr
+    assert result.returncode == 0 and 'PASS direct_bypass / PHP ' in output and 'Fatal error' not in output, output
+    print(result.stdout.strip(), flush=True)
+
 # The gate file itself removed: the plugin must stay inert, never white-screen.
 with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
     plugin = Path(temp) / 'ashna-otp'
@@ -106,4 +118,4 @@ with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-t
     print(result.stdout.strip(), flush=True)
 
 assert (ROOT / 'ashna.php').read_bytes() == original
-print(f'PASS {len(fixtures)} scenarios + missing-gate scenario; production license hash and source unchanged by tests.')
+print(f'PASS {len(fixtures)} scenarios + bypass, missing-gate and no-license scenarios; production license hash and source unchanged by tests.')

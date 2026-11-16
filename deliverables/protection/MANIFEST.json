@@ -1,0 +1,278 @@
+{
+  "entry_upload": {
+    "file": "ashna-core.php",
+    "bytes": 1910,
+    "sha256": "665041c599d1731e6ea58dc7afa88a5e261c9599bb56253753c5ee9d8f459d38",
+    "note": "single-file upload; do not zip it"
+  },
+  "batches": [
+    {
+      "file": "batch-01.zip",
+      "bytes": 51807,
+      "sha256": "d9b414ca44f925ad2dd53c1d7d84d8681e0a73d997a518445f5bea82de7aac33",
+      "files": [
+        {
+          "path": "includes/admin/class-ashna-admin.php",
+          "bytes": 36651
+        },
+        {
+          "path": "includes/admin/views/logs-page.php",
+          "bytes": 12864
+        },
+        {
+          "path": "includes/admin/views/partials/tab-appearance.php",
+          "bytes": 149146
+        },
+        {
+          "path": "includes/admin/views/partials/tab-auth-flow.php",
+          "bytes": 36922
+        },
+        {
+          "path": "includes/admin/views/partials/tab-bale-email.php",
+          "bytes": 18236
+        }
+      ]
+    },
+    {
+      "file": "batch-02.zip",
+      "bytes": 28746,
+      "sha256": "be795dc83c1a365aca257ec4b7f016a5db8e1c63c9db670c0e63c1b447ed6573",
+      "files": [
+        {
+          "path": "includes/admin/views/partials/tab-dashboard.php",
+          "bytes": 27482
+        },
+        {
+          "path": "includes/admin/views/partials/tab-security.php",
+          "bytes": 26645
+        },
+        {
+          "path": "includes/admin/views/partials/tab-sms-gateways.php",
+          "bytes": 31047
+        },
+        {
+          "path": "includes/admin/views/partials/tab-social.php",
+          "bytes": 24478
+        },
+        {
+          "path": "includes/admin/views/partials/tab-tools.php",
+          "bytes": 6778
+        }
+      ]
+    },
+    {
+      "file": "batch-03.zip",
+      "bytes": 19721,
+      "sha256": "9c93087c996bc14ff8390d9f2fc59a2cfca81e65632b692cfb708cadaec6d4f7",
+      "files": [
+        {
+          "path": "includes/admin/views/partials/tab-woocommerce.php",
+          "bytes": 19897
+        },
+        {
+          "path": "includes/admin/views/settings-page.php",
+          "bytes": 41285
+        },
+        {
+          "path": "includes/class-ashna-autoloader.php",
+          "bytes": 3923
+        },
+        {
+          "path": "includes/class-ashna-plugin.php",
+          "bytes": 3192
+        },
+        {
+          "path": "includes/core/class-ashna-activator.php",
+          "bytes": 6089
+        }
+      ]
+    },
+    {
+      "file": "batch-04.zip",
+      "bytes": 26360,
+      "sha256": "843e5883a27c74edd95a2604c8e7ab6413755fbbd0ded1ce3340399b0aa15284",
+      "files": [
+        {
+          "path": "includes/core/class-ashna-helper.php",
+          "bytes": 23173
+        },
+        {
+          "path": "includes/core/class-ashna-ip.php",
+          "bytes": 11126
+        },
+        {
+          "path": "includes/core/class-ashna-jwt.php",
+          "bytes": 8151
+        },
+        {
+          "path": "includes/core/class-ashna-logger.php",
+          "bytes": 17423
+        },
+        {
+          "path": "includes/core/class-ashna-passkey.php",
+          "bytes": 26375
+        }
+      ]
+    },
+    {
+      "file": "batch-05.zip",
+      "bytes": 27627,
+      "sha256": "7fdc89d2f527d5ae033a94f164cb3a067915393d2ea09b6ae2eab002761d93d5",
+      "files": [
+        {
+          "path": "includes/core/class-ashna-rate-limiter.php",
+          "bytes": 17226
+        },
+        {
+          "path": "includes/core/class-ashna-security.php",
+          "bytes": 24998
+        },
+        {
+          "path": "includes/core/class-ashna-session.php",
+          "bytes": 16475
+        },
+        {
+          "path": "includes/gateways/abstract-ashna-gateway.php",
+          "bytes": 5061
+        },
+        {
+          "path": "includes/gateways/class-ashna-failover.php",
+          "bytes": 22201
+        }
+      ]
+    },
+    {
+      "file": "batch-06.zip",
+      "bytes": 8127,
+      "sha256": "4729c2520ac11f29913f534999eb13852b6cacfd70ae5fd061f30bd2e8e6ec93",
+      "files": [
+        {
+          "path": "includes/gateways/class-ashna-gateway-bale.php",
+          "bytes": 7323
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-email.php",
+          "bytes": 2689
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-farazsms.php",
+          "bytes": 2926
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-ippanel.php",
+          "bytes": 2719
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-kavenegar.php",
+          "bytes": 2942
+        }
+      ]
+    },
+    {
+      "file": "batch-07.zip",
+      "bytes": 10649,
+      "sha256": "aab18bf473c919e28e60dea6a87c7fe5b3078c5f96878374fd421e5c778516eb",
+      "files": [
+        {
+          "path": "includes/gateways/class-ashna-gateway-manager.php",
+          "bytes": 20942
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-melipayamak.php",
+          "bytes": 5059
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-msgway-messenger.php",
+          "bytes": 2453
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-msgway.php",
+          "bytes": 3442
+        },
+        {
+          "path": "includes/gateways/class-ashna-gateway-sandbox.php",
+          "bytes": 681
+        }
+      ]
+    },
+    {
+      "file": "batch-08.zip",
+      "bytes": 10695,
+      "sha256": "271585941c5ef3a658374c27a9820a1a493566bfa0dea4088e168a702a764054",
+      "files": [
+        {
+          "path": "includes/gateways/class-ashna-gateway-smsir.php",
+          "bytes": 2484
+        },
+        {
+          "path": "includes/gateways/interface-ashna-gateway.php",
+          "bytes": 614
+        },
+        {
+          "path": "includes/integrations/class-ashna-integration-dokan.php",
+          "bytes": 12199
+        },
+        {
+          "path": "includes/integrations/class-ashna-integration-um.php",
+          "bytes": 6102
+        },
+        {
+          "path": "includes/integrations/class-ashna-integrations.php",
+          "bytes": 6793
+        }
+      ]
+    },
+    {
+      "file": "batch-09.zip",
+      "bytes": 25036,
+      "sha256": "9166c3fd34c75987b3214cb6f99a89162dd9a623449589ac061de2ce21162676",
+      "files": [
+        {
+          "path": "includes/integrations/elementor/class-ashna-elementor-login-widget.php",
+          "bytes": 14598
+        },
+        {
+          "path": "includes/integrations/elementor/class-ashna-elementor-modal-button-widget.php",
+          "bytes": 6743
+        },
+        {
+          "path": "includes/integrations/elementor/class-ashna-elementor.php",
+          "bytes": 3709
+        },
+        {
+          "path": "includes/services/class-ashna-auth.php",
+          "bytes": 44234
+        },
+        {
+          "path": "includes/services/class-ashna-frontend.php",
+          "bytes": 18899
+        }
+      ]
+    },
+    {
+      "file": "batch-10.zip",
+      "bytes": 17483,
+      "sha256": "788e20e10090182662e8f18148d94be859a820782f9ca7cd6c5ffe03765ddb66",
+      "files": [
+        {
+          "path": "includes/services/class-ashna-sso.php",
+          "bytes": 54694
+        },
+        {
+          "path": "includes/services/class-ashna-woocommerce.php",
+          "bytes": 9079
+        }
+      ]
+    }
+  ],
+  "never_submitted": [
+    "ashna.php",
+    "ashna-license.php",
+    "scripts/templates/ashna-no-license.php"
+  ],
+  "limits": {
+    "files_per_zip": 5,
+    "zip_bytes": 6291456,
+    "file_bytes": 1048576
+  }
+}

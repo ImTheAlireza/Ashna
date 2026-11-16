@@ -70,7 +70,7 @@ class Ashna_Autoloader {
 		}
 
 		if ( isset( self::$class_map[ $class_name ] ) ) {
-			$file = ASHNA_OTP_PATH . self::$class_map[ $class_name ];
+			$file = __DIR__ . '/../' . self::$class_map[ $class_name ];
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
@@ -82,7 +82,7 @@ class Ashna_Autoloader {
 		$dirs = array( 'core/', 'services/', 'gateways/', 'admin/', '' );
 
 		foreach ( $dirs as $dir ) {
-			$candidate = ASHNA_OTP_PATH . 'includes/' . $dir . 'class-' . $slug . '.php';
+			$candidate = __DIR__ . '/../includes/' . $dir . 'class-' . $slug . '.php';
 			if ( file_exists( $candidate ) ) {
 				require_once $candidate;
 				return;
