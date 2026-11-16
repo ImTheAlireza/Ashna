@@ -1434,7 +1434,7 @@ scenario(
 				}
 			}
 		}
-		foreach ( array( 'index.php', 'ashna.php', 'uninstall.php' ) as $top ) {
+		foreach ( array( 'index.php', 'ashna.php', 'ashna-license.php', 'ashna-core.php', 'uninstall.php' ) as $top ) {
 			$files[] = ASHNA_OTP_PATH . $top;
 		}
 

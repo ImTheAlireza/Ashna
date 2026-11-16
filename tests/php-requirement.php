@@ -23,9 +23,9 @@ class WP_Plugin_Dependencies {
 }
 // Runner extracts this unmodified function from the official cached WP source.
 require __DIR__ . '/../.cache/license-tests/validate-requirements.php';
-$headers = get_plugin_data(WP_PLUGIN_DIR . '/index.php');
+$headers = get_plugin_data(WP_PLUGIN_DIR . '/ashna.php');
 if ($headers['RequiresPHP'] !== '8.2') { throw new RuntimeException('Wrong minimum PHP header'); }
-$result = validate_plugin_requirements('index.php');
+$result = validate_plugin_requirements('ashna.php');
 $compatible = version_compare(PHP_VERSION, '8.2', '>=');
 if ($compatible ? $result !== true : !($result instanceof WP_Error && $result->code === 'plugin_php_incompatible')) {
     throw new RuntimeException('Wrong WordPress requirement validation result');

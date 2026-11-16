@@ -38,18 +38,8 @@ if ( ! defined( 'ASHNA_OTP_BASENAME' ) ) {
 	define( 'ASHNA_OTP_BASENAME', plugin_basename( ASHNA_OTP_FILE ) );
 }
 
-require_once ASHNA_OTP_PATH . 'includes/class-ashna-autoloader.php';
-Ashna_Autoloader::register();
-
-if ( ! function_exists( 'ashna_otp' ) ) {
-	/**
-	 * Return the plugin kernel for this license-free build.
-	 *
-	 * @return Ashna_Plugin
-	 */
-	function ashna_otp() {
-		return Ashna_Plugin::instance();
-	}
+// Both editions share one bootstrap file; this build simply skips the license.
+$ashna_core = __DIR__ . DIRECTORY_SEPARATOR . 'ashna-core.php';
+if ( is_file( $ashna_core ) ) {
+	require_once $ashna_core;
 }
-
-ashna_otp();

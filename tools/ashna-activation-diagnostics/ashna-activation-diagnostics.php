@@ -91,8 +91,9 @@ final class Ashna_Activation_Diagnostics {
 	}
 
 	public static function is_target( $plugin ) {
-		// Deliberately limited to the distributed Ashna entry points, no traversal.
-		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/index\.php\z~i', $plugin );
+		// Deliberately limited to the distributed Ashna entry point, no traversal.
+		// ashna.php is the file WordPress activates; index.php is only a silence stub.
+		return is_string( $plugin ) && 1 === preg_match( '~\Aashna(?:-otp)?/(?:ashna|index)\.php\z~i', $plugin );
 	}
 
 	private static function files( $plugin ) {
@@ -104,7 +105,7 @@ final class Ashna_Activation_Diagnostics {
 			'license_readable' => $readable,
 			'license_matches_expected_sha1' => $readable ? ( '321791ab0231890e4569d17c52e64ed93d2eb42d' === @sha1_file( $license ) ) : null,
 		);
-		foreach ( array( 'index.php', 'ashna.php' ) as $name ) {
+		foreach ( array( 'index.php', 'ashna.php', 'ashna-license.php', 'ashna-core.php' ) as $name ) {
 			$file = $dir . '/' . $name;
 			$result[ $name . '_sha256' ] = is_readable( $file ) ? @hash_file( 'sha256', $file ) : null;
 		}
@@ -218,7 +219,7 @@ final class Ashna_Activation_Diagnostics {
 		if ( class_exists( 'Ashna_License_Bootstrap', false ) && is_callable( array( 'Ashna_License_Bootstrap', 'get_status' ) ) ) {
 			try {
 				$status = Ashna_License_Bootstrap::get_status();
-				$known = array( 'pending', 'checking', 'active', 'license_file_missing', 'license_hash_mismatch', 'license_class_conflict', 'license_class_missing', 'license_method_invalid', 'license_inactive', 'license_runtime_error', 'license_loader_missing' );
+				$known = array( 'pending', 'checking', 'active', 'license_file_missing', 'license_hash_mismatch', 'license_class_conflict', 'license_class_missing', 'license_method_invalid', 'license_inactive', 'license_runtime_error', 'license_loader_missing', 'license_manager_missing', 'license_gate_missing', 'license_core_missing' );
 				self::$report['bootstrap_status'] = in_array( $status, $known, true ) ? $status : 'unknown_status';
 			} catch ( Throwable $ignored ) {
 				self::$report['bootstrap_status'] = 'status_unavailable';

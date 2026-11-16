@@ -22,7 +22,22 @@ temporary plugin copies**. The production verifier hash is never altered.
 Coverage includes normal early loading, late activation from function scope,
 strict true/false results, missing/bad files, runtime/parse/constructor errors,
 preloaded/conflicting classes, inaccessible methods, service initialization,
-activation/deactivation, idempotency, non-admin notices and the no-license build.
+activation/deactivation, idempotency, non-admin notices, a missing Smart Manager
+plugin (`license_manager_missing` + RTL's approved notice), a deleted encoded gate
+(`license_gate_missing`) and the no-license build.
+
+The harness includes the plugin **main file** (`ashna.php`), the way WordPress
+does. The license Loader lives in `ashna-license.php` and the product boots from
+`ashna-core.php`, the only file submitted to RTL-Theme's protection service;
+see `docs/RTL-LICENSE-FA.md`.
+
+## Protection readiness
+
+`python3 tests/run-protection-readiness.py` pins RTL-Theme's submission rules:
+`ashna-core.php` must stay under 1 MB, use no short tags and no
+`__halt_compiler()`, reach other files only through an explicit path base, and
+must not carry the plugin header or the license Loader. `ashna.php` and
+`ashna-license.php` must stay readable — the service does not accept them.
 One scenario feeds an ionCube-encoded stub without the Loader and expects
 `license_loader_missing`: the gate must refuse before `require`, because the
 encoded stub itself would print a raw error and `exit(199)` the request.

@@ -49,7 +49,7 @@
 
 - [x] سربرگ افزونه: نام «آشنا | ورود و ثبت‌نام با کد یکبارمصرف»، نسخه‌ی `3.1.3` (نسخه پس از کار بهینه‌سازی/رفع باگ بالا رفت)، نویسنده «پارسنا» (Author URI: `https://parsena.ir`)، صفحه‌ی محصول (Plugin URI: `https://parsena.ir/ashna`)، Text Domain `ashna-otp`
 - [x] نام پوشه و زیپ نصب: `ashna` (فایل اصلی: `ashna/ashna.php`)
-  - `deliverables/ashna.zip`: نسخه‌ی لایسنس‌دار (فایل لایسنس راست‌چین باید کنار `ashna.php` قرار بگیره)
+  - `deliverables/ashna.zip`: نسخه‌ی لایسنس‌دار (فایل لایسنس راست‌چین باید کنار `ashna.php`، `ashna-license.php` و `ashna-core.php` قرار بگیره)
   - `deliverables/ashna-no-license.zip`: فقط برای تست روی سایت آزمایشی
 - [x] کلاس‌ها و فایل‌ها: `Signa_*` ← `Ashna_*`، `class-signa-*` ← `class-ashna-*` و بوت‌استرپ `signa.php` ← `ashna.php`
 - [x] ثابت‌ها: `SIGNA_OTP_*` ← `ASHNA_OTP_*`
@@ -412,6 +412,7 @@
 - [ ] **فایل ۲، بروزرسان:** فقط `ashna.zip` قابل نصب
 - [ ] **فایل ۳:** فقط PDF راهنما
 - [ ] 👤 قراردادن فایل لایسنس راست‌چین (`RTL_License_*.php`) کنار فایل اصلی افزونه
+- [ ] 👤 ارسال **فقط** `ashna-core.php` به سرویس محافظت فایل راست‌چین و جای‌گذاری خروجی با همان نام (`ashna.php` و `ashna-license.php` متن ساده می‌مانند — روند در `docs/RTL-LICENSE-FA.md`)
 - [ ] نبود فایل‌های اضافه در زیپ افزونه: tests، scripts، deliverables، node_modules و .git
 - [ ] تست نصب زیپ نهایی روی وردپرس تمیز
 - [x] اسکریپت `scripts/package-rightchin.py` (بستهٔ برند قبلی) حذف شد؛ ساختن بسته با `scripts/package-deliverables.py` و ساختن زیپ لندینگ با `scripts/package-landing.py` انجام می‌شود.

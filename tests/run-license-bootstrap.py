@@ -45,7 +45,9 @@ fixtures = {
     'parse_error': ('', 'license_runtime_error'),
     'encoded_no_loader': (active, 'license_loader_missing'),
     'conflict': (active, 'license_class_conflict'),
+    'no_manager': (active, 'license_manager_missing'),
     'core_error': (active, 'propagate_core_error'),
+    'core_missing': (active, 'license_core_missing'),
     'no_license': ('', 'active'),
     'no_license_activation': ('', 'active'),
 }
@@ -54,7 +56,7 @@ for scenario, (body, expected) in fixtures.items():
     with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
         plugin = Path(temp) / 'ashna-otp'
         plugin.mkdir()
-        for name in ['index.php', 'ashna.php']:
+        for name in ['index.php', 'ashna.php', 'ashna-license.php', 'ashna-core.php']:
             shutil.copyfile(ROOT / name, plugin / name)
         shutil.copytree(ROOT / 'includes', plugin / 'includes')
         fixture = '<?php class ' + license_name + ' { ' + body + ' }'
@@ -63,16 +65,21 @@ for scenario, (body, expected) in fixtures.items():
         if scenario == 'parse_error': fixture = '<?php class !!! INVALID !!!'
         if scenario == 'encoded_no_loader': fixture = '<?php //ICB0 81:0 82:503b ?><?php class ' + license_name + ' { ' + body + ' }'
         license_file = plugin / (license_name + '.php')
-        if 'missing' not in [scenario, scenario.removeprefix('activation_')]:
+        if scenario not in {'missing', 'activation_missing'}:
             license_file.write_text(fixture)
+        if scenario == 'core_missing':
+            (plugin / 'ashna-core.php').unlink()
         if scenario == 'conflict':
             (plugin / 'conflicting-class.php').write_text('<?php class ' + license_name + ' { }')
-        source = (plugin / 'ashna.php').read_text()
+        # The verifier hash lives in the encoded gate, not in the header file.
+        gate = plugin / 'ashna-license.php'
+        source = gate.read_text()
         if scenario != 'bad_hash':
             source = source.replace('321791ab0231890e4569d17c52e64ed93d2eb42d', hashlib.sha1(fixture.encode()).hexdigest())
-        (plugin / 'ashna.php').write_text(source)
+        gate.write_text(source)
         if scenario.startswith('no_license'):
             shutil.copyfile(ROOT / 'scripts/templates/ashna-no-license.php', plugin / 'ashna.php')
+            (plugin / 'ashna-license.php').unlink()
         if scenario == 'core_error':
             (plugin / 'includes/class-ashna-autoloader.php').write_text('<?php throw new RuntimeException("core-fixture-failure");')
         result = subprocess.run([PHP, str(ROOT / 'tests/license-bootstrap.php'), str(plugin), scenario, expected, str(WP)], capture_output=True, text=True, cwd=ROOT)
@@ -86,5 +93,17 @@ for scenario, (body, expected) in fixtures.items():
         else:
             assert result.returncode == 0 and ('PASS ' + scenario + ' / PHP ') in output and 'Fatal error' not in output, output
             print(result.stdout.strip(), flush=True)
+# The gate file itself removed: the plugin must stay inert, never white-screen.
+with tempfile.TemporaryDirectory(prefix='fixture-', dir=ROOT / '.cache/license-tests') as temp:
+    plugin = Path(temp) / 'ashna-otp'
+    plugin.mkdir()
+    for name in ['index.php', 'ashna.php']:
+        shutil.copyfile(ROOT / name, plugin / name)
+    shutil.copytree(ROOT / 'includes', plugin / 'includes')
+    result = subprocess.run([PHP, str(ROOT / 'tests/license-bootstrap.php'), str(plugin), 'gate_missing', 'license_gate_missing', str(WP)], capture_output=True, text=True, cwd=ROOT)
+    output = result.stdout + result.stderr
+    assert result.returncode == 0 and 'PASS gate_missing / PHP ' in output and 'Fatal error' not in output, output
+    print(result.stdout.strip(), flush=True)
+
 assert (ROOT / 'ashna.php').read_bytes() == original
-print(f'PASS {len(fixtures)} scenarios; production license hash and source unchanged by tests.')
+print(f'PASS {len(fixtures)} scenarios + missing-gate scenario; production license hash and source unchanged by tests.')

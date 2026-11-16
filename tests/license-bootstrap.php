@@ -41,6 +41,10 @@ function get_bloginfo($key) { return $key === 'name' ? 'Test Site' : 'admin@exam
 function is_admin() { return true; }
 function wp_doing_ajax() { return false; }
 function current_user_can($cap) { return $GLOBALS['can_manage']; }
+function is_multisite() { return false; }
+function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
+function esc_url($url) { return $url; }
+function esc_attr($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 class TestWpdb {
 	public $prefix = 'wp_';
@@ -58,6 +62,11 @@ function check($condition, $message) { if (!$condition) { throw new RuntimeExcep
 function load_pluggable_functions() {
 	function wp_get_current_user() { return (object) array('ID' => 1); }
 }
+// RTL-Theme's Smart Manager plugin is present in every scenario but the
+// dedicated no-manager one.
+if ('no_manager' !== $scenario) {
+	class RtlRequired {}
+}
 $late = strpos($scenario, 'activation') !== false;
 $unlicensed = strpos($scenario, 'no_license') === 0;
 if ($late) {
@@ -69,9 +78,20 @@ if ('conflict' === $scenario) { require $plugin_dir . '/conflicting-class.php'; 
 if ('preloaded' === $scenario) { require $plugin_dir . '/RTL_License_c1595a7238d64f3a.php'; }
 ob_start();
 if ('direct_then_index' === $scenario) { require_once $plugin_dir . '/ashna.php'; }
-// WordPress's activation sandbox includes the plugin from function scope.
-(function ($entry) { include_once $entry; })($plugin_dir . '/index.php');
+// WordPress includes the plugin main file (the one with the Plugin Name header)
+// from function scope, both on a normal request and in the activation sandbox.
+(function ($entry) { include_once $entry; })($plugin_dir . '/ashna.php');
+include_once $plugin_dir . '/index.php';
 check(ob_get_clean() === '', 'Unexpected output during inclusion');
+if ('gate_missing' === $scenario) {
+	// The encoded gate was deleted: the plain header stub must stay inert and say so.
+	check(!class_exists('Ashna_License_Bootstrap', false), 'Gate file was still present');
+	check(!function_exists('ashna_otp'), 'Missing gate booted the kernel');
+	ob_start(); do_action('admin_notices'); $gate_notice = ob_get_clean();
+	check(false !== strpos($gate_notice, $expected), 'Gate-missing notice missing');
+	echo 'PASS ' . $scenario . ' / PHP ' . PHP_VERSION . "\n";
+	return;
+}
 if (!$late) {
 	if (!$unlicensed) { check(!function_exists('ashna_otp'), 'License check ran before WordPress was ready'); }
 	load_pluggable_functions();
@@ -112,8 +132,17 @@ if ('active' === $expected) {
 	check(!class_exists('Ashna_Auth', false), 'License failure loaded auth service');
 	check(empty($GLOBALS['schema']), 'License failure changed the database');
 	ob_start(); do_action('admin_notices'); $notice = ob_get_clean();
-	check(strpos($notice, $expected) !== false, 'Diagnostic notice missing');
+	if ('no_manager' === $scenario) {
+		check(false !== strpos($notice, 'rcu-install-manual'), 'Approved manager notice missing');
+		check(false !== strpos($notice, 'notice-warning'), 'Manager notice must be notice-warning');
+	} elseif ('license_inactive' === $expected) {
+		// The active manager already prints the inactive-product notice.
+		check('' === trim($notice), 'Duplicate notice next to the manager notice');
+	} else {
+		check(strpos($notice, $expected) !== false, 'Diagnostic notice missing');
+	}
 	check(strpos($notice, 'fixture-secret') === false, 'Raw exception leaked a secret');
+	check(has_filter('plugin_action_links_' . ASHNA_OTP_BASENAME) !== false, 'License action link missing');
 	$GLOBALS['can_manage'] = false;
 	ob_start(); do_action('admin_notices'); check(ob_get_clean() === '', 'Diagnostic visible to non-admin');
 }
