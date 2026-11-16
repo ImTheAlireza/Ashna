@@ -14,9 +14,12 @@ from pathlib import Path
 import re
 
 MAX_BYTES = 1024 * 1024
+# The service resolves only these bases. Its help page also lists the theme
+# directory functions, but in practice they are rejected ("مسیر قابل تشخیص
+# نیست"), so a theme template must be loaded with get_template_part() instead of
+# an include statement.
 SAFE_BASES = ('__DIR__', '__FILE__', 'plugin_dir_path(', 'plugin_dir_url(', 'ABSPATH',
-              'WP_PLUGIN_DIR', 'WP_CONTENT_DIR', 'get_template_directory(',
-              'get_stylesheet_directory(')
+              'WP_PLUGIN_DIR', 'WP_CONTENT_DIR')
 INCLUDE = re.compile(r'\b(?:require|include)(?:_once)?\b[ \t]*(?:\([ \t]*)?([^;]*);', re.I)
 # RTL-Theme's service analyses the include statement itself: an expression that
 # is only a variable (`require $file;`) is rejected even when that variable was

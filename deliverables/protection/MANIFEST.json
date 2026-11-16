@@ -224,8 +224,8 @@
     },
     {
       "file": "batch-09.zip",
-      "bytes": 25153,
-      "sha256": "aece9d046a3e317567fc6695df3fd448781a4c83ddd57648137a480eb18761db",
+      "bytes": 25148,
+      "sha256": "135c80fcefd48aaed2672a2cd1aefd48ba5754c5c516285f0192e4855b379ec7",
       "files": [
         {
           "path": "includes/integrations/elementor/class-ashna-elementor-login-widget.php",
@@ -245,7 +245,7 @@
         },
         {
           "path": "includes/services/class-ashna-frontend.php",
-          "bytes": 19274
+          "bytes": 19120
         }
       ]
     },

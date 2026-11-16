@@ -360,13 +360,11 @@ class Ashna_Frontend {
 		$args     = wp_parse_args( $args, $defaults );
 
 		ob_start();
-		// Theme override: child theme first, then the parent theme, then the
-		// bundled template. Each include keeps its base in the statement itself,
-		// which is what the protection service can resolve.
-		if ( is_readable( get_stylesheet_directory() . '/ashna/login-form.php' ) ) {
-			include get_stylesheet_directory() . '/ashna/login-form.php';
-		} elseif ( is_readable( get_template_directory() . '/ashna/login-form.php' ) ) {
-			include get_template_directory() . '/ashna/login-form.php';
+		// Theme override (child theme, then parent theme) is loaded by WordPress
+		// itself: the protection service only resolves includes whose base is
+		// __DIR__, so this file must not include a path outside the plugin.
+		if ( locate_template( array( 'ashna/login-form.php' ) ) ) {
+			get_template_part( 'ashna/login-form', null, $args );
 		} else {
 			include __DIR__ . '/../../templates/login-form.php';
 		}
