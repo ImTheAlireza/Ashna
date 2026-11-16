@@ -95,9 +95,13 @@ def main():
         })
 
     readme = (ROOT / 'scripts' / 'templates' / 'protection-README-FA.txt').read_text()
-    readme = readme.format(batches=len(manifest['batches']),
-                           files=len(candidates) + 1,
-                           entry=relative(ENTRY))
+    # Plain token replacement: the guide contains PHP code with braces, so
+    # str.format() would treat them as fields.
+    batches = len(manifest['batches'])
+    readme = (readme.replace('{batches:02d}', f'{batches:02d}')
+                    .replace('{batches}', str(batches))
+                    .replace('{files}', str(len(candidates) + 1))
+                    .replace('{entry}', relative(ENTRY)))
     (OUT / 'README-FA.txt').write_text(readme)
     (OUT / 'MANIFEST.json').write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + '\n')
 
