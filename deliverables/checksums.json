@@ -2,13 +2,13 @@
   {
     "file": "ashna.zip",
     "bytes": 597134,
-    "sha256": "bd14935561da1aaa48c0e3b13a926f9453fa6c2de5274aa482883047a63e7f97",
+    "sha256": "6bb0fa84e20d3ad2f8df6c5febc2e896f507ba6e5f075e9b9eb39f91d65bb9c9",
     "files": 91
   },
   {
     "file": "ashna-no-license.zip",
     "bytes": 559544,
-    "sha256": "8346a64197118672bf21850328b7c724474120ab74bf763cf6a6c47676d1f8ad",
+    "sha256": "4d9765d9e4c19e130551781687cc32dac73eb87335d7d25e914f69a2d2db7430",
     "files": 89
   },
   {
@@ -19,8 +19,8 @@
   },
   {
     "file": "help.pdf",
-    "bytes": 2704649,
-    "sha256": "58b2a4ffca9341e1dcbb1331a56c37bdac62ca38312e36c76583cdec6bf1797f"
+    "bytes": 2566870,
+    "sha256": "ed1f204ebf51f502758935f9b5a7c8bf68dfdb093b8a0caf3eafed470f24b3f8"
   },
   {
     "file": "ashna-landing.zip",
@@ -33,5 +33,11 @@
     "bytes": 125312,
     "sha256": "ec07c48df2e30b7f020096c1f1696f4c969c1a5b2c239055bae7a17715119a9e",
     "files": 7
+  },
+  {
+    "file": "ashna-product-images.zip",
+    "bytes": 3132981,
+    "sha256": "6b5762b12739ce2f9aa1caa78e6e0bcc92e8b92bcc6b1fd2887d3d8f145d6baf",
+    "files": 21
   }
 ]
