@@ -72,7 +72,9 @@ class Ashna_Autoloader {
 		if ( isset( self::$class_map[ $class_name ] ) ) {
 			$file = __DIR__ . '/../' . self::$class_map[ $class_name ];
 			if ( file_exists( $file ) ) {
-				require_once $file;
+				// The base stays in the statement: RTL-Theme's protection service
+				// cannot resolve an include whose expression is only a variable.
+				require_once __DIR__ . '/../' . self::$class_map[ $class_name ];
 				return;
 			}
 		}
@@ -84,7 +86,7 @@ class Ashna_Autoloader {
 		foreach ( $dirs as $dir ) {
 			$candidate = __DIR__ . '/../includes/' . $dir . 'class-' . $slug . '.php';
 			if ( file_exists( $candidate ) ) {
-				require_once $candidate;
+				require_once __DIR__ . '/../includes/' . $dir . 'class-' . $slug . '.php';
 				return;
 			}
 		}

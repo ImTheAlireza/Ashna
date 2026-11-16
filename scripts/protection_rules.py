@@ -18,13 +18,10 @@ SAFE_BASES = ('__DIR__', '__FILE__', 'plugin_dir_path(', 'plugin_dir_url(', 'ABS
               'WP_PLUGIN_DIR', 'WP_CONTENT_DIR', 'get_template_directory(',
               'get_stylesheet_directory(')
 INCLUDE = re.compile(r'\b(?:require|include)(?:_once)?\b[ \t]*(?:\([ \t]*)?([^;]*);', re.I)
-# A variable that was itself built from a portable base (e.g. `$partials_dir =
-# __DIR__ . '/partials/'`) counts as an explicit base: RTL-Theme's rule is about
-# paths that do not resolve relative to the file, not about literal strings.
-ASSIGN_BASES = SAFE_BASES + ('locate_template(', 'get_theme_file_path(')
-ASSIGN = re.compile(r'(\$[A-Za-z_]\w*)\s*=\s*(?:' +
-                    '|'.join(re.escape(base) for base in ASSIGN_BASES) + ')')
-LEADING_VAR = re.compile(r'^\$([A-Za-z_]\w*)')
+# RTL-Theme's service analyses the include statement itself: an expression that
+# is only a variable (`require $file;`) is rejected even when that variable was
+# built from __DIR__ a few lines above. The base must be part of the statement.
+LEADING_VAR = re.compile(r'^\$')
 SHORT_TAG = re.compile(r'<\?(?!php|=)', re.I)
 BLOCK_COMMENT = re.compile(r'/\*.*?\*/', re.S)
 LINE_COMMENT = re.compile(r'^[ \t]*(?://|\*|#(?!\[)).*$', re.M)
@@ -63,13 +60,9 @@ def check_file(path):
         problems.append(f'{path}: plugin header (the main file is never submitted)')
     if 'RTL_LICENSE_CLASS' in text or 'RTL_LICENSE_HASH' in text:
         problems.append(f'{path}: license Loader (that file is never submitted)')
-    safe_variables = {match.group(1) for match in ASSIGN.finditer(code)}
     for expression in INCLUDE.findall(code):
         stripped = expression.lstrip()
         if stripped.startswith(SAFE_BASES):
-            continue
-        variable = LEADING_VAR.match(stripped)
-        if variable and ('$' + variable.group(1)) in safe_variables:
             continue
         problems.append(f'{path}: pathless include/require -> {stripped[:60]}')
     return problems

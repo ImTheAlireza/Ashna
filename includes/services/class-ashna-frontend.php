@@ -360,9 +360,13 @@ class Ashna_Frontend {
 		$args     = wp_parse_args( $args, $defaults );
 
 		ob_start();
-		$theme_template = locate_template( 'ashna/login-form.php' );
-		if ( $theme_template ) {
-			include $theme_template;
+		// Theme override: child theme first, then the parent theme, then the
+		// bundled template. Each include keeps its base in the statement itself,
+		// which is what the protection service can resolve.
+		if ( is_readable( get_stylesheet_directory() . '/ashna/login-form.php' ) ) {
+			include get_stylesheet_directory() . '/ashna/login-form.php';
+		} elseif ( is_readable( get_template_directory() . '/ashna/login-form.php' ) ) {
+			include get_template_directory() . '/ashna/login-form.php';
 		} else {
 			include __DIR__ . '/../../templates/login-form.php';
 		}

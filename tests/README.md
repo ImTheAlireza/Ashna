@@ -36,7 +36,9 @@ see `docs/RTL-LICENSE-FA.md`.
 `python3 tests/run-protection-readiness.py` pins RTL-Theme's submission rules
 for all 48 files that get protected (`ashna-core.php` plus `includes/**`): under
 1 MB each, no short tags, no `__halt_compiler()`, every include/require with an
-explicit path base, and never the plugin header or the license Loader.
+explicit path base **inside the statement itself** (RTL-Theme rejects
+`require $file;` even when `$file` was built from `__DIR__`), and never the plugin
+header or the license Loader.
 `ashna.php` and `ashna-license.php` must stay readable — the service does not
 accept them — and the entry guard (`Ashna_License_Bootstrap::granted()`) must be
 in place so a direct `require` of `ashna-core.php` boots nothing (scenario

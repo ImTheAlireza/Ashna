@@ -62,8 +62,8 @@
     },
     {
       "file": "batch-03.zip",
-      "bytes": 19721,
-      "sha256": "9c93087c996bc14ff8390d9f2fc59a2cfca81e65632b692cfb708cadaec6d4f7",
+      "bytes": 19785,
+      "sha256": "df5663bb5e803df77d8730aa3e909d9d0cab75cd5556ea783454a01db0d61216",
       "files": [
         {
           "path": "includes/admin/views/partials/tab-woocommerce.php",
@@ -71,11 +71,11 @@
         },
         {
           "path": "includes/admin/views/settings-page.php",
-          "bytes": 41285
+          "bytes": 41277
         },
         {
           "path": "includes/class-ashna-autoloader.php",
-          "bytes": 3923
+          "bytes": 4159
         },
         {
           "path": "includes/class-ashna-plugin.php",
@@ -224,8 +224,8 @@
     },
     {
       "file": "batch-09.zip",
-      "bytes": 25036,
-      "sha256": "9166c3fd34c75987b3214cb6f99a89162dd9a623449589ac061de2ce21162676",
+      "bytes": 25153,
+      "sha256": "aece9d046a3e317567fc6695df3fd448781a4c83ddd57648137a480eb18761db",
       "files": [
         {
           "path": "includes/integrations/elementor/class-ashna-elementor-login-widget.php",
@@ -245,7 +245,7 @@
         },
         {
           "path": "includes/services/class-ashna-frontend.php",
-          "bytes": 18899
+          "bytes": 19274
         }
       ]
     },
